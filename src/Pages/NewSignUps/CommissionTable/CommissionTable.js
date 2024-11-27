@@ -136,7 +136,7 @@ const CommissionTable = () => {
                 
                   <td className={`status ${restaurant.is_verify}`}>
                     <div className={`status-background-${restaurant.is_verify}`}>
-                      {restaurant.is_verify === "0"
+                      {restaurant.is_verify === 0
                         ? "No"
                         : "Yes"}
                     </div>
