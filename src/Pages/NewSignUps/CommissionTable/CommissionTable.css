@@ -1,0 +1,148 @@
+/* Table Styles */
+.table-user {
+  border-radius: 8px;
+  background-color: #ffffff;
+  border: 1px solid #eaecf0 !important;
+  overflow: hidden; /* Ensures no overflow occurs */
+}
+
+.heading_user {
+  background-color: #f9fafb;
+  font-family: "Inter";
+  font-weight: 600; /* Slightly bolder for visibility */
+  font-size: 14px; /* Increased font size */
+  color: #4a4a4a; /* Darker color for better readability */
+}
+
+.id-user {
+  font-family: "Inter";
+  font-weight: 600;
+  font-size: 14px; /* Increased font size */
+  color: #4a4a4a;
+}
+
+/* Table Cell Borders */
+.table-user th,
+.table-user td {
+  border-top: 1px solid #eaecf0;
+  border-bottom: 1px solid #eaecf0;
+  border-left: none;
+  border-right: none;
+  cursor: default; /* Removed hover cursor effect */
+  padding: 12px; /* Increased padding for better spacing */
+}
+
+.table-user td {
+  position: relative;
+}
+
+/* Edit User Style */
+.edit_users {
+  font-family: "Inter";
+  color: #6941c6;
+  font-weight: 500;
+  font-size: 14px; /* Increased font size */
+  text-decoration: underline; /* Added underline for better visibility */
+  cursor: pointer; /* Ensure cursor indicates clickable item */
+}
+
+/* Status Styles */
+.status {
+  font-family: "Inter";
+  font-weight: 600; /* Slightly bolder for emphasis */
+  font-size: 14px; /* Increased font size */
+}
+
+.status.Activated {
+  color: #027a48; /* Green for Activated */
+}
+
+.status.Deactivated {
+  color: #b42318; /* Red for Deactivated */
+}
+
+.status.refund {
+  color: #344054; /* Default color for refund */
+}
+
+/* Background for Status */
+.status-background-Activated,
+.status-background-Deactivated,
+.status-background-refund {
+  border-radius: 16px;
+  padding: 6px 12px; /* Adjusted padding for more spacing */
+  text-align: center;
+  font-size: 12px; /* Smaller font for background status */
+}
+
+.status-background-Activated {
+  background: #ecfdf3;
+}
+
+.status-background-Deactivated {
+  background: #fef3f2;
+}
+
+.status-background-refund {
+  background: #f2f4f7;
+}
+
+/* Text User Style */
+.text-user {
+  font-family: "Inter";
+  font-weight: 400;
+  font-size: 14px;
+  color: #667085;
+}
+
+/* Pagination Styles */
+.pagination-row {
+  text-align: center; /* Center the pagination container */
+}
+
+.pagination {
+  display: flex;
+  justify-content: center; /* Center the pagination items */
+  align-items: center;
+  gap: 8px; /* Increased gap for spacing */
+}
+
+.page-item {
+  display: inline;
+}
+
+.page-link {
+  padding: 0.5rem 1rem; /* Increased padding for better touch targets */
+  margin: 0;
+  line-height: 1.25;
+  color: #667085; /* Color for links */
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.page-item:first-child {
+  margin-right: auto; /* Push the previous button to the left */
+}
+
+.page-item:last-child {
+  margin-left: auto; /* Push the next button to the right */
+}
+
+.page-item.active .page-link {
+  background-color: #eaecf0;
+  border-color: #7f56d9;
+  color: #fff; /* White text for active page */
+}
+
+.page-item.disabled .page-link {
+  color: #6c757d;
+  cursor: not-allowed;
+  background-color: #fff;
+  border-color: #dee2e6;
+}
+
+.pagination .page-link:hover {
+  background-color: #e0e0e0; /* Light grey on hover */
+}

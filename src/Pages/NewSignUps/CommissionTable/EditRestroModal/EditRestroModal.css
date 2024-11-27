@@ -1,0 +1,14 @@
+.btn-cancel-user{
+    background-color: rgb(223, 22, 22) !important;
+    color: white;
+    border: none !important;
+}
+.btn-saveChanges-user{
+    background-color: #2f4cdd  !important;
+    color: white;
+    border-color: none !important;
+}
+.modal-header {
+    border-bottom: 1px solid #dee2e6 !important; /* Add a bottom border to the modal header */
+  }
+  

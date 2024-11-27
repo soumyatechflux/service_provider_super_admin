@@ -1,0 +1,51 @@
+.Main_TotalMenu_HeyMaria{
+    display: flex;
+}
+.TotalMenu_HeyMaria{
+    width: 100%;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: 1px solid #E4E4E7
+}
+.SubMenu_HeyMaria{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+.value_HeyMaria{
+    font-family: 'Poppins';
+    font-weight: 400;
+    font-size: 33.73px;
+    line-height: 40.47px;
+    color: #000000;
+}
+.label_HeyMaria{
+    font-family: 'Poppins';
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 16.86px;
+    color: #7E7E7E;
+}
+.Head_Text-HeyMaria{
+    font-family: 'Plus Jakarta Sans';
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+    color: #000000;
+    margin-left: 3px;
+}
+.Sub_Text-HeyMaria{
+    font-family: 'Plus Jakarta Sans';
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 26px;
+    color: #71717A;
+}
+@media (max-width: 765px){
+    .Main_TotalMenu_HeyMaria{
+        gap: 20px;
+    }
+}
+    

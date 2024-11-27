@@ -1,0 +1,92 @@
+.layout {
+    display: flex;
+    flex-direction: column; 
+  }
+  
+  .content-container {
+    height: auto;
+    overflow-y: auto;
+  }
+  /* Layout for Desktop and larger devices */
+.layout {
+  height: auto;
+  overflow-y: auto;
+}
+
+.content-container {
+  margin-top: 50px; /* Space for the navbar */
+}
+
+.main-content {
+  padding: 20px;
+  flex: 1;
+  transition: margin-left 0.3s ease-in-out;
+  overflow-y: auto;
+}
+
+.sidebar-open {
+  margin-left: 120px; 
+}
+
+.sidebar-closed {
+  margin-left: 35px; 
+}
+
+.Headings-RestroAdmins{
+  text-align: center;
+  font-family: 'Plus Jakarta Sans';
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
+  color: #667085;
+  
+  }
+@media (min-width: 769px)and(max-width: 1024px) {
+  .sidebar-open {
+    margin-left: 2px; 
+  }
+  .sidebar-closed {
+    margin-left: 2px;
+  }
+}
+/* For mobile devices with max-width of 768px */
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute;
+    z-index: 1000;
+    width: 80px;
+    height: 100vh;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(-100%);
+  }
+  .sidebar-open {
+    margin-left: 2px; 
+  }
+  
+  .sidebar-closed {
+    margin-left: 2px; 
+  }
+  
+}
+
+/* For mobile devices with max-width of 480px */
+@media (max-width: 480px) {
+  
+  .navbar-title {
+    font-size: 18px;
+  }
+
+  .hamburger {
+    font-size: 20px;
+  }
+  .sidebar-open {
+    margin-left: 2px; 
+  }
+  
+  .sidebar-closed {
+    margin-left: 2px; 
+  }
+
+}
+
+  

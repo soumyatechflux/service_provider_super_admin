@@ -1,0 +1,176 @@
+/* .navbar {
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+} */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 15px;
+  color: black;
+  z-index: 1000;
+  box-shadow: 0px 1px 0px 0px #12203b17;
+}
+
+.navbar-title {
+  font-size: 24px;
+}
+
+.DineRightLogo_Dashboard {
+  display: flex;
+  gap: 10px;
+  cursor: pointer;
+}
+.leftside_navbar_dashboard {
+  display: flex;
+  gap: 30px;
+}
+.Hamburger_MobileResponsive {
+  cursor: pointer;
+}
+
+/* rightside  */
+.Rightside_navbar_dashboard {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+/* centersection  */
+.Centre_navbar_dashboard {
+  width: 35%;
+}
+.Search_dashboard {
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #e4e4e7;
+  cursor: pointer;
+  height: 42px;
+}
+.Search_dashboard:active {
+  border-color: #e4e4e7;
+}
+
+/* for dropdown  */
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-img {
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 50px; /* Adjust this to move the dropdown below the image */
+  left: -55px;
+  background-color: white !important;
+  border: 1px solid #272424;
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  min-width: 3rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Ensure it is above other elements */
+  display: block; /* Make sure it is displayed */
+}
+
+.dropdown-menu li {
+  padding: 8px 12px;
+}
+
+.dropdown-menu li {
+  color: #333;
+  text-decoration: none;
+}
+
+
+.dropdown-menu li:hover {
+  background-color: #ffffe0;
+  color: black !important;
+  width: 80px !important;
+  height: 40px;
+  border-radius: 5px;
+}
+.circle-count {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 37px; /* Adjust size as needed */
+  height: 37px; /* Adjust size as needed */
+  border-radius: 50%; /* Makes it a circle */
+  background-color: #f0f0f0; /* Set your desired background color */
+  color: #c39873; /* Set text color */
+  font-weight: bold; /* Optional: make text bold */
+  margin-right: 10px;
+}
+
+/* For mobile devices */
+@media (max-width: 768px) {
+  .DineRightLogo_Dashboard {
+    height: 10px;
+  }
+  .Hamburger_MobileResponsive {
+    height: 10px;
+  }
+  .Hamburger_Dashboard {
+    display: flex;
+    align-items: center;
+  }
+  .leftside_navbar_dashboard {
+    gap: 10px;
+  }
+  .Search_dashboard {
+    height: 30px;
+  }
+}
+.notification-bell {
+  position: relative;
+  /* margin-bottom: 17px; */
+}
+
+.notification-count {
+  position: absolute;
+    top: -10px;
+    right: -9px;
+    color: black;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 19px;
+}
+.notification-bell-img {
+  position: relative;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  bottom: -3px;
+}
+/* For very small mobile screens */
+@media (max-width: 480px) {
+  .DineRightLogo_Dashboard {
+    height: 10px;
+  }
+  .navbar-title {
+    font-size: 18px;
+  }
+
+  .hamburger {
+    font-size: 20px;
+  }
+  .Search_dashboard {
+    height: 30px;
+  }
+}

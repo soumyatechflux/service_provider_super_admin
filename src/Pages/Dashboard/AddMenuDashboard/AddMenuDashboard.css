@@ -1,0 +1,67 @@
+.box_AddMenu_Dashboard{
+    width: 257px;
+    height: 194px;
+    background-color:  #2F4CDD;
+    position: relative;
+    top: 60px;
+    border-radius: 20px; 
+}
+.cookimg_AddMenu_Dashboard{
+    display: flex;
+    justify-content: center;
+    position: relative;
+    bottom: 39px;
+}
+.cookpic_AddMenu_Dashboard{
+    width: 75px;
+    height: 88px;
+}
+.text_AddMenu_Dashboard{
+    text-align: center;
+    font-family: 'Poppins';
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19.6px;
+    color: #ffffff;
+    margin-top: -25px;
+}
+.btn_AddMenu_Dashboard{
+    width: 156px;
+    height: 56px;
+    border-radius: 8px;
+    background-color: #ffffff !important;
+    border: none !important;
+    margin-top: 6%;
+    border: none !important;
+
+    /* for text  */
+    font-family: 'Poppins';
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 23px;
+    color: #000000;
+    text-align: center; 
+
+    outline: none;
+    box-shadow: none;
+}
+.btn_AddMenu_Dashboard:hover{
+    border-color: #ffffff;
+    border: none;
+}
+.btn_AddMenu_Dashboard:active,
+.btn_AddMenu_Dashboard:focus {
+    border-color: #ffffff;
+    border: none !important;
+    outline: none;
+    box-shadow: none;
+}
+.buttonContainer_AddMenu_Dashboard{
+    text-align: center;
+}
+@media (max-width: 765px){
+    .container_AddMenu_Dashboard{
+        display: flex;
+        justify-content: center;
+    }
+}

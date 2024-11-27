@@ -1,0 +1,173 @@
+.sidebar {
+  background-color: #ffffff;
+  color: black;
+  width: 230px;
+  position: fixed;
+  overflow-y: scroll;
+  height: 100vh;
+  top: 53px;
+  transition: width 0.3s, transform 0.3s ease-in-out;
+}
+/* Hide scrollbar for Chrome, Safari, and Opera */
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.sidebar {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
+.sidebar.closed {
+  width: 55px;
+}
+
+.sidebar-menu {
+  background-color: #ffffff;
+  list-style: none;
+  padding: 0;
+  /* margin: 0; */
+  margin-top: 28px;
+  cursor: pointer;
+}
+.sidebar-menu-container ul li{
+  margin: 5px;
+}
+
+.Link{
+  text-decoration-style: none;
+  text-decoration: none;
+}
+.menu-item {
+  padding: 17px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  color:#3F3F46 ;
+}
+
+.menu-item i {
+  font-size: 18px;
+}
+
+.menu-item ul li Link span{
+  margin-left: 10px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 21px;
+  font-family: 'Plus Jakarta San' !important;
+  color: #3F3F46 !important;
+  text-decoration: none !important;
+}
+a {
+  color: #3F3F46 !important;
+  text-decoration: none !important;
+}
+
+.menu-item svg{
+  color: #3F3F46;
+  font-size: 15px;
+  position: relative;
+  /* right: 4px; */
+}
+
+.sidebar.closed .menu-item span {
+  display: none; /* Hide text when sidebar is closed */
+}
+/* Bottom section */
+.sidebar-bottom {
+  background-color: #ffffff;
+  color: black;
+  transition: padding-bottom 0.3s ease; /* Add a transition for smooth change */
+}
+
+.sidebar.open .sidebar-bottom {
+  padding-top: 120%;
+  padding-bottom: 39%; /* Apply 65% when the sidebar is open */
+}
+
+.sidebar.closed .sidebar-bottom {
+  padding-top: 520%;
+  padding-bottom: 140%; /* Apply 126% when the sidebar is closed */
+}
+
+.sidebar-menu-container{
+  background-color: #ffffff;
+}
+
+
+
+
+/* for actively hover  */
+.menu-item.active:hover,
+.menu-item.active {
+  background-color: #2F4CDD; /* Change background on active or hover */
+  cursor: pointer; /* Indicate it's clickable */
+  border-radius: 8px;
+  width: 87%;
+  text-decoration: none;
+  color: #ffffff !important;
+}
+
+.menu-item:hover {
+  background-color: #2F4CDD; /* Optional: Change background on hover */
+  width: 87%;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  color: #ffffff !important;
+}
+
+.menu-item.active span{
+  color: #fff; /* Text color when active */
+}
+
+.menu-item.active svg {
+  color: #fff; /* Icon color when active */
+}
+.menu-item:hover svg {
+  color: #fff; /* Icon color on hover */
+}
+
+.menu-item:hover span {
+  color: #fff; /* Text color on hover */
+}
+
+
+/* Tablet screens */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .sidebar.closed {
+    width: 70px;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute;
+    z-index: 1000;
+    width: 150px;
+    transform: translateX(-100%);
+    height: 101vh;
+  }
+
+  .sidebar.open {
+    width: 150px !important;
+    transform: translateX(0); /* Show sidebar */
+    top: 54px;
+    position: fixed;
+  }
+
+  .sidebar.closed {
+    width: 80px;
+    transform: translateX(-100%); /* Hide sidebar when closed on mobile */
+    top: 54px;
+  }
+  .sidebar.open .sidebar-bottom {
+    padding-bottom: 65%; /* Apply 65% when the sidebar is open */
+  }
+}
