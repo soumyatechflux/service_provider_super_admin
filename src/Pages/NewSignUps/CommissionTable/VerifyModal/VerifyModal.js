@@ -85,7 +85,7 @@ const VerifyModal = ({
           },
         }}
       >
-        <DialogTitle>Verify Partner</DialogTitle>
+        <DialogTitle>Change Verification Status</DialogTitle>
         <DialogContent>
           <form onSubmit={handleFormSubmit}>
             <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
