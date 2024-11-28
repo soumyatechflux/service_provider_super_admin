@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./CommissionTable.css";
+
 import { IoMdCheckmark } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
 import { toast } from "react-toastify";
@@ -8,10 +8,27 @@ import Loader from "../../Loader/Loader";
 import EditRestroModal from "./EditRestroModal/EditRestroModal";
 import EditIcon from "@mui/icons-material/Edit";
 
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DoneIcon from '@mui/icons-material/Done';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import CancelIcon from '@mui/icons-material/Cancel';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import BlockIcon from '@mui/icons-material/Block';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import VerifyModal from "./VerifyModal/VerifyModal";
+
+
+
+
 const CommissionTable = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+
+  const [ShowVerifyModal, setShowVerifyModal] = useState(false);
+
+
+
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
   const getRestaurantTableData = async () => {
@@ -53,12 +70,38 @@ const CommissionTable = () => {
     setSelectedRestaurant(restaurant);
     setShowDetailsModal(true);
   };
-
   const handleCloseDetailsModal = () => {
     setShowDetailsModal(false);
     setSelectedRestaurant(null);
   };
 
+
+
+
+
+
+
+
+
+  const handleVerifyClick = (restaurant) => {
+    setSelectedRestaurant(restaurant);
+    setShowVerifyModal(true);
+  };
+
+
+
+  const handleCloseVerifyModal = () => {
+    setShowVerifyModal(false);
+    setSelectedRestaurant(null);
+  };
+
+
+
+
+
+
+
+  
   return (
     <div className="Restro-Table-Main p-3">
       {loading ? (
@@ -77,25 +120,25 @@ const CommissionTable = () => {
   <th scope="col" style={{ width: "15%" }}>
     Name
   </th>
-  <th scope="col" style={{ width: "12%" }}>
+  <th scope="col" style={{ width: "15%" }}>
     Email
   </th>
   <th scope="col" style={{ width: "10%" }}>
     Phone
   </th>
-  <th scope="col" style={{ width: "10%" }}>
-    Years of Exp.
+  <th scope="col" style={{ width: "5%" }}>
+  YOE
   </th>
   <th scope="col" style={{ width: "15%" }}>
     Address
   </th>
   <th scope="col" style={{ width: "10%" }}>
-    Signup Date
+    Sign-Up Date
+  </th>
+  <th scope="col" style={{ width: "5%" }}>
+   Verification
   </th>
   <th scope="col" style={{ width: "10%" }}>
-    Verified
-  </th>
-  <th scope="col" style={{ width: "8%" }}>
     Status
   </th>
   <th scope="col" style={{ width: "5%" }}>
@@ -134,13 +177,88 @@ const CommissionTable = () => {
                       .replace(",", "")}
                   </td>
                 
-                  <td className={`status ${restaurant.is_verify}`}>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  {/* <td className={`status ${restaurant.is_verify}`}>
                     <div className={`status-background-${restaurant.is_verify}`}>
                       {restaurant.is_verify === 0
                         ? "No"
                         : "Yes"}
                     </div>
-                  </td>
+                  </td> */}
+
+
+
+
+
+<td
+  className={`edit_users ${restaurant.is_verify !== 0 ? "disabled" : ""}`}
+  onClick={
+    restaurant.is_verify === 0 ? () => handleVerifyClick(restaurant) : null
+  }
+  style={{
+    cursor: restaurant.is_verify === 0 ? "pointer" : "not-allowed",
+    opacity: restaurant.is_verify === 0 ? 1 : 0.6,
+  }}
+>
+  {restaurant.is_verify !== 0 ? (
+    <VerifiedUserIcon style={{ color: "green" }} />
+  ) : (
+    <HighlightOffIcon style={{ color: "red" }} />
+  )}
+</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
                   <td className={`status ${restaurant.active_status}`}>
@@ -150,6 +268,9 @@ const CommissionTable = () => {
                         : "In-Active"}
                     </div>
                   </td>
+
+
+
                   <td
   className={`edit_users ${
     restaurant.active_status === "active" ? "disabled" : ""
@@ -182,6 +303,22 @@ const CommissionTable = () => {
           getRestaurantTableData={getRestaurantTableData}
         />
       )}
+
+
+
+
+
+{ShowVerifyModal && (
+        <VerifyModal
+          show={ShowVerifyModal}
+          handleClose={handleCloseVerifyModal}
+          restaurantDetails={selectedRestaurant}
+          getRestaurantTableData={getRestaurantTableData}
+        />
+      )}
+
+
+
     </div>
   );
 };

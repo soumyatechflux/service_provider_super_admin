@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import axios from "axios"; // Import axios for API calls
 import Loader from "../../../Loader/Loader";
 
-const EditRestroModal = ({
+const VerifyModal = ({
   show,
   handleClose,
   restaurantDetails,
@@ -23,14 +23,14 @@ const EditRestroModal = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [restaurant, setRestaurant] = useState({
-    status: restaurantDetails?.active_status,
+    status: restaurantDetails?.is_verify,
   });
 
   const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
   const statusOptions = [
-    { key: "active", label: "Active" },
-    { key: "inactive", label: "In-Active" },
+    { key: 0, label: "Un-Verified" },
+    { key: 1, label: "Verified" },
   ];
 
   const handleStatusChange = (e) => {
@@ -44,13 +44,13 @@ const EditRestroModal = ({
     const body = {
       partner: {
         partner_id: restaurantDetails?.id,
-        active_status: restaurant.status,
+        is_verify: restaurant.status,
       },
     };
 
     try {
       const response = await axios.patch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/partners/status`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/partners/verify`,
         body,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -85,7 +85,7 @@ const EditRestroModal = ({
           },
         }}
       >
-        <DialogTitle>Edit Partner</DialogTitle>
+        <DialogTitle>Verify Partner</DialogTitle>
         <DialogContent>
           <form onSubmit={handleFormSubmit}>
             <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
@@ -109,7 +109,7 @@ const EditRestroModal = ({
               </InputLabel>
               <Select
                 labelId="status-label"
-                value={restaurant.status}
+                value={restaurant?.status}
                 onChange={handleStatusChange}
                 fullWidth
                 label="Status"
@@ -149,4 +149,4 @@ const EditRestroModal = ({
   );
 };
 
-export default EditRestroModal;
+export default VerifyModal;
