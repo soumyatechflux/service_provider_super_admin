@@ -85,7 +85,7 @@ const EditRestroModal = ({
           },
         }}
       >
-        <DialogTitle>Edit Partner</DialogTitle>
+        <DialogTitle>Change Partner Status</DialogTitle>
         <DialogContent>
           <form onSubmit={handleFormSubmit}>
             <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>

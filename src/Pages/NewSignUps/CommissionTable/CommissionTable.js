@@ -16,7 +16,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import BlockIcon from '@mui/icons-material/Block';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import VerifyModal from "./VerifyModal/VerifyModal";
-
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 
@@ -115,7 +115,7 @@ const CommissionTable = () => {
             <thead style={{ cursor: "default" }} className="heading_user">
             <tr style={{ cursor: "default" }}>
   <th scope="col" style={{ width: "5%" }}>
-    Sr No.
+    Sr.
   </th>
   <th scope="col" style={{ width: "15%" }}>
     Name
@@ -129,16 +129,16 @@ const CommissionTable = () => {
   <th scope="col" style={{ width: "5%" }}>
   YOE
   </th>
-  <th scope="col" style={{ width: "15%" }}>
+  <th scope="col" style={{ width: "13%" }}>
     Address
   </th>
   <th scope="col" style={{ width: "10%" }}>
-    Sign-Up Date
+    Sign-Up
   </th>
   <th scope="col" style={{ width: "5%" }}>
    Verification
   </th>
-  <th scope="col" style={{ width: "10%" }}>
+  <th scope="col" style={{ width: "12%" }}>
     Status
   </th>
   <th scope="col" style={{ width: "5%" }}>
@@ -259,33 +259,40 @@ const CommissionTable = () => {
 
 
 
+<td className={`status ${restaurant.active_status}`}>
+  <div 
+    className={`status-background-${restaurant.active_status}`} 
+    style={{ 
+      display: "flex", 
+      alignItems: "center", 
+      justifyContent: "space-between" 
+    }}
+  >
+    <span>{restaurant.active_status === "active" ? "Active" : "In-Active"}</span>
+    <div 
+      onClick={() => handleRestaurantClick(restaurant)}
+      style={{
+        cursor: "pointer",
+        opacity: 1,
+      }}
+    >
+      <EditIcon />
+    </div>
+  </div>
+</td>
 
 
-                  <td className={`status ${restaurant.active_status}`}>
-                    <div className={`status-background-${restaurant.active_status}`}>
-                      {restaurant.active_status === "active"
-                        ? "Active"
-                        : "In-Active"}
-                    </div>
-                  </td>
 
 
 
                   <td
-  className={`edit_users ${
-    restaurant.active_status === "active" ? "disabled" : ""
-  }`}
-  onClick={
-    restaurant.active_status !== "active"
-      ? () => handleRestaurantClick(restaurant)
-      : null
-  }
+  className="edit_users disabled"
   style={{
-    cursor: restaurant.active_status === "active" ? "not-allowed" : "pointer",
-    opacity: restaurant.active_status === "active" ? 0.6 : 1,
+    cursor: "not-allowed",
+    opacity: 0.6,
   }}
 >
-  <EditIcon />
+  <DeleteIcon style={{ color: "gray" }} />
 </td>
 
                 </tr>
