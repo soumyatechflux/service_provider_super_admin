@@ -84,6 +84,7 @@ const CommissionTable = () => {
     setShowVerifyModal(false);
     setSelectedRestaurant(null);
   };
+  
   const handleNavigateToVerifyCook = (restaurant,id,isVerify) => {
     setSelectedId(restaurant);
     navigate("/verify-partner", { state: { restaurant,id,isVerify } });

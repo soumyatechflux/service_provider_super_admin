@@ -49,7 +49,7 @@ const VerifyChef = () => {
       setLoading(true);
 
       const response = await axios.get(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/partners/${restaurant}`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/partners/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
