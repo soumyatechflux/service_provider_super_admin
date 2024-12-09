@@ -1,0 +1,31 @@
+.payNow-btn{
+    color: white !important;
+    background-color: #2F4CDD;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer; /* Ensures the pointer changes to a hand */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 16px;
+  font-weight: bold;
+  
+}
+
+.payNow-btn:hover {
+  background-color: #1E3BB8; /* Darker shade for hover effect */
+  transform: scale(1.05); /* Slightly enlarges the button on hover */
+}
+.paid-label{
+  justify-items: center;
+  color: #1E3BB8;
+  font-size: 16px;
+  margin-bottom: 0;
+
+}
+
+.action-btn-pay{
+  text-align: center;
+  align-content: center ;
+  font-weight: bold;
+}

@@ -16,6 +16,13 @@ import Layout from "./Template/LayoutMain/LayoutMain/Layout";
 import EmailModal from "./Pages/Credentials/Login/EmailModal";
 import OtpModal from "./Pages/Credentials/Login/OtpModal";
 import NewSignUps from "./Pages/NewSignUps/NewSignUps";
+import Customers from "./Pages/Customers/Customers";
+import Support from "./Pages/Support/Support";
+import ReviewsAndRating from "./Pages/ReviewsAndRating/ReviewsAndRating";
+import Categories from "./Pages/Categories/Categories";
+import SubCategories from "./Pages/SubCategories/SubCategories";
+import CommissionDue from "./Pages/CommissionDue/CommissionDue";
+import VerifyChef from "./Pages/VerifyPartners/VerifyChef/VerifyChef";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -95,6 +102,13 @@ function AppContent({ isOffline, loggedIn }) {
 
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/partners" element={<NewSignUps />} />
+          <Route path="/customers" element={<Customers/>} />
+          <Route path="/support" element={<Support/>} />
+          <Route path="/reviews-and-ratings" element={<ReviewsAndRating/>}/>
+          <Route path="/categories" element={<Categories/>}/>
+          <Route path="/sub-categories" element={<SubCategories/>}/>
+          <Route path="/commission-due" element={<CommissionDue/>}/>
+          <Route path="/verify-chef" element={<VerifyChef/>}/>
 
         </Route>
       </Routes>

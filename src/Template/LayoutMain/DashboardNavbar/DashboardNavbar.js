@@ -43,13 +43,13 @@ const DashboardNavbar = ({ toggleSidebar, isSidebarOpen }) => {
         <div className="DineRightLogo_Dashboard">
         {!isSidebarOpen && (
                 <span  style={{cursor:"default"}} className="navbar-brand font-serif">
-                Servgo
+                Servyo
               </span>
           )}
 
           {isSidebarOpen && (
                  <span  style={{cursor:"default"}} className="navbar-brand font-serif">
-                 Servgo
+                 Servyo
                </span>
           )}
         </div>

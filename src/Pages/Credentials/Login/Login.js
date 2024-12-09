@@ -165,6 +165,7 @@ const Login = () => {
       borderRadius: "0 4px 4px 0",
       height: "40px",
       outline: "none",
+      marginTop: "0px"
     }}
     value={email}
     onChange={(e) => setEmail(e.target.value)}

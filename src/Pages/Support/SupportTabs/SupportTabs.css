@@ -1,0 +1,57 @@
+.custom-tabs {
+    /* background-color: #f8f9fa; Light background */
+    /* border: 1px solid #ddd; Border around tabs */
+    
+    overflow: hidden; /* Ensure content stays within bounds */
+  }
+  
+  .custom-tabs .nav-link {
+    font-size: 16px; /* Adjust font size */
+    font-weight: 600; /* Make text bold */
+    color: #007bff; /* Default tab text color */
+    padding: 12px 20px; /* Add padding for a better look */
+    text-align: center; /* Center align text */
+    border: none; /* Remove default borders */
+    transition: all 0.3s ease-in-out; /* Smooth hover effect */
+    width: 100%;
+    outline: none;
+  }
+  .custom-tabs .nav-link:target{
+    border: none !important;
+  }
+  .nav-item{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    
+  }
+  .status-div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .custom-tabs .nav-link.active {
+    /* background-color: #007bff;  */
+    color: white !important;
+    background-color: #2F4CDD;
+    /* box-shadow: inset -2px -2px 2px 0 #2F4CDD;  */
+  }
+  .supportTab{
+    margin-right: 0 !important;
+  }
+  .custom-tabs .nav-link:hover {
+    /* color: #2F4CDD !important; */
+    /* background-color: #ddd; */
+    color: white !important;
+    background-color: #2F4CDD;
+    
+  }
+  
+  .custom-tabs .tab-pane {
+    padding: 20px; /* Add padding to content */
+    background-color: #fff; /* White background for content area */
+    border: 1px solid #ddd; /* Border for content area */
+    border-top: none; /* Remove top border to connect with tabs */
+    border-radius: 0 0 8px 8px; /* Rounded bottom corners */
+  }
+  

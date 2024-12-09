@@ -9,11 +9,11 @@ const Navbar = () => {
 
 
           {/* <a href="/" className="navbar-brand font-serif">
-            Servgo
+            Servyo
           </a> */}
 
           <span  style={{cursor:"default"}} className="navbar-brand font-serif">
-            Servgo
+            Servyo
           </span>
 
 

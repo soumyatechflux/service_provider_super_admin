@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from "react";
 
-import { IoMdCheckmark } from "react-icons/io";
-import { RxCross2 } from "react-icons/rx";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Loader from "../../Loader/Loader";
-import EditRestroModal from "./EditRestroModal/EditRestroModal";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoneIcon from "@mui/icons-material/Done";
@@ -14,10 +11,9 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import BlockIcon from "@mui/icons-material/Block";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import VerifyModal from "./VerifyModal/VerifyModal";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const CommissionTable = () => {
+const CustomersTable = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -231,7 +227,7 @@ const CommissionTable = () => {
         </div>
       )}
 
-      {showDetailsModal && (
+      {/* {showDetailsModal && (
         <EditRestroModal
           show={showDetailsModal}
           handleClose={handleCloseDetailsModal}
@@ -247,9 +243,9 @@ const CommissionTable = () => {
           restaurantDetails={selectedRestaurant}
           getRestaurantTableData={getRestaurantTableData}
         />
-      )}
+      )} */}
     </div>
   );
 };
 
-export default CommissionTable;
+export default CustomersTable;

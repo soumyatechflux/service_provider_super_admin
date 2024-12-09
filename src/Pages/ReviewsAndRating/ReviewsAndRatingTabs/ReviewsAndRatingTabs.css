@@ -1,0 +1,16 @@
+#justify-tab-example .nav-item {
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    /* margin-right: 10px; */
+    /* padding: 10px; */
+    /* margin-right: 0 !important; */
+  }
+
+  /* Remove margin-right from Partner Reviews tab */
+#justify-tab-example .nav-item button.nav-link[data-rr-ui-event-key="partner-reviews"] {
+    margin-right: 0 !important; /* Ensure no margin is applied to this tab */
+  }
+
+  .action-btn-trash{
+    text-align: center;
+  }
