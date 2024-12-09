@@ -1,13 +1,3 @@
-// import React from 'react'
-
-// const VerifyGardener = () => {
-//   return (
-//     <div>VerifyGardener</div>
-//   )
-// }
-
-// export default VerifyGardener
-
 
 import React, { useState } from "react";
 import "./VerifyGardener.css";
@@ -26,7 +16,12 @@ const VerifyGardener = () => {
   const [error, setError] = useState("");
 
   const handleSubmit = () => {
-    if (!gardenerDetails.name || !gardenerDetails.phone || !carType || !tripPreferred) {
+    if (
+      !gardenerDetails.name ||
+      !gardenerDetails.phone ||
+      !carType ||
+      !tripPreferred
+    ) {
       setError("All fields are required!");
       return;
     }
@@ -56,30 +51,26 @@ const VerifyGardener = () => {
         <div className="avatar-section">
           <div className="avatar">
             <span>{gardenerDetails.name[0]}</span>
-            
           </div>
         </div>
 
         {/* Details Section */}
         <div className="details-section">
-            <label>Full Name</label>
+          <label>Full Name</label>
           <div className="detail-item">
             <div className="detail-value">
               <span>{gardenerDetails.name}</span>
-              
-              
             </div>
           </div>
 
-            <label>Mobile Number</label>
+          <label>Mobile Number</label>
           <div className="detail-item">
             <div className="detail-value">
               <span>{gardenerDetails.phone}</span>
-              
             </div>
           </div>
 
-            <label>Email</label>
+          <label>Email</label>
           <div className="detail-item">
             <div className="detail-value">
               <span>{gardenerDetails.email}</span>
@@ -93,8 +84,8 @@ const VerifyGardener = () => {
         <label>Years of Experience</label>
         <input
           type="number"
-        //   value={experience}
-        //   onChange={(e) => setExperience(e.target.value)}
+          //   value={experience}
+          //   onChange={(e) => setExperience(e.target.value)}
           placeholder="Enter years of experience"
         />
       </div>
@@ -109,7 +100,6 @@ const VerifyGardener = () => {
           <option value="own">Part Time</option>
         </select>
       </div>
-
 
       {/* Aadhar Card Section */}
       <div className="form-group">

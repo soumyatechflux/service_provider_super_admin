@@ -1,13 +1,3 @@
-// import React from 'react'
-
-// const VerifyDriver = () => {
-//   return (
-//     <div>VerifyDriver</div>
-//   )
-// }
-
-// export default VerifyDriver
-
 
 import React, { useState } from "react";
 import "./VerifyDriver.css";
@@ -28,7 +18,15 @@ const VerifyDriver = () => {
   const [error, setError] = useState("");
 
   const handleSubmit = () => {
-    if (!driverDetails.name || !driverDetails.phone || !aadhar || !carType || !tripPreferred || !drivingLicence || !expiryDate) {
+    if (
+      !driverDetails.name ||
+      !driverDetails.phone ||
+      !aadhar ||
+      !carType ||
+      !tripPreferred ||
+      !drivingLicence ||
+      !expiryDate
+    ) {
       setError("All fields are required!");
       return;
     }
@@ -60,41 +58,36 @@ const VerifyDriver = () => {
         <div className="avatar-section">
           <div className="avatar">
             <span>{driverDetails.name[0]}</span>
-            
           </div>
         </div>
 
         {/* Details Section */}
         <div className="details-section">
-            <label>Full Name</label>
+          <label>Full Name</label>
           <div className="detail-item">
             <div className="detail-value">
               <span>{driverDetails.name}</span>
-              
-              
             </div>
           </div>
 
-            <label>Mobile Number</label>
+          <label>Mobile Number</label>
           <div className="detail-item">
             <div className="detail-value">
               <span>{driverDetails.phone}</span>
-              
             </div>
           </div>
 
-            <label>Email</label>
+          <label>Email</label>
           <div className="detail-item">
             <div className="detail-value">
               <span>{driverDetails.email}</span>
-             
             </div>
           </div>
         </div>
       </div>
 
-       {/* Driving Licence Section */}
-       <div className="form-group mt-4">
+      {/* Driving Licence Section */}
+      <div className="form-group mt-4">
         <label>Driving Licence</label>
         <input
           type="text"
@@ -128,7 +121,10 @@ const VerifyDriver = () => {
 
       <div className="form-group">
         <label>Trip Preferred</label>
-        <select value={tripPreferred} onChange={(e) => setTripPreferred(e.target.value)}>
+        <select
+          value={tripPreferred}
+          onChange={(e) => setTripPreferred(e.target.value)}
+        >
           <option value="" disabled>
             Select Trip Preferred
           </option>
@@ -136,8 +132,6 @@ const VerifyDriver = () => {
           <option value="long">Long</option>
         </select>
       </div>
-
-     
 
       {/* Aadhar Card Section */}
       <div className="form-group">

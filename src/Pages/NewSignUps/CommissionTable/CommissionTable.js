@@ -16,6 +16,9 @@ import BlockIcon from "@mui/icons-material/Block";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import VerifyModal from "./VerifyModal/VerifyModal";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
+import VerifyChef from "../../VerifyPartners/VerifyChef/VerifyChef";
+// import VerifyChef from "../../VerifyPartners/VerifyChef/VerifyChef";
 
 const CommissionTable = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -23,9 +26,9 @@ const CommissionTable = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const [ShowVerifyModal, setShowVerifyModal] = useState(false);
-
+  const [selectedId, setSelectedId] = useState(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
-
+  const navigate = useNavigate();
   const getRestaurantTableData = async () => {
     try {
       const token = sessionStorage.getItem(
@@ -80,6 +83,10 @@ const CommissionTable = () => {
   const handleCloseVerifyModal = () => {
     setShowVerifyModal(false);
     setSelectedRestaurant(null);
+  };
+  const handleNavigateToVerifyCook = (restaurant,id,isVerify) => {
+    setSelectedId(restaurant);
+    navigate("/verify-partner", { state: { restaurant,id,isVerify } });
   };
 
   return (
@@ -167,26 +174,53 @@ const CommissionTable = () => {
                     </div>
                   </td> */}
 
-                  <td
-                    className={`edit_users ${
-                      restaurant.is_verify !== 0 ? "disabled" : ""
-                    }`}
-                    onClick={
-                      restaurant.is_verify === 0
-                        ? () => handleVerifyClick(restaurant)
-                        : null
-                    }
-                    style={{
-                      cursor:
-                        restaurant.is_verify === 0 ? "pointer" : "not-allowed",
-                      opacity: restaurant.is_verify === 0 ? 1 : 0.6,
-                    }}
-                  >
-                    {restaurant.is_verify !== 0 ? (
-                      <VerifiedUserIcon style={{ color: "green" }} />
-                    ) : (
-                      <HighlightOffIcon style={{ color: "red" }} />
-                    )}
+                  <td>
+                    <div style={{ display: "flex", gap: "2px" }}>
+                      <div
+                        className={`edit_users ${
+                          restaurant.is_verify !== 0 ? "disabled" : ""
+                        }`}
+                        onClick={
+                          restaurant.is_verify === 0
+                            ? () => handleVerifyClick(restaurant)
+                            : null
+                        }
+                        style={{
+                          cursor:
+                            restaurant.is_verify === 0
+                              ? "pointer"
+                              : "not-allowed",
+                          opacity: restaurant.is_verify === 0 ? 1 : 0.6,
+                        }}
+                      >
+                        {restaurant.is_verify !== 0 ? (
+                          <VerifiedUserIcon style={{ color: "green" }} />
+                        ) : (
+                          <>
+                            <div>
+                              <button
+                                style={{
+                                  backgroundColor: "white",
+                                  margin: 0,
+                                  padding: 0,
+                                }}
+                                key={restaurant?.category_id}
+                                onClick={() =>
+                                  handleNavigateToVerifyCook(
+                                    restaurant?.category_id,
+                                    restaurant?.id,
+                                    restaurant?.is_verify
+                                  )
+
+                                }
+                              >
+                                <HighlightOffIcon style={{ color: "red" }} />
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </td>
 
                   <td className={`status ${restaurant.active_status}`}>
@@ -248,6 +282,7 @@ const CommissionTable = () => {
           getRestaurantTableData={getRestaurantTableData}
         />
       )}
+      {selectedId && <VerifyChef restaurant={selectedId} />}
     </div>
   );
 };

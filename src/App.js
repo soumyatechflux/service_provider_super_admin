@@ -23,6 +23,7 @@ import Categories from "./Pages/Categories/Categories";
 import SubCategories from "./Pages/SubCategories/SubCategories";
 import CommissionDue from "./Pages/CommissionDue/CommissionDue";
 import VerifyChef from "./Pages/VerifyPartners/VerifyChef/VerifyChef";
+// import VerifyChef from "./Pages/VerifyPartners/VerifyChef/VerifyChef";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -108,7 +109,7 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/categories" element={<Categories/>}/>
           <Route path="/sub-categories" element={<SubCategories/>}/>
           <Route path="/commission-due" element={<CommissionDue/>}/>
-          <Route path="/verify-chef" element={<VerifyChef/>}/>
+          <Route path="/verify-partner" element={<VerifyChef/>}/>
 
         </Route>
       </Routes>
