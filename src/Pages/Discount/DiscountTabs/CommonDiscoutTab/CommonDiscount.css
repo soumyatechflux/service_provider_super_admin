@@ -1,0 +1,18 @@
+.Discount-btn{
+    width: auto ;
+    float: right;
+    background-color: #2F4CDD;
+    color: white;
+    font-weight: bold;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+
+}
+.Discount-btn:hover{
+    background-color: #1E3BB8;
+    border: none !important;
+    outline: none !important;
+    color: white;
+    box-shadow: none !important;
+}

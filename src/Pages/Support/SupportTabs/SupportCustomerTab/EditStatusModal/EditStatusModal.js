@@ -11,6 +11,8 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
+import axios from "axios";
+import { toast } from "react-toastify"; // Import toast
 
 const EditStatusModal = ({ support, onClose, onStatusChange }) => {
   const [status, setStatus] = useState(support?.status || "open");
@@ -19,13 +21,45 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
   const handleStatusUpdate = async () => {
     setLoading(true);
     try {
-      await onStatusChange(status);
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+  
+      // Create the payload as you want it to appear in the response format
+      const payload = {
+        support: {
+          support_id: support.support_id,
+          status: status,
+        },
+      };
+  
+      // Make the PATCH request with the payload
+      const response = await axios.patch(
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/supports/action`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      // Check if the response is successful and contains the message
+      if (response?.status === 200 && response?.data?.success) {
+        onStatusChange(response.data.message); // Send message instead of status for parent update
+        
+        // Show success toast message with the response message
+        toast.success(response?.data?.message || "Status updated successfully!");
+      } else {
+        toast.error("Failed to update status. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status. Please try again.");
     } finally {
       setLoading(false);
       onClose();
     }
   };
-
+  
   return (
     <Dialog
       open={true}
@@ -52,10 +86,12 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
             fullWidth
             label="Status"
           >
-            <MenuItem value="open">Open</MenuItem>
-            <MenuItem value="close">Close</MenuItem>
+            <MenuItem value="in-progress">In Progress</MenuItem> 
+            <MenuItem value="resolved">Resolved</MenuItem>       
+            <MenuItem value="closed">Closed</MenuItem> 
           </Select>
         </FormControl>
+        {/* {loading && <CircularProgress size={40} style={{ margin: "20px auto", display: "block" }} />} Display loader in content */}
       </DialogContent>
       <DialogActions>
         <Button
@@ -64,7 +100,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
           onClick={handleStatusUpdate}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} /> : "Save"}
+          Save
         </Button>
         <Button
           variant="outlined"

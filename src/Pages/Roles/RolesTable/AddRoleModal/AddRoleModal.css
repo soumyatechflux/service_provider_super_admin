@@ -1,0 +1,16 @@
+.form-check-input {
+    box-shadow: none !important;
+}
+.form-check-all {
+    display: flex;
+    align-items: center;
+    gap: 2px; /* Adjust this value to control the spacing */
+  }
+  
+  .form-check-input-all {
+    margin-right: 0;
+    margin-left: -44px;
+  }
+  .form-check-label-all {
+    margin-bottom: 0; /* Ensure no extra margin from the label */
+  }

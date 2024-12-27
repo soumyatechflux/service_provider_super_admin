@@ -23,6 +23,15 @@ import Categories from "./Pages/Categories/Categories";
 import SubCategories from "./Pages/SubCategories/SubCategories";
 import CommissionDue from "./Pages/CommissionDue/CommissionDue";
 import VerifyChef from "./Pages/VerifyPartners/VerifyChef/VerifyChef";
+import Booking from "./Pages/Booking/Booking";
+import Pricing from "./Pages/Pricing/Pricing";
+import Inquiries from "./Pages/Inquiries/Inquiries";
+import Comments from "./Pages/Comments/Comments";
+import Discount from "./Pages/Discount/Discount";
+import Roles from "./Pages/Roles/Roles";
+import Settings from "./Pages/Settings/Settings";
+import Reporting from "./Pages/Reporting/Reporting";
+import Staff from "./Pages/Staff/Staff";
 // import VerifyChef from "./Pages/VerifyPartners/VerifyChef/VerifyChef";
 
 function App() {
@@ -105,11 +114,20 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/partners" element={<NewSignUps />} />
           <Route path="/customers" element={<Customers/>} />
           <Route path="/support" element={<Support/>} />
-          <Route path="/reviews-and-ratings" element={<ReviewsAndRating/>}/>
+          <Route path="/reviews-&-ratings" element={<ReviewsAndRating/>}/>
           <Route path="/categories" element={<Categories/>}/>
           <Route path="/sub-categories" element={<SubCategories/>}/>
           <Route path="/commission-due" element={<CommissionDue/>}/>
           <Route path="/verify-partner" element={<VerifyChef/>}/>
+          <Route path="/booking" element={<Booking/>} />
+          <Route path="/pricing-module" element={<Pricing/>}/>
+          <Route path="/inquiries" element={<Inquiries/>}/>
+          <Route path="/comments" element={<Comments/>}/>
+          <Route path="/discount" element={<Discount/>}/>
+          <Route path="/roles" element={<Roles/>} />
+          <Route path="/settings" element={<Settings/>} />
+          <Route path="/reporting" element={<Reporting/>} />
+          <Route path="/staff" element={<Staff/>} />
 
         </Route>
       </Routes>

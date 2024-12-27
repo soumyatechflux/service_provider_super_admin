@@ -5,13 +5,17 @@ import Loader from "../../../Loader/Loader";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteSubCategoryModal from "./../DeleteSubCategoryModal/DeleteSubCategoryModal";
 import EditSubCatStatusModal from "./../EditSubCatStatusModal/EditSubCatStatusModal";
+import AddSubCategoryModal from "../AddSubCategoryModal/AddSubCategoryModal";
+import EditSubCategoryModal from "../EditSubCategoryModal/EditSubCategoryModal";
 
-const CookCategoriesTab = () => {
+const CookCategoriesTab = ({ category_id }) => {
   const [subCategoryData, setSubCategoryData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+  const [showEditSubCategoryModal, setShowEditSubCategoryModal] =useState(false);
 
   const fetchSubCategoryData = async () => {
     try {
@@ -45,9 +49,51 @@ const CookCategoriesTab = () => {
     }
   };
 
+  const handleDeleteSubCategory = async (subCategory) => {
+    try {
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
+      setLoading(true);
+
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/sub_category/${subCategory.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response?.status === 200 && response?.data?.success) {
+        toast.success("Sub-category deleted successfully.");
+        fetchSubCategoryData(); // Refresh data after deletion
+      } else {
+        toast.error(response.data.message || "Failed to delete sub-category.");
+      }
+    } catch (error) {
+      toast.error("Error deleting sub-category. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleOpenEditModal = (subCategory) => {
     setSelectedSubCategory(subCategory);
     setShowEditModal(true);
+  };
+
+  const handleOpenEditSubCategoryModal = (subCategory) => {
+    setSelectedSubCategory(subCategory);
+    setShowEditSubCategoryModal(true);
+  };
+
+  const handleOpenAddModal = () => {
+    setShowAddModal(true);
+  };
+
+  const handleCloseAddModal = () => {
+    setShowAddModal(false);
   };
 
   const handleOpenDeleteModal = (subCategory) => {
@@ -71,7 +117,14 @@ const CookCategoriesTab = () => {
         <Loader />
       ) : (
         <div className="table-responsive mb-5">
+          <button
+            className="Discount-btn mb-3"
+            onClick={() => setShowAddModal(true)}
+          >
+            Add Sub Category
+          </button>
           <table className="table table-bordered table-user">
+            {/* // Inside the <thead> section */}
             <thead className="heading_user">
               <tr>
                 <th scope="col" style={{ width: "5%" }}>
@@ -80,11 +133,12 @@ const CookCategoriesTab = () => {
                 <th scope="col" style={{ width: "15%" }}>
                   Sub-Category Name
                 </th>
+                <th scope="col" style={{ width: "15%" }}>
+                  Image
+                </th>
+                {/* New column header */}
                 <th scope="col" style={{ width: "8%" }}>
                   Price
-                </th>
-                <th scope="col" style={{ width: "13%" }}>
-                  Number of People
                 </th>
                 <th scope="col" style={{ width: "20%" }}>
                   Description
@@ -103,13 +157,26 @@ const CookCategoriesTab = () => {
                 </th>
               </tr>
             </thead>
+
+            {/* // Inside the <tbody> section */}
             <tbody>
               {subCategoryData.map((item, index) => (
                 <tr key={item.id}>
                   <th scope="row">{index + 1}.</th>
                   <td>{item.sub_category_name || "N/A"}</td>
+                  <td>
+                  {item.image ? (
+                <img
+                  src={item.image} // Ensure this is the correct image URL
+                  alt={item.subCategoryName}
+                  style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                />
+              ) : (
+                "No image"
+              )}
+                  </td>
+                  {/* New image cell */}
                   <td>{item.price || "N/A"}</td>
-                  <td>{item.number_of_people || "N/A"}</td>
                   <td>{item.description || "No description available."}</td>
                   <td>
                     <div className="status-div">
@@ -144,6 +211,14 @@ const CookCategoriesTab = () => {
                       style={{ cursor: "pointer" }}
                       onClick={() => handleOpenDeleteModal(item)}
                     ></i>
+                    <EditIcon
+                      style={{
+                        cursor: "pointer",
+                        marginLeft: "10px",
+                        fontSize: "21px",
+                      }}
+                      onClick={() => handleOpenEditSubCategoryModal(item)}
+                    />
                   </td>
                 </tr>
               ))}
@@ -156,16 +231,31 @@ const CookCategoriesTab = () => {
       <DeleteSubCategoryModal
         show={showDeleteModal}
         handleClose={handleCloseModals}
-        handleDelete={(subCategory) => console.log("Delete", subCategory)}
-        review={selectedSubCategory}
+        handleDelete={handleDeleteSubCategory}
+        subCategory={selectedSubCategory}
       />
 
       {/* Edit Sub-Category Status Modal */}
       <EditSubCatStatusModal
-        open={showEditModal} // Dynamically control visibility
+        open={showEditModal}
         support={selectedSubCategory}
         onClose={handleCloseModals}
-        onStatusChange={(status) => console.log("Edit Status", status)}
+        refreshData={fetchSubCategoryData} // Pass the function to refresh the data
+      />
+
+      {/* Add Sub-Category Modal */}
+      <AddSubCategoryModal
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSubmit={fetchSubCategoryData}
+        category_id={category_id} // Pass category_id to the modal
+      />
+
+      <EditSubCategoryModal
+        open={showEditSubCategoryModal}
+        onClose={() => setShowEditSubCategoryModal(false)}
+        onSubmit={fetchSubCategoryData} // Refresh data after saving
+        initialData={selectedSubCategory}
       />
     </div>
   );

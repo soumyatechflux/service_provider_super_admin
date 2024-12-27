@@ -125,16 +125,16 @@ const CategoriesTable = () => {
           </table>
         </div>
       )}
-
-      {/* Edit Category Modal */}
       {showModal && (
-      <EditCategoriesModal
-        category={selectedCategory}
-        onClose={handleCloseModal}
-      />
-    )}
+        <EditCategoriesModal
+          category={selectedCategory}
+          onClose={handleCloseModal}
+          onStatusUpdateSuccess={fetchCategoryData} 
+        />
+      )}
     </div>
   );
 };
 
 export default CategoriesTable;
+

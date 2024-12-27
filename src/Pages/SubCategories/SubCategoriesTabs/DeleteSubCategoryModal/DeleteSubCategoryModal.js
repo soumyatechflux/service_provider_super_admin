@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button, Spinner } from "react-bootstrap";
+import './DeleteSubCategoryModal.css'
 
 const DeleteSubCategoryModal = ({ show, handleClose, handleDelete, subCategory }) => {
   const [loading, setLoading] = useState(false);

@@ -46,9 +46,25 @@ const SupportCustomerTab = () => {
     }
   };
 
+  const onStatusChange = (newStatus) => {
+    // Update the status locally in the support data
+    updateSupportStatus(selectedSupport.support_id, newStatus);
+  
+    // Call getSupportData to refresh the data after the successful status update
+    getSupportData();
+  };
+  
   const handleEditStatus = (support) => {
     setSelectedSupport(support); // Set the selected support ticket
     setShowModal(true); // Show the modal
+  };
+
+  const updateSupportStatus = (supportId, newStatus) => {
+    setSupportData((prevData) =>
+      prevData.map((item) =>
+        item.support_id === supportId ? { ...item, status: newStatus } : item
+      )
+    );
   };
 
   // Fetch data on component mount
@@ -68,8 +84,8 @@ const SupportCustomerTab = () => {
           >
             <thead style={{ cursor: "default" }} className="heading_user">
               <tr style={{ cursor: "default" }}>
-                <th scope="col" style={{ width: "10%" }}>
-                  Support ID
+                <th scope="col" style={{ width: "5%" }}>
+                  ID
                 </th>
                 <th scope="col" style={{ width: "15%" }}>
                   Email
@@ -83,7 +99,7 @@ const SupportCustomerTab = () => {
                 <th scope="col" style={{ width: "20%" }}>
                   Description
                 </th>
-                <th scope="col" style={{ width: "10%" }}>
+                <th scope="col" style={{ width: "15%" }}>
                   Status
                 </th>
                 <th scope="col" style={{ width: "10%" }}>
@@ -100,12 +116,16 @@ const SupportCustomerTab = () => {
                   <td className="text-user">{item.support_id}</td>
                   <td className="text-user">{item.email}</td>
                   <td className="text-user">{item.user_role}</td>
-
                   <td className="text-user">{item.subject}</td>
                   <td className="text-user">{item.description}</td>
                   <td className="text-user">
                     <div className="status-div">
-                      <span>{item.status === "open" ? "Open" : "Closed"}</span>
+                      <span>
+                        {item.status === "open" && "Open"}
+                        {item.status === "in-progress" && "In Progress"}
+                        {item.status === "resolved" && "Resolved"}
+                        {item.status === "closed" && "Closed"}
+                      </span>
                       <EditIcon
                         onClick={() => handleEditStatus(item)} // Trigger modal
                       />
@@ -131,13 +151,23 @@ const SupportCustomerTab = () => {
           </table>
         </div>
       )}
-      {showModal && (
+      {/* {showModal && (
         <EditStatusModal
           support={selectedSupport}
           onClose={() => setShowModal(false)} // Close the modal
-          onStatusChange={getSupportData} // Refresh data after status change
+          onStatusChange={(newStatus) =>
+            updateSupportStatus(selectedSupport.support_id, newStatus)
+          }
         />
-      )}
+      )} */}
+      {showModal && (
+  <EditStatusModal
+    support={selectedSupport}
+    onClose={() => setShowModal(false)} // Close the modal
+    onStatusChange={onStatusChange} // Pass the updated handler to trigger status update and re-fetch
+  />
+)}
+
     </div>
   );
 };

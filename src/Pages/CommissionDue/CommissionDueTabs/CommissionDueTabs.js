@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import CommonCommissionTab from "./CommonCommissionTab/CommonCommissionTab";
-import axios from "axios";
-import { toast } from "react-toastify";
 
 const CommissionDueTabs = () => {
 

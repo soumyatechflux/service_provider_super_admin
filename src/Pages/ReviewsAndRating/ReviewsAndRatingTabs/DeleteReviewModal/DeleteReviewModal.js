@@ -4,7 +4,7 @@ import { Modal, Button } from "react-bootstrap";
 const DeleteReviewModal = ({ show, handleClose, handleDelete, review }) => {
   return (
     <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header >
+      <Modal.Header>
         <Modal.Title>Confirm Deletion</Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -15,7 +15,13 @@ const DeleteReviewModal = ({ show, handleClose, handleDelete, review }) => {
         <Button variant="secondary" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="danger" onClick={() => handleDelete(review)}>
+        <Button
+          variant="danger"
+          onClick={() => {
+            handleDelete(review);
+            handleClose(); // Close the modal after triggering the delete
+          }}
+        >
           Delete
         </Button>
       </Modal.Footer>

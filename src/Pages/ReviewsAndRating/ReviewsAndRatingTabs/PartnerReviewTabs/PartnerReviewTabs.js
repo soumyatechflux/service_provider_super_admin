@@ -41,7 +41,39 @@ const PartnerReviewTabs = () => {
     }
   };
 
-  const handleDeleteReview = () => {
+  const handleDeleteReview = async (review) => {
+    try {
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
+
+      setLoading(true);
+
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/ratings/${review.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setLoading(false);
+
+      if (response?.status === 200 && response?.data?.success) {
+        toast.success("Review deleted successfully.");
+        // Remove the deleted review from the local state
+        setReviewData((prevData) =>
+          prevData.filter((item) => item.id !== review.id)
+        );
+        setShowModal(false);
+      } else {
+        toast.error(response.data.message || "Failed to delete review.");
+      }
+    } catch (error) {
+      toast.error("Failed to delete review. Please try again.");
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -80,8 +112,7 @@ const PartnerReviewTabs = () => {
                 </th>
                 <th scope="col" style={{ width: "10%" }}>
                   Action
-                </th>{" "}
-                {/* New Action Column */}
+                </th>
               </tr>
             </thead>
             <tbody>

@@ -70,12 +70,12 @@ const SupportPartnerTab = () => {
             <thead style={{ cursor: "default" }} className="heading_user">
               <tr style={{ cursor: "default" }}>
                 {/* <th scope="col" style={{ width: "5%" }}>Sr.</th> */}
-                <th scope="col" style={{ width: "10%" }}>Support ID</th>
+                <th scope="col" style={{ width: "5%" }}>ID</th>
                 <th scope="col" style={{ width: "15%" }}>Email</th>
                 <th scope="col" style={{ width: "10%" }}>Role</th>
                 <th scope="col" style={{ width: "15%" }}>Subject</th>
                 <th scope="col" style={{ width: "20%" }}>Description</th>
-                <th scope="col" style={{ width: "10%" }}>Status</th>
+                <th scope="col" style={{ width: "15%" }}>Status</th>
                 <th scope="col" style={{ width: "10%" }}>Created At</th>
                 <th scope="col" style={{ width: "10%" }}>Updated At</th>
               </tr>

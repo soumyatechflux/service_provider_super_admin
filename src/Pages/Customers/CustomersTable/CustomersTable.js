@@ -1,80 +1,58 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Loader from "../../Loader/Loader";
 import EditIcon from "@mui/icons-material/Edit";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import DoneIcon from "@mui/icons-material/Done";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import BlockIcon from "@mui/icons-material/Block";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditCustomerModal from "../EditCustomersModal/EditCustomersModal";
 
 const CustomersTable = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-
-  const [ShowVerifyModal, setShowVerifyModal] = useState(false);
-
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
-  const getRestaurantTableData = async () => {
+  // Fetch restaurant data with error handling
+  const getRestaurantTableData = useCallback(async () => {
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
       setLoading(true);
 
       const response = await axios.get(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/partners`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/customers`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
+
       setLoading(false);
 
-      if (response?.data?.message === "partners fetched successfully") {
-        const data = response?.data?.data || [];
-        setRestaurants(data);
+      if (response?.data?.message === "customers fetched successfully") {
+        setRestaurants(response?.data?.data || []);
       } else {
         toast.error(response.data.message || "Please try again.");
-        setLoading(false);
       }
     } catch (error) {
-      console.error("Error fetching partners data:", error);
-      toast.error("Failed to load partners data. Please try again.");
       setLoading(false);
+      console.error("Error fetching customers data:", error);
+      toast.error("Failed to load customers data. Please try again.");
     }
-  };
+  }, []);
 
-  // Fetch data on component mount
   useEffect(() => {
     getRestaurantTableData();
-  }, []);
+  }, [getRestaurantTableData]);
 
   const handleRestaurantClick = (restaurant) => {
     setSelectedRestaurant(restaurant);
     setShowDetailsModal(true);
   };
+
   const handleCloseDetailsModal = () => {
     setShowDetailsModal(false);
-    setSelectedRestaurant(null);
-  };
-
-  const handleVerifyClick = (restaurant) => {
-    setSelectedRestaurant(restaurant);
-    setShowVerifyModal(true);
-  };
-
-  const handleCloseVerifyModal = () => {
-    setShowVerifyModal(false);
     setSelectedRestaurant(null);
   };
 
@@ -102,24 +80,12 @@ const CustomersTable = () => {
                 <th scope="col" style={{ width: "10%" }}>
                   Phone
                 </th>
-                <th scope="col" style={{ width: "5%" }}>
-                  YOE
-                </th>
-                <th scope="col" style={{ width: "13%" }}>
-                  Address
-                </th>
                 <th scope="col" style={{ width: "10%" }}>
-                  Sign-Up
-                </th>
-                <th scope="col" style={{ width: "5%" }}>
-                  Verification
-                </th>
-                <th scope="col" style={{ width: "12%" }}>
                   Status
                 </th>
-                <th scope="col" style={{ width: "5%" }}>
+                {/* <th scope="col" style={{ width: "5%" }}>
                   Action
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody style={{ cursor: "default" }}>
@@ -141,49 +107,6 @@ const CustomersTable = () => {
                   </td>
 
                   <td className="text-user">{restaurant.mobile}</td>
-                  <td className="text-user">
-                    {restaurant.years_of_experience}
-                  </td>
-                  <td className="text-user">{restaurant.current_address}</td>
-                  <td className="text-user">
-                    {new Intl.DateTimeFormat("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "2-digit",
-                    })
-                      .format(new Date(restaurant.created_at))
-                      .replace(",", "")}
-                  </td>
-
-                  {/* <td className={`status ${restaurant.is_verify}`}>
-                    <div className={`status-background-${restaurant.is_verify}`}>
-                      {restaurant.is_verify === 0
-                        ? "No"
-                        : "Yes"}
-                    </div>
-                  </td> */}
-
-                  <td
-                    className={`edit_users ${
-                      restaurant.is_verify !== 0 ? "disabled" : ""
-                    }`}
-                    onClick={
-                      restaurant.is_verify === 0
-                        ? () => handleVerifyClick(restaurant)
-                        : null
-                    }
-                    style={{
-                      cursor:
-                        restaurant.is_verify === 0 ? "pointer" : "not-allowed",
-                      opacity: restaurant.is_verify === 0 ? 1 : 0.6,
-                    }}
-                  >
-                    {restaurant.is_verify !== 0 ? (
-                      <VerifiedUserIcon style={{ color: "green" }} />
-                    ) : (
-                      <HighlightOffIcon style={{ color: "red" }} />
-                    )}
-                  </td>
 
                   <td className={`status ${restaurant.active_status}`}>
                     <div
@@ -211,15 +134,15 @@ const CustomersTable = () => {
                     </div>
                   </td>
 
-                  <td
-                    className="edit_users disabled"
+                  {/* <td
+                    className="edit_users disabled action-btn-trash"
                     style={{
                       cursor: "not-allowed",
                       opacity: 0.6,
                     }}
                   >
                     <DeleteIcon style={{ color: "gray" }} />
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>
@@ -227,23 +150,14 @@ const CustomersTable = () => {
         </div>
       )}
 
-      {/* {showDetailsModal && (
-        <EditRestroModal
+      {showDetailsModal && (
+        <EditCustomerModal
           show={showDetailsModal}
           handleClose={handleCloseDetailsModal}
           restaurantDetails={selectedRestaurant}
           getRestaurantTableData={getRestaurantTableData}
         />
       )}
-
-      {ShowVerifyModal && (
-        <VerifyModal
-          show={ShowVerifyModal}
-          handleClose={handleCloseVerifyModal}
-          restaurantDetails={selectedRestaurant}
-          getRestaurantTableData={getRestaurantTableData}
-        />
-      )} */}
     </div>
   );
 };

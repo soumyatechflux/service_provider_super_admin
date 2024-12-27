@@ -45,7 +45,7 @@
   textarea,
   button,
   select {
-    width: 100%;
+    /* width: 100%; */
     padding: 10px;
     /* margin-top: 5px; */
     border: 1px solid #ccc;
@@ -60,18 +60,12 @@
     resize: none;
   }
   
-  input:focus,
-  textarea:focus,
-  select:focus {
-    outline: none;
-    border-color: #0056b3;
-    box-shadow: 0 0 5px rgba(0, 86, 179, 0.3);
-  }
+
   
-  button {
+  /* button {
     font-size: 16px;
     cursor: pointer;
-    background-color: #0056b3;
+    background-color: #0056b3; 
     color: #ffffff;
     border: none;
     border-radius: 6px;
@@ -79,8 +73,8 @@
   }
   
   button:hover {
-    background-color: #004494;
-  }
+    background-color: #004494; */
+  /* }  */
   
   .specializations {
     display: flex;

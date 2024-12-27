@@ -1,19 +1,6 @@
-// import React from 'react'
-
-// const Categories = () => {
-//   return (
-//     <div>Categories</div>
-//   )
-// }
-
-// export default Categories
-
-
 import React, { useEffect, useState } from "react";
 import "../../Template/LayoutMain/LayoutMain/Layout.css";
 import CategoriesTable from "./CategoriesTable/CategoriesTable";
-
-
 
 const Categories = () => {
   const [value, setValue] = useState(() => {
@@ -42,19 +29,15 @@ const Categories = () => {
     };
   }, [value]);
 
-
   return (
     <>
- 
       <div
         className={`content-container ${
           value ? "sidebar-open" : "sidebar-closed"
         }`}
-        style={{marginTop:"30px"}}
+        style={{ marginTop: "30px" }}
       >
-        <CategoriesTable/>
-
-
+        <CategoriesTable />
       </div>
     </>
   );

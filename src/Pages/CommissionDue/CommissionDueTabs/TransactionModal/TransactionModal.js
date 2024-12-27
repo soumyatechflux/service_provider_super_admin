@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { TextField } from "@mui/material"; // Import TextField from Material-UI
-import './TransactionModal.css'
+import { TextField } from "@mui/material";
+import "./TransactionModal.css";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const TransactionModal = ({ item, onClose, setLoading }) => {
   const [transactionId, setTransactionId] = useState("");
-  const [paymentDate, setPaymentDate] = useState(""); // State to store the selected date
+  const [paymentDate, setPaymentDate] = useState("");
 
   const handlePayNow = async () => {
     if (!transactionId || !paymentDate) {
@@ -14,29 +14,27 @@ const TransactionModal = ({ item, onClose, setLoading }) => {
       return;
     }
     await postCommissionData(transactionId, paymentDate);
-    alert(`Payment processed for ${item.name} with Transaction ID: ${transactionId} on ${paymentDate}`);
-    // onClose(); // Close the modal
+    onClose(); // Close the modal after the operation
   };
 
-  
-  
   const postCommissionData = async (transactionId, paymentDate) => {
-    onClose();
     try {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
-      
+
       setLoading(true);
 
-      
+      // Explicitly construct the payload with all required fields
+      const payload = {
+        partner_id: item.partner_id, // Partner ID from the item prop
+        payout_date: paymentDate, // Selected payment date
+        payment_transaction_id: transactionId, // Transaction ID entered by the user
+      };
 
       const response = await axios.post(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/postCommissionDatadffffffffffffffffffffffd`,
-        {
-          transactionId,
-          paymentDate
-        },
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/payout_paid`,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -47,20 +45,15 @@ const TransactionModal = ({ item, onClose, setLoading }) => {
       setLoading(false);
 
       if (response?.status === 200 && response?.data?.success) {
-        const data = response?.data?.data || [];
-        // setDummy_Data(data);
+        toast.success("Payment successful!");
       } else {
-        toast.error(
-          response.data.message || "Failed to post commission."
-        );
-        setLoading(false);
+        toast.error(response.data.message || "Failed to post commission.");
       }
-      onClose();
     } catch (error) {
       console.error("Error posting commission:", error);
       toast.error("Failed to post commission. Please try again.");
+    } finally {
       setLoading(false);
-      onClose();
     }
   };
 
@@ -74,18 +67,16 @@ const TransactionModal = ({ item, onClose, setLoading }) => {
         <p>
           <strong>Amount Due:</strong> ₹ {item.total_partner_amount}
         </p>
-        
+
         {/* Date Picker Field */}
         <div className="form-group">
-        <label htmlFor="transaction-id">Date:</label>
+          <label htmlFor="payment-date">Date:</label>
           <TextField
-            
             type="date"
+            id="payment-date"
             value={paymentDate}
             onChange={(e) => setPaymentDate(e.target.value)}
-            
             fullWidth
-            
           />
         </div>
 

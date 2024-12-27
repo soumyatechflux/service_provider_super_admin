@@ -14,12 +14,10 @@ const CommonCommissionTab = ({
   showModal,
   setShowModa,
   handlePayNowClick,
-  handleCloseModal
+  handleCloseModal,
 }) => {
-    // Sample data constant
-    const [dummy_Data, setDummy_Data] = useState([]);
-
-
+  // Sample data constant
+  const [dummy_Data, setDummy_Data] = useState([]);
 
   const getCommissionData = async (category_id) => {
     try {
@@ -30,7 +28,8 @@ const CommonCommissionTab = ({
       setLoading(true);
 
       const response = await axios.get(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/payout/`+category_id,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/payout/` +
+          category_id,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -42,13 +41,10 @@ const CommonCommissionTab = ({
 
       if (response?.status === 200 && response?.data?.success) {
         const data = response?.data?.data || [];
-        
 
         setDummy_Data(data);
 
         console.log("dasd", data);
-
-
       } else {
         toast.error(response.data.message || "Failed to fetch commission.");
         setLoading(false);
@@ -62,7 +58,7 @@ const CommonCommissionTab = ({
 
   useEffect(() => {
     getCommissionData(category_id);
-  },[category_id]);
+  }, [category_id]);
 
   return (
     <div className="SubCategory-Table-Main p-3">
@@ -86,7 +82,7 @@ const CommonCommissionTab = ({
                   Amount Due
                 </th>
                 <th scope="col" style={{ width: "20%" }}>
-                 Address
+                  Address
                 </th>
                 {/* <th scope="col" style={{ width: "15%" }}>
                   Booking Date
@@ -103,7 +99,9 @@ const CommonCommissionTab = ({
                   <td>{item.name || "Unknown"}</td>
                   <td>{item.category_name || "N/A"}</td>
                   <td>{item.total_partner_amount || "N/A"}</td>
-                  <td>{item.current_address || "No current_address available."}</td>
+                  <td>
+                    {item.current_address || "No current_address available."}
+                  </td>
                   {/* <td>
                     {new Intl.DateTimeFormat("en-GB", {
                       day: "2-digit",
@@ -111,14 +109,13 @@ const CommonCommissionTab = ({
                       year: "numeric",
                     }).format(new Date(item.booking_date))}
                   </td> */}
-                  <td className="action-btn-pay">   
-                      <button
-                        className="payNow-btn"
-                        onClick={() => handlePayNowClick(item)}
-                      >
-                        Pay Now
-                      </button>
-                    
+                  <td className="action-btn-pay">
+                    <button
+                      className="payNow-btn"
+                      onClick={() => handlePayNowClick(item)}
+                    >
+                      Pay Now
+                    </button>
                   </td>
                 </tr>
               ))}

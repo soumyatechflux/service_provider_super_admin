@@ -1,15 +1,3 @@
-// import React from 'react'
-
-// const CommissionDue = () => {
-//   return (
-//     <div>CommissionDue</div>
-//   )
-// }
-
-// export default CommissionDue
-
-
-
 import React, { useEffect, useState } from "react";
 import "../../Template/LayoutMain/LayoutMain/Layout.css";
 import CommissionDueTabs from "./CommissionDueTabs/CommissionDueTabs";
