@@ -22,16 +22,19 @@ const TransactionModal = ({ item, onClose, setLoading }) => {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
-
+  
       setLoading(true);
-
-      // Explicitly construct the payload with all required fields
+  
+      // Construct the payload with all required fields
       const payload = {
-        partner_id: item.partner_id, // Partner ID from the item prop
+        partner_id: item.id, // Adjust based on your API response key for the partner ID
+        payout_amount: parseFloat(item.total_partner_amount), // Ensure amount is a number
         payout_date: paymentDate, // Selected payment date
         payment_transaction_id: transactionId, // Transaction ID entered by the user
       };
-
+  
+      console.log("Payload:", payload); // Debug to verify payload structure
+  
       const response = await axios.post(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/payout_paid`,
         payload,
@@ -41,9 +44,9 @@ const TransactionModal = ({ item, onClose, setLoading }) => {
           },
         }
       );
-
+  
       setLoading(false);
-
+  
       if (response?.status === 200 && response?.data?.success) {
         toast.success("Payment successful!");
       } else {
@@ -56,7 +59,8 @@ const TransactionModal = ({ item, onClose, setLoading }) => {
       setLoading(false);
     }
   };
-
+  
+  
   return (
     <div className="modal-overlay">
       <div className="modal-content">

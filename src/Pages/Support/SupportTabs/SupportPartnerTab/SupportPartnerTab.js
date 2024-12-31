@@ -5,14 +5,13 @@ import { toast } from "react-toastify";
 import EditStatusModal from "./../SupportCustomerTab/EditStatusModal/EditStatusModal";
 import EditIcon from "@mui/icons-material/Edit";
 
-
 const SupportPartnerTab = () => {
   const [supportData, setSupportData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedSupport, setSelectedSupport] = useState(null); // To store the selected ticket for status update
   const [showModal, setShowModal] = useState(false); // Modal visibility state
 
-
+  // Fetch support data
   const getSupportData = async () => {
     try {
       const token = sessionStorage.getItem(
@@ -31,9 +30,9 @@ const SupportPartnerTab = () => {
       );
 
       setLoading(false);
-      console.log("Partner Response ",response)
+      console.log("Partner Response ", response);
 
-      if (response?.status===200 && response?.data?.success) {
+      if (response?.status === 200 && response?.data?.success) {
         const data = response?.data?.data || [];
         setSupportData(data);
       } else {
@@ -47,9 +46,15 @@ const SupportPartnerTab = () => {
     }
   };
 
+  // Handle status edit click
   const handleEditStatus = (support) => {
     setSelectedSupport(support); // Set the selected support ticket
     setShowModal(true); // Show the modal
+  };
+
+  // Handle status change after updating
+  const handleStatusChange = () => {
+    getSupportData(); // Fetch the latest data after the status change
   };
 
   // Fetch data on component mount
@@ -69,7 +74,6 @@ const SupportPartnerTab = () => {
           >
             <thead style={{ cursor: "default" }} className="heading_user">
               <tr style={{ cursor: "default" }}>
-                {/* <th scope="col" style={{ width: "5%" }}>Sr.</th> */}
                 <th scope="col" style={{ width: "5%" }}>ID</th>
                 <th scope="col" style={{ width: "15%" }}>Email</th>
                 <th scope="col" style={{ width: "10%" }}>Role</th>
@@ -83,27 +87,22 @@ const SupportPartnerTab = () => {
             <tbody style={{ cursor: "default" }}>
               {supportData.map((item) => (
                 <tr style={{ cursor: "default" }} key={item.support_id}>
-                  {/* <th scope="row" className="id-user">{index + 1}.</th> */}
                   <td className="text-user">{item.support_id}</td>
                   <td className="text-user">{item.email}</td>
                   <td className="text-user">{item.user_role}</td>
                   <td className="text-user">{item.subject}</td>
                   <td className="text-user">{item.description}</td>
                   <td className="text-user">
-                  <div className="status-div">
-                  <span>{item.status === "open" ? "Open" : "Closed"}</span>
-                      <EditIcon
-                        onClick={() => handleEditStatus(item)} // Trigger modal
-                      />
+                    <div className="status-div">
+                      <span>{item.status === "open" ? "Open" : item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>
+                      <EditIcon onClick={() => handleEditStatus(item)} /> {/* Trigger modal */}
                     </div>
-                  </td> 
+                  </td>
                   <td className="text-user">
                     {new Intl.DateTimeFormat("en-GB", {
                       day: "2-digit",
                       month: "short",
                       year: "2-digit",
-                    //   hour: "2-digit",
-                    //   minute: "2-digit",
                     }).format(new Date(item.created_at))}
                   </td>
                   <td className="text-user">
@@ -111,8 +110,6 @@ const SupportPartnerTab = () => {
                       day: "2-digit",
                       month: "short",
                       year: "2-digit",
-                    //   hour: "2-digit",
-                    //   minute: "2-digit",
                     }).format(new Date(item.updated_at))}
                   </td>
                 </tr>
@@ -125,7 +122,7 @@ const SupportPartnerTab = () => {
         <EditStatusModal
           support={selectedSupport}
           onClose={() => setShowModal(false)} // Close the modal
-          onStatusChange={getSupportData} // Refresh data after status change
+          onStatusChange={handleStatusChange} // Refresh data after status change
         />
       )}
     </div>

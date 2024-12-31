@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import CommonCommissionTab from "./CommonCommissionTab/CommonCommissionTab";
+import PaymentHistoryTable from "../PaymentHistoryTable/PaymentHistoryTable";
 
 const CommissionDueTabs = () => {
 
@@ -56,6 +57,20 @@ const CommissionDueTabs = () => {
       <Tab eventKey="gardener" title="Gardener">
         <CommonCommissionTab
           category_id="3"
+          loading={loading}
+          setLoading={setLoading}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          showModal={showModal}
+          setShowModal={setShowModal}
+          handlePayNowClick={handlePayNowClick}
+          handleCloseModal={handleCloseModal}
+        />
+      </Tab>
+
+      <Tab eventKey="history" title="Payment History">
+        <PaymentHistoryTable
+          // category_id="3"
           loading={loading}
           setLoading={setLoading}
           selectedItem={selectedItem}

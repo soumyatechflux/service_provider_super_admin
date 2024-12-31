@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,54 +14,63 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const EditSubCatStatusModal = ({
-  subCategory,
+const EditStaffStatusModal = ({
   open,
   onClose,
   onStatusChange,
-  fetchSubCategoryData
+  staff,
+  initialStatus,
 }) => {
-  const [status, setStatus] = useState(subCategory?.active_status || "active");
+  const [status, setStatus] = useState(initialStatus || "active");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    console.log("Staff Object:", staff);
+  }, [staff]);
+  
+  
+
   const handleStatusUpdate = async () => {
-    
+    if (!staff?.id) {
+      toast.error("Staff ID is missing. Unable to update status.");
+      onClose();
+      return;
+    }
+  
     setLoading(true);
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-
+  
       const payload = {
-        sub_category: {
-          sub_category_id: Number(subCategory?.id), // Ensure the id is passed correctly
+       
+          staff_id: Number(staff?.id), // Use staff.id here
           active_status: status,
-        },
+        
       };
-
-      console.log("Payload being sent:", payload); // Debug log
-
+  
       const response = await axios.patch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/sub_category/status`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/staff/status`,
         payload,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
+  
       if (response?.status === 200 && response?.data?.success) {
-        toast.success(response.data.message || "Sub-category status updated successfully!");
-        onStatusChange(status);
-        fetchSubCategoryData(); // Refresh data after successful update
+        onStatusChange(status); // Notify parent of status change
+        toast.success("Staff status updated successfully!");
       } else {
-        toast.error(response.data.message || "Failed to update status.");
+        toast.error(response?.data?.message || "Failed to update status.");
       }
     } catch (error) {
-      console.error("API Error:", error.response?.data || error.message); // Debug log
+      console.error("API Error:", error.response?.data); // Debug log
       toast.error("Error updating status. Please try again.");
     } finally {
       setLoading(false);
-      onClose();
+      onClose(); // Close the modal after API call
     }
   };
+  
 
   return (
     <Dialog
@@ -76,7 +85,7 @@ const EditSubCatStatusModal = ({
         },
       }}
     >
-      <DialogTitle>Edit Sub-Category Status</DialogTitle>
+      <DialogTitle>Edit Staff Status</DialogTitle>
       <DialogContent>
         <FormControl fullWidth margin="normal">
           <InputLabel id="status-label" shrink>
@@ -119,5 +128,4 @@ const EditSubCatStatusModal = ({
   );
 };
 
-
-export default EditSubCatStatusModal;
+export default EditStaffStatusModal;

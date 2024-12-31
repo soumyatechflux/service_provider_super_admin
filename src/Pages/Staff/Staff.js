@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../Template/LayoutMain/LayoutMain/Layout.css";
+import StaffTable from "./StaffTable/StaffTable";
 
 const Staff = () => {
   const [value, setValue] = useState(() => {
@@ -36,7 +37,8 @@ const Staff = () => {
         }`}
         style={{ marginTop: "30px" }}
       >
-    
+
+        <StaffTable/>
       </div>
     </>
   );

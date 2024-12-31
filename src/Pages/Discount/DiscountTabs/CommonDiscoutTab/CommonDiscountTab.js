@@ -6,8 +6,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddDiscountModal from "../CommonDiscoutTab/AddDiscountModal/AddDiscountModal";
 import EditDiscountModal from "../CommonDiscoutTab/EditDiscountModal/EditDiscountModal";
 import DeleteDiscountModal from "../CommonDiscoutTab/DeleteDiscountModal/DeleteDiscountModal";
-import EditDiscountStatusModal from "../../../SubCategories/SubCategoriesTabs/EditSubCatStatusModal/EditSubCatStatusModal";
+
 import "./CommonDiscount.css";
+import EditDiscountStatusModal from "./EditDiscountStatusModal/EditDiscountStatusModal";
 
 const CommonDiscountTab = () => {
   const [discountData, setDiscountData] = useState([]);
@@ -19,7 +20,6 @@ const CommonDiscountTab = () => {
   const [selectedDiscount, setSelectedDiscount] = useState(null);
   const [showEditStatusModal, setShowEditStatusModal] = useState(false);
 
-  // Fetch discount data from the API
   const fetchDiscountData = async () => {
     try {
       const token = sessionStorage.getItem(
@@ -27,7 +27,6 @@ const CommonDiscountTab = () => {
       );
 
       setLoading(true);
-
       const response = await axios.get(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount`,
         {
@@ -36,9 +35,7 @@ const CommonDiscountTab = () => {
           },
         }
       );
-
       setLoading(false);
-
       if (response?.status === 200 && response?.data?.success) {
         const data = response?.data?.data || [];
         setDiscountData(data);
@@ -50,19 +47,18 @@ const CommonDiscountTab = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchDiscountData();
   }, []);
 
   const handleOpenStatusModal = (discount) => {
     setSelectedDiscount(discount);
-    setShowEditStatusModal(true); // Open status modal
+    setShowEditStatusModal(true); 
   };
 
   const handleEdit = (item) => {
-    setSelectedItem(item); // Set the selected discount item
-    setShowEditModal(true); // Open edit modal
+    setSelectedItem(item); 
+    setShowEditModal(true);
   };
 
   const handleDelete = (item) => {
@@ -77,16 +73,7 @@ const CommonDiscountTab = () => {
     setSelectedItem(null);
     setSelectedDiscount(null);
   };
-  // const handleSaveEdit = (updatedItem) => {
-  //   setDiscountData((prevData) =>
-  //     prevData.map((item) =>
-  //       item.voucher_id === updatedItem.voucher_id ? updatedItem : item
-  //     )
-  //   );
-    
-  //   handleCloseModals();
-  // };
-
+  
   const handleSaveEdit = async (updatedItem) => {
     try {
       await fetchDiscountData();
@@ -101,8 +88,6 @@ const CommonDiscountTab = () => {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
-
-      // Make the API call to delete the discount using voucher_id
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount/${selectedItem.voucher_id}`,
         {
@@ -175,6 +160,9 @@ const CommonDiscountTab = () => {
                 <th scope="col" style={{ width: "10%" }}>
                   Status
                 </th>
+                <th scope="col" style={{ width: "10%" }}>
+                  Used Count
+                </th>
                 <th scope="col" style={{ width: "5%" }}>
                   Action
                 </th>
@@ -221,6 +209,7 @@ const CommonDiscountTab = () => {
                       />
                     </div>
                   </td>
+                  <td>{item.used_count === 0 ? "0" : item.used_count || "N/A"}</td>
                   <td>
                     <div className="status-div">
                       <EditIcon
@@ -248,7 +237,6 @@ const CommonDiscountTab = () => {
             ...newData,
             id: new Date().getTime(),
           };
-
           setDiscountData((prevData) => [...prevData, newDiscountData]);
           toast.success("Discount added successfully!");
         }}
@@ -260,7 +248,7 @@ const CommonDiscountTab = () => {
         onClose={handleCloseModals}
         onSave={handleSaveEdit}
         initialData={selectedItem}
-        fetchDiscountData={fetchDiscountData} // Pass fetchDiscountData as prop
+        fetchDiscountData={fetchDiscountData} 
       />
 
       <DeleteDiscountModal
@@ -274,7 +262,7 @@ const CommonDiscountTab = () => {
         discount={selectedDiscount}
         onClose={handleCloseModals}
         onStatusChange={(status) => console.log("Edit Status", status)}
-        fetchDiscountData={fetchDiscountData} // Add this prop
+        fetchDiscountData={fetchDiscountData} 
       />
     </div>
   );

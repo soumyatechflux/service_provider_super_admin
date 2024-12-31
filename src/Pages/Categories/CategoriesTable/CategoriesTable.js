@@ -76,13 +76,13 @@ const CategoriesTable = () => {
                   Description
                 </th>
                 <th scope="col" style={{ width: "10%" }}>
-                  Active Status
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
                   Created At
                 </th>
                 <th scope="col" style={{ width: "10%" }}>
                   Updated At
+                </th>
+                <th scope="col" style={{ width: "10%" }}>
+                  Active Status
                 </th>
               </tr>
             </thead>
@@ -92,19 +92,6 @@ const CategoriesTable = () => {
                   <th scope="row">{index + 1}.</th>
                   <td>{item.category_name || "N/A"}</td>
                   <td>{item.description || "No description available."}</td>
-                  <td>
-                    <div className="status-div">
-                      <span>
-                        {item.active_status === "active"
-                          ? "Active"
-                          : "In-Active"}
-                      </span>
-                      <EditIcon
-                        onClick={() => handleEditStatus(item)}
-                        style={{ cursor: "pointer", marginLeft: "10px" }}
-                      />
-                    </div>
-                  </td>
                   <td>
                     {new Intl.DateTimeFormat("en-GB", {
                       day: "2-digit",
@@ -118,6 +105,19 @@ const CategoriesTable = () => {
                       month: "short",
                       year: "numeric",
                     }).format(new Date(item.updated_at))}
+                  </td>
+                  <td>
+                    <div className="status-div">
+                      <span>
+                        {item.active_status === "active"
+                          ? "Active"
+                          : "In-Active"}
+                      </span>
+                      <EditIcon
+                        onClick={() => handleEditStatus(item)}
+                        style={{ cursor: "pointer", marginLeft: "10px" }}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -14,55 +14,59 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const EditSubCatStatusModal = ({
-  subCategory,
+const EditStatusModal = ({
   open,
   onClose,
-  onStatusChange,
-  fetchSubCategoryData
+  bookingId,
+  getCommissionData,
+  dummyData,
+  setDummyData,
+  setShowEditModal,
 }) => {
-  const [status, setStatus] = useState(subCategory?.active_status || "active");
+  const [status, setStatus] = useState("Cancelled");
   const [loading, setLoading] = useState(false);
 
   const handleStatusUpdate = async () => {
-    
     setLoading(true);
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-
-      const payload = {
-        sub_category: {
-          sub_category_id: Number(subCategory?.id), // Ensure the id is passed correctly
-          active_status: status,
-        },
-      };
-
-      console.log("Payload being sent:", payload); // Debug log
-
+  
       const response = await axios.patch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/sub_category/status`,
-        payload,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/cancel_booking/${bookingId}`,
+        {}, // No payload needed
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-
+  
       if (response?.status === 200 && response?.data?.success) {
-        toast.success(response.data.message || "Sub-category status updated successfully!");
-        onStatusChange(status);
-        fetchSubCategoryData(); // Refresh data after successful update
+        toast.success("Booking status updated successfully!");
+  
+        // Update the local state with updated status
+        setDummyData((prevData) => {
+          // Create a new array to force re-render
+          return prevData.map((item) =>
+            item.booking_id === bookingId
+              ? { ...item, booking_status: "Cancelled" } // Update status
+              : item
+          );
+        });
+  
+        getCommissionData(); // Refresh the data if needed
+        setShowEditModal(false); // Close the modal
       } else {
-        toast.error(response.data.message || "Failed to update status.");
+        toast.error(response?.data?.message || "Failed to update status.");
       }
     } catch (error) {
-      console.error("API Error:", error.response?.data || error.message); // Debug log
-      toast.error("Error updating status. Please try again.");
+      console.error("API Error:", error);
+      toast.error(error.response?.data?.message || "Error updating status. Please try again.");
     } finally {
       setLoading(false);
-      onClose();
     }
   };
-
+  
   return (
     <Dialog
       open={open}
@@ -76,7 +80,7 @@ const EditSubCatStatusModal = ({
         },
       }}
     >
-      <DialogTitle>Edit Sub-Category Status</DialogTitle>
+      <DialogTitle>Edit Booking Status</DialogTitle>
       <DialogContent>
         <FormControl fullWidth margin="normal">
           <InputLabel id="status-label" shrink>
@@ -89,8 +93,7 @@ const EditSubCatStatusModal = ({
             fullWidth
             label="Status"
           >
-            <MenuItem value="active">Active</MenuItem>
-            <MenuItem value="inactive">Inactive</MenuItem>
+            <MenuItem value="Cancelled">Cancelled</MenuItem>
           </Select>
         </FormControl>
       </DialogContent>
@@ -119,5 +122,4 @@ const EditSubCatStatusModal = ({
   );
 };
 
-
-export default EditSubCatStatusModal;
+export default EditStatusModal;

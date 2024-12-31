@@ -43,9 +43,8 @@
   
   input,
   textarea,
-  button,
   select {
-    /* width: 100%; */
+    width: 100%;
     padding: 10px;
     /* margin-top: 5px; */
     border: 1px solid #ccc;
@@ -55,7 +54,17 @@
     color: #333;
     margin-bottom: 5px;
   }
-  
+  button{
+     /* width: 100%; */
+     padding: 10px;
+     /* margin-top: 5px; */
+     border: 1px solid #ccc;
+     border-radius: 6px;
+     font-size: 14px;
+     background-color: #ffffff;
+     color: #333;
+     margin-bottom: 5px;
+  }
   textarea {
     resize: none;
   }
@@ -115,6 +124,7 @@
     border: none;
     border-radius: 6px;
     transition: background 0.3s;
+    width: 100%;
   }
   
   .verify-button:hover {

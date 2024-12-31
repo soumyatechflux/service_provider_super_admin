@@ -15,44 +15,51 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const EditDiscountStatusModal = ({
+  discount,  // Change to match parent prop name
   open,
-  support,
   onClose,
   onStatusChange,
+  fetchDiscountData
 }) => {
-  const [status, setStatus] = useState(support?.active_status || "active");
+  const [status, setStatus] = useState(discount?.active_status || "active");
   const [loading, setLoading] = useState(false);
 
   const handleStatusUpdate = async () => {
     setLoading(true);
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-     
+      console.log("Discount data:", discount); // Debug log
+      
+      const payload = {
+        discount: {
+          voucher_id: Number(discount?.voucher_id), // Ensure it's a number
+          active_status: status
+        }
+      };
+      
+      console.log("Payload:", payload); // Debug log
+  
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount/status`,
+        payload,
         {
-          voucher_id: support?.voucher_id,
-          active_status: status,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` }
         }
       );
-
+  
       if (response?.status === 200 && response?.data?.success) {
         onStatusChange(status);
         toast.success("Discount status updated successfully!");
+        fetchDiscountData(); // Add this line to refresh data
       } else {
-        toast.error(response?.data?.message || "Failed to update status.");
+        toast.error(response.data.message || "Failed to update status.");
       }
     } catch (error) {
-      toast.error("Failed to update status. Please try again.");
-      console.error("Error updating status:", error);
+      console.error("API Error:", error.response?.data); // Debug log
+      toast.error("Error updating status. Please try again.");
     } finally {
       setLoading(false);
-      onClose(); // Close the modal after update attempt
+      onClose();
     }
   };
 
@@ -69,7 +76,7 @@ const EditDiscountStatusModal = ({
         },
       }}
     >
-      <DialogTitle>Edit Discount Status</DialogTitle>
+      <DialogTitle>Edit Sub-Category Status</DialogTitle>
       <DialogContent>
         <FormControl fullWidth margin="normal">
           <InputLabel id="status-label" shrink>
@@ -92,7 +99,7 @@ const EditDiscountStatusModal = ({
           variant="contained"
           color="primary"
           onClick={handleStatusUpdate}
-          disabled={loading} // Disable the button during loading state
+          disabled={loading}
         >
           {loading ? <CircularProgress size={24} /> : "Save"}
         </Button>

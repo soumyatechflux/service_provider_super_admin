@@ -22,8 +22,6 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
     setLoading(true);
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-  
-      // Create the payload as you want it to appear in the response format
       const payload = {
         support: {
           support_id: support.support_id,
@@ -44,9 +42,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
   
       // Check if the response is successful and contains the message
       if (response?.status === 200 && response?.data?.success) {
-        onStatusChange(response.data.message); // Send message instead of status for parent update
-        
-        // Show success toast message with the response message
+        onStatusChange(); // Trigger status change in the parent component to refresh data
         toast.success(response?.data?.message || "Status updated successfully!");
       } else {
         toast.error("Failed to update status. Please try again.");
@@ -59,6 +55,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
       onClose();
     }
   };
+  
   
   return (
     <Dialog

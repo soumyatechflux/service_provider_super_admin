@@ -237,10 +237,13 @@ const DriverCategoriesTab = ({ category_id }) => {
 
       {/* Edit Sub-Category Status Modal */}
       <EditSubCatStatusModal
+        subCategory={selectedSubCategory} // Pass the full object here
         open={showEditModal}
-        support={selectedSubCategory}
         onClose={handleCloseModals}
-        refreshData={fetchSubCategoryData} // Pass the function to refresh the data
+        onStatusChange={(newStatus) =>
+          console.log("Status Changed:", newStatus)
+        }
+        fetchSubCategoryData={fetchSubCategoryData}
       />
 
       {/* Add Sub-Category Modal */}
