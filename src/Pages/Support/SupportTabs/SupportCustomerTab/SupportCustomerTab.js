@@ -128,6 +128,7 @@ const SupportCustomerTab = () => {
                       </span>
                       <EditIcon
                         onClick={() => handleEditStatus(item)} // Trigger modal
+                        style={{cursor:"pointer"}}
                       />
                     </div>
                   </td>

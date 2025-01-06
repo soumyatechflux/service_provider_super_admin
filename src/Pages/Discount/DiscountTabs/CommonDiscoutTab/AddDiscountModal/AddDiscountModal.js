@@ -27,6 +27,8 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
   };
 
   const handleSave = async () => {
+    const currentDate = new Date().toISOString().split("T")[0]; // Get today's date in 'YYYY-MM-DD' format
+    
     if (
       !formData.sub_category_name ||
       !formData.price ||
@@ -40,9 +42,19 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
       toast.error("Please fill in all fields.");
       return;
     }
-
+  
+    if (formData.start_date < currentDate) {
+      toast.error("Start date cannot be in the past.");
+      return;
+    }
+  
+    if (formData.end_date <= formData.start_date) {
+      toast.error("End date must be later than start date.");
+      return;
+    }
+  
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-
+  
     const payload = {
       discount: {
         voucher_code: formData.discount_code,
@@ -55,7 +67,7 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
         description: formData.description,
       },
     };
-
+  
     try {
       const response = await fetch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount/add`,
@@ -68,19 +80,19 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
           body: JSON.stringify(payload),
         }
       );
-
+  
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to save the discount.");
       }
-
+  
       const data = await response.json();
       console.log("Discount added successfully:", data);
-
+  
       toast.success("Discount added successfully!");
       onSave(data);
       fetchDiscountData();
-
+  
       setFormData({
         sub_category_name: "",
         price: "",
@@ -91,13 +103,14 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
         start_date: "",
         end_date: "",
       });
-
+  
       onClose();
     } catch (error) {
       console.error("Error:", error.message);
       toast.error("Failed to save the discount. Please try again.");
     }
   };
+  
 
   const handleCancel = () => {
     setFormData({

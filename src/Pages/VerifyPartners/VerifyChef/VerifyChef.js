@@ -39,7 +39,7 @@ const VerifyChef = () => {
     drivingLicense: null,
     currentAddressProof: null,
   });
-  
+
   const getVerifyDetails = async () => {
     try {
       const token = sessionStorage.getItem(
@@ -81,32 +81,54 @@ const VerifyChef = () => {
 
   const [error, setError] = useState("");
 
-  // const handleInputChange = (e) => {
-  //   const { name, value, files } = e.target;
 
-  //   if (files) {
-  //     setCookDetails({ ...cookDetails, [name]: files[0] });
-  //   } else {
-  //     setCookDetails({ ...cookDetails, [name]: value });
-  //   }
-  // };
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-  
+
     setCookDetails((prevState) => ({
       ...prevState,
       [name]: files ? files[0] : value,
     }));
   };
-  
+
   const verificationHeadings = {
     1: "Cook Verification",
     2: "Driver Verification",
     3: "Gardener Verification",
   };
   const heading = verificationHeadings[restaurant] || "Default Verification";
-  const verifyPartnerDetails = async () => {
+  
 
+  
+  const verifyPartnerDetails = async () => {
+    const requiredFields = [
+      
+      "email",
+      "dob",
+      "aadhar",
+      "address",
+      "permanentAddress",
+      "experience",
+      "subCategory",
+      "dateOfJoining",
+      "languages",
+      "aadharFront",
+      "aadharBack",
+      "panCard",
+      "bankDetails",
+    ];
+  
+    // Validate required fields
+    const missingFields = requiredFields.filter(
+      (field) => !cookDetails[field]
+    );
+  
+    if (missingFields.length > 0) {
+      toast.error(
+        `Please fill all required fields: ${missingFields.join(", ")}`
+      );
+      return;
+    }
     try {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
@@ -159,7 +181,7 @@ const VerifyChef = () => {
 
       if (response.status === 200 && response.data.success) {
         toast.success("Partner verified successfully!");
-         navigate("/partners"); 
+        navigate("/partners");
       } else {
         toast.error(response.data.message || "Verification failed.");
       }
@@ -178,7 +200,9 @@ const VerifyChef = () => {
 
       <div className="profile-content">
         <div className="avatar-section">
-          <div className="avatar">{/* <span>{cookDetails.name}</span> */}</div>
+          <div className="avatar">
+            <span>{partnerDetails?.name?.charAt(0).toUpperCase()}</span>
+          </div>
         </div>
 
         <div className="details-section">
@@ -226,6 +250,7 @@ const VerifyChef = () => {
             value={cookDetails?.cuisines}
             onChange={handleInputChange}
             placeholder="Enter cuisines"
+            required
           />
 
           <label>Veg / Non-Veg</label>
@@ -254,6 +279,7 @@ const VerifyChef = () => {
             value={cookDetails?.drivingLicenseNumber}
             onChange={handleInputChange}
             placeholder="Enter driving license number"
+            required
           />
 
           <label>License Expiry Date</label>
@@ -263,6 +289,7 @@ const VerifyChef = () => {
             name="licenseExpiryDate"
             value={cookDetails?.licenseExpiryDate}
             onChange={handleInputChange}
+            required
           />
 
           <label>Car Type</label>
@@ -271,6 +298,7 @@ const VerifyChef = () => {
             name="carType"
             value={cookDetails?.carType}
             onChange={handleInputChange}
+            required
           >
             <option value="">Select Car Type</option>
 
@@ -285,12 +313,13 @@ const VerifyChef = () => {
       <label>Date of Birth</label>
 
       <input
-  type="date"
-  name="dob"
-  value={cookDetails?.dob}
-  onChange={handleInputChange}
-  placeholder="Enter Date of Birth"
-/>
+        type="date"
+        name="dob"
+        value={cookDetails?.dob}
+        onChange={handleInputChange}
+        placeholder="Enter Date of Birth"
+        required
+      />
 
       <div className="additional-details mt-2">
         <label>Gender</label>
@@ -299,6 +328,7 @@ const VerifyChef = () => {
           name="gender"
           value={cookDetails?.gender}
           onChange={handleInputChange}
+          required
         >
           <option value="">Select Gender</option>
 
@@ -317,6 +347,7 @@ const VerifyChef = () => {
           value={cookDetails?.aadhar}
           onChange={handleInputChange}
           placeholder="Enter Aadhar card number"
+          required
         />
 
         <label>Current Address</label>
@@ -327,6 +358,7 @@ const VerifyChef = () => {
           value={cookDetails.address}
           onChange={handleInputChange}
           placeholder="Enter current address"
+          required
         />
 
         <label>Permanent Address</label>
@@ -337,6 +369,7 @@ const VerifyChef = () => {
           value={cookDetails.permanentAddress}
           onChange={handleInputChange}
           placeholder="Enter permanent address"
+          required
         />
 
         <label>Years of Experience</label>
@@ -347,6 +380,7 @@ const VerifyChef = () => {
           value={cookDetails?.experience}
           onChange={handleInputChange}
           placeholder="Enter years of experience"
+          required
         />
 
         <label>Category</label>
@@ -357,6 +391,7 @@ const VerifyChef = () => {
           value={cookDetails?.category}
           onChange={handleInputChange}
           placeholder="Enter category"
+          required
         />
 
         <label>Specialization / Sub Category</label>
@@ -376,6 +411,7 @@ const VerifyChef = () => {
           name="dateOfJoining"
           value={cookDetails?.dateOfJoining}
           onChange={handleInputChange}
+          required
         />
 
         <label>Languages</label>
@@ -386,6 +422,7 @@ const VerifyChef = () => {
           value={cookDetails?.languages}
           onChange={handleInputChange}
           placeholder="Enter languages (comma-separated)"
+          required
         />
       </div>
 
@@ -403,6 +440,7 @@ const VerifyChef = () => {
             name="bankDetails"
             accept=".pdf,.jpg,.jpeg,.png"
             onChange={handleInputChange}
+            required
           />
         </div>
 
@@ -410,24 +448,26 @@ const VerifyChef = () => {
           <label htmlFor="aadharCard">Aadhaar Card Photocopy Front</label>
 
           <input
-  type="file"
-  id="aadharFront"
-  name="aadharFront"
-  accept=".pdf,.jpg,.jpeg,.png"
-  onChange={handleInputChange}
-/>
+            type="file"
+            id="aadharFront"
+            name="aadharFront"
+            accept=".pdf,.jpg,.jpeg,.png"
+            onChange={handleInputChange}
+            required
+          />
         </div>
 
         <div className="file-input-group">
           <label htmlFor="aadharCard">Aadhaar Card Photocopy Back</label>
 
           <input
-  type="file"
-  id="aadharBack"
-  name="aadharBack"
-  accept=".pdf,.jpg,.jpeg,.png"
-  onChange={handleInputChange}
-/>
+            type="file"
+            id="aadharBack"
+            name="aadharBack"
+            accept=".pdf,.jpg,.jpeg,.png"
+            onChange={handleInputChange}
+            required
+          />
         </div>
 
         <div className="file-input-group">
@@ -439,6 +479,7 @@ const VerifyChef = () => {
             name="panCard"
             accept=".pdf,.jpg,.jpeg,.png"
             onChange={handleInputChange}
+            required
           />
         </div>
 
@@ -451,6 +492,7 @@ const VerifyChef = () => {
             name="drivingLicense"
             accept=".pdf,.jpg,.jpeg,.png"
             onChange={handleInputChange}
+            required
           />
         </div>
 
@@ -465,6 +507,7 @@ const VerifyChef = () => {
             name="currentAddressProof"
             accept=".pdf,.jpg,.jpeg,.png"
             onChange={handleInputChange}
+            required
           />
         </div>
       </div>

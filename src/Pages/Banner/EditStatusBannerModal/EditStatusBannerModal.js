@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,48 +14,52 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const EditDiscountStatusModal = ({
-  discount,  // Change to match parent prop name
+const EditStatusBannerModal = ({
+  banner,
   open,
   onClose,
   onStatusChange,
-  fetchDiscountData
+  fetchBanners,
 }) => {
-  const [status, setStatus] = useState(discount?.active_status || "active");
+  const [status, setStatus] = useState(banner?.activeStatus || "active");
   const [loading, setLoading] = useState(false);
 
+  // Update status when banner changes
+  useEffect(() => {
+    setStatus(banner?.activeStatus || "active");
+  }, [banner]);
+
   const handleStatusUpdate = async () => {
+    if (!banner) {
+      toast.error("No banner selected.");
+      return;
+    }
+
     setLoading(true);
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-      console.log("Discount data:", discount); // Debug log
-      
       const payload = {
-        discount: {
-          voucher_id: Number(discount?.voucher_id), // Ensure it's a number
-          active_status: status
-        }
+        banner_id: banner.id,
+        active_status: status,
       };
-      
-      console.log("Payload:", payload); // Debug log
-  
+
       const response = await axios.patch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount/status`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/cms/banners/status`,
         payload,
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-  
-      if (response?.status === 200 && response?.data?.success) {
-        onStatusChange(status);
-        toast.success("Discount status updated successfully!");
-        fetchDiscountData(); // Add this line to refresh data
+
+      if (response.status === 200 && response.data.success) {
+        toast.success("Banner status updated successfully!");
+        onStatusChange(banner.id, status); // Notify parent of change
+        fetchBanners(); // Refresh banners
       } else {
         toast.error(response.data.message || "Failed to update status.");
       }
     } catch (error) {
-      console.error("API Error:", error.response?.data); // Debug log
+      console.error("Error updating banner status:", error);
       toast.error("Error updating status. Please try again.");
     } finally {
       setLoading(false);
@@ -76,7 +80,7 @@ const EditDiscountStatusModal = ({
         },
       }}
     >
-      <DialogTitle>Edit Sub-Category Status</DialogTitle>
+      <DialogTitle>Edit Banner Status</DialogTitle>
       <DialogContent>
         <FormControl fullWidth margin="normal">
           <InputLabel id="status-label" shrink>
@@ -101,7 +105,7 @@ const EditDiscountStatusModal = ({
           onClick={handleStatusUpdate}
           disabled={loading}
         >
-         Save
+          {loading ? <CircularProgress size={24} /> : "Save"}
         </Button>
         <Button
           variant="outlined"
@@ -119,4 +123,4 @@ const EditDiscountStatusModal = ({
   );
 };
 
-export default EditDiscountStatusModal;
+export default EditStatusBannerModal;

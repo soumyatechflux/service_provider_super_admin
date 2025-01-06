@@ -95,7 +95,9 @@ const SupportPartnerTab = () => {
                   <td className="text-user">
                     <div className="status-div">
                       <span>{item.status === "open" ? "Open" : item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>
-                      <EditIcon onClick={() => handleEditStatus(item)} /> {/* Trigger modal */}
+                      <EditIcon onClick={() => handleEditStatus(item)} 
+                        style={{cursor:"pointer"}}
+                        /> {/* Trigger modal */}
                     </div>
                   </td>
                   <td className="text-user">

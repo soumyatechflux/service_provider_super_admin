@@ -12,7 +12,7 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
     email: "",
     years_of_experience: "",
     current_address: "",
-    category_id: "", // No default category selected
+    category_id: "",
   });
 
   const handleChange = (e) => {
@@ -20,17 +20,38 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSave = async () => {
-    if (
-      !formData.first_name ||
-      !formData.last_name ||
-      !formData.mobile.match(/^\d{10}$/) || // Example phone validation
-      !formData.years_of_experience ||
-      !formData.category_id
-    ) {
-      toast.error("Please fill in all required fields correctly.");
-      return;
+  const validateFields = () => {
+    const { first_name, last_name, mobile, email, years_of_experience, current_address, category_id } = formData;
+    if (!first_name || first_name.trim() === "") {
+      toast.error("First Name is required.");
+      return false;
     }
+    if (!last_name || last_name.trim() === "") {
+      toast.error("Last Name is required.");
+      return false;
+    }
+    if (!mobile || !/^\d{10}$/.test(mobile)) {
+      toast.error("Enter a valid 10-digit mobile number.");
+      return false;
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Enter a valid email address.");
+      return false;
+    }
+    if (!years_of_experience || isNaN(years_of_experience) || years_of_experience <= 0) {
+      toast.error("Years of Experience must be a positive number.");
+      return false;
+    }
+    
+    if (!category_id) {
+      toast.error("Category is required.");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSave = async () => {
+    if (!validateFields()) return;
   
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
@@ -53,23 +74,27 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
       );
   
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Registration failed.");
   
+      // Check if the API responded with success: false
+      if (data.success === false) {
+        toast.error(data.message || "An error occurred while registering the partner.");
+        return; // Stop further execution as registration failed
+      }
+  
+      // Success flow
       toast.success("Partner registered successfully!");
   
       if (typeof onSave === "function") {
         onSave(data.partner); // Pass the saved partner data to the parent component.
-      } else {
-        console.error("onSave prop is not defined or is not a function.");
       }
   
       getRestaurantTableData();
       handleCancel();
     } catch (error) {
-      toast.error(error.message);
+      // General error handling
+      toast.error(error.message || "Failed to register partner. Please try again.");
     }
   };
-  
   
   const handleCancel = () => {
     setFormData({
@@ -89,7 +114,7 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
 
   return (
     <>
-      {/* <ToastContainer /> */}
+      <ToastContainer />
       <div className="modal-overlay">
         <div className="modal-content" style={{ height: "80%", overflowY: "auto" }}>
           <h2>Register Partner</h2>
@@ -103,6 +128,7 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
               onChange={handleChange}
               placeholder="Enter first name"
               fullWidth
+              required
             />
           </div>
 
@@ -115,6 +141,7 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
               onChange={handleChange}
               placeholder="Enter last name"
               fullWidth
+              required
             />
           </div>
 
@@ -128,6 +155,7 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
               onChange={handleChange}
               placeholder="Enter mobile number"
               fullWidth
+              required
             />
           </div>
 
@@ -154,11 +182,12 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
               onChange={handleChange}
               placeholder="Enter years of experience"
               fullWidth
+              required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="current_address">Current Address (optional):</label>
+            <label htmlFor="current_address">Current Address:</label>
             <TextField
               id="current_address"
               name="current_address"
@@ -166,13 +195,14 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
               onChange={handleChange}
               placeholder="Enter current address"
               fullWidth
+              
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="category_id">Category:</label>
-            <FormControl fullWidth>
-              <InputLabel>Category</InputLabel>
+            <FormControl fullWidth required>
+              
               <Select
                 id="category_id"
                 name="category_id"

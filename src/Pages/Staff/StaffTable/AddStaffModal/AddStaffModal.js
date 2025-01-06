@@ -1,13 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-const AddStaffModal = ({ show, onClose, onSave,getStaffData }) => {
+const AddStaffModal = ({ show, onClose, onSave, getStaffData }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Reset form fields whenever the modal opens
+  useEffect(() => {
+    if (show) {
+      setName("");
+      setEmail("");
+      setMobile("");
+    }
+  }, [show]);
 
   const handleSubmit = async () => {
     if (!name || !email || !mobile) {
@@ -41,12 +50,9 @@ const AddStaffModal = ({ show, onClose, onSave,getStaffData }) => {
         }
       );
 
-      if (response.status === 200) {
-        toast.success("Staff added successfully!");
+      if (response.data.success) {
+        toast.success(response.data.message || "Staff added successfully!");
         onSave(response.data); // Update the parent component with the new staff
-        setName("");
-        setEmail("");
-        setMobile("");
         getStaffData();
         onClose();
       } else {

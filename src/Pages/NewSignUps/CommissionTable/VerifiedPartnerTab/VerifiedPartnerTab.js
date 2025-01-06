@@ -112,14 +112,14 @@ const VerifiedPartnerTab = ({
             <thead style={{ cursor: "default" }} className="heading_user">
               <tr style={{ cursor: "default" }}>
                 <th scope="col" style={{ width: "5%" }}>Sr.</th>
-                <th scope="col" style={{ width: "15%" }}>Name</th>
+                <th scope="col" style={{ width: "12%" }}>Name</th>
                 <th scope="col" style={{ width: "10%" }}>Category</th>
-                <th scope="col" style={{ width: "15%" }}>Email</th>
+                <th scope="col" style={{ width: "10%" }}>Email</th>
                 <th scope="col" style={{ width: "10%" }}>Phone</th>
                 <th scope="col" style={{ width: "5%" }}>YOE</th>
                 <th scope="col" style={{ width: "5%" }}>Address</th>
                 <th scope="col" style={{ width: "10%" }}>Sign-Up</th>
-                <th scope="col" style={{ width: "5%" }}>Verification</th>
+                <th scope="col" style={{ width: "5%" }}>Verify</th>
                 <th scope="col" style={{ width: "10%" }}>Status</th>
                 <th scope="col" style={{ width: "5%" }}>Action</th>
               </tr>

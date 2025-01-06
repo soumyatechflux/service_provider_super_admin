@@ -124,12 +124,12 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
   if (!show) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-overlay modal-overlay-role">
+      <div className="modal-content-role modal-content">
         <h2>Edit Role</h2>
 
         {/* Role Name Field */}
-        <div className="form-group">
+        <div className="form-group form-group-role">
           <label htmlFor="role-name">Role Name:</label>
           <input
             id="role-name"
@@ -144,7 +144,7 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
         </div>
 
         {/* Description Field */}
-        <div className="form-group">
+        <div className="form-group form-group-role">
           <label htmlFor="description">Description:</label>
           <textarea
             id="description"
@@ -160,9 +160,9 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
         </div>
 
         {/* Permissions with Select All */}
-        <div className="form-group">
+        <div className="form-group form-group-role">
           <label>Permissions:</label>
-          <div className="form-check form-check-all">
+          <div className="form-check form-check-role form-check-all">
             <input
               type="checkbox"
               className="form-check-input form-check-input-all"
@@ -200,7 +200,7 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
         </div>
 
         {/* Modal Actions */}
-        <div className="modal-actions">
+        <div className="modal-actions modal-actions-role">
           <button onClick={handleSave} className="btn btn-primary" disabled={loading}>
             {loading ? "Saving..." : "Save"}
           </button>
@@ -214,3 +214,4 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
 };
 
 export default EditRoleModal;
+

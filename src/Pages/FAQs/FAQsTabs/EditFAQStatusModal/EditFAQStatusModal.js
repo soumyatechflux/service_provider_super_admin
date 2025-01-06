@@ -14,43 +14,43 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const EditDiscountStatusModal = ({
-  discount,  // Change to match parent prop name
+const EditFAQStatusModal = ({
+  faq,  // Changed from "discount" to "faq" to match the CommonFAQsTab prop
   open,
   onClose,
   onStatusChange,
-  fetchDiscountData
 }) => {
-  const [status, setStatus] = useState(discount?.active_status || "active");
+  const [status, setStatus] = useState(faq?.active_status || "active");
   const [loading, setLoading] = useState(false);
+  console.log("Selected FAQ in Modal:", faq);
+
 
   const handleStatusUpdate = async () => {
     setLoading(true);
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-      console.log("Discount data:", discount); // Debug log
-      
+      console.log("FAQ data:", faq); // Debug log
+
       const payload = {
-        discount: {
-          voucher_id: Number(discount?.voucher_id), // Ensure it's a number
-          active_status: status
-        }
+        
+          faq_id: Number(faq?.faq_id),  // Ensure it's a number
+          active_status: status,
+        
       };
-      
+
       console.log("Payload:", payload); // Debug log
-  
+
       const response = await axios.patch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount/status`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/cms/faqs/status`,  // Adjusted URL endpoint
         payload,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
-  
+
       if (response?.status === 200 && response?.data?.success) {
-        onStatusChange(status);
-        toast.success("Discount status updated successfully!");
-        fetchDiscountData(); // Add this line to refresh data
+        onStatusChange(status);  // Notify parent component of status change
+        toast.success("FAQ status updated successfully!");
       } else {
         toast.error(response.data.message || "Failed to update status.");
       }
@@ -59,7 +59,7 @@ const EditDiscountStatusModal = ({
       toast.error("Error updating status. Please try again.");
     } finally {
       setLoading(false);
-      onClose();
+      onClose();  // Close the modal after the update
     }
   };
 
@@ -76,7 +76,7 @@ const EditDiscountStatusModal = ({
         },
       }}
     >
-      <DialogTitle>Edit Sub-Category Status</DialogTitle>
+      <DialogTitle>Edit FAQ Status</DialogTitle>
       <DialogContent>
         <FormControl fullWidth margin="normal">
           <InputLabel id="status-label" shrink>
@@ -101,7 +101,7 @@ const EditDiscountStatusModal = ({
           onClick={handleStatusUpdate}
           disabled={loading}
         >
-         Save
+          {loading ? <CircularProgress size={24} /> : "Save"}
         </Button>
         <Button
           variant="outlined"
@@ -119,4 +119,4 @@ const EditDiscountStatusModal = ({
   );
 };
 
-export default EditDiscountStatusModal;
+export default EditFAQStatusModal;

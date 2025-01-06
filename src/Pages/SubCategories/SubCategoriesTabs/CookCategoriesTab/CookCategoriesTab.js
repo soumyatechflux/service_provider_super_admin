@@ -15,7 +15,9 @@ const CookCategoriesTab = ({ category_id }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
-  const [showEditSubCategoryModal, setShowEditSubCategoryModal] =useState(false);
+  const [showEditSubCategoryModal, setShowEditSubCategoryModal] =
+    useState(false);
+  const [expandedDescriptions, setExpandedDescriptions] = useState({});
 
   const fetchSubCategoryData = async () => {
     try {
@@ -47,6 +49,13 @@ const CookCategoriesTab = ({ category_id }) => {
       toast.error("Failed to load sub-categories. Please try again.");
       setLoading(false);
     }
+  };
+
+  const handleToggleDescription = (id) => {
+    setExpandedDescriptions((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
   };
 
   const handleDeleteSubCategory = async (subCategory) => {
@@ -165,19 +174,40 @@ const CookCategoriesTab = ({ category_id }) => {
                   <th scope="row">{index + 1}.</th>
                   <td>{item.sub_category_name || "N/A"}</td>
                   <td>
-                  {item.image ? (
-                <img
-                  src={item.image} // Ensure this is the correct image URL
-                  alt={item.subCategoryName}
-                  style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                />
-              ) : (
-                "No image"
-              )}
+                    {item.image ? (
+                      <img
+                        src={item.image} // Ensure this is the correct image URL
+                        alt={item.subCategoryName}
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      "No image"
+                    )}
                   </td>
                   {/* New image cell */}
                   <td>{item.price || "N/A"}</td>
-                  <td>{item.description || "No description available."}</td>
+                  <td>
+                    {expandedDescriptions[item.id]
+                      ? item.description
+                      : item.description.split(" ").slice(0, 20).join(" ") +
+                        (item.description.split(" ").length > 20 ? "..." : "")}
+                    {item.description.split(" ").length > 20 && (
+                      <button
+                        onClick={() => handleToggleDescription(item.id)}
+                        className="btn btn-link p-0 ms-2"
+                        style={{boxShadow:"none"}}
+                      >
+                        {expandedDescriptions[item.id]
+                          ? "View Less"
+                          : "View More"}
+                      </button>
+                    )}
+                  </td>
+
                   <td>
                     <div className="status-div">
                       <span>

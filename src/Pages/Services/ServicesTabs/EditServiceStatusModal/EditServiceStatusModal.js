@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,43 +14,44 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const EditDiscountStatusModal = ({
-  discount,  // Change to match parent prop name
+const EditServiceStatusModal = ({
+  service,
   open,
   onClose,
   onStatusChange,
-  fetchDiscountData
+  fetchServices,
 }) => {
-  const [status, setStatus] = useState(discount?.active_status || "active");
+  const [status, setStatus] = useState(service?.active_status || "active");
   const [loading, setLoading] = useState(false);
+
+  // Update the status when the service prop changes
+  useEffect(() => {
+    if (service) {
+      setStatus(service.active_status);
+    }
+  }, [service]);
 
   const handleStatusUpdate = async () => {
     setLoading(true);
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-      console.log("Discount data:", discount); // Debug log
-      
+
       const payload = {
-        discount: {
-          voucher_id: Number(discount?.voucher_id), // Ensure it's a number
-          active_status: status
-        }
+        service_id: Number(service?.id),  // Ensure it's a number
+        active_status: status,
       };
-      
-      console.log("Payload:", payload); // Debug log
-  
+
       const response = await axios.patch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount/status`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/cms/services/status`, // Adjust URL endpoint
         payload,
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-  
+
       if (response?.status === 200 && response?.data?.success) {
-        onStatusChange(status);
-        toast.success("Discount status updated successfully!");
-        fetchDiscountData(); // Add this line to refresh data
+        onStatusChange(status); // Notify parent component of status change
+        toast.success("Service status updated successfully!");
       } else {
         toast.error(response.data.message || "Failed to update status.");
       }
@@ -59,14 +60,15 @@ const EditDiscountStatusModal = ({
       toast.error("Error updating status. Please try again.");
     } finally {
       setLoading(false);
-      onClose();
+      fetchServices(); // Refresh services list
+      onClose(); // Close the modal after update
     }
   };
 
   return (
     <Dialog
-      open={open}
-      onClose={onClose}
+      open={open} // Modal visibility controlled by this prop
+      onClose={onClose} // Close modal
       fullWidth
       maxWidth="sm"
       PaperProps={{
@@ -76,16 +78,14 @@ const EditDiscountStatusModal = ({
         },
       }}
     >
-      <DialogTitle>Edit Sub-Category Status</DialogTitle>
+      <DialogTitle>Edit Service Status</DialogTitle>
       <DialogContent>
         <FormControl fullWidth margin="normal">
-          <InputLabel id="status-label" shrink>
-            Status
-          </InputLabel>
+          <InputLabel id="status-label">Status</InputLabel>
           <Select
             labelId="status-label"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            value={status} // The status is bound to the state
+            onChange={(e) => setStatus(e.target.value)} // Update the status on change
             fullWidth
             label="Status"
           >
@@ -101,7 +101,7 @@ const EditDiscountStatusModal = ({
           onClick={handleStatusUpdate}
           disabled={loading}
         >
-         Save
+          {loading ? <CircularProgress size={24} /> : "Save"}
         </Button>
         <Button
           variant="outlined"
@@ -119,4 +119,4 @@ const EditDiscountStatusModal = ({
   );
 };
 
-export default EditDiscountStatusModal;
+export default EditServiceStatusModal;

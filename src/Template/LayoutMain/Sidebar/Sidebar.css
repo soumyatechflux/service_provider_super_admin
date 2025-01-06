@@ -5,7 +5,7 @@
   position: fixed;
   overflow-y: scroll;
   height: calc(100vh - 40px);
-  top: 53px;
+  top: 40px;
   transition: width 0.3s, transform 0.3s ease-in-out;
 }
 /* Hide scrollbar for Chrome, Safari, and Opera */
