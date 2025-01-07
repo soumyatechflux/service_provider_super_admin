@@ -9,6 +9,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
     price: "",
     description: "",
     image: null, // For file upload
+    imagePreview: "", // For storing the image preview URL
   });
   const [loading, setLoading] = useState(false);
 
@@ -19,6 +20,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
         price: initialData.price || "",
         description: initialData.description || "",
         image: null, // Reset to null as file uploads are not prefilled
+        imagePreview: initialData.image || "", // If there is an image, set the preview URL
       });
     }
   }, [initialData]);
@@ -29,7 +31,12 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
   };
 
   const handleFileChange = (e) => {
-    setFormData((prev) => ({ ...prev, image: e.target.files[0] }));
+    const file = e.target.files[0];
+    setFormData((prev) => ({
+      ...prev,
+      image: file,
+      imagePreview: URL.createObjectURL(file), // Generate the preview URL
+    }));
   };
 
   const handleSubmit = async () => {
@@ -73,7 +80,6 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
       setLoading(false);
     }
   };
-  
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -130,7 +136,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
           variant="outlined"
         />
 
-        {/* Image */}
+        {/* Image Upload */}
         <input
           type="file"
           id="image"
@@ -139,6 +145,17 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
           accept="image/*"
           style={{ marginTop: "16px", marginBottom: "16px", display: "block" }}
         />
+        
+        {/* Display image preview if available */}
+        {formData.imagePreview && (
+          <Box sx={{ mt: 2, mb: 2, textAlign: "center" }}>
+            <img
+              src={formData.imagePreview}
+              alt="Image Preview"
+              style={{ width: "100%", maxHeight: 200, objectFit: "cover" }}
+            />
+          </Box>
+        )}
 
         {/* Actions */}
         <Box display="flex" justifyContent="flex-end" mt={3}>

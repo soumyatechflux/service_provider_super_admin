@@ -81,9 +81,9 @@ const CommonCommissionTab = ({
                 <th scope="col" style={{ width: "15%" }}>
                   Amount Due
                 </th>
-                <th scope="col" style={{ width: "20%" }}>
+                {/* <th scope="col" style={{ width: "20%" }}>
                   Address
-                </th>
+                </th> */}
                 {/* <th scope="col" style={{ width: "15%" }}>
                   Booking Date
                 </th> */}
@@ -99,9 +99,10 @@ const CommonCommissionTab = ({
                   <td>{item.name || "Unknown"}</td>
                   <td>{item.category_name || "N/A"}</td>
                   <td>{item.total_partner_amount || "N/A"}</td>
-                  <td>
+                  {/* <td>
                     {item.current_address || "No current_address available."}
-                  </td>
+                  </td> */}
+                  
                   {/* <td>
                     {new Intl.DateTimeFormat("en-GB", {
                       day: "2-digit",

@@ -134,7 +134,9 @@ a {
   color: #fff; /* Text color on hover */
 }
 
-
+.sidebar.closed .menu-item svg {
+  font-size: 20px;
+}
 /* Tablet screens */
 @media (max-width: 1024px) {
   .sidebar {

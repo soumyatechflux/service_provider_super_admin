@@ -25,10 +25,10 @@ const EditStaffStatusModal = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("Staff Object:", staff);
-  }, [staff]);
-  
-  
+    if (open) {
+      setStatus(initialStatus || "active"); // Reset status when modal opens
+    }
+  }, [open, initialStatus]);
 
   const handleStatusUpdate = async () => {
     if (!staff?.id) {
@@ -36,18 +36,16 @@ const EditStaffStatusModal = ({
       onClose();
       return;
     }
-  
+
     setLoading(true);
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-  
+
       const payload = {
-       
-          staff_id: Number(staff?.id), // Use staff.id here
-          active_status: status,
-        
+        staff_id: Number(staff?.id), // Use staff.id here
+        active_status: status,
       };
-  
+
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/staff/status`,
         payload,
@@ -55,7 +53,7 @@ const EditStaffStatusModal = ({
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-  
+
       if (response?.status === 200 && response?.data?.success) {
         onStatusChange(status); // Notify parent of status change
         toast.success("Staff status updated successfully!");
@@ -70,7 +68,6 @@ const EditStaffStatusModal = ({
       onClose(); // Close the modal after API call
     }
   };
-  
 
   return (
     <Dialog

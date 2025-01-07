@@ -26,7 +26,7 @@ const StaffTable = ({}) => {
         "TokenForSuperAdminOfServiceProvider"
       );
       setLoading(true);
-
+  
       const response = await axios.get(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/staff`,
         {
@@ -35,9 +35,9 @@ const StaffTable = ({}) => {
           },
         }
       );
-
+  
       setLoading(false);
-
+  
       if (response?.status === 200) {
         const data = response?.data?.data || [];
         const normalizedData = data.map((item, index) => ({
@@ -45,9 +45,7 @@ const StaffTable = ({}) => {
           ...item,
         }));
         setDummy_Data(normalizedData);
-        toast.success("Staff fetched successfully", {
-          toastId: "staff-fetch-success",
-        });
+        // Removed the toast.success message
       } else {
         toast.error(response.data.message || "Failed to fetch staff.");
       }
@@ -56,6 +54,7 @@ const StaffTable = ({}) => {
       setLoading(false);
     }
   };
+  
 
   const handleSaveRole = (newRole) => {
     setDummy_Data((prevData) => [

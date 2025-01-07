@@ -28,7 +28,7 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
 
   const handleSave = async () => {
     const currentDate = new Date().toISOString().split("T")[0]; // Get today's date in 'YYYY-MM-DD' format
-    
+  
     if (
       !formData.sub_category_name ||
       !formData.price ||
@@ -40,6 +40,16 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
       !formData.end_date
     ) {
       toast.error("Please fill in all fields.");
+      return;
+    }
+  
+    if (formData.price <= 0) {
+      toast.error("Discount value must be greater than 0.");
+      return;
+    }
+  
+    if (formData.limit <= 0) {
+      toast.error("Usage limit must be greater than 0.");
       return;
     }
   

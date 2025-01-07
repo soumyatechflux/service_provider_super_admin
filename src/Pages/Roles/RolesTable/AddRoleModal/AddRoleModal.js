@@ -118,6 +118,7 @@ const AddRoleModal = ({ show, onClose, onSave }) => {
         toast.success("Role added successfully!");
         onSave(payload.role);
         onClose();
+        window.location.reload(); // Refresh the page
       } else {
         toast.error(response.data.message || "Failed to add role.");
       }

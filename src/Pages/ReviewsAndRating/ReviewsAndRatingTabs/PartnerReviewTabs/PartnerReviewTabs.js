@@ -116,39 +116,47 @@ const PartnerReviewTabs = () => {
               </tr>
             </thead>
             <tbody>
-              {reviewData.map((item, index) => (
-                <tr key={item.id}>
-                  <th scope="row">{index + 1}.</th>
-                  <td>{item.partner?.name || "N/A"}</td>
-                  <td>{item.customer?.name || "N/A"}</td>
-                  <td style={{ fontWeight: "bold" }}>{item.rating || "N/A"}</td>
-                  <td>{item.review || "No review provided."}</td>
-                  <td>
-                    {new Intl.DateTimeFormat("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    }).format(new Date(item.created_at))}
-                  </td>
-                  <td>
-                    {new Intl.DateTimeFormat("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    }).format(new Date(item.updated_at))}
-                  </td>
-                  <td className="action-btn-trash">
-                    <i
-                      className="fa fa-trash text-danger"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        setSelectedReview(item);
-                        setShowModal(true);
-                      }}
-                    ></i>
+              {reviewData.length > 0 ? (
+                reviewData.map((item, index) => (
+                  <tr key={item.id}>
+                    <th scope="row">{index + 1}.</th>
+                    <td>{item.partner?.name || "N/A"}</td>
+                    <td>{item.customer?.name || "N/A"}</td>
+                    <td style={{ fontWeight: "bold" }}>{item.rating || "N/A"}</td>
+                    <td>{item.review || "No review provided."}</td>
+                    <td>
+                      {new Intl.DateTimeFormat("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }).format(new Date(item.created_at))}
+                    </td>
+                    <td>
+                      {new Intl.DateTimeFormat("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }).format(new Date(item.updated_at))}
+                    </td>
+                    <td className="action-btn-trash">
+                      <i
+                        className="fa fa-trash text-danger"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setSelectedReview(item);
+                          setShowModal(true);
+                        }}
+                      ></i>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="text-center">
+                    No reviews available.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -166,3 +174,4 @@ const PartnerReviewTabs = () => {
 };
 
 export default PartnerReviewTabs;
+

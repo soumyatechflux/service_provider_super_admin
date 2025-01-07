@@ -152,13 +152,13 @@ const EditBannerModal = ({ show, onClose, onSave, bannerData, fetchBanners }) =>
                 <img
                   src={URL.createObjectURL(formData.image)}
                   alt="Preview"
-                  style={{ width: "100px", height: "auto", marginTop: "10px" }}
+                  style={{ width: "100%", height: "auto", marginTop: "10px" }}
                 />
               ) : bannerData?.image ? (
                 <img
                   src={bannerData.image}
                   alt="Current"
-                  style={{ width: "100px", height: "auto", marginTop: "10px" }}
+                  style={{ width: "100%", height: "auto", marginTop: "10px" }}
                 />
               ) : null}
             </div>

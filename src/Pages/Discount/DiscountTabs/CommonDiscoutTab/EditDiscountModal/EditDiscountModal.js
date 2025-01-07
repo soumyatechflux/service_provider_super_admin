@@ -11,7 +11,7 @@ const EditDiscountModal = ({
   fetchDiscountData,
 }) => {
   const [formData, setFormData] = useState({
-    sub_category_name: "", // Store the discount type ("percentage" or "flat")
+    sub_category_name: "",
     price: "",
     limit: "",
     minimum_price: "",
@@ -25,7 +25,7 @@ const EditDiscountModal = ({
   useEffect(() => {
     if (initialData) {
       setFormData({
-        sub_category_name: initialData.discount_type || "", // Map to initial data discount type
+        sub_category_name: initialData.discount_type || "",
         price: initialData.discount_value || "",
         limit: initialData.usage_limit || "",
         minimum_price: initialData.minimum_order_amount || "",
@@ -43,14 +43,45 @@ const EditDiscountModal = ({
   };
 
   const handleSave = async () => {
+    const today = new Date().toISOString().split("T")[0];
+  
+    // Validate form data
+    if (!formData.sub_category_name) {
+      toast.error("Please select a discount type.");
+      return;
+    }
+    if (!formData.price || formData.price <= 0) {
+      toast.error("Discount value must be greater than 0.");
+      return;
+    }
+    if (!formData.limit || formData.limit <= 0) {
+      toast.error("Usage limit must be greater than 0.");
+      return;
+    }
+    if (formData.minimum_price < 0) {
+      toast.error("Minimum price must be greater than or equal to 0.");
+      return;
+    }
+    if (formData.start_date && formData.start_date < today) {
+      toast.error("Start date cannot be in the past.");
+      return;
+    }
+    if (formData.end_date && formData.end_date < today) {
+      toast.error("End date cannot be in the past.");
+      return;
+    }
+    if (formData.start_date && formData.end_date && formData.start_date > formData.end_date) {
+      toast.error("Start date cannot be later than the end date.");
+      return;
+    }
+  
     setLoading(true);
-
+  
     try {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
-
-      // Build the payload for updating the discount
+  
       const payload = {
         discount: {
           voucher_id: initialData.voucher_id,
@@ -64,7 +95,7 @@ const EditDiscountModal = ({
           description: formData.description || null,
         },
       };
-
+  
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount`,
         payload,
@@ -74,21 +105,7 @@ const EditDiscountModal = ({
           },
         }
       );
-
-      //   if (response?.status === 200 && response?.data?.discount) {
-      //     toast.success("Discount updated successfully!");
-      //     await fetchDiscountData(); // Wait for data refresh
-      //     onSave(response.data.discount); // Close modal with updated data
-
-      //   } else {
-      //     toast.error(response.data?.message || "Failed to update the discount.");
-      //   }
-      // } catch (error) {
-      //   toast.error("An error occurred while updating the discount.");
-      // } finally {
-      //   setLoading(false);
-      //   onClose(); // Close modal
-      // }
+  
       if (response?.status === 200) {
         toast.success("Discount updated successfully!");
         await fetchDiscountData();
@@ -97,12 +114,13 @@ const EditDiscountModal = ({
         throw new Error(response.data?.message || "Failed to update the discount.");
       }
     } catch (error) {
-      console.error('Update error:', error);
+      console.error("Update error:", error);
       toast.error(error.message || "An error occurred while updating the discount.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   if (!show) return null;
 

@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import Loader from "../../Loader/Loader";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditCustomerModal from "../EditCustomersModal/EditCustomersModal";
 
 const CustomersTable = () => {
@@ -11,6 +10,9 @@ const CustomersTable = () => {
   const [loading, setLoading] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const entriesPerPage = 10;
 
   // Fetch restaurant data with error handling
   const getRestaurantTableData = useCallback(async () => {
@@ -56,98 +58,150 @@ const CustomersTable = () => {
     setSelectedRestaurant(null);
   };
 
+  // Pagination logic
+  const totalPages = Math.ceil(restaurants.length / entriesPerPage);
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = restaurants.slice(indexOfFirstEntry, indexOfLastEntry);
+
+  const getPageRange = () => {
+    let start = currentPage - 1;
+    let end = currentPage + 1;
+
+    if (start < 1) {
+      start = 1;
+      end = Math.min(3, totalPages);
+    }
+
+    if (end > totalPages) {
+      end = totalPages;
+      start = Math.max(1, totalPages - 2);
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  };
+
+  const renderPaginationItems = () => {
+    const pageRange = getPageRange();
+
+    return (
+      <ul className="pagination mb-0" style={{ gap: "5px" }}>
+        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage(1)}
+            style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
+          >
+            First
+          </button>
+        </li>
+
+        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
+          >
+            Previous
+          </button>
+        </li>
+
+        {pageRange.map((number) => (
+          <li
+            key={number}
+            className={`page-item ${currentPage === number ? "active" : ""}`}
+          >
+            <button
+              className="page-link"
+              onClick={() => setCurrentPage(number)}
+              style={{
+                backgroundColor: currentPage === number ? "#007bff" : "white",
+                color: currentPage === number ? "white" : "#007bff",
+              }}
+            >
+              {number}
+            </button>
+          </li>
+        ))}
+
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+          >
+            Next
+          </button>
+        </li>
+
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage(totalPages)}
+            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+          >
+            Last
+          </button>
+        </li>
+      </ul>
+    );
+  };
+
   return (
     <div className="Restro-Table-Main p-3">
       {loading ? (
         <Loader />
       ) : (
-        <div className="table-responsive mb-5">
-          <table
-            style={{ cursor: "default" }}
-            className="table table-bordered table-user"
-          >
-            <thead style={{ cursor: "default" }} className="heading_user">
-              <tr style={{ cursor: "default" }}>
-                <th scope="col" style={{ width: "5%" }}>
-                  Sr.
-                </th>
-                <th scope="col" style={{ width: "15%" }}>
-                  Name
-                </th>
-                <th scope="col" style={{ width: "15%" }}>
-                  Email
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Phone
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Status
-                </th>
-                {/* <th scope="col" style={{ width: "5%" }}>
-                  Action
-                </th> */}
-              </tr>
-            </thead>
-            <tbody style={{ cursor: "default" }}>
-              {restaurants.map((restaurant, index) => (
-                <tr style={{ cursor: "default" }} key={restaurant.id}>
-                  <th scope="row" className="id-user">
-                    {index + 1}.
-                  </th>
-                  <td className="text-user">{restaurant.name}</td>
-
-                  <td className="text-user">
-                    {restaurant.email ? (
-                      restaurant.email
-                    ) : (
-                      <span style={{ color: "red", fontWeight: "bold" }}>
-                        -
-                      </span>
-                    )}
-                  </td>
-
-                  <td className="text-user">{restaurant.mobile}</td>
-
-                  <td className={`status ${restaurant.active_status}`}>
-                    <div
-                      className={`status-background-${restaurant.active_status}`}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <span>
-                        {restaurant.active_status === "active"
-                          ? "Active"
-                          : "In-Active"}
-                      </span>
+        <>
+          <div className="table-responsive mb-5">
+            <table className="table table-bordered table-user">
+              <thead>
+                <tr>
+                  <th scope="col" style={{ width: "5%" }}>Sr.</th>
+                  <th scope="col" style={{ width: "15%" }}>Name</th>
+                  <th scope="col" style={{ width: "15%" }}>Email</th>
+                  <th scope="col" style={{ width: "10%" }}>Phone</th>
+                  <th scope="col" style={{ width: "10%" }}>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentEntries.map((restaurant, index) => (
+                  <tr key={restaurant.id}>
+                    <th scope="row">{indexOfFirstEntry + index + 1}.</th>
+                    <td>{restaurant.name}</td>
+                    <td>{restaurant.email || "-"}</td>
+                    <td>{restaurant.mobile}</td>
+                    <td className={`status ${restaurant.active_status}`}>
                       <div
+                        className={`status-background-${restaurant.active_status}`}
                         onClick={() => handleRestaurantClick(restaurant)}
-                        style={{
-                          cursor: "pointer",
-                          opacity: 1,
-                        }}
+                        style={{ cursor: "pointer" }}
                       >
                         <EditIcon />
                       </div>
-                    </div>
-                  </td>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-                  {/* <td
-                    className="edit_users disabled action-btn-trash"
-                    style={{
-                      cursor: "not-allowed",
-                      opacity: 0.6,
-                    }}
-                  >
-                    <DeleteIcon style={{ color: "gray" }} />
-                  </td> */}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+          {/* Pagination Controls */}
+          <nav
+            aria-label="Page navigation"
+            className="d-flex justify-content-center"
+          >
+            {renderPaginationItems()}
+          </nav>
+        </>
       )}
 
       {showDetailsModal && (

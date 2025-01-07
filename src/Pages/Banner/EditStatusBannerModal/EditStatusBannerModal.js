@@ -29,6 +29,13 @@ const EditStatusBannerModal = ({
     setStatus(banner?.activeStatus || "active");
   }, [banner]);
 
+  // Reset status when modal is closed
+  useEffect(() => {
+    if (!open) {
+      setStatus(banner?.activeStatus || "active"); // Reset to initial status or default
+    }
+  }, [open, banner]);
+
   const handleStatusUpdate = async () => {
     if (!banner) {
       toast.error("No banner selected.");

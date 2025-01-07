@@ -1,17 +1,24 @@
-import { BarChart, People, Settings } from "@mui/icons-material";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import CategoryIcon from "@mui/icons-material/Category";
-import HelpIcon from "@mui/icons-material/Help";
-import ImageIcon from "@mui/icons-material/Image";
-import InfoIcon from "@mui/icons-material/Info";
-import LocalOfferIcon from "@mui/icons-material/LocalOffer";
-import PriceChangeIcon from "@mui/icons-material/PriceChange";
-import WorkIcon from "@mui/icons-material/Work";
+import {
+  BarChart,
+  People,
+  Settings,
+  AttachMoney,
+  CalendarToday,
+  Category,
+  Help,
+  Image,
+  Info,
+  LocalOffer,
+  PriceChange,
+  Work,
+  Home,
+  Person,
+  StarHalf,
+  GridView,
+  QuestionAnswer,
+  AccountBox,
+} from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
-import { FaQuestionCircle, FaStarHalfAlt, FaThLarge, FaUser } from "react-icons/fa";
-import { HiOutlineHome } from "react-icons/hi2";
-import { LiaMoneyBillWaveSolid } from "react-icons/lia";
 import { Link, useLocation } from "react-router-dom";
 import "./Sidebar.css";
 
@@ -55,25 +62,25 @@ const Sidebar = ({ isOpen }) => {
   };
 
   const iconMapping = {
-    1: <HiOutlineHome />,
-    2: <LiaMoneyBillWaveSolid />,
-    3: <FaUser />,
-    4: <FaQuestionCircle />,
-    5: <FaStarHalfAlt />,
-    6: <FaThLarge />,
-    7: <CategoryIcon />,
-    8: <AttachMoneyIcon />,
-    9: <PriceChangeIcon />,
-    10: <LocalOfferIcon />,
-    11: <CalendarTodayIcon />,
+    1: <Home />,
+    2: <AttachMoney />,
+    3: <Person />,
+    4: <QuestionAnswer />,
+    5: <StarHalf />,
+    6: <GridView />,
+    7: <Category />,
+    8: <AttachMoney />,
+    9: <PriceChange />,
+    10: <LocalOffer />,
+    11: <CalendarToday />,
     12: <Settings />,
-    13: <Settings />,
+    13: <AccountBox />, // Different icon for role
     14: <People />,
     15: <BarChart />,
-    16: <ImageIcon />,
-    17: <WorkIcon />,
-    18: <HelpIcon />,
-    19: <InfoIcon />,
+    16: <Image />,
+    17: <Work />,
+    18: <Help />,
+    19: <Info />,
   };
 
   return (
@@ -89,7 +96,7 @@ const Sidebar = ({ isOpen }) => {
                   className={`menu-item ${activeItem === itemPath ? "active" : ""}`}
                   onClick={() => handleItemClick(itemPath)}
                 >
-                  {iconMapping[permission_id]}
+                  {iconMapping[permission_id] || <Info />}
                   <span>{permission_name}</span>
                 </li>
               </Link>

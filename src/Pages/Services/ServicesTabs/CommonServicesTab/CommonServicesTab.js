@@ -63,7 +63,7 @@ const CommonServicesTab = ({ categoryId, subCategoryId }) => {
         }
       );
       if (response.data.success) {
-        fetchServices(); 
+        fetchServices();
       } else {
         console.error("Failed to add service:", response.data.message);
       }
@@ -79,7 +79,7 @@ const CommonServicesTab = ({ categoryId, subCategoryId }) => {
       [id]: !prevState[id],
     }));
   };
-  
+
 
   const handleEditClick = (service) => {
     setSelectedService(service);
@@ -171,30 +171,31 @@ const CommonServicesTab = ({ categoryId, subCategoryId }) => {
                       />
                     </td>
                     <td>
-          {expandedDescriptions[service.id]
-            ? service.description
-            : service.description.split(" ").slice(0, 20).join(" ") +
-              (service.description.split(" ").length > 20 ? "..." : "")}
-          {service.description.split(" ").length > 20 && (
-            <button
-              onClick={() => handleToggleDescription(service.id)}
-              className="btn btn-link p-0 ms-2"
-              style={{boxShadow:"none"}}
-            >
-              {expandedDescriptions[service.id] ? "View Less" : "View More"}
-            </button>
-          )}
-        </td>
-                    <td>{service.url}</td> 
+                      {expandedDescriptions[service.id]
+                        ? service.description
+                        : service.description.split(" ").slice(0, 20).join(" ") +
+                        (service.description.split(" ").length > 20 ? "..." : "")}
+                      {service.description.split(" ").length > 20 && (
+                        <button
+                          onClick={() => handleToggleDescription(service.id)}
+                          className="btn btn-link p-0 ms-2"
+                          style={{ boxShadow: "none" }}
+                        >
+                          {expandedDescriptions[service.id] ? "View Less" : "View More"}
+                        </button>
+                      )}
+                    </td>
+                    <td>{service.url}</td>
                     <td>{service.sub_category_id}</td>
                     <td>
-                      <div className="status-div">
-                        {service.active_status}
+                      <div className="status-div" style={{gap:"10px"}}>
+                        {service.active_status.charAt(0).toUpperCase() + service.active_status.slice(1)}
                         <EditIcon
-                          onClick={() => handleEditStatusClick(service)} 
+                          onClick={() => handleEditStatusClick(service)}
                           style={{ cursor: "pointer", marginRight: "10px" }}
                         />
                       </div>
+
                     </td>
                     <td>
                       <div className="status-div">
@@ -238,12 +239,12 @@ const CommonServicesTab = ({ categoryId, subCategoryId }) => {
         service={selectedService}
       />
 
-<DeleteServiceModal
-  show={showDeleteModal}
-  onClose={() => setShowDeleteModal(false)}
-  onDelete={() => handleDeleteService(selectedService.id)} // Pass the correct function to handle deletion
-  serviceId={selectedService ? selectedService.id : null}
-/>
+      <DeleteServiceModal
+        show={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onDelete={() => handleDeleteService(selectedService.id)} // Pass the correct function to handle deletion
+        serviceId={selectedService ? selectedService.id : null}
+      />
 
 
       <EditServiceStatusModal

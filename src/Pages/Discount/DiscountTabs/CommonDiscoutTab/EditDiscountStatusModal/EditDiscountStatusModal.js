@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -15,7 +15,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const EditDiscountStatusModal = ({
-  discount,  // Change to match parent prop name
+  discount, 
   open,
   onClose,
   onStatusChange,
@@ -24,38 +24,40 @@ const EditDiscountStatusModal = ({
   const [status, setStatus] = useState(discount?.active_status || "active");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (discount) {
+      setStatus(discount.active_status || "active");
+    }
+  }, [discount, open]);
+
   const handleStatusUpdate = async () => {
     setLoading(true);
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-      console.log("Discount data:", discount); // Debug log
-      
       const payload = {
         discount: {
-          voucher_id: Number(discount?.voucher_id), // Ensure it's a number
-          active_status: status
-        }
+          voucher_id: Number(discount?.voucher_id),
+          active_status: status,
+        },
       };
-      
-      console.log("Payload:", payload); // Debug log
-  
+
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount/status`,
         payload,
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-  
+
       if (response?.status === 200 && response?.data?.success) {
         onStatusChange(status);
         toast.success("Discount status updated successfully!");
-        fetchDiscountData(); // Add this line to refresh data
+        fetchDiscountData();
       } else {
         toast.error(response.data.message || "Failed to update status.");
       }
     } catch (error) {
-      console.error("API Error:", error.response?.data); // Debug log
+      console.error("API Error:", error.response?.data);
       toast.error("Error updating status. Please try again.");
     } finally {
       setLoading(false);
@@ -63,10 +65,15 @@ const EditDiscountStatusModal = ({
     }
   };
 
+  const handleCancel = () => {
+    setStatus(discount?.active_status || "active");
+    onClose();
+  };
+
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleCancel}
       fullWidth
       maxWidth="sm"
       PaperProps={{
@@ -76,7 +83,7 @@ const EditDiscountStatusModal = ({
         },
       }}
     >
-      <DialogTitle>Edit Sub-Category Status</DialogTitle>
+      <DialogTitle>Edit Discount Status</DialogTitle>
       <DialogContent>
         <FormControl fullWidth margin="normal">
           <InputLabel id="status-label" shrink>
@@ -101,11 +108,11 @@ const EditDiscountStatusModal = ({
           onClick={handleStatusUpdate}
           disabled={loading}
         >
-         Save
+          {loading ? <CircularProgress size={24} /> : "Save"}
         </Button>
         <Button
           variant="outlined"
-          onClick={onClose}
+          onClick={handleCancel}
           style={{
             backgroundColor: "rgb(223, 22, 22)",
             color: "white",

@@ -152,7 +152,7 @@ const CookCategoriesTab = ({ category_id }) => {
                 <th scope="col" style={{ width: "20%" }}>
                   Description
                 </th>
-                <th scope="col" style={{ width: "10%" }}>
+                <th scope="col" style={{ width: "15%" }}>
                   Active Status
                 </th>
                 <th scope="col" style={{ width: "9%" }}>

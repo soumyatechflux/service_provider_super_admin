@@ -20,6 +20,8 @@ const CommonDiscountTab = () => {
   const [selectedDiscount, setSelectedDiscount] = useState(null);
   const [showEditStatusModal, setShowEditStatusModal] = useState(false);
 
+  const [expandedDescriptions, setExpandedDescriptions] = useState({});
+
   const fetchDiscountData = async () => {
     try {
       const token = sessionStorage.getItem(
@@ -51,13 +53,20 @@ const CommonDiscountTab = () => {
     fetchDiscountData();
   }, []);
 
+  const handleToggleDescription = (id) => {
+    setExpandedDescriptions((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   const handleOpenStatusModal = (discount) => {
     setSelectedDiscount(discount);
-    setShowEditStatusModal(true); 
+    setShowEditStatusModal(true);
   };
 
   const handleEdit = (item) => {
-    setSelectedItem(item); 
+    setSelectedItem(item);
     setShowEditModal(true);
   };
 
@@ -73,13 +82,13 @@ const CommonDiscountTab = () => {
     setSelectedItem(null);
     setSelectedDiscount(null);
   };
-  
+
   const handleSaveEdit = async (updatedItem) => {
     try {
       await fetchDiscountData();
     } catch (error) {
-      console.error('Error refreshing data:', error);
-      toast.error('Failed to refresh data');
+      console.error("Error refreshing data:", error);
+      toast.error("Failed to refresh data");
     }
   };
 
@@ -157,7 +166,7 @@ const CommonDiscountTab = () => {
                 <th scope="col" style={{ width: "10%" }}>
                   Description
                 </th>
-                <th scope="col" style={{ width: "10%" }}>
+                <th scope="col" style={{ width: "15%" }}>
                   Status
                 </th>
                 <th scope="col" style={{ width: "10%" }}>
@@ -195,7 +204,24 @@ const CommonDiscountTab = () => {
                         }).format(new Date(item.end_date))
                       : "N/A"}
                   </td>
-                  <td>{item.description || "N/A"}</td>
+                  <td>
+                    {expandedDescriptions[item.id]
+                      ? item.description
+                      : item.description.split(" ").slice(0, 10).join(" ") +
+                        (item.description.split(" ").length > 10 ? "..." : "")}
+                    {item.description.split(" ").length > 10 && (
+                      <button
+                        onClick={() => handleToggleDescription(item.id)}
+                        className="btn btn-link p-0 ms-2"
+                        style={{ boxShadow: "none" }}
+                      >
+                        {expandedDescriptions[item.id]
+                          ? "View Less"
+                          : "View More"}
+                      </button>
+                    )}
+                  </td>
+
                   <td>
                     <div className="status-div">
                       <span>
@@ -209,7 +235,9 @@ const CommonDiscountTab = () => {
                       />
                     </div>
                   </td>
-                  <td>{item.used_count === 0 ? "0" : item.used_count || "N/A"}</td>
+                  <td>
+                    {item.used_count === 0 ? "0" : item.used_count || "N/A"}
+                  </td>
                   <td>
                     <div className="status-div">
                       <EditIcon
@@ -248,7 +276,7 @@ const CommonDiscountTab = () => {
         onClose={handleCloseModals}
         onSave={handleSaveEdit}
         initialData={selectedItem}
-        fetchDiscountData={fetchDiscountData} 
+        fetchDiscountData={fetchDiscountData}
       />
 
       <DeleteDiscountModal
@@ -262,7 +290,7 @@ const CommonDiscountTab = () => {
         discount={selectedDiscount}
         onClose={handleCloseModals}
         onStatusChange={(status) => console.log("Edit Status", status)}
-        fetchDiscountData={fetchDiscountData} 
+        fetchDiscountData={fetchDiscountData}
       />
     </div>
   );

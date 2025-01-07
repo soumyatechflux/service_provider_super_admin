@@ -18,7 +18,7 @@ const EditRoleStatusModal = ({
   open,
   onClose,
   onStatusChange,
-  role, // Use 'role' instead of 'discount'
+  role,
   initialStatus,
 }) => {
   const [status, setStatus] = useState(initialStatus || "active");
@@ -44,7 +44,7 @@ const EditRoleStatusModal = ({
 
       const payload = {
         role: {
-          role_id: Number(role?.role_id), // Ensure it's a number
+          role_id: Number(role?.role_id),
           active_status: status,
         },
       };
@@ -58,24 +58,29 @@ const EditRoleStatusModal = ({
       );
 
       if (response?.status === 200 && response?.data?.success) {
-        onStatusChange(status); // Call onStatusChange passed from parent
+        onStatusChange(status);
         toast.success("Role status updated successfully!");
       } else {
         toast.error(response?.data?.message || "Failed to update status.");
       }
     } catch (error) {
-      console.error("API Error:", error.response?.data); // Debug log
+      console.error("API Error:", error.response?.data);
       toast.error("Error updating status. Please try again.");
     } finally {
       setLoading(false);
-      onClose(); // Close the modal after API call
+      onClose();
     }
+  };
+
+  const handleCancel = () => {
+    setStatus(initialStatus || "active"); // Reset the status to initialStatus or default to "active"
+    onClose();
   };
 
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleCancel}
       fullWidth
       maxWidth="sm"
       PaperProps={{
@@ -114,7 +119,7 @@ const EditRoleStatusModal = ({
         </Button>
         <Button
           variant="outlined"
-          onClick={onClose}
+          onClick={handleCancel}
           style={{
             backgroundColor: "rgb(223, 22, 22)",
             color: "white",

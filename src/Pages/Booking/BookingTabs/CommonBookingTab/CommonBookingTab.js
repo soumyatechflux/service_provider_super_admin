@@ -107,6 +107,25 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
 
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
+        {/* First Page Button */}
+        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage(1)}
+            style={{
+              border: "1px solid #dee2e6",
+              borderRadius: "4px",
+              padding: "8px 12px",
+              color: currentPage === 1 ? "#6c757d" : "#007bff",
+              backgroundColor: "white",
+              cursor: currentPage === 1 ? "not-allowed" : "pointer",
+            }}
+          >
+            First
+          </button>
+        </li>
+
+        {/* Previous Page Button */}
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
           <button
             className="page-link"
@@ -124,6 +143,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
           </button>
         </li>
 
+        {/* Page Number Buttons */}
         {pageRange.map((number) => (
           <li
             key={number}
@@ -146,16 +166,11 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
           </li>
         ))}
 
-        <li
-          className={`page-item ${
-            currentPage === totalPages ? "disabled" : ""
-          }`}
-        >
+        {/* Next Page Button */}
+        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
           <button
             className="page-link"
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             style={{
               border: "1px solid #dee2e6",
               borderRadius: "4px",
@@ -166,6 +181,24 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
             }}
           >
             Next
+          </button>
+        </li>
+
+        {/* Last Page Button */}
+        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage(totalPages)}
+            style={{
+              border: "1px solid #dee2e6",
+              borderRadius: "4px",
+              padding: "8px 12px",
+              color: currentPage === totalPages ? "#6c757d" : "#007bff",
+              backgroundColor: "white",
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            }}
+          >
+            Last
           </button>
         </li>
       </ul>
@@ -277,15 +310,6 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
       )}
 
       {/* Edit Status Modal */}
-      {/* <EditStatusModal
-          open={showEditModal}
-          onClose={handleCloseEditModal}
-          bookingId={selectedBookingId}
-          partnerId={partnerId}
-          categoryId={categoryId}
-          getCommissionData={getCommissionData}
-          onStatusUpdate={handleStatusUpdate}
-        /> */}
       <EditStatusModal
         open={showEditModal}
         onClose={handleCloseEditModal}

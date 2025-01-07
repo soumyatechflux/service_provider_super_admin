@@ -19,8 +19,16 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
     image3: null,
     image4: null,
   });
-  const [loading, setLoading] = useState(false); // Loader state for API request
-  const [isSubmitting, setIsSubmitting] = useState(false); // Track form submission status
+
+  const [imagePreviews, setImagePreviews] = useState({
+    image1: null,
+    image2: null,
+    image3: null,
+    image4: null,
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -38,6 +46,13 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
         image3: null,
         image4: null,
       });
+
+      setImagePreviews({
+        image1: initialData.image1 || null,
+        image2: initialData.image2 || null,
+        image3: initialData.image3 || null,
+        image4: initialData.image4 || null,
+      });
     }
   }, [initialData]);
 
@@ -48,12 +63,17 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
 
   const handleFileChange = (e) => {
     const { name } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: e.target.files[0] }));
+    const file = e.target.files[0];
+    setFormData((prev) => ({ ...prev, [name]: file }));
+    setImagePreviews((prev) => ({
+      ...prev,
+      [name]: file ? URL.createObjectURL(file) : null,
+    }));
   };
 
   const handleSubmit = async () => {
-    setLoading(true); // Show loader during API request
-    setIsSubmitting(true); // Indicate that submission is in progress
+    setLoading(true);
+    setIsSubmitting(true);
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
@@ -93,8 +113,8 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
 
       if (response?.status === 200 && response?.data?.success) {
         toast.success("About Us data updated successfully.");
-        onSubmit(); // Refresh the parent data
-        onClose(); // Close the modal
+        onSubmit();
+        onClose();
         fetchAboutUsData();
       } else {
         toast.error(response?.data?.message || "Failed to update About Us data.");
@@ -102,8 +122,8 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
     } catch (error) {
       toast.error("Error updating About Us data. Please try again.");
     } finally {
-      setLoading(false); // Hide loader after the API call finishes
-      setIsSubmitting(false); // Reset the form submission state
+      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -127,7 +147,6 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
       >
         <h2>Edit About Us Data</h2>
 
-        {/* Title */}
         <TextField
           id="title"
           name="title"
@@ -139,7 +158,6 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
           variant="outlined"
         />
 
-        {/* Sub Title */}
         <TextField
           id="subTitle"
           name="subTitle"
@@ -151,7 +169,6 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
           variant="outlined"
         />
 
-        {/* Description 1 */}
         <TextField
           id="description1"
           name="description1"
@@ -165,7 +182,6 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
           variant="outlined"
         />
 
-        {/* Description 2 */}
         <TextField
           id="description2"
           name="description2"
@@ -179,7 +195,6 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
           variant="outlined"
         />
 
-        {/* Our Mission */}
         <TextField
           id="ourMissionDescription"
           name="ourMissionDescription"
@@ -191,7 +206,6 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
           variant="outlined"
         />
 
-        {/* Counters */}
         <TextField
           id="counter1"
           name="counter1"
@@ -223,47 +237,32 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
           variant="outlined"
         />
 
-        {/* Image Uploads */}
-        <input
-          type="file"
-          id="image1"
-          name="image1"
-          onChange={handleFileChange}
-          accept="image/*"
-          style={{ marginTop: "16px", marginBottom: "16px", display: "block" }}
-        />
-        <input
-          type="file"
-          id="image2"
-          name="image2"
-          onChange={handleFileChange}
-          accept="image/*"
-          style={{ marginTop: "16px", marginBottom: "16px", display: "block" }}
-        />
-        <input
-          type="file"
-          id="image3"
-          name="image3"
-          onChange={handleFileChange}
-          accept="image/*"
-          style={{ marginTop: "16px", marginBottom: "16px", display: "block" }}
-        />
-        <input
-          type="file"
-          id="image4"
-          name="image4"
-          onChange={handleFileChange}
-          accept="image/*"
-          style={{ marginTop: "16px", marginBottom: "16px", display: "block" }}
-        />
+        {["image1", "image2", "image3", "image4"].map((imageKey, index) => (
+          <div key={index} style={{ marginTop: "16px", marginBottom: "16px" }}>
+            <input
+              type="file"
+              id={imageKey}
+              name={imageKey}
+              onChange={handleFileChange}
+              accept="image/*"
+              style={{ display: "block" }}
+            />
+            {imagePreviews[imageKey] && (
+              <img
+                src={imagePreviews[imageKey]}
+                alt={`Preview ${index + 1}`}
+                style={{ maxWidth: "100px", marginTop: "10px" }}
+              />
+            )}
+          </div>
+        ))}
 
-        {/* Actions */}
         <Box display="flex" justifyContent="flex-end" mt={3}>
           <Button
             onClick={handleSubmit}
             variant="contained"
             color="primary"
-            disabled={isSubmitting} // Disable button during API request
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save Changes"}
           </Button>

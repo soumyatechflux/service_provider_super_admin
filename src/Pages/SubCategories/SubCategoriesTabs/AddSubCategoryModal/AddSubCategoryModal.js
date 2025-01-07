@@ -112,7 +112,6 @@ const AddSubCategoryModal = ({
   };
 
   const handleCancel = () => {
-    toast.info("Action canceled.");
     resetFormData();
     onClose();
   };
@@ -125,7 +124,7 @@ const AddSubCategoryModal = ({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 400,
+          width: 500,
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
@@ -196,8 +195,7 @@ const AddSubCategoryModal = ({
           inputProps={{ accept: "image/*" }}
         />
 
-        {/* Actions */}
-        <Box display="flex" justifyContent="flex-end" mt={3}>
+        <Box display="flex" justifyContent="flex-end" mt={2} gap="5px">
           <Button
             onClick={handleSubmit}
             variant="contained"
