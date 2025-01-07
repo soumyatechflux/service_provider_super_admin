@@ -30,8 +30,8 @@ const EditDiscountModal = ({
         limit: initialData.usage_limit || "",
         minimum_price: initialData.minimum_order_amount || "",
         discount_code: initialData.voucher_code || "",
-        start_date: initialData.start_date || "",
-        end_date: initialData.end_date || "",
+        start_date: initialData.start_date ? initialData.start_date.split('T')[0] : "", // Format to YYYY-MM-DD
+        end_date: initialData.end_date ? initialData.end_date.split('T')[0] : "", // Format to YYYY-MM-DD
         description: initialData.description || "",
       });
     }

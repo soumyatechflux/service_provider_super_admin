@@ -24,7 +24,6 @@ const EditFAQStatusModal = ({
   const [loading, setLoading] = useState(false);
   console.log("Selected FAQ in Modal:", faq);
 
-
   const handleStatusUpdate = async () => {
     setLoading(true);
     try {
@@ -32,10 +31,8 @@ const EditFAQStatusModal = ({
       console.log("FAQ data:", faq); // Debug log
 
       const payload = {
-        
-          faq_id: Number(faq?.faq_id),  // Ensure it's a number
-          active_status: status,
-        
+        faq_id: Number(faq?.faq_id),  // Ensure it's a number
+        active_status: status,
       };
 
       console.log("Payload:", payload); // Debug log
@@ -59,14 +56,19 @@ const EditFAQStatusModal = ({
       toast.error("Error updating status. Please try again.");
     } finally {
       setLoading(false);
-      onClose();  // Close the modal after the update
+      handleClose();  // Close the modal after the update
     }
+  };
+
+  const handleClose = () => {
+    setStatus(faq?.active_status || "active"); // Reset status to its initial value
+    onClose();  // Call the passed onClose function to close the dialog
   };
 
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       fullWidth
       maxWidth="sm"
       PaperProps={{
@@ -105,7 +107,7 @@ const EditFAQStatusModal = ({
         </Button>
         <Button
           variant="outlined"
-          onClick={onClose}
+          onClick={handleClose}
           style={{
             backgroundColor: "rgb(223, 22, 22)",
             color: "white",

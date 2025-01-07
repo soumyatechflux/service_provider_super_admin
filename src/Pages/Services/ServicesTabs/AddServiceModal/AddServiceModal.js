@@ -9,25 +9,23 @@ const AddServiceModal = ({ show, onClose, onSave, categoryId, subCategoryId, fet
   const [title, setTitle] = useState("");
   const [services, setServices] = useState("");
   const [image, setImage] = useState(null);
-  const [url, setUrl] = useState(""); // New state for URL
-  const [subCategory, setSubCategory] = useState(subCategoryId); // New state for sub-category ID (editable now)
-
-  const [errors, setErrors] = useState({}); // State to track form validation errors
+  const [url, setUrl] = useState("");
+  const [subCategory, setSubCategory] = useState(subCategoryId);
+  const [errors, setErrors] = useState({});
 
   const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
-  // Reset form data when modal is opened
   useEffect(() => {
     if (show) {
       setTitle("");
       setServices("");
       setImage(null);
       setUrl("");
-      setSubCategory(subCategoryId);
-      setErrors({}); 
+      setSubCategory(""); // Reset the subCategory to an empty string
+      setErrors({});
     }
   }, [show, subCategoryId]);
-
+  
   const handleFileChange = (e) => {
     setImage(e.target.files[0]);
   };
@@ -52,8 +50,8 @@ const AddServiceModal = ({ show, onClose, onSave, categoryId, subCategoryId, fet
     formData.append("description", services);
     formData.append("image", image);
     formData.append("category_id", categoryId);
-    formData.append("sub_category_id", subCategory); // Include sub-category ID
-    formData.append("url", url); // Add URL to form data
+    formData.append("sub_category_id", subCategory);
+    formData.append("url", url);
 
     try {
       const response = await axios.post(
@@ -71,7 +69,7 @@ const AddServiceModal = ({ show, onClose, onSave, categoryId, subCategoryId, fet
         toast.success("Service added successfully!");
         onSave(response.data.data);
         fetchServices();
-        onClose(); 
+        onClose();
       } else {
         toast.error(response.data.message || "Failed to add service.");
       }
@@ -84,7 +82,7 @@ const AddServiceModal = ({ show, onClose, onSave, categoryId, subCategoryId, fet
   return (
     <Modal open={show} onClose={onClose} aria-labelledby="modal-title" aria-describedby="modal-description">
       <div className="modal-overlay" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
-        <div className="modal-content" style={{ padding: "20px", maxWidth: "600px", backgroundColor: "white", borderRadius: "8px", overflowY: "auto" }}>
+        <div className="modal-content" style={{ padding: "20px", maxWidth: "600px", backgroundColor: "white", borderRadius: "8px", overflowY: "auto", height: "90vh" }}>
           <h2 id="modal-title" style={{ textAlign: "center" }}>Add Service</h2>
 
           <div className="form-group" style={{ marginBottom: "15px" }}>

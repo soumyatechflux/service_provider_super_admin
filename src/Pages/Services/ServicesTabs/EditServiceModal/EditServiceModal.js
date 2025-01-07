@@ -10,7 +10,7 @@ const EditServiceModal = ({ show, onClose, onSave, service }) => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const [url, setUrl] = useState("");
-  const [subCategoryId, setSubCategoryId] = useState(""); // State for subCategoryId
+  const [subCategoryId, setSubCategoryId] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const EditServiceModal = ({ show, onClose, onSave, service }) => {
       setTitle(service.title);
       setDescription(service.description);
       setImage(service.image);
-      setUrl(service.url || ""); 
+      setUrl(service.url || "");
       setSubCategoryId(service.sub_category_id || "");
     }
   }, [service]);
@@ -27,22 +27,39 @@ const EditServiceModal = ({ show, onClose, onSave, service }) => {
     setImage(e.target.files[0]);
   };
 
-  const handleSave = async () => {
-    if (!title || !description) {
-      toast.error("Please fill all fields.");
-      return;
+  const validateFields = () => {
+    if (!title) {
+      toast.error("Service title is required.");
+      return false;
     }
-
+    if (!description) {
+      toast.error("Description is required.");
+      return false;
+    }
+    if (!url) {
+      toast.error("URL is required.");
+      return false;
+    }
+    if (!subCategoryId) {
+      toast.error("Sub-Category ID is required.");
+      return false;
+    }
+    return true;
+  };
+  
+  const handleSave = async () => {
+    if (!validateFields()) return;
+  
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-
+  
     const formData = new FormData();
-    formData.append("service_id", service.id);  
+    formData.append("service_id", service.id);
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("url", url); 
-    formData.append("sub_category_id", subCategoryId); 
+    formData.append("url", url);
+    formData.append("sub_category_id", subCategoryId);
     if (image) formData.append("image", image);
-
+  
     try {
       setLoading(true);
       const response = await axios.patch(
@@ -55,12 +72,19 @@ const EditServiceModal = ({ show, onClose, onSave, service }) => {
           },
         }
       );
-
+  
       setLoading(false);
-
+  
       if (response.data.success) {
         toast.success("Service updated successfully!");
-        onSave({ ...service, title, description, url, subCategoryId, image: image || service.image });
+        onSave({
+          ...service,
+          title,
+          description,
+          url,
+          subCategoryId,
+          image: image || service.image,
+        });
         onClose();
       } else {
         toast.error(response.data.message || "Failed to update service.");
@@ -70,10 +94,10 @@ const EditServiceModal = ({ show, onClose, onSave, service }) => {
       toast.error("An error occurred while updating the service. Please try again.");
     }
   };
-
+  
   return (
     <>
-      {/* <ToastContainer /> */}
+      <ToastContainer />
       <Modal open={show} onClose={onClose}>
         <div
           className="modal-overlay"
@@ -90,9 +114,10 @@ const EditServiceModal = ({ show, onClose, onSave, service }) => {
             style={{
               padding: "20px",
               maxWidth: "600px",
+              height: "90vh", // Fixed height
               backgroundColor: "white",
               borderRadius: "8px",
-              overflowY: "auto",
+              overflowY: "auto", // Enable vertical scrolling
             }}
           >
             <h2 style={{ textAlign: "center" }}>Edit Service</h2>
@@ -155,7 +180,17 @@ const EditServiceModal = ({ show, onClose, onSave, service }) => {
                 onChange={handleFileChange}
                 style={{ display: "block", width: "100%" }}
               />
+              {image && (
+                <div style={{ marginTop: "10px" }}>
+                  <img
+                    src={typeof image === "string" ? image : URL.createObjectURL(image)}
+                    alt="Service"
+                    style={{ maxWidth: "50%", height: "auto", borderRadius: "8px" }}
+                  />
+                </div>
+              )}
             </div>
+
 
             <div className="modal-actions">
               <button

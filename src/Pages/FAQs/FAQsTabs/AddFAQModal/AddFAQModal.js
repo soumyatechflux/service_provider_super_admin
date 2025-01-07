@@ -4,55 +4,61 @@ import { Button, TextField, CircularProgress } from "@mui/material";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const AddFAQModal = ({ show, onClose, onSave, categoryID,fetchFAQs }) => {
+const AddFAQModal = ({ show, onClose, onSave, categoryID, fetchFAQs }) => {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     if (!question || !answer) {
-        toast.error("Please fill in all fields.");
-        return;
+      toast.error("Please fill in all fields.");
+      return;
     }
 
     setLoading(true);
 
     try {
-        const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-        const payload = {
-            category_id: categoryID, // Ensure categoryID is passed correctly
-            question,
-            answer,
-        };
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+      const payload = {
+        category_id: categoryID,
+        question,
+        answer,
+      };
 
-        const response = await axios.post(
-            `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/cms/faqs/add`,
-            payload,
-            {
-                headers: { Authorization: `Bearer ${token}` },
-            }
-        );
-
-        if (response?.data?.success) {
-            toast.success("FAQ added successfully!");
-            onSave(response.data); // Pass the newly created FAQ to the parent component
-            setQuestion(""); // Clear the question field
-            setAnswer(""); // Clear the answer field
-            onClose();
-            fetchFAQs(); // Refresh FAQs list
-        } else {
-            toast.error(response.data.message || "Failed to add FAQ.");
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/cms/faqs/add`,
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
+      );
+
+      if (response?.data?.success) {
+        toast.success("FAQ added successfully!");
+        onSave(response.data);
+        setQuestion(""); // Clear the question field
+        setAnswer(""); // Clear the answer field
+        onClose();
+        fetchFAQs();
+      } else {
+        toast.error(response.data.message || "Failed to add FAQ.");
+      }
     } catch (error) {
-        console.error("Error adding FAQ:", error.response?.data);
-        toast.error("Failed to add FAQ. Please try again.");
+      console.error("Error adding FAQ:", error.response?.data);
+      toast.error("Failed to add FAQ. Please try again.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
+
+  const handleClose = () => {
+    setQuestion(""); // Reset question field
+    setAnswer(""); // Reset answer field
+    onClose(); // Call the passed onClose function
+  };
 
   return (
-    <Modal open={show} onClose={onClose}>
+    <Modal open={show} onClose={handleClose}>
       <div
         className="modal-overlay"
         style={{
@@ -92,15 +98,16 @@ const AddFAQModal = ({ show, onClose, onSave, categoryID,fetchFAQs }) => {
           <div className="modal-actions" style={{ marginTop: "15px" }}>
             <button
               onClick={handleSave}
-                 type="button"
-                className="btn btn-primary"
+              type="button"
+              className="btn btn-primary"
             >
               {loading ? <CircularProgress size={24} /> : "Save"}
             </button>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               type="button"
-              className="btn btn-secondary">
+              className="btn btn-secondary"
+            >
               Cancel
             </button>
           </div>
@@ -111,4 +118,3 @@ const AddFAQModal = ({ show, onClose, onSave, categoryID,fetchFAQs }) => {
 };
 
 export default AddFAQModal;
-

@@ -103,7 +103,7 @@ const VerifyChef = () => {
   const verifyPartnerDetails = async () => {
     const requiredFields = [
       
-      "email",
+      // "email",
       "dob",
       "aadhar",
       "address",
@@ -514,9 +514,14 @@ const VerifyChef = () => {
 
       {/* Verify Button */}
 
-      <button onClick={verifyPartnerDetails} className="verify-button">
-        Verify
-      </button>
+      <button
+  onClick={verifyPartnerDetails}
+  className="verify-button"
+  disabled={loading}
+>
+  {loading ? "Verifying..." : "Verify"}
+</button>
+
     </div>
   );
 };

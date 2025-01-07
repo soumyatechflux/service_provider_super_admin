@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 import Loader from "../../Loader/Loader";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddBannerModal from "../AddBannerModal/AddBannerModal";
@@ -79,11 +79,11 @@ const BannerTable = () => {
         banner.id === updatedBanner.id ? updatedBanner : banner
       )
     );
-  
+
     // Display toast message when banner is successfully saved
     // toast.success("Banner updated successfully!");
   };
-  
+
   const handleDeleteBanner = () => {
     setBanners(banners.filter((banner) => banner.id !== bannerToDelete));
     setShowDeleteModal(false);
@@ -164,7 +164,7 @@ const BannerTable = () => {
                     </td>
                     <td>
                       <div className="status-div">
-                        {banner.activeStatus}
+                        {banner.activeStatus.charAt(0).toUpperCase() + banner.activeStatus.slice(1)}
                         <EditIcon
                           style={{ cursor: "pointer", marginLeft: "10px" }}
                           onClick={() => {
@@ -173,9 +173,10 @@ const BannerTable = () => {
                           }}
                         />
                       </div>
+
                     </td>
                     <td>
-                    <div className="status-div">
+                      <div className="status-div">
                         <EditIcon
                           style={{ cursor: "pointer", marginRight: "10px" }}
                           onClick={() => {

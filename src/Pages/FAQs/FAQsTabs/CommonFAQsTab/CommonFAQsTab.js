@@ -112,6 +112,7 @@ const CommonFAQsTab = ({ categoryID }) => {
                       </div>
                     </td>
                     <td>
+                    <div className="status-div">
                       <EditIcon
                         onClick={() => {
                           setSelectedFAQ(faq);
@@ -126,6 +127,7 @@ const CommonFAQsTab = ({ categoryID }) => {
                         }}
                         style={{ cursor: "pointer", color: "red" }}
                       />
+                      </div>
                     </td>
                   </tr>
                 ))

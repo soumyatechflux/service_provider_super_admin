@@ -37,12 +37,12 @@ const EditServiceStatusModal = ({
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
       const payload = {
-        service_id: Number(service?.id),  // Ensure it's a number
+        service_id: Number(service?.id), // Ensure it's a number
         active_status: status,
       };
 
       const response = await axios.patch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/cms/services/status`, // Adjust URL endpoint
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/cms/services/status`,
         payload,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -65,10 +65,15 @@ const EditServiceStatusModal = ({
     }
   };
 
+  const handleClose = () => {
+    setStatus(service?.active_status || "active"); // Reset status to initial value
+    onClose(); // Close the modal
+  };
+
   return (
     <Dialog
-      open={open} // Modal visibility controlled by this prop
-      onClose={onClose} // Close modal
+      open={open}
+      onClose={handleClose} // Use handleClose to reset fields
       fullWidth
       maxWidth="sm"
       PaperProps={{
@@ -84,8 +89,8 @@ const EditServiceStatusModal = ({
           <InputLabel id="status-label">Status</InputLabel>
           <Select
             labelId="status-label"
-            value={status} // The status is bound to the state
-            onChange={(e) => setStatus(e.target.value)} // Update the status on change
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
             fullWidth
             label="Status"
           >
@@ -105,7 +110,7 @@ const EditServiceStatusModal = ({
         </Button>
         <Button
           variant="outlined"
-          onClick={onClose}
+          onClick={handleClose}
           style={{
             backgroundColor: "rgb(223, 22, 22)",
             color: "white",

@@ -166,7 +166,7 @@ const CommonDiscountTab = () => {
                 <th scope="col" style={{ width: "10%" }}>
                   Description
                 </th>
-                <th scope="col" style={{ width: "15%" }}>
+                <th scope="col" style={{ width: "25%" }}>
                   Status
                 </th>
                 <th scope="col" style={{ width: "10%" }}>

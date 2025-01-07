@@ -180,11 +180,14 @@ const CustomersTable = () => {
                     <td>{restaurant.email || "-"}</td>
                     <td>{restaurant.mobile}</td>
                     <td className={`status ${restaurant.active_status}`}>
-                      <div
-                        className={`status-background-${restaurant.active_status}`}
+                    <div
+                        className="status-div"
                         onClick={() => handleRestaurantClick(restaurant)}
                         style={{ cursor: "pointer" }}
                       >
+                        <span>
+                          {restaurant.active_status.charAt(0).toUpperCase() + restaurant.active_status.slice(1)}
+                        </span>
                         <EditIcon />
                       </div>
                     </td>

@@ -182,6 +182,9 @@ const ReportTable = ({ filters, loading, setLoading }) => {
                     Partner Name
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
+                   Category
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
                     Sub Category
                   </th>
                   <th scope="col" style={{ width: "5%" }}>
@@ -207,6 +210,10 @@ const ReportTable = ({ filters, loading, setLoading }) => {
                     <th scope="row">{indexOfFirstEntry + index + 1}.</th>
                     <td>{item.guest_name || "N/A"}</td>
                     <td>{item.partner?.name || "Unknown"}</td>
+                    <td>
+  {item.category?.category_name || "N/A"}
+</td>
+
                     <td>
                       {item.sub_category_name?.sub_category_name || "N/A"}
                     </td>
