@@ -7,6 +7,7 @@ import DeleteSubCategoryModal from "./../DeleteSubCategoryModal/DeleteSubCategor
 import EditSubCatStatusModal from "./../EditSubCatStatusModal/EditSubCatStatusModal";
 import AddSubCategoryModal from "../AddSubCategoryModal/AddSubCategoryModal";
 import EditSubCategoryModal from "../EditSubCategoryModal/EditSubCategoryModal";
+import { useNavigate } from "react-router-dom";
 
 const GardenerCategoriesTab = ({ category_id }) => {
   const [subCategoryData, setSubCategoryData] = useState([]);
@@ -120,18 +121,28 @@ const GardenerCategoriesTab = ({ category_id }) => {
     fetchSubCategoryData();
   }, []);
 
+   const navigate = useNavigate();
+
+  const handleNavigateToSettings = (id) => {
+        if (id === 8) {
+          navigate("/gardner-visit");
+        } else if (id === 9) {
+          navigate("/monthly-subscription");
+        }
+      };
+
   return (
     <div className="SubCategory-Table-Main p-3">
       {loading ? (
         <Loader />
       ) : (
         <div className="table-responsive mb-5">
-          <button
+          {/* <button
             className="Discount-btn mb-3"
             onClick={() => setShowAddModal(true)}
           >
             Add Sub Category
-          </button>
+          </button> */}
           <table className="table table-bordered table-user">
             {/* // Inside the <thead> section */}
             <thead className="heading_user">
@@ -163,6 +174,9 @@ const GardenerCategoriesTab = ({ category_id }) => {
                 </th>
                 <th scope="col" style={{ width: "5%" }}>
                   Action
+                </th>
+                <th scope="col" style={{ width: "5%" }}>
+                  Setting
                 </th>
               </tr>
             </thead>
@@ -235,11 +249,11 @@ const GardenerCategoriesTab = ({ category_id }) => {
                     }).format(new Date(item.updated_at))}
                   </td>
                   <td className="action-btn-trash">
-                    <i
+                    {/* <i
                       className="fa fa-trash text-danger"
                       style={{ cursor: "pointer" }}
                       onClick={() => handleOpenDeleteModal(item)}
-                    ></i>
+                    ></i> */}
                     <EditIcon
                       style={{
                         cursor: "pointer",
@@ -248,6 +262,14 @@ const GardenerCategoriesTab = ({ category_id }) => {
                       }}
                       onClick={() => handleOpenEditSubCategoryModal(item)}
                     />
+                  </td>
+                  <td>
+                    <button
+                      className="Discount-btn mb-3"
+                      onClick={() => handleNavigateToSettings(item.id)}
+                    >
+                      Setting
+                    </button>
                   </td>
                 </tr>
               ))}

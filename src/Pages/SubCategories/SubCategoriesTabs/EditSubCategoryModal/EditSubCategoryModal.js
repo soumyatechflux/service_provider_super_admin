@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Box, TextField, Button } from "@mui/material";
+import { Box, Button, Modal, TextField } from "@mui/material";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
@@ -96,7 +96,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
           borderRadius: 2,
         }}
       >
-        <h2>Edit Sub-Category</h2>
+        <h2 style={{color:"black"}}>Edit Sub-Category</h2>
 
         {/* Sub-Category Name */}
         <TextField
@@ -158,24 +158,21 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
         )}
 
         {/* Actions */}
-        <Box display="flex" justifyContent="flex-end" mt={3}>
-          <Button
+        <div className="modal-actions">
+          <button
             onClick={handleSubmit}
-            variant="contained"
-            color="primary"
+            className="btn btn-primary" style={{width:"100%"}}
             disabled={loading}
           >
             {loading ? "Saving..." : "Save Changes"}
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={onClose}
-            variant="contained"
-            color="error"
-            style={{ marginLeft: 8 }}
+            className="btn btn-secondary" style={{width:"100%"}}
           >
             Cancel
-          </Button>
-        </Box>
+          </button>
+        </div>
       </Box>
     </Modal>
   );

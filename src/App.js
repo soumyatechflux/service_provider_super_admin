@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useState } from "react";
 import {
   BrowserRouter,
@@ -39,6 +36,21 @@ import Banner from "./Pages/Banner/Banner";
 import Services from "./Pages/Services/Services";
 import FAQs from "./Pages/FAQs/FAQs";
 import AboutUs from "./Pages/AboutUs/AboutUs";
+import TermsConditions from "./Pages/Terms&Conditions/TermsConditions";
+import PrivacyPolicy from "./Pages/PrivacyPolicy/PrivacyPolicy";
+import CancellationPlicy from "./Pages/CancellationPlicy/CancellationPlicy";
+import RefundPolicy from "./Pages/RefundPolicy/RefundPolicy";
+import ServerDown from "./Pages/ServerDown/ServerDown";
+import UnderConstruction from "./Pages/UnderConstruction/UnderConstruction";
+import CookForDayTab from "./Pages/SubCategories/Settings/Chef/CookForDay/CookForDayTab";
+import CookForOneMeal from "./Pages/SubCategories/Settings/Chef/CookForOneMeal/CookForOneMeal";
+import ChefForPartyTab from "./Pages/SubCategories/Settings/Chef/ChefForParty/ChefForPartyTab";
+import OutStationTripTab from "./Pages/SubCategories/Settings/Driver/OutStationTripTab/OutStationTripTab";
+import OutStationRoundTripTab from "./Pages/SubCategories/Settings/Driver/OutStationRoundTripTab/OutStationRoundTripTab";
+import RoundTripTab from "./Pages/SubCategories/Settings/Driver/RoundTripTab/RoundTripTab";
+import OneWayTripTab from "./Pages/SubCategories/Settings/Driver/OneWayTripTab/OneWayTripTab";
+import MonthlySubscriptionTab from "./Pages/SubCategories/Settings/Gardener/MonthlySubscriptionTab/MonthlySubscriptionTab";
+import GardnerDayVisitTab from "./Pages/SubCategories/Settings/Gardener/GardnerDayVisitTab/GardnerDayVisitTab";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -144,6 +156,27 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/services" element={<Services/>}/>
           <Route path="/faq" element={<FAQs/>}/>
           <Route path="/about-us" element={<AboutUs/>}/>
+          <Route path="/termsconditions" element={<TermsConditions/>}/>
+          <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>
+          <Route path="/cancellationplicy" element={<CancellationPlicy/>}/>
+          <Route path="/refundpolicy" element={<RefundPolicy/>}/>
+
+
+          <Route path="/serverDown" element={<ServerDown/>}/>
+          <Route path="/underconstruction" element={<UnderConstruction/>}/>
+
+          <Route path="/cook_for_one_meal" element={<CookForOneMeal/>}/>
+          <Route path="/cook-for-day" element={<CookForDayTab/>}/>
+          <Route path="/chef-for-party" element={<ChefForPartyTab/>}/>
+
+          <Route path="/outstaion-round-trip" element={<OutStationRoundTripTab/>}/>
+          <Route path="/outstaion-trip" element={<OutStationTripTab/>}/>
+          <Route path="/round-trip" element={<RoundTripTab/>}/>
+          <Route path="/one-way-trip" element={<OneWayTripTab/>}/>
+
+          <Route path="/monthly-subscription" element={<MonthlySubscriptionTab/>}/>
+          <Route path="/gardner-visit" element={<GardnerDayVisitTab/>}/>
+
         </Route>
       </Routes>
     </>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Box, TextField, Button } from "@mui/material";
+import { Box, Button, Modal, TextField } from "@mui/material";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const AddSubCategoryModal = ({
@@ -131,7 +131,7 @@ const AddSubCategoryModal = ({
           borderRadius: 2,
         }}
       >
-        <h2>{initialData ? "Edit Sub-Category" : "Add Sub-Category"}</h2>
+        <h2 style={{color:"black"}}>{initialData ? "Edit Sub-Category" : "Add Sub-Category"}</h2>
 
         {/* Sub-Category Name */}
         <label htmlFor="subCategoryName" style={{ fontWeight: "bold" }}>
@@ -195,25 +195,23 @@ const AddSubCategoryModal = ({
           inputProps={{ accept: "image/*" }}
         />
 
-        <Box display="flex" justifyContent="flex-end" mt={2} gap="5px">
-          <Button
+<div className="modal-actions">
+          <button
             onClick={handleSubmit}
-            variant="contained"
-            color="primary"
+            className="btn btn-primary" style={{width:"100%"}}
             disabled={loading}
           >
             {loading ? "Saving..." : initialData ? "Save Changes" : "Add"}
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={handleCancel}
-            variant="contained"
-            color="error"
-            style={{ marginRight: 8 }}
+            className="btn btn-secondary" style={{width:"100%"}}
           >
             Cancel
-          </Button>
+          </button>
+          </div>
         </Box>
-      </Box>
+      
     </Modal>
   );
 };

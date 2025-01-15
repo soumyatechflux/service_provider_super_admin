@@ -201,10 +201,10 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
 
         {/* Modal Actions */}
         <div className="modal-actions modal-actions-role">
-          <button onClick={handleSave} className="btn btn-primary" disabled={loading}>
+          <button onClick={handleSave} className="btn btn-primary" disabled={loading} style={{width:"100%"}}>
             {loading ? "Saving..." : "Save"}
           </button>
-          <button onClick={onClose} className="btn btn-secondary">
+          <button onClick={onClose} className="btn btn-secondary" style={{width:"100%"}}>
             Cancel
           </button>
         </div>

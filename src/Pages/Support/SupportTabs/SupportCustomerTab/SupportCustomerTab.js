@@ -171,7 +171,7 @@ const SupportCustomerTab = () => {
                   <th>Role</th>
                   <th>Subject</th>
                   <th>Description</th>
-                  <th>Status</th>
+                  <th  style={{ width: "15%" }}>Status</th>
                   <th>Created At</th>
                   <th>Updated At</th>
                 </tr>

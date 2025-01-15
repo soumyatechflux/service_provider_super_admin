@@ -1,0 +1,90 @@
+.advanced-rich-text-editor {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 8px;
+    background-color: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .toolbar button {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 6px 12px;
+    transition: all 0.2s ease;
+  }
+  
+  .toolbar button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .toolbar button:active {
+    background-color: #d0d0d0;
+  }
+  
+  .editor-container {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-height: 300px;
+    padding: 16px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .DraftEditor-root {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  .DraftEditor-editorContainer {
+    min-height: 280px;
+  }
+  
+  .public-DraftStyleDefault-block {
+    margin-bottom: 8px;
+  }
+  
+  .public-DraftStyleDefault-header-one {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+  }
+  
+  .public-DraftStyleDefault-header-two {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+  }
+  
+  .public-DraftStyleDefault-header-three {
+    font-size: 1.17em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+  }
+  
+  .public-DraftStyleDefault-unorderedListItem,
+  .public-DraftStyleDefault-orderedListItem {
+    margin-left: 1.5em;
+  }

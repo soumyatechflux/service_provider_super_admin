@@ -198,6 +198,7 @@ const EditServiceModal = ({ show, onClose, onSave, service }) => {
                 type="button"
                 className="btn btn-primary"
                 disabled={loading}
+                style={{width:"100%"}}
               >
                 {loading ? "Saving..." : "Save"}
               </button>
@@ -205,6 +206,7 @@ const EditServiceModal = ({ show, onClose, onSave, service }) => {
                 onClick={onClose}
                 type="button"
                 className="btn btn-secondary"
+                style={{width:"100%"}}
               >
                 Cancel
               </button>

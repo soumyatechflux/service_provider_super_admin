@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import Loader from "../../../Loader/Loader";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteSubCategoryModal from "./../DeleteSubCategoryModal/DeleteSubCategoryModal";
@@ -15,18 +16,16 @@ const CookCategoriesTab = ({ category_id }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
-  const [showEditSubCategoryModal, setShowEditSubCategoryModal] =
-    useState(false);
+  const [showEditSubCategoryModal, setShowEditSubCategoryModal] = useState(false);
   const [expandedDescriptions, setExpandedDescriptions] = useState({});
+  const navigate = useNavigate();
 
   const fetchSubCategoryData = async () => {
     try {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
-
       setLoading(true);
-
       const response = await axios.get(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/sub_category_by_category_id/1`,
         {
@@ -35,9 +34,7 @@ const CookCategoriesTab = ({ category_id }) => {
           },
         }
       );
-
       setLoading(false);
-
       if (response?.status === 200 && response?.data?.success) {
         const data = response?.data?.data || [];
         setSubCategoryData(data);
@@ -120,20 +117,31 @@ const CookCategoriesTab = ({ category_id }) => {
     fetchSubCategoryData();
   }, []);
 
+  const handleNavigateToSettings = (id) => {
+    if (id === 1) {
+      navigate("/cook_for_one_meal");
+    } else if (id === 2) {
+      navigate("/cook-for-day");
+    } else if (id === 3) {
+      navigate("/chef-for-party");
+    } else {
+      toast.error("Invalid ID");
+    }
+  };
+
   return (
     <div className="SubCategory-Table-Main p-3">
       {loading ? (
         <Loader />
       ) : (
         <div className="table-responsive mb-5">
-          <button
+          {/* <button
             className="Discount-btn mb-3"
             onClick={() => setShowAddModal(true)}
           >
             Add Sub Category
-          </button>
+          </button> */}
           <table className="table table-bordered table-user">
-            {/* // Inside the <thead> section */}
             <thead className="heading_user">
               <tr>
                 <th scope="col" style={{ width: "5%" }}>
@@ -145,7 +153,6 @@ const CookCategoriesTab = ({ category_id }) => {
                 <th scope="col" style={{ width: "15%" }}>
                   Image
                 </th>
-                {/* New column header */}
                 <th scope="col" style={{ width: "8%" }}>
                   Price
                 </th>
@@ -164,10 +171,12 @@ const CookCategoriesTab = ({ category_id }) => {
                 <th scope="col" style={{ width: "5%" }}>
                   Action
                 </th>
+                <th scope="col" style={{ width: "5%" }}>
+                  Setting
+                </th>
               </tr>
             </thead>
 
-            {/* // Inside the <tbody> section */}
             <tbody>
               {subCategoryData.map((item, index) => (
                 <tr key={item.id}>
@@ -188,7 +197,6 @@ const CookCategoriesTab = ({ category_id }) => {
                       "No image"
                     )}
                   </td>
-                  {/* New image cell */}
                   <td>{item.price || "N/A"}</td>
                   <td>
                     {expandedDescriptions[item.id]
@@ -199,7 +207,7 @@ const CookCategoriesTab = ({ category_id }) => {
                       <button
                         onClick={() => handleToggleDescription(item.id)}
                         className="btn btn-link p-0 ms-2"
-                        style={{boxShadow:"none"}}
+                        style={{ boxShadow: "none" }}
                       >
                         {expandedDescriptions[item.id]
                           ? "View Less"
@@ -236,11 +244,11 @@ const CookCategoriesTab = ({ category_id }) => {
                     }).format(new Date(item.updated_at))}
                   </td>
                   <td className="action-btn-trash">
-                    <i
+                    {/* <i
                       className="fa fa-trash text-danger"
                       style={{ cursor: "pointer" }}
                       onClick={() => handleOpenDeleteModal(item)}
-                    ></i>
+                    ></i> */}
                     <EditIcon
                       style={{
                         cursor: "pointer",
@@ -250,6 +258,14 @@ const CookCategoriesTab = ({ category_id }) => {
                       onClick={() => handleOpenEditSubCategoryModal(item)}
                     />
                   </td>
+                  <td>
+                    <button
+                      className="Discount-btn mb-3"
+                      onClick={() => handleNavigateToSettings(item.id)}
+                    >
+                      Setting
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -257,7 +273,6 @@ const CookCategoriesTab = ({ category_id }) => {
         </div>
       )}
 
-      {/* Delete Sub-Category Modal */}
       <DeleteSubCategoryModal
         show={showDeleteModal}
         handleClose={handleCloseModals}
@@ -265,9 +280,8 @@ const CookCategoriesTab = ({ category_id }) => {
         subCategory={selectedSubCategory}
       />
 
-      {/* Edit Sub-Category Status Modal */}
       <EditSubCatStatusModal
-        subCategory={selectedSubCategory} // Pass the full object here
+        subCategory={selectedSubCategory}
         open={showEditModal}
         onClose={handleCloseModals}
         onStatusChange={(newStatus) =>
@@ -276,7 +290,6 @@ const CookCategoriesTab = ({ category_id }) => {
         fetchSubCategoryData={fetchSubCategoryData}
       />
 
-      {/* Add Sub-Category Modal */}
       <AddSubCategoryModal
         open={showAddModal}
         onClose={() => setShowAddModal(false)}

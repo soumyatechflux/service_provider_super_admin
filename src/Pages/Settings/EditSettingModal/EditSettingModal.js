@@ -83,10 +83,10 @@ const EditSettingModal = ({ show, onClose, onSave, selectedSetting }) => {
           />
         </div>
         <div className="modal-actions">
-          <button onClick={handleSave} className="btn btn-primary">
+          <button onClick={handleSave} className="btn btn-primary" style={{width:"100%"}}>
             Save
           </button>
-          <button onClick={handleCancel} className="btn btn-secondary">
+          <button onClick={handleCancel} className="btn btn-secondary" style={{width:"100%"}}>
             Cancel
           </button>
         </div>

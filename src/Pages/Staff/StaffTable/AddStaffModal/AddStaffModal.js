@@ -111,22 +111,25 @@ const AddStaffModal = ({ show, onClose, onSave, getStaffData }) => {
           />
         </div>
         <div className="modal-actions">
+        <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleSubmit}
+            disabled={loading}
+            style={{width:"100%"}}
+          >
+            {loading ? "Saving..." : "Save"}
+          </button>
           <button
             type="button"
             className="btn btn-secondary"
             onClick={onClose}
             disabled={loading}
+            style={{width:"100%"}}
           >
             Cancel
           </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? "Saving..." : "Save"}
-          </button>
+          
         </div>
       </form>
     </Modal>

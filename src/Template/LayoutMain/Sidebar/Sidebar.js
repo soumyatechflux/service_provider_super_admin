@@ -18,9 +18,28 @@ import {
   QuestionAnswer,
   AccountBox,
 } from "@mui/icons-material";
+import { Gavel, Lock, ReceiptLong, Cancel } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import Tooltip from "@mui/material/Tooltip";
+import { styled } from "@mui/material/styles";
 import "./Sidebar.css";
+
+// Custom styled tooltip
+const CustomTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .MuiTooltip-tooltip`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+    fontSize: "0.9rem",
+    boxShadow: theme.shadows[1],
+    borderRadius: "4px",
+  },
+  [`& .MuiTooltip-arrow`]: {
+    color: theme.palette.common.black,
+  },
+}));
 
 const Sidebar = ({ isOpen }) => {
   const [activeItem, setActiveItem] = useState("");
@@ -42,7 +61,9 @@ const Sidebar = ({ isOpen }) => {
         );
         const data = await response.json();
         if (data.success) {
-          const sortedPermissions = data.data.sort((a, b) => a.index_id - b.index_id);
+          const sortedPermissions = data.data.sort(
+            (a, b) => a.index_id - b.index_id
+          );
           setPermissions(sortedPermissions);
         }
       } catch (error) {
@@ -74,7 +95,7 @@ const Sidebar = ({ isOpen }) => {
     10: <LocalOffer />,
     11: <CalendarToday />,
     12: <Settings />,
-    13: <AccountBox />, // Different icon for role
+    13: <AccountBox />,
     14: <People />,
     15: <BarChart />,
     16: <Image />,
@@ -89,19 +110,68 @@ const Sidebar = ({ isOpen }) => {
         <ul style={{ marginTop: "8vh" }} className="sidebar-menu">
           {permissions.map((permission) => {
             const { permission_id, permission_name, path } = permission;
-            const itemPath = path || `/${permission_name.toLowerCase().replace(/\s+/g, "-")}`;
+            const itemPath =
+              path || `/${permission_name.toLowerCase().replace(/\s+/g, "-")}`;
             return (
-              <Link key={permission_id} to={itemPath}>
-                <li
-                  className={`menu-item ${activeItem === itemPath ? "active" : ""}`}
-                  onClick={() => handleItemClick(itemPath)}
-                >
-                  {iconMapping[permission_id] || <Info />}
-                  <span>{permission_name}</span>
-                </li>
-              </Link>
+              <CustomTooltip
+                key={permission_id}
+                title={!isOpen ? permission_name : ""}
+                placement="right"
+                arrow
+              >
+                <Link to={itemPath}>
+                  <li
+                    className={`menu-item ${
+                      activeItem === itemPath ? "active" : ""
+                    }`}
+                    onClick={() => handleItemClick(itemPath)}
+                  >
+                    {iconMapping[permission_id] || <Info />}
+                    {isOpen && <span>{permission_name}</span>}
+                  </li>
+                </Link>
+              </CustomTooltip>
             );
           })}
+
+          {/* Static Tabs for Terms and Conditions, Privacy Policy, and Cancellation Policy */}
+          {[
+            {
+              path: "/termsconditions",
+              name: "Terms and Conditions",
+              icon: <Gavel />,
+            },
+            { path: "/privacypolicy", name: "Privacy Policy", icon: <Lock /> },
+            {
+              path: "/refundpolicy",
+              name: "Refund Policy",
+              icon: <ReceiptLong />,
+            },
+            {
+              path: "/cancellationplicy",
+              name: "Cancellation Policy",
+              icon: <Cancel />,
+            },
+          ].map((tab) => (
+            <CustomTooltip
+              key={tab.path}
+              title={!isOpen ? tab.name : ""}
+              placement="right"
+              arrow
+            >
+              <Link to={tab.path}>
+                <li
+                  className={`menu-item ${
+                    activeItem === tab.path ? "active" : ""
+                  }`}
+                  onClick={() => handleItemClick(tab.path)}
+                >
+                  {tab.icon}
+                  {isOpen && <span>{tab.name}</span>}
+                </li>
+              </Link>
+            </CustomTooltip>
+          ))}
         </ul>
       </div>
     </div>

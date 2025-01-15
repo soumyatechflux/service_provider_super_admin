@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Modal from "@mui/material/Modal";
-import { Button } from "@mui/material";
+import { Button, Modal } from "react-bootstrap";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../../../Loader/Loader";
@@ -35,70 +34,25 @@ const DeleteFAQModal = ({ show, onClose, onDelete, faq }) => {
   };
 
   return (
-    <Modal open={show} onClose={onClose}>
-      <div
-        className="modal-overlay"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-        }}
-      >
-        <div
-          className="modal-content"
-          style={{
-            padding: "20px",
-            maxWidth: "600px",
-            backgroundColor: "white",
-            borderRadius: "8px",
-            overflowY: "auto",
-            position: "relative",
-          }}
+    <Modal show={show} onHide={onClose} centered>
+      <Modal.Header>
+        <Modal.Title>Confirm Deletion</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        Are you sure you want to delete the FAQ: <b>{faq?.question}</b>?
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onClose} disabled={loading}>
+          Cancel
+        </Button>
+        <Button
+          variant="danger"
+          onClick={handleDelete}
+          disabled={loading}
         >
-          {loading && (
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "rgba(255, 255, 255, 0.8)",
-                zIndex: 10,
-              }}
-            >
-              <Loader />
-            </div>
-          )}
-          <h2>Delete FAQ</h2>
-          <p>
-            Are you sure you want to delete the FAQ: <b>{faq?.question}</b>?
-          </p>
-          <div className="modal-actions">
-            <Button
-              onClick={handleDelete}
-              variant="contained"
-              color="error"
-              disabled={loading}
-            >
-              Delete
-            </Button>
-            <Button
-              onClick={onClose}
-              variant="outlined"
-              color="secondary"
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-          </div>
-        </div>
-      </div>
+          {loading ? "Deleting..." : "Delete"}
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 };

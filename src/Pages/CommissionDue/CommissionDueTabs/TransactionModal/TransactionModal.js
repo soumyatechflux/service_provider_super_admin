@@ -98,10 +98,10 @@ const TransactionModal = ({ item, onClose, setLoading }) => {
 
         {/* Modal Actions */}
         <div className="modal-actions">
-          <button onClick={handlePayNow} className="payNow-btn">
+          <button onClick={handlePayNow} className="payNow-btn" style={{width:"100%"}}>
             Pay Now
           </button>
-          <button onClick={onClose} className="btn btn-secondary">
+          <button onClick={onClose} className="btn btn-secondary" style={{width:"100%"}}>
             Cancel
           </button>
         </div>

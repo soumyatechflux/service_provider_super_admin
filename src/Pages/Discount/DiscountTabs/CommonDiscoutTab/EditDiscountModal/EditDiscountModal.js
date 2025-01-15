@@ -224,10 +224,11 @@ const EditDiscountModal = ({
               onClick={handleSave}
               className="btn btn-primary"
               disabled={loading}
+              style={{width:"100%"}}
             >
               Save
             </button>
-            <button onClick={onClose} className="btn btn-secondary">
+            <button onClick={onClose} className="btn btn-secondary" style={{width:"100%"}}>
               Cancel
             </button>
           </div>

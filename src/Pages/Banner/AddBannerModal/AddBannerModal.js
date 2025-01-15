@@ -179,15 +179,16 @@ const AddBannerModal = ({ show, onClose, onSave }) => {
               </div>
             )}
 
-            <div className="modal-actions" style={{ display: "flex", justifyContent: "space-between" }}>
+            <div className="modal-actions" style={{ display: "flex", justifyContent: "space-between" }} >
               <button
                 onClick={handleSave}
                 className="btn btn-primary"
                 disabled={loading} // Disable button when loading
+                style={{width:"100%"}}
               >
                 Save
               </button>
-              <button onClick={onClose} className="btn btn-secondary">
+              <button onClick={onClose} className="btn btn-secondary" style={{width:"100%"}}>
                 Cancel
               </button>
             </div>

@@ -155,8 +155,8 @@ const AddServiceModal = ({ show, onClose, onSave, categoryId, subCategoryId, fet
           </div>
 
           <div className="modal-actions">
-            <button onClick={handleSave} type="button" className="btn btn-primary">Save</button>
-            <button onClick={onClose} type="button" className="btn btn-secondary">Cancel</button>
+            <button onClick={handleSave} type="button" className="btn btn-primary" style={{width:"100%"}}>Save</button>
+            <button onClick={onClose} type="button" className="btn btn-secondary" style={{width:"100%"}}>Cancel</button>
           </div>
         </div>
       </div>

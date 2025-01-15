@@ -100,6 +100,7 @@ const AddFAQModal = ({ show, onClose, onSave, categoryID, fetchFAQs }) => {
               onClick={handleSave}
               type="button"
               className="btn btn-primary"
+              style={{width:"100%"}}
             >
               {loading ? <CircularProgress size={24} /> : "Save"}
             </button>
@@ -107,6 +108,7 @@ const AddFAQModal = ({ show, onClose, onSave, categoryID, fetchFAQs }) => {
               onClick={handleClose}
               type="button"
               className="btn btn-secondary"
+              style={{width:"100%"}}
             >
               Cancel
             </button>

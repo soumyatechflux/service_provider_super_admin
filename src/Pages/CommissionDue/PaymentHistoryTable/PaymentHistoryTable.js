@@ -73,9 +73,9 @@ const PaymentHistoryTable = ({
                 <th scope="col" style={{ width: "15%" }}>
                   Payout Amount
                 </th>
-                <th scope="col" style={{ width: "20%" }}>
+                {/* <th scope="col" style={{ width: "20%" }}>
                   Address
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody>
@@ -85,9 +85,9 @@ const PaymentHistoryTable = ({
                   <td>{item.partner_name || "Unknown"}</td>
                   <td>{item.category_name || "N/A"}</td>
                   <td>{item.payout_amount || "N/A"}</td> {/* Updated here */}
-                  <td>
+                  {/* <td>
                     {item.current_address || "No current_address available."}
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

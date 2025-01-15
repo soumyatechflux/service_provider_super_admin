@@ -105,14 +105,14 @@ a {
   background-color: #2F4CDD; /* Change background on active or hover */
   cursor: pointer; /* Indicate it's clickable */
   border-radius: 8px;
-  width: 87%;
+  /* width: 87%; */
   text-decoration: none;
   color: #ffffff !important;
 }
 
 .menu-item:hover {
   background-color: #2F4CDD; /* Optional: Change background on hover */
-  width: 87%;
+  /* width: 90%; */
   border-radius: 8px;
   text-decoration: none;
   color: inherit;

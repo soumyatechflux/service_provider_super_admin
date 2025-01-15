@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import Loader from "../../../Loader/Loader";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteSubCategoryModal from "./../DeleteSubCategoryModal/DeleteSubCategoryModal";
@@ -17,6 +18,8 @@ const DriverCategoriesTab = ({ category_id }) => {
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
   const [showEditSubCategoryModal, setShowEditSubCategoryModal] =useState(false);
    const [expandedDescriptions, setExpandedDescriptions] = useState({});
+   const navigate = useNavigate();
+   
 
   const fetchSubCategoryData = async () => {
     try {
@@ -119,6 +122,19 @@ const DriverCategoriesTab = ({ category_id }) => {
   useEffect(() => {
     fetchSubCategoryData();
   }, []);
+   const handleNavigateToSettings = (id) => {
+      if (id === 4) {
+        navigate("/round-trip");
+      } else if (id === 5) {
+        navigate("/one-way-trip");
+      } else if (id === 6) {
+        navigate("/outstaion-trip");
+      } else if (id === 7) {
+        navigate("/outstaion-round-trip");
+      } else {
+        toast.error("Invalid ID");
+      }
+    };
 
   return (
     <div className="SubCategory-Table-Main p-3">
@@ -126,12 +142,12 @@ const DriverCategoriesTab = ({ category_id }) => {
         <Loader />
       ) : (
         <div className="table-responsive mb-5">
-          <button
+          {/* <button
             className="Discount-btn mb-3"
             onClick={() => setShowAddModal(true)}
           >
             Add Sub Category
-          </button>
+          </button> */}
           <table className="table table-bordered table-user">
             {/* // Inside the <thead> section */}
             <thead className="heading_user">
@@ -163,6 +179,9 @@ const DriverCategoriesTab = ({ category_id }) => {
                 </th>
                 <th scope="col" style={{ width: "5%" }}>
                   Action
+                </th>
+                <th scope="col" style={{ width: "5%" }}>
+                  Setting
                 </th>
               </tr>
             </thead>
@@ -231,11 +250,11 @@ const DriverCategoriesTab = ({ category_id }) => {
                     }).format(new Date(item.updated_at))}
                   </td>
                   <td className="action-btn-trash">
-                    <i
+                    {/* <i
                       className="fa fa-trash text-danger"
                       style={{ cursor: "pointer" }}
                       onClick={() => handleOpenDeleteModal(item)}
-                    ></i>
+                    ></i> */}
                     <EditIcon
                       style={{
                         cursor: "pointer",
@@ -244,6 +263,14 @@ const DriverCategoriesTab = ({ category_id }) => {
                       }}
                       onClick={() => handleOpenEditSubCategoryModal(item)}
                     />
+                  </td>
+                  <td>
+                    <button
+                      className="Discount-btn mb-3"
+                      onClick={() => handleNavigateToSettings(item.id)}
+                    >
+                      Setting
+                    </button>
                   </td>
                 </tr>
               ))}

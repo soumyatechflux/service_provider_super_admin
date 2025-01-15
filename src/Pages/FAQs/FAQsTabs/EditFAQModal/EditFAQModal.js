@@ -91,23 +91,23 @@ const EditFAQModal = ({ show, onClose, onSave, faq,categoryID,fetchFAQs }) => {
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
           />
-          <div className="modal-actions" style={{ marginTop: "20px" }}>
-            <Button
+          <div className="modal-actions">
+            <button
               onClick={handleSave}
-              variant="contained"
-              color="primary"
+              type="button" className="btn btn-primary"
               disabled={loading}
+              style={{width:"100%"}}
             >
               {loading ? "Saving..." : "Save"}
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={onClose}
-              variant="outlined"
-              color="secondary"
+               type="button" className="btn btn-secondary"
               disabled={loading}
+              style={{width:"100%"}}
             >
               Cancel
-            </Button>
+            </button>
           </div>
         </div>
       </div>

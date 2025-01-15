@@ -106,22 +106,26 @@ const EditStaffModal = ({ show, onClose, onSave,staffData,getStaffData }) => {
           />
         </div>
         <div className="modal-actions">
+        <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleSave}
+            disabled={loading}
+            style={{width:"100%"}}
+          >
+            {loading ? "Saving..." : "Save"}
+          </button>
+          
           <button
             type="button"
             className="btn btn-secondary"
             onClick={onClose}
             disabled={loading}
+            style={{width:"100%"}}
           >
             Cancel
           </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleSave}
-            disabled={loading}
-          >
-            {loading ? "Saving..." : "Save"}
-          </button>
+         
         </div>
       </form>
     </Modal>

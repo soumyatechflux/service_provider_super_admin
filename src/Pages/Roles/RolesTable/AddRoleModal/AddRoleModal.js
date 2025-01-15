@@ -216,11 +216,11 @@ const AddRoleModal = ({ show, onClose, onSave }) => {
         </div>
 
         {/* Modal Actions */}
-        <div className="modal-actions-role">
-          <button onClick={handleSave} className="btn btn-primary">
+        <div className="modal-actions">
+          <button onClick={handleSave} className="btn btn-primary" style={{width:"100%"}}>
             Save
           </button>
-          <button onClick={onClose} className="btn btn-secondary">
+          <button onClick={onClose} className="btn btn-secondary" style={{width:"100%"}}>
             Cancel
           </button>
         </div>
