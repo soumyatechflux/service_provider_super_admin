@@ -25,6 +25,10 @@ const GardnerDayVisit = () => {
   const [loading, setLoading] = useState(false);
   const [additionalPriceHours, setAdditionalPriceHours] = useState("");
   const [nightChargesEndAt, setNightChargesEndAt] = useState(""); // New Field
+   const [gst, setGst] = useState(null);
+                  const [secureFees, setSecureFees] = useState(null);
+                  const [platformFees, setPlatformFees] = useState(null);
+  
 
   const [guestRows, setGuestRows] = useState([
     { id: 0, count: 1, duration: "", price: "" },
@@ -56,6 +60,9 @@ const GardnerDayVisit = () => {
         setBookingSummaryPage(data.booking_summary || "");
         setNightCharge(data.night_charge || "");
         setAdditionalPriceHours(data.additional_price_hours || {});
+        setGst(data.gst || null);
+        setSecureFees(data.secure_fee || null);
+        setPlatformFees(data.platform_fee || null);
   
         // Process gardener_hours_calculations
         if (data.gardener_hours_calculations.length > 0) {
@@ -172,6 +179,9 @@ const GardnerDayVisit = () => {
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("night_charge", nightCharge || "");
     formData.append("additional_price_hours", additionalPriceHours);
+    formData.append("gst", gst || "");
+    formData.append("secure_fee", secureFees || "");
+    formData.append("platform_fee", platformFees || "");
   
     const noOfPeopleData = guestRows.map((row) => ({
       people_count: row.count,
@@ -434,6 +444,46 @@ const GardnerDayVisit = () => {
             />
           </div>
         </div>
+
+        <div className="row mb-3 align-items-center">
+  <div className="col-md-3">
+    <label htmlFor="gst" className="form-label">GST</label>
+    <input
+      type="number"
+      className="form-control"
+      id="gst"
+      value={gst === null ? "" : gst} // Set value to empty string when null
+      onChange={(e) => setGst(e.target.value === "" ? null : Number(e.target.value))}
+      min="1"
+      required
+    />
+  </div>
+  <div className="col-md-3">
+    <label htmlFor="secureFees" className="form-label">Secure Fees</label>
+    <input
+      type="number"
+      className="form-control"
+      id="secureFees"
+      value={secureFees === null ? "" : secureFees} // Set value to empty string when null
+      onChange={(e) => setSecureFees(e.target.value === "" ? null : Number(e.target.value))}
+      min="1"
+      required
+    />
+  </div>
+  <div className="col-md-3">
+    <label htmlFor="platformFees" className="form-label">Platform Fees</label>
+    <input
+      type="number"
+      className="form-control"
+      id="platformFees"
+      value={platformFees === null ? "" : platformFees} // Set value to empty string when null
+      onChange={(e) => setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
+      min="1"
+      required
+    />
+  </div>
+</div>
+
         {/* Guest Time Slot Section */}
         <div className="MainDining_AddTable mb-5 mt-5">
           <p className="Subheading1_AddTable">Time duration and price</p>

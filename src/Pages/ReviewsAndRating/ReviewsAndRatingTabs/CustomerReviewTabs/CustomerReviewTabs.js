@@ -82,6 +82,7 @@ const PartnerReviewTabs = () => {
 
   return (
     <div className="Support-Table-Main p-3">
+       <h2>Customer Review and Rating</h2>
       {loading ? (
         <Loader />
       ) : (

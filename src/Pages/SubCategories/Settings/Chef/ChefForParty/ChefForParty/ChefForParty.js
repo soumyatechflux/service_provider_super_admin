@@ -33,6 +33,10 @@ const ChefForParty = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedFoodItem, setSelectedFoodItem] = useState(null);
 
+  const [gst, setGst] = useState(null);
+    const [secureFees, setSecureFees] = useState(null);
+    const [platformFees, setPlatformFees] = useState(null);
+
   const fetchSubCategoryData = async () => {
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
     // setLoading(true);
@@ -81,6 +85,10 @@ const ChefForParty = () => {
         setCancellationPolicy(data.cancellation_policy || "");
         setBookingSummaryPage(data.booking_summary || "");
         setNightCharge(data.night_charge || "");
+
+        setGst(data.gst || null);
+setSecureFees(data.secure_fee || null);
+setPlatformFees(data.platform_fee || null);
 
         // Populate guestRows based on API response (if provided)
         if (data.no_of_people && data.no_of_people.length > 0) {
@@ -221,6 +229,10 @@ const ChefForParty = () => {
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("night_charge", nightCharge || "");
+
+    formData.append("gst", gst || "");
+    formData.append("secure_fee", secureFees || "");
+    formData.append("platform_fee", platformFees || "");
 
     // Add `no_of_people` data
     const noOfPeopleData = guestRows.map((row) => ({
@@ -442,6 +454,46 @@ const ChefForParty = () => {
             />
           </div>
         </div>
+
+        <div className="row mb-3 align-items-center">
+  <div className="col-md-3">
+    <label htmlFor="gst" className="form-label">GST</label>
+    <input
+      type="number"
+      className="form-control"
+      id="gst"
+      value={gst === null ? "" : gst} // Set value to empty string when null
+      onChange={(e) => setGst(e.target.value === "" ? null : Number(e.target.value))}
+      min="1"
+      required
+    />
+  </div>
+  <div className="col-md-3">
+    <label htmlFor="secureFees" className="form-label">Secure Fees</label>
+    <input
+      type="number"
+      className="form-control"
+      id="secureFees"
+      value={secureFees === null ? "" : secureFees} // Set value to empty string when null
+      onChange={(e) => setSecureFees(e.target.value === "" ? null : Number(e.target.value))}
+      min="1"
+      required
+    />
+  </div>
+  <div className="col-md-3">
+    <label htmlFor="platformFees" className="form-label">Platform Fees</label>
+    <input
+      type="number"
+      className="form-control"
+      id="platformFees"
+      value={platformFees === null ? "" : platformFees} // Set value to empty string when null
+      onChange={(e) => setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
+      min="1"
+      required
+    />
+  </div>
+</div>
+
 
         <div className="MainDining_AddTable mb-5 mt-5">
           <p className="Subheading1_AddTable">

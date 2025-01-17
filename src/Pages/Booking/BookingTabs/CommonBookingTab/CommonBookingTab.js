@@ -115,7 +115,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
 
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
-          <h2>Booking</h2>
+         
         {/* First Page Button */}
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
           <button
@@ -216,6 +216,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
 
   return (
     <div className="SubCategory-Table-Main p-3">
+       <h2>Bookings</h2>
       {loading ? (
         <Loader />
       ) : (

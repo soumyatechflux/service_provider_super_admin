@@ -60,6 +60,7 @@ const AboutUsTable = () => {
 
   return (
     <div className="about-us-table-container" style={{ padding: "1rem" }}>
+         <h2>About Us</h2>
       {loading ? (
         <Loader />
       ) : (

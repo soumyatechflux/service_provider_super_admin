@@ -25,6 +25,10 @@ const MonthlySubscription = () => {
   const [guestRows, setGuestRows] = useState([
     { id: 0, count: 1, duration: "", price: "" },
   ]);
+    const [gst, setGst] = useState(null);
+                    const [secureFees, setSecureFees] = useState(null);
+                    const [platformFees, setPlatformFees] = useState(null);
+    
 
   // Fetch data for sub_category_id = 2
 
@@ -56,6 +60,10 @@ const MonthlySubscription = () => {
         setBookingSummaryPage(data.booking_summary || "");
         setNightCharge(data.night_charge || "");
         setAdditionalPriceHours(data.additional_price_hours || {});
+        setGst(data.gst || null);
+        setSecureFees(data.secure_fee || null);
+        setPlatformFees(data.platform_fee || null);
+  
   
         // Map gardener monthly visit calculations to hourRows
         if (data.gardener_monthly_visit_calculations.length > 0) {
@@ -178,6 +186,10 @@ if (hasDuplicates) {
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("booking_details", summary);
+
+    formData.append("gst", gst || "");
+    formData.append("secure_fee", secureFees || "");
+    formData.append("platform_fee", platformFees || "");
 
     // Format the data according to the expected structure
     const visitCalculations = hourRows.map((row) => ({
@@ -410,6 +422,47 @@ if (hasDuplicates) {
             />
           </div>
         </div>
+
+
+        <div className="row mb-3 align-items-center">
+  <div className="col-md-3">
+    <label htmlFor="gst" className="form-label">GST</label>
+    <input
+      type="number"
+      className="form-control"
+      id="gst"
+      value={gst === null ? "" : gst} // Set value to empty string when null
+      onChange={(e) => setGst(e.target.value === "" ? null : Number(e.target.value))}
+      min="1"
+      required
+    />
+  </div>
+  <div className="col-md-3">
+    <label htmlFor="secureFees" className="form-label">Secure Fees</label>
+    <input
+      type="number"
+      className="form-control"
+      id="secureFees"
+      value={secureFees === null ? "" : secureFees} // Set value to empty string when null
+      onChange={(e) => setSecureFees(e.target.value === "" ? null : Number(e.target.value))}
+      min="1"
+      required
+    />
+  </div>
+  <div className="col-md-3">
+    <label htmlFor="platformFees" className="form-label">Platform Fees</label>
+    <input
+      type="number"
+      className="form-control"
+      id="platformFees"
+      value={platformFees === null ? "" : platformFees} // Set value to empty string when null
+      onChange={(e) => setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
+      min="1"
+      required
+    />
+  </div>
+</div>
+
         {/* Guest Time Slot Section */}
         <div className="MainDining_AddTable mb-5 mt-5">
           <p className="Subheading1_AddTable">Time duration and price</p>

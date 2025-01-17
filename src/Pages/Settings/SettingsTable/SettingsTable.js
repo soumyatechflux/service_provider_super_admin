@@ -94,6 +94,7 @@ const SettingsTable = () => {
   
   return (
     <div className="Restro-Table-Main p-3">
+         <h2>Settings</h2>
       {loading ? (
         <Loader />
       ) : (

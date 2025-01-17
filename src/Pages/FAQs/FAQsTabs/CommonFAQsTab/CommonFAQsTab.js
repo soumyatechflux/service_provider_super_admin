@@ -58,6 +58,7 @@ const CommonFAQsTab = ({ categoryID }) => {
 
   return (
     <div className="Restro-Table-Main p-3">
+         <h2>FAQs</h2>
       {loading ? (
         <Loader />
       ) : (

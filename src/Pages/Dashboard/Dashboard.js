@@ -26,7 +26,7 @@ const Dashboard = () => {
   return (
     <>
       <div className={`content-container ${value ? "sidebar-open" : "sidebar-closed"}`}>
-Dashboard
+      <h2>Dashboard</h2>
       </div>
 
     </>

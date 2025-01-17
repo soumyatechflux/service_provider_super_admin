@@ -81,7 +81,7 @@ const CategoriesTable = () => {
 
   return (
     <div className="Category-Table-Main p-3">
-      <h2>categories</h2>
+      <h2>Categories</h2>
       {loading ? (
         <Loader />
       ) : (
