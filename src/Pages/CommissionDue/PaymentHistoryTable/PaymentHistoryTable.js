@@ -33,9 +33,7 @@ const PaymentHistoryTable = ({
 
       if (response?.status === 200 && response?.data?.success) {
         const data = response?.data?.data || [];
-
         setDummy_Data(data);
-
         console.log("Payment history data:", data);
       } else {
         toast.error(response.data.message || "Failed to fetch commission.");
@@ -54,6 +52,7 @@ const PaymentHistoryTable = ({
 
   return (
     <div className="SubCategory-Table-Main p-3">
+        <h2>Payment History</h2>
       {loading ? (
         <Loader />
       ) : (
@@ -73,23 +72,25 @@ const PaymentHistoryTable = ({
                 <th scope="col" style={{ width: "15%" }}>
                   Payout Amount
                 </th>
-                {/* <th scope="col" style={{ width: "20%" }}>
-                  Address
-                </th> */}
               </tr>
             </thead>
             <tbody>
-              {dummy_Data.map((item, index) => (
-                <tr key={item.id}>
-                  <th scope="row">{index + 1}.</th>
-                  <td>{item.partner_name || "Unknown"}</td>
-                  <td>{item.category_name || "N/A"}</td>
-                  <td>{item.payout_amount || "N/A"}</td> {/* Updated here */}
-                  {/* <td>
-                    {item.current_address || "No current_address available."}
-                  </td> */}
+              {dummy_Data.length === 0 ? (
+                <tr>
+                  <td colSpan="4" style={{ textAlign: "center" }}>
+                    No data available
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                dummy_Data.map((item, index) => (
+                  <tr key={item.id}>
+                    <th scope="row">{index + 1}.</th>
+                    <td>{item.partner_name || "Unknown"}</td>
+                    <td>{item.category_name || "N/A"}</td>
+                    <td>{item.payout_amount || "N/A"}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

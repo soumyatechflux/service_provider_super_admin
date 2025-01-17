@@ -206,18 +206,33 @@ const VerifiedPartnerTab = ({
     getRestaurantTableData();
   }, []);
 
+  useEffect(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth", // Enables smooth scrolling
+      });
+    }, [currentPage]);
+    
   return (
     <div className="Restro-Table-Main p-3">
+     <h2>
+  {restaurants.filter((restaurant) => restaurant.is_verify === 0).length > 0
+    ? "Unverified Partners"
+    : restaurants.filter((restaurant) => restaurant.is_verify === 1).length > 0
+    ? "Verified Partners"
+    : "No Partners Available"}
+</h2>
+
       <div style={{ float: "right" }}>
         {restaurants.filter((restaurant) => restaurant.is_verify === 0).length >
-          0 && (
+          0 || restaurants.length === 0 ? (
           <button
             className="Discount-btn"
             onClick={() => setShowAddPartnerModal(true)}
           >
             + Register Partner
           </button>
-        )}
+        ) : null}
       </div>
 
       {loading ? (
@@ -267,45 +282,59 @@ const VerifiedPartnerTab = ({
                 </tr>
               </thead>
               <tbody style={{ cursor: "default" }}>
-                {currentEntries.map((restaurant, index) => (
-                  <tr style={{ cursor: "default" }} key={restaurant.id}>
-                    <th scope="row" className="id-user">
-                      {indexOfFirstEntry + index + 1}.
-                    </th>
-                    <td className="text-user">{restaurant.name}</td>
-                    <td className="text-user">
-                      {restaurant.category_id === 1
-                        ? "Cook"
-                        : restaurant.category_id === 2
-                        ? "Driver"
-                        : restaurant.category_id === 3
-                        ? "Gardener"
-                        : "Unknown"}
+                {restaurants.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="11"
+                      style={{
+                        textAlign: "center",
+                      }}
+                    >
+                      No data available
                     </td>
-                    <td className="text-user">
-                      {restaurant.email ? (
-                        restaurant.email
-                      ) : (
-                        <span style={{ color: "red", fontWeight: "bold" }}>
-                          -
-                        </span>
-                      )}
-                    </td>
-                    <td className="text-user">{restaurant.mobile}</td>
-                    <td className="text-user">
-                      {restaurant.years_of_experience}
-                    </td>
-                    <td className="text-user">{restaurant.current_address}</td>
-                    <td className="text-user">
-                      {new Intl.DateTimeFormat("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "2-digit",
-                      })
-                        .format(new Date(restaurant.created_at))
-                        .replace(",", "")}
-                    </td>
-                    <td>
+                  </tr>
+                ) : (
+                  currentEntries.map((restaurant, index) => (
+                    <tr style={{ cursor: "default" }} key={restaurant.id}>
+                      <th scope="row" className="id-user">
+                        {indexOfFirstEntry + index + 1}.
+                      </th>
+                      <td className="text-user">{restaurant.name}</td>
+                      <td className="text-user">
+                        {restaurant.category_id === 1
+                          ? "Cook"
+                          : restaurant.category_id === 2
+                          ? "Driver"
+                          : restaurant.category_id === 3
+                          ? "Gardener"
+                          : "Unknown"}
+                      </td>
+                      <td className="text-user">
+                        {restaurant.email ? (
+                          restaurant.email
+                        ) : (
+                          <span style={{ color: "red", fontWeight: "bold" }}>
+                            -
+                          </span>
+                        )}
+                      </td>
+                      <td className="text-user">{restaurant.mobile}</td>
+                      <td className="text-user">
+                        {restaurant.years_of_experience}
+                      </td>
+                      <td className="text-user">
+                        {restaurant.current_address}
+                      </td>
+                      <td className="text-user">
+                        {new Intl.DateTimeFormat("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "2-digit",
+                        })
+                          .format(new Date(restaurant.created_at))
+                          .replace(",", "")}
+                      </td>
+                      <td>
                       <div
                         style={{
                           display: "flex",
@@ -358,37 +387,38 @@ const VerifiedPartnerTab = ({
                         </div>
                       </div>
                     </td>
-                    <td className={`status ${restaurant.active_status}`}>
-                      <div
-                        className={`status-background-${restaurant.active_status}`}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <span>
-                          {restaurant.active_status === "active"
-                            ? "Active"
-                            : "In-Active"}
-                        </span>
+                      <td className={`status ${restaurant.active_status}`}>
                         <div
-                          onClick={() => handleRestaurantClick(restaurant)}
-                          style={{ cursor: "pointer", opacity: 1 }}
+                          className={`status-background-${restaurant.active_status}`}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
                         >
-                          <EditIcon />
+                          <span>
+                            {restaurant.active_status === "active"
+                              ? "Active"
+                              : "In-Active"}
+                          </span>
+                          <div
+                            onClick={() => handleRestaurantClick(restaurant)}
+                            style={{ cursor: "pointer", opacity: 1 }}
+                          >
+                            <EditIcon />
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td
-                      className="edit_users action-btn-trash"
-                      style={{ cursor: "pointer", opacity: 1 }}
-                      onClick={() => handleDeleteClick(restaurant)}
-                    >
-                      <DeleteIcon style={{ color: "red" }} />
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td
+                        className="edit_users action-btn-trash"
+                        style={{ cursor: "pointer", opacity: 1 }}
+                        onClick={() => handleDeleteClick(restaurant)}
+                      >
+                        <DeleteIcon style={{ color: "red" }} />
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

@@ -63,6 +63,14 @@ const SupportPartnerTab = () => {
     getSupportData();
   }, []);
 
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Enables smooth scrolling
+    });
+  }, [currentPage]);
+  
   // Pagination logic
   const totalPages = Math.ceil(supportData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -150,6 +158,7 @@ const SupportPartnerTab = () => {
 
   return (
     <div className="Support-Table-Main p-3">
+      <h2>Partner Support</h2>
       {loading ? (
         <Loader />
       ) : (

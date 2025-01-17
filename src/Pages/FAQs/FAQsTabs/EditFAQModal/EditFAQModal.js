@@ -4,7 +4,7 @@ import { Button, TextField } from "@mui/material";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const EditFAQModal = ({ show, onClose, onSave, faq,categoryID,fetchFAQs }) => {
+const EditFAQModal = ({ show, onClose, onSave, faq, categoryID, fetchFAQs }) => {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
@@ -13,8 +13,11 @@ const EditFAQModal = ({ show, onClose, onSave, faq,categoryID,fetchFAQs }) => {
     if (faq) {
       setQuestion(faq.question);
       setAnswer(faq.answer);
+    } else {
+      setQuestion("");
+      setAnswer("");
     }
-  }, [faq]);
+  }, [faq, show]);
 
   const handleSave = async () => {
     if (!question || !answer) {
@@ -29,7 +32,7 @@ const EditFAQModal = ({ show, onClose, onSave, faq,categoryID,fetchFAQs }) => {
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/cms/faqs`,
         {
-          category_id: categoryID, // Ensure categoryID is passed correctly
+          category_id: categoryID,
           faq_id: faq.faq_id,
           question,
           answer,
@@ -41,9 +44,9 @@ const EditFAQModal = ({ show, onClose, onSave, faq,categoryID,fetchFAQs }) => {
 
       if (response?.data?.success) {
         toast.success("FAQ updated successfully!");
-        onSave(response.data); // Pass the updated FAQ back to the parent
+        onSave(response.data);
         onClose();
-        fetchFAQs()
+        fetchFAQs();
       } else {
         toast.error(response.data.message || "Failed to update FAQ.");
       }
@@ -55,8 +58,14 @@ const EditFAQModal = ({ show, onClose, onSave, faq,categoryID,fetchFAQs }) => {
     }
   };
 
+  const handleCancel = () => {
+    setQuestion("");
+    setAnswer("");
+    onClose();
+  };
+
   return (
-    <Modal open={show} onClose={onClose}>
+    <Modal open={show} onClose={handleCancel}>
       <div
         className="modal-overlay"
         style={{
@@ -94,17 +103,19 @@ const EditFAQModal = ({ show, onClose, onSave, faq,categoryID,fetchFAQs }) => {
           <div className="modal-actions">
             <button
               onClick={handleSave}
-              type="button" className="btn btn-primary"
+              type="button"
+              className="btn btn-primary"
               disabled={loading}
-              style={{width:"100%"}}
+              style={{ width: "100%" }}
             >
               {loading ? "Saving..." : "Save"}
             </button>
             <button
-              onClick={onClose}
-               type="button" className="btn btn-secondary"
+              onClick={handleCancel}
+              type="button"
+              className="btn btn-secondary"
               disabled={loading}
-              style={{width:"100%"}}
+              style={{ width: "100%" }}
             >
               Cancel
             </button>

@@ -9,9 +9,8 @@ import AddRoleModal from "./AddRoleModal/AddRoleModal";
 import EditRoleModal from "./EditRoleModal/EditRoleModal";
 import EditRoleStatusModal from "./EditRoleStatusModal/EditRoleStatusModal";
 
-const RolesTable = ({  }) => {
-    const [loading, setLoading] = useState(false); // Simulating loader state
-  
+const RolesTable = () => {
+  const [loading, setLoading] = useState(false); // Simulating loader state
   const [roles, setRoles] = useState([]);
   const [dummy_Data, setDummy_Data] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -19,6 +18,11 @@ const RolesTable = ({  }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
+
+  // State for managing view more/less functionality
+  const [expandedDescription, setExpandedDescription] = useState(
+    new Array(dummy_Data.length).fill(false) // To track which description is expanded
+  );
 
   const getRolesData = async () => {
     try {
@@ -116,12 +120,19 @@ const RolesTable = ({  }) => {
     // toast.success("Role status updated successfully!");
   };
 
+  const handleToggleDescription = (index) => {
+    const newExpandedDescription = [...expandedDescription];
+    newExpandedDescription[index] = !newExpandedDescription[index];
+    setExpandedDescription(newExpandedDescription);
+  };
+
   useEffect(() => {
     getRolesData(); // Fetch roles data on component mount
   }, []);
 
   return (
     <div className="SubCategory-Table-Main p-3">
+        <h2>Roles</h2>
       <div style={{ float: "right" }}>
         <button className="Discount-btn" onClick={() => setShowAddModal(true)}>
           + Add Role
@@ -152,39 +163,71 @@ const RolesTable = ({  }) => {
               </tr>
             </thead>
             <tbody>
-              {dummy_Data.map((item, index) => (
-                <tr key={item.id}>
-                  <th scope="row">{index + 1}.</th>
-                  <td>{item.role_name || "No role available"}</td>
-                  <td>{item.description || "No description available"}</td>
-                  <td>
-                    <div className="status-div">
-                      <span>
-                        {item.active_status === "active"
-                          ? "Active"
-                          : "In-Active"}
-                      </span>
-                      <EditIcon
-                        onClick={() => handleStatusClick(item)}
-                        style={{ cursor: "pointer", marginLeft: "10px" }}
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div className="status-div">
-                      <EditIcon
-                        style={{ cursor: "pointer", marginLeft: "10px" }}
-                        onClick={() => handleEdit(item)}
-                      />
-                      <i
-                        className="fa fa-trash text-danger"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => handleDeleteClick(item)}
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {dummy_Data.map((item, index) => {
+                const descriptionWords = item.description?.split(" ") || [];
+                const showFullDescription =
+                  expandedDescription[index] || descriptionWords.length <= 5;
+                const truncatedDescription = descriptionWords
+                  .slice(0, 5)
+                  .join(" ");
+
+                return (
+                  <tr key={item.id}>
+                    <th scope="row">{index + 1}.</th>
+                    <td>{item.role_name || "No role available"}</td>
+                    <td>
+                      <div>
+                        {item.description && item.description.trim() !== ""
+                          ? showFullDescription
+                            ? item.description
+                            : `${truncatedDescription}...`
+                          : "No description available"}
+                        {item.description &&
+                          item.description.trim() !== "" &&
+                          descriptionWords.length > 5 && (
+                            <span
+                              onClick={() => handleToggleDescription(index)}
+                              style={{
+                                color: "#007bff",
+                                cursor: "pointer",
+                                marginLeft: "5px",
+                              }}
+                            >
+                              {showFullDescription ? "View Less" : "View More"}
+                            </span>
+                          )}
+                      </div>
+                    </td>
+
+                    <td>
+                      <div className="status-div">
+                        <span>
+                          {item.active_status === "active"
+                            ? "Active"
+                            : "In-Active"}
+                        </span>
+                        <EditIcon
+                          onClick={() => handleStatusClick(item)}
+                          style={{ cursor: "pointer", marginLeft: "10px" }}
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="status-div">
+                        <EditIcon
+                          style={{ cursor: "pointer", marginLeft: "10px" }}
+                          onClick={() => handleEdit(item)}
+                        />
+                        <i
+                          className="fa fa-trash text-danger"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleDeleteClick(item)}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -207,7 +250,7 @@ const RolesTable = ({  }) => {
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleConfirmDelete}
         roleId={selectedRole?.role_id}
-        getRolesData = {getRolesData}
+        getRolesData={getRolesData}
       />
 
       <EditRoleStatusModal

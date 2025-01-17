@@ -118,6 +118,24 @@ const OneWayTrip = () => {
   });
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const invalidHourRow = hourRows.some(
+      (row) => !row.duration || row.duration <= 0 || !row.price || row.price <= 0
+    );
+    if (invalidHourRow) {
+      toast.error("Please fill out all duration and price fields before submitting.");
+      return; // Prevent form submission if validation fails
+    }
+     const durations = hourRows.map((row) => String(row.duration).trim());
+        console.log("Durations (normalized):", durations); // Log the normalized durations array
+      
+        const hasDuplicates = durations.some((duration, index) => durations.indexOf(duration) !== index);
+        console.log("Has duplicates:", hasDuplicates); // Log whether duplicates are found
+        
+        if (hasDuplicates) {
+          toast.error("Duplicate durations are not allowed.");
+          console.log("Form submission stopped due to duplicate durations."); // Log the reason for stopping the form submission
+          return; // Stop execution to prevent form submission
+        }
 
     const formData = new FormData();
     formData.append("category_id", 2);
@@ -610,7 +628,15 @@ const OneWayTrip = () => {
           <button
             type="submit"
             className="btn btn-primary w-50 mt-4"
-            onClick={handleSubmit}
+            onClick={(e) => {
+              handleSubmit(e); 
+              setTimeout(() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth", 
+                });
+              }, 500); 
+            }}
             disabled={loading}
           >
             {loading ? "Submitting..." : "Submit"}

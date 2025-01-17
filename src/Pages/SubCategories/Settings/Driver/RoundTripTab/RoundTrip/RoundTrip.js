@@ -194,7 +194,18 @@ const RoundTrip = () => {
 
     // Create FormData object
     const formData = new FormData();
-
+    
+    const durations = hourRows.map((row) => String(row.duration).trim());
+    console.log("Durations (normalized):", durations); // Log the normalized durations array
+  
+    const hasDuplicates = durations.some((duration, index) => durations.indexOf(duration) !== index);
+    console.log("Has duplicates:", hasDuplicates); // Log whether duplicates are found
+    
+    if (hasDuplicates) {
+      toast.error("Duplicate durations are not allowed.");
+      console.log("Form submission stopped due to duplicate durations."); // Log the reason for stopping the form submission
+      return; // Stop execution to prevent form submission
+    }
     // Add required fields
     formData.append("category_id", 2); // Example category ID for "Driver"
     formData.append("sub_category_id", 4); // Example sub-category ID for "One Day Ride"
@@ -655,7 +666,15 @@ const RoundTrip = () => {
           <button
             type="submit"
             className="btn btn-primary w-50 mt-4"
-            onClick={handleSubmit}
+            onClick={(e) => {
+              handleSubmit(e); 
+              setTimeout(() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth", 
+                });
+              }, 500); 
+            }}
             disabled={loading}
           >
             {loading ? "Submitting..." : "Submit"}

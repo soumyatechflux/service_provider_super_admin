@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { BiMinus } from "react-icons/bi";
 import { HiPlus } from "react-icons/hi";
 import { HiPlusSmall } from "react-icons/hi2";
@@ -101,44 +101,21 @@ const OneMealTab = () => {
     setMenuRows([...menuRows, newMenuRow]);
   };
 
-  const handleRemoveMenuRow = async (id) => {
+  const handleRemoveMenuRow = (id) => {
     if (menuRows.length === 1) {
       toast.error("At least one menu item is required.");
       return;
     }
 
-    try {
-      // Call the API to delete the dish
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
-      const response = await axios.delete(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/dishes/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    // Remove the dish from the menuRows array
+    const updatedMenuRows = menuRows
+      .filter((row) => row.id !== id)
+      .map((row, index) => ({
+        ...row,
+        id: index, // Reassign IDs based on the new array index
+      }));
 
-      if (response.data.success) {
-        // Remove the dish from the menuRows array
-        const updatedMenuRows = menuRows
-          .filter((row) => row.id !== id)
-          .map((row, index) => ({
-            ...row,
-            id: index, // Reassign IDs based on the new array index
-          }));
-
-        setMenuRows(updatedMenuRows);
-        toast.success("Menu item removed successfully.");
-      } else {
-        toast.error(response.data.message || "Failed to remove menu item.");
-      }
-    } catch (error) {
-      console.error("Error removing menu item:", error);
-      toast.error("An error occurred while removing the menu item.");
-    }
+    setMenuRows(updatedMenuRows);
   };
 
   const handleDishNameChange = (index, value) => {
@@ -170,12 +147,12 @@ const OneMealTab = () => {
   };
 
   const handleRemoveRow = (id) => {
-      if (guestRows.length > 1) {
-        setGuestRows(guestRows.filter((row) => row.id !== id));
-      } else {
-        toast.error("At least one guest slot is required.");
-      }
-    };
+    if (guestRows.length > 1) {
+      setGuestRows(guestRows.filter((row) => row.id !== id));
+    } else {
+      toast.error("At least one guest slot is required.");
+    }
+  };
 
   const handleCountChange = (index, increment) => {
     if (index === 0) {
@@ -205,10 +182,49 @@ const OneMealTab = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-
+  
+    // Validate that all dish names are filled
+    const invalidMenuItem = menuRows.some(row => !row.dishName.trim());
+    if (invalidMenuItem) {
+      toast.error("Please fill out all dish names before submitting.");
+      return; // Prevent form submission if validation fails
+    }
+  
+    // Validate that all guest count and price fields are filled
+    const invalidGuestRow = guestRows.some(
+      (row) => !row.count || row.count < 1 || !row.price || row.price <= 0
+    );
+    if (invalidGuestRow) {
+      toast.error("Please fill out all guest counts and prices before submitting.");
+      return; // Prevent form submission if validation fails
+    }
+  
+    // Validate that guest counts are unique
+    const guestCounts = guestRows.map(row => row.count);
+    const hasDuplicateGuestCounts = guestCounts.length !== new Set(guestCounts).size;
+    if (hasDuplicateGuestCounts) {
+      toast.error("Guest counts should be unique. Please add different guest counts.");
+      return;
+    }
+  
+    // Validate that guest counts are in ascending order
+    const isAscendingOrder = guestCounts.every((count, index, array) =>
+      index === 0 || count >= array[index - 1]
+    );
+    if (!isAscendingOrder) {
+      toast.error("Guest counts should be in ascending order.");
+      return;
+    }
+  
+    // Validate that the number of rows does not exceed 15
+    if (guestRows.length > 15) {
+      toast.error("Guest count cannot exceed 15.");
+      return;
+    }
+  
     // Create FormData object
     const formData = new FormData();
-
+  
     // Add required fields
     formData.append("category_id", 1); // Add category_id explicitly
     formData.append("sub_category_id", 1); // Add sub_category_id explicitly
@@ -223,7 +239,7 @@ const OneMealTab = () => {
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("booking_details", summary);
     formData.append("night_charge", night_charge || "");
-
+  
     // Add `no_of_people` data
     const noOfPeopleData = guestRows.map((row) => ({
       people_count: row.count,
@@ -231,16 +247,16 @@ const OneMealTab = () => {
       aprox_time: row.duration,
     }));
     formData.append("no_of_people", JSON.stringify(noOfPeopleData));
-
+  
     // Add `dishes` data
     const menuItemsData = menuRows.map((row) => ({
       dish_name: row.dishName,
     }));
     formData.append("dishes", JSON.stringify(menuItemsData));
-
+  
     // Loading state
     setLoading(true);
-
+  
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/sub_category`,
@@ -252,7 +268,7 @@ const OneMealTab = () => {
           },
         }
       );
-
+  
       if (response.data.success) {
         toast.success("Sub-category updated successfully!");
         fetchSubCategoryData(); // Refresh the data after update
@@ -266,6 +282,8 @@ const OneMealTab = () => {
       setLoading(false);
     }
   };
+  
+  
 
   const generateTimeOptions = () => {
     const times = [];
@@ -459,7 +477,11 @@ const OneMealTab = () => {
               <div
                 key={row.id}
                 className="row mb-3"
-                style={{ backgroundColor: "#F6F8F9", justifyContent: "center" }}
+                style={{
+                  backgroundColor: "#F6F8F9",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
               >
                 <div className="col-12 col-md-3 p-4">
                   <div className="Subheading2_AddTable">
@@ -598,7 +620,8 @@ const OneMealTab = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="menu-actions mt-4"
+                <div
+                  className="menu-actions mt-4"
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -711,7 +734,15 @@ const OneMealTab = () => {
           <button
             type="submit"
             className="btn btn-primary w-50 mt-4"
-            onClick={handleSubmit}
+            onClick={(e) => {
+              handleSubmit(e);
+              setTimeout(() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }, 500);
+            }}
             disabled={loading}
           >
             {loading ? "Submitting..." : "Submit"}
@@ -723,30 +754,3 @@ const OneMealTab = () => {
 };
 
 export default OneMealTab;
-
-{
-  /* Booking Summary Page Editor */
-}
-{
-  /* <div className="MainDining_AddTable mb-5 mt-5">
-<label className="form-label">Booking Summary Page</label>
-<ReactQuill
-  value={bookingSummaryPage}
-  onChange={setBookingSummaryPage}
-  placeholder="Write the booking summary page content here..."
-  theme="snow"
-  modules={{
-    toolbar: [
-      [{ header: "1" }, { header: "2" }, { font: [] }],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["bold", "italic", "underline"],
-      [{ align: [] }],
-      ["link"],
-      ["blockquote"],
-      [{ indent: "-1" }, { indent: "+1" }],
-      [{ direction: "rtl" }],
-    ],
-  }}
-/>
-</div> */
-}

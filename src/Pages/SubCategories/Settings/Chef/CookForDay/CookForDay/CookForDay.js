@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { HiPlus, HiPlusSm } from "react-icons/hi";
-import { IoMdBackspace } from "react-icons/io";
-import { HiPlusSmall } from "react-icons/hi2";
-import { BiMinus } from "react-icons/bi";
-import { toast } from "react-toastify";
-import ReactQuill from "react-quill";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { BiMinus } from "react-icons/bi";
+import { HiPlus } from "react-icons/hi";
+import { HiPlusSmall } from "react-icons/hi2";
+import { IoMdBackspace } from "react-icons/io";
+import ReactQuill from "react-quill";
+import { toast } from "react-toastify";
 
 const CookForDay = () => {
   const [startTime, setStartTime] = useState("");
@@ -24,6 +24,8 @@ const CookForDay = () => {
   const [guestRows, setGuestRows] = useState([
     { id: 0, count: 1, duration: "", price: "" },
   ]);
+  const [menuRows, setMenuRows] = useState([{ id: 0, dishName: "" }]);
+  
 
   // Fetch data for sub_category_id = 2
 
@@ -52,8 +54,17 @@ const CookForDay = () => {
             duration: item.aprox_time,
           }));
         setGuestRows(sortedRows);
-
-        // Populate state with API data
+        
+        const dishes = data.dishes
+        .filter(dish => dish.dish_name.trim() !== "") 
+        .map((dish) => ({
+          id: dish.dish_id,
+          dishName: dish.dish_name, 
+        }))
+        .sort((a, b) => a.id - b.id);  
+      
+      setMenuRows(dishes);
+      
         setStartTime(data.service_start_time.slice(0, 5));
         setEndTime(data.service_end_time.slice(0, 5));
         setNightChargesStartAt(data.night_charge_start_time.slice(0, 5));
@@ -136,12 +147,53 @@ const CookForDay = () => {
     setGuestRows(newRows);
   };
 
+ 
+ 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
     // Create FormData object
     const formData = new FormData();
+
+    const invalidMenuItem = menuRows.some(row => !row.dishName.trim());
+  if (invalidMenuItem) {
+    toast.error("Please fill out all dish names before submitting.");
+    return; // Prevent form submission if validation fails
+  }
+
+  // Validate that all guest count and price fields are filled
+    const invalidGuestRow = guestRows.some(
+      (row) => !row.count || row.count < 1 || !row.price || row.price <= 0
+    );
+    if (invalidGuestRow) {
+      toast.error("Please fill out all guest counts and prices before submitting.");
+      return; // Prevent form submission if validation fails
+    }
+  
+    const guestCounts = guestRows.map(row => row.count);
+        const hasDuplicateGuestCounts = guestCounts.length !== new Set(guestCounts).size;
+        if (hasDuplicateGuestCounts) {
+          toast.error("Guest counts should be unique. Please add different guest counts.");
+          return;
+        }
+      
+        // Validate that guest counts are in ascending order
+        const isAscendingOrder = guestCounts.every((count, index, array) =>
+          index === 0 || count >= array[index - 1]
+        );
+        if (!isAscendingOrder) {
+          toast.error("Guest counts should be in ascending order.");
+          return;
+        }
+      
+        // Validate that the number of rows does not exceed 15
+        if (guestRows.length > 15) {
+          toast.error("Guest count cannot exceed 15.");
+          return;
+        }
+      
 
     // Add required fields
     formData.append("category_id", 1); // Add category_id explicitly
@@ -157,6 +209,7 @@ const CookForDay = () => {
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("booking_details", summary);
     formData.append("night_charge", nightCharge || "");
+    formData.append("duration", "720 minutes");
 
     // Add `no_of_people` data
     const noOfPeopleData = guestRows.map((row) => ({
@@ -165,6 +218,11 @@ const CookForDay = () => {
       aprox_time: row.duration,
     }));
     formData.append("no_of_people", JSON.stringify(noOfPeopleData));
+
+    const menuItemsData = menuRows.map((row) => ({
+      dish_name: row.dishName,
+    }));
+    formData.append("dishes", JSON.stringify(menuItemsData));
 
     // Loading state
     setLoading(true);
@@ -206,7 +264,35 @@ const CookForDay = () => {
     }
     return times;
   };
-
+  const handleRemoveMenuRow = (id) => {
+    if (menuRows.length === 1) {
+      toast.error("At least one menu item is required.");
+      return;
+    }
+  
+    // Remove the dish from the menuRows array
+    const updatedMenuRows = menuRows
+      .filter((row) => row.id !== id)
+      .map((row, index) => ({
+        ...row,
+        id: index, // Reassign IDs based on the new array index
+      }));
+  
+    setMenuRows(updatedMenuRows);
+  };
+  
+  const handleAddMenuRow = () => {
+    // Create a new row with an empty dishName
+    const newRow = { id: Date.now(), dishName: '' };
+    setMenuRows([...menuRows, newRow]);
+  };
+  
+  const handleDishNameChange = (index, value) => {
+    // Update the dishName of the specific row based on the index
+    const updatedMenuRows = [...menuRows];
+    updatedMenuRows[index].dishName = value;
+    setMenuRows(updatedMenuRows);
+  };
   const timeOptions = generateTimeOptions();
   return (
     <div className="container mt-5">
@@ -389,7 +475,7 @@ const CookForDay = () => {
               <div
                 key={row.id}
                 className="row mb-3"
-                style={{ backgroundColor: "#F6F8F9", justifyContent: "center" }}
+                style={{ backgroundColor: "#F6F8F9", justifyContent: "center",width:"100%"  }}
               >
                 <div className="col-12 col-md-3 p-4">
                   <div className="Subheading2_AddTable">
@@ -466,6 +552,145 @@ const CookForDay = () => {
           </div>
         </div>
 
+ {/* Menu Section */}
+
+ <div className="MainDining_AddTable mb-5 mt-5">
+  <p className="Subheading1_AddTable">Menu Items</p>
+  <div
+    className="menu-container"
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: "15px",
+    }}
+  >
+    {/* If there are no rows, show one input field */}
+    {menuRows.length === 0 && (
+      <div
+        className="menu-row"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "#F6F8F9",
+          padding: "10px 15px",
+          borderRadius: "8px",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {/* Dish Name Input */}
+        <div style={{ flex: 1, marginRight: "15px" }}>
+          <label
+            className="Subheading2_AddTable"
+            style={{ fontWeight: "600" }}
+          >
+            Dish Name <span className="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            value={menuRows[0]?.dishName || ''}  // Ensure the value is properly linked to the first row
+            onChange={(e) =>
+              handleDishNameChange(0, e.target.value)  // Use index 0 for the first (and only) row
+            }
+            className="form-control"
+            placeholder="Enter dish name"
+            required
+            style={{
+              marginTop: "5px",
+              padding: "8px",
+              fontSize: "18px",
+              border: "1px solid #ccc",
+              borderRadius: "5px",
+            }}
+          />
+        </div>
+        {/* Add Button */}
+        <div className="menu-actions mt-4" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <HiPlus
+            className="svg_AddTable"
+            style={{
+              fontSize: "25px",
+              cursor: "pointer",
+            }}
+            onClick={handleAddMenuRow}  // Add new row when + button is clicked
+          />
+        </div>
+      </div>
+    )}
+
+    {/* If there are existing rows, display them */}
+    {menuRows.map((row, index) => (
+      <div
+        key={row.id}
+        className="menu-row"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "#F6F8F9",
+          padding: "10px 15px",
+          borderRadius: "8px",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {/* Dish Name Input */}
+        <div style={{ flex: 1, marginRight: "15px" }}>
+          <label
+            className="Subheading2_AddTable"
+            style={{ fontWeight: "600" }}
+          >
+            Dish Name <span className="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            value={row.dishName || ''}  // Ensure value is only linked to the specific row
+            onChange={(e) =>
+              handleDishNameChange(index, e.target.value)  // Update only the dishName of the row being typed in
+            }
+            className="form-control"
+            placeholder="Enter dish name"
+            required
+            style={{
+              marginTop: "5px",
+              padding: "8px",
+              fontSize: "18px",
+              border: "1px solid #ccc",
+              borderRadius: "5px",
+            }}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="menu-actions mt-4" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {/* Add Button */}
+          {index === menuRows.length - 1 && (
+            <HiPlus
+              className="svg_AddTable"
+              style={{
+                fontSize: "25px",
+                cursor: "pointer",
+              }}
+              onClick={handleAddMenuRow}  // Add new row when + button is clicked
+            />
+          )}
+
+          {/* Remove Button */}
+          {menuRows.length > 1 && (
+            <IoMdBackspace
+              className="svg_AddTable"
+              style={{
+                fontSize: "25px",
+                cursor: "pointer",
+              }}
+              onClick={() => handleRemoveMenuRow(row.id)}  // Logic to remove a row
+            />
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+        
         <div className="MainDining_AddTable mb-5 mt-5">
                   <h4 className="form-label">
                     Additional Details (Booking Details Summary)
@@ -542,7 +767,15 @@ const CookForDay = () => {
           <button
             type="submit"
             className="btn btn-primary w-50 mt-4"
-            onClick={handleSubmit}
+            onClick={(e) => {
+              handleSubmit(e); 
+              setTimeout(() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth", 
+                });
+              }, 500); 
+            }}
             disabled={loading}
           >
             {loading ? "Submitting..." : "Submit"}

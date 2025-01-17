@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // Using axios to make API requests
-import { toast } from "react-toastify"; // Import react-toastify for toasts
-import "react-toastify/dist/ReactToastify.css"; // Import the toast CSS
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./EditRoleModal.css";
 
-const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
+const EditRoleModal = ({ show, onClose, onSave, roleData, getRolesData }) => {
   const [formData, setFormData] = useState({
+    roleName: "",
+    description: "",
+    permissions: [],
+  });
+  const [initialFormData, setInitialFormData] = useState({
     roleName: "",
     description: "",
     permissions: [],
   });
 
   const [permissionsList, setPermissionsList] = useState([]);
-  const [isAllSelected, setIsAllSelected] = useState(false); // Track if all checkboxes are selected
-  const [loading, setLoading] = useState(false); // Track loading state
+  const [isAllSelected, setIsAllSelected] = useState(false);
+  const [loading, setLoading] = useState(false);
   const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
   // Fetch permissions from API
@@ -21,7 +26,7 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
     if (show) {
       const fetchPermissions = async () => {
         try {
-          setLoading(true); // Start loading
+          setLoading(true);
           const response = await axios.get(
             `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/permissions`,
             {
@@ -30,14 +35,14 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
               },
             }
           );
-          setLoading(false); // Stop loading
+          setLoading(false);
           if (response?.data?.success) {
             setPermissionsList(response?.data?.data || []);
           } else {
             toast.error("Failed to fetch permissions.");
           }
         } catch (error) {
-          setLoading(false); // Stop loading
+          setLoading(false);
           console.error("Error fetching permissions:", error);
           toast.error("Error fetching permissions.");
         }
@@ -47,22 +52,44 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
     }
   }, [show, token]);
 
-  // Update the formData state when roleData is passed as a prop
+  // Update formData when roleData is passed as a prop
+ // Update formData when roleData is passed as a prop
+useEffect(() => {
+  if (roleData) {
+    const selectedPermissions = roleData.permissions.map((perm) => perm.permission_id);
+
+    setFormData({
+      roleName: roleData.role_name,
+      description: roleData.description || "",
+      permissions: selectedPermissions,
+    });
+
+    setInitialFormData({
+      roleName: roleData.role_name,
+      description: roleData.description || "",
+      permissions: selectedPermissions,
+    });
+
+    // Check if all permissions are selected
+    const allSelected = permissionsList.length > 0 && permissionsList.every((perm) => selectedPermissions.includes(perm.permission_id));
+    setIsAllSelected(allSelected);
+  }
+}, [roleData, permissionsList]);
+
+
+  // Reset form data when modal is closed (but keep previous data on reopen)
   useEffect(() => {
-    if (roleData) {
-      setFormData({
-        roleName: roleData.role_name,
-        description: roleData.description || "",
-        permissions: roleData.permissions.map((perm) => perm.permission_id), // Extract permission IDs
-      });
+    if (!show) {
+      setFormData(initialFormData); // Keep the previous data when reopening modal
+      setIsAllSelected(false); // Reset Select All checkbox
     }
-  }, [roleData]);
+  }, [show, initialFormData]);
 
   const handlePermissionChange = (permissionId, isChecked) => {
     setFormData((prevData) => {
       const updatedPermissions = isChecked
-        ? [...prevData.permissions, permissionId] // Add permission ID
-        : prevData.permissions.filter((id) => id !== permissionId); // Remove permission ID
+        ? [...prevData.permissions, permissionId]
+        : prevData.permissions.filter((id) => id !== permissionId);
       return { ...prevData, permissions: updatedPermissions };
     });
   };
@@ -84,19 +111,19 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
     }
 
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
       const updatedRole = {
         role: {
-          role_id: roleData.role_id, // Include role_id inside the 'role' object
+          role_id: roleData.role_id,
           role_name: formData.roleName,
           description: formData.description,
-          permissions: formData.permissions,  // Send selected permissions
+          permissions: formData.permissions,
         }
       };
 
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/roles`,
-        updatedRole, // Send the role data with the role object inside the payload
+        updatedRole,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -104,18 +131,17 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
         }
       );
 
-      setLoading(false); // Stop loading
+      setLoading(false);
 
       if (response?.status === 200 && response?.data?.success) {
         toast.success("Role updated successfully!");
-        onSave(updatedRole.role); // Pass updated role to parent
+        onSave(updatedRole.role);
         onClose(); // Close the modal
-        
       } else {
         toast.error(response?.data?.message || "Failed to update role.");
       }
     } catch (error) {
-      setLoading(false); // Stop loading
+      setLoading(false);
       console.error("Error updating role:", error);
       toast.error("An error occurred while updating the role. Please try again.");
     }
@@ -185,7 +211,7 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
                     type="checkbox"
                     className="form-check-input"
                     id={permission.permission_id}
-                    checked={formData.permissions.includes(permission.permission_id)} // Check if permission is selected
+                    checked={formData.permissions.includes(permission.permission_id)}
                     onChange={(e) =>
                       handlePermissionChange(permission.permission_id, e.target.checked)
                     }
@@ -201,10 +227,10 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
 
         {/* Modal Actions */}
         <div className="modal-actions modal-actions-role">
-          <button onClick={handleSave} className="btn btn-primary" disabled={loading} style={{width:"100%"}}>
+          <button onClick={handleSave} className="btn btn-primary" disabled={loading} style={{ width: "100%" }}>
             {loading ? "Saving..." : "Save"}
           </button>
-          <button onClick={onClose} className="btn btn-secondary" style={{width:"100%"}}>
+          <button onClick={onClose} className="btn btn-secondary" style={{ width: "100%" }}>
             Cancel
           </button>
         </div>
@@ -214,4 +240,3 @@ const EditRoleModal = ({ show, onClose, onSave, roleData,getRolesData }) => {
 };
 
 export default EditRoleModal;
-

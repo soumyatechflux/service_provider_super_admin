@@ -138,8 +138,28 @@ const GardnerDayVisit = () => {
     event.preventDefault();
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
     const formData = new FormData();
-    formData.append("category_id", 3); // Add category_id explicitly
-    formData.append("sub_category_id", 8); // Add sub_category_id explicitly
+  
+    // Check for duplicate durations in the hourRows
+    const durations = hourRows.map((row) => row.duration);
+    const hasDuplicateDuration = durations.some((duration, index) => durations.indexOf(duration) !== index);
+  
+    if (hasDuplicateDuration) {
+      toast.error("Duration should be unique for each row.");
+      return; // Prevent form submission if there are duplicate durations
+    }
+  
+    // Check if all required fields are filled
+    const invalidHourRow = hourRows.some(
+      (row) => !row.duration || row.duration <= 0 || !row.price || row.price <= 0
+    );
+    if (invalidHourRow) {
+      toast.error("Please fill out all duration and price fields before submitting.");
+      return; // Prevent form submission if validation fails
+    }
+  
+    // Continue with the rest of the form submission logic
+    formData.append("category_id", 3);
+    formData.append("sub_category_id", 8);
     formData.append("service_start_time", startTime);
     formData.append("service_end_time", endTime);
     formData.append("night_charge_start_time", nightChargesStartAt);
@@ -153,7 +173,6 @@ const GardnerDayVisit = () => {
     formData.append("night_charge", nightCharge || "");
     formData.append("additional_price_hours", additionalPriceHours);
   
-    // Serialize no_of_people data
     const noOfPeopleData = guestRows.map((row) => ({
       people_count: row.count,
       base_price: row.price,
@@ -161,7 +180,6 @@ const GardnerDayVisit = () => {
     }));
     formData.append("no_of_people", JSON.stringify(noOfPeopleData));
   
-    // Serialize gardener_hours_calculations data
     const gardenerHoursData = hourRows.map((row) => ({
       hours: row.duration,
       price: parseFloat(row.price).toFixed(2),
@@ -195,6 +213,7 @@ const GardnerDayVisit = () => {
       setLoading(false);
     }
   };
+  
   
 
   const generateTimeOptions = () => {
@@ -623,7 +642,15 @@ const GardnerDayVisit = () => {
           <button
             type="submit"
             className="btn btn-primary w-50 mt-4"
-            onClick={handleSubmit}
+            onClick={(e) => {
+              handleSubmit(e); 
+              setTimeout(() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth", 
+                });
+              }, 500); 
+            }}
             disabled={loading}
           >
             {loading ? "Submitting..." : "Submit"}

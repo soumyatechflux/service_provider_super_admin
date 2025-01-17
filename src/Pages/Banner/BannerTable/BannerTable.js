@@ -19,9 +19,11 @@ const BannerTable = () => {
   const [selectedBanner, setSelectedBanner] = useState(null);
   const [bannerToDelete, setBannerToDelete] = useState(null);
 
+  // State to manage which banner is expanded (full description shown)
+  const [expandedBanners, setExpandedBanners] = useState({});
+
   const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-  const baseUrl =
-    process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL;
+  const baseUrl = process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL;
 
   // Fetch banners from the API
   const fetchBanners = async () => {
@@ -79,9 +81,6 @@ const BannerTable = () => {
         banner.id === updatedBanner.id ? updatedBanner : banner
       )
     );
-
-    // Display toast message when banner is successfully saved
-    // toast.success("Banner updated successfully!");
   };
 
   const handleDeleteBanner = () => {
@@ -101,8 +100,16 @@ const BannerTable = () => {
     );
   };
 
+  const toggleDescription = (id) => {
+    setExpandedBanners((prev) => ({
+      ...prev,
+      [id]: !prev[id], // Toggle expanded state for the specific banner
+    }));
+  };
+
   return (
     <div className="Restro-Table-Main p-3">
+        <h2>Banner</h2>
       {loading ? (
         <Loader />
       ) : (
@@ -141,57 +148,77 @@ const BannerTable = () => {
             </thead>
             <tbody>
               {banners.length > 0 ? (
-                banners.map((banner, index) => (
-                  <tr key={banner.id}>
-                    <td>{index + 1}</td>
-                    <td>{banner.title}</td>
-                    <td>
-                      <img
-                        src={banner.image}
-                        alt="Banner"
-                        style={{ width: "100px", height: "auto" }}
-                      />
-                    </td>
-                    <td>{banner.description}</td>
-                    <td>
-                      <a
-                        href={banner.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {banner.url}
-                      </a>
-                    </td>
-                    <td>
-                      <div className="status-div">
-                        {banner.activeStatus.charAt(0).toUpperCase() + banner.activeStatus.slice(1)}
-                        <EditIcon
-                          style={{ cursor: "pointer", marginLeft: "10px" }}
-                          onClick={() => {
-                            setSelectedBanner(banner);
-                            setShowStatusEditModal(true);
-                          }}
-                        />
-                      </div>
+                banners.map((banner, index) => {
+                  const words = banner.description?.split(" ") || [];
+                  const visibleWords = words.slice(0, 5); // Get the first 5 words
+                  const displayDescription = visibleWords.join(" ");
 
-                    </td>
-                    <td>
-                      <div className="status-div">
-                        <EditIcon
-                          style={{ cursor: "pointer", marginRight: "10px" }}
-                          onClick={() => {
-                            setSelectedBanner(banner);
-                            setShowEditModal(true);
+                  return (
+                    <tr key={banner.id}>
+                      <td>{index + 1}</td>
+                      <td>{banner.title}</td>
+                      <td>
+                        <img
+                          src={banner.image}
+                          alt="Banner"
+                          style={{ width: "100px", height: "auto" }}
+                        />
+                      </td>
+                      <td>
+                        {expandedBanners[banner.id]
+                          ? banner.description
+                          : `${displayDescription}...`}
+                        <span
+                          onClick={() => toggleDescription(banner.id)}
+                          style={{
+                            color: "blue",
+                            cursor: "pointer",
+                            marginLeft: "10px",
                           }}
-                        />
-                        <DeleteIcon
-                          onClick={() => handleDeleteClick(banner.id)}
-                          style={{ cursor: "pointer", color: "red" }}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                        >
+                          {expandedBanners[banner.id] ? "View Less" : "View More"}
+                        </span>
+                      </td>
+                      <td>
+                        <a
+                          href={banner.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {banner.url}
+                        </a>
+                      </td>
+                      <td>
+                        <div className="status-div">
+                          {banner.activeStatus.charAt(0).toUpperCase() +
+                            banner.activeStatus.slice(1)}
+                          <EditIcon
+                            style={{ cursor: "pointer", marginLeft: "10px" }}
+                            onClick={() => {
+                              setSelectedBanner(banner);
+                              setShowStatusEditModal(true);
+                            }}
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="status-div">
+                          <EditIcon
+                            style={{ cursor: "pointer", marginRight: "10px" }}
+                            onClick={() => {
+                              setSelectedBanner(banner);
+                              setShowEditModal(true);
+                            }}
+                          />
+                          <DeleteIcon
+                            onClick={() => handleDeleteClick(banner.id)}
+                            style={{ cursor: "pointer", color: "red" }}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
                   <td colSpan="7" style={{ textAlign: "center" }}>

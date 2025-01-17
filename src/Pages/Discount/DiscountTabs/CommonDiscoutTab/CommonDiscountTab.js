@@ -6,7 +6,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddDiscountModal from "../CommonDiscoutTab/AddDiscountModal/AddDiscountModal";
 import EditDiscountModal from "../CommonDiscoutTab/EditDiscountModal/EditDiscountModal";
 import DeleteDiscountModal from "../CommonDiscoutTab/DeleteDiscountModal/DeleteDiscountModal";
-
 import "./CommonDiscount.css";
 import EditDiscountStatusModal from "./EditDiscountStatusModal/EditDiscountStatusModal";
 
@@ -24,9 +23,7 @@ const CommonDiscountTab = () => {
 
   const fetchDiscountData = async () => {
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
       setLoading(true);
       const response = await axios.get(
@@ -49,14 +46,15 @@ const CommonDiscountTab = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchDiscountData();
   }, []);
 
-  const handleToggleDescription = (id) => {
+  const handleToggleDescription = (voucher_id) => {
     setExpandedDescriptions((prev) => ({
       ...prev,
-      [id]: !prev[id],
+      [voucher_id]: !prev[voucher_id],
     }));
   };
 
@@ -94,9 +92,7 @@ const CommonDiscountTab = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount/${selectedItem.voucher_id}`,
         {
@@ -112,9 +108,7 @@ const CommonDiscountTab = () => {
           prevData.filter((item) => item.voucher_id !== selectedItem.voucher_id)
         );
       } else {
-        toast.error(
-          response?.data?.message || "Failed to delete the discount."
-        );
+        toast.error(response?.data?.message || "Failed to delete the discount.");
       }
     } catch (error) {
       toast.error("Failed to delete the discount. Please try again.");
@@ -125,61 +119,35 @@ const CommonDiscountTab = () => {
 
   return (
     <div className="Discount-Table-Main p-3">
+        <h2>Discount</h2>
       <ToastContainer />
       {loading ? (
         <Loader />
       ) : (
         <div className="table-responsive mb-5">
-          <button
-            className="Discount-btn"
-            onClick={() => setShowAddModal(true)}
-          >
+          <button className="Discount-btn" onClick={() => setShowAddModal(true)}>
             Add Discount
           </button>
           <table className="table table-bordered table-user">
             <thead className="heading_user">
               <tr>
-                <th scope="col" style={{ width: "2%" }}>
-                  Sr.
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Discount Type
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Discount Value
-                </th>
-                <th scope="col" style={{ width: "8%" }}>
-                  Usage Limit
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Minimum Price
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Voucher Code
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Start Date
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  End Date
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Description
-                </th>
-                <th scope="col" style={{ width: "25%" }}>
-                  Status
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Used Count
-                </th>
-                <th scope="col" style={{ width: "5%" }}>
-                  Action
-                </th>
+                <th scope="col" style={{ width: "2%" }}>Sr.</th>
+                <th scope="col" style={{ width: "10%" }}>Discount Type</th>
+                <th scope="col" style={{ width: "10%" }}>Discount Value</th>
+                <th scope="col" style={{ width: "8%" }}>Usage Limit</th>
+                <th scope="col" style={{ width: "10%" }}>Minimum Price</th>
+                <th scope="col" style={{ width: "10%" }}>Voucher Code</th>
+                <th scope="col" style={{ width: "10%" }}>Start Date</th>
+                <th scope="col" style={{ width: "10%" }}>End Date</th>
+                <th scope="col" style={{ width: "10%" }}>Description</th>
+                <th scope="col" style={{ width: "25%" }}>Status</th>
+                <th scope="col" style={{ width: "10%" }}>Used Count</th>
+                <th scope="col" style={{ width: "5%" }}>Action</th>
               </tr>
             </thead>
             <tbody>
               {discountData.map((item, index) => (
-                <tr key={item.id}>
+                <tr key={item.voucher_id}>
                   <th scope="row">{index + 1}.</th>
                   <td>{item.discount_type || "N/A"}</td>
                   <td>{item.discount_value || "N/A"}</td>
@@ -205,39 +173,30 @@ const CommonDiscountTab = () => {
                       : "N/A"}
                   </td>
                   <td>
-                    {expandedDescriptions[item.id]
+                    {expandedDescriptions[item.voucher_id]
                       ? item.description
                       : item.description.split(" ").slice(0, 10).join(" ") +
                         (item.description.split(" ").length > 10 ? "..." : "")}
                     {item.description.split(" ").length > 10 && (
                       <button
-                        onClick={() => handleToggleDescription(item.id)}
+                        onClick={() => handleToggleDescription(item.voucher_id)}
                         className="btn btn-link p-0 ms-2"
                         style={{ boxShadow: "none" }}
                       >
-                        {expandedDescriptions[item.id]
-                          ? "View Less"
-                          : "View More"}
+                        {expandedDescriptions[item.voucher_id] ? "View Less" : "View More"}
                       </button>
                     )}
                   </td>
-
                   <td>
                     <div className="status-div">
-                      <span>
-                        {item.active_status === "active"
-                          ? "Active"
-                          : "In-Active"}
-                      </span>
+                      <span>{item.active_status === "active" ? "Active" : "In-Active"}</span>
                       <EditIcon
                         onClick={() => handleOpenStatusModal(item)}
                         style={{ cursor: "pointer", marginLeft: "10px" }}
                       />
                     </div>
                   </td>
-                  <td>
-                    {item.used_count === 0 ? "0" : item.used_count || "N/A"}
-                  </td>
+                  <td>{item.used_count === 0 ? "0" : item.used_count || "N/A"}</td>
                   <td>
                     <div className="status-div">
                       <EditIcon

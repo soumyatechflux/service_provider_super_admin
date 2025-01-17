@@ -155,6 +155,14 @@ const CustomersTable = () => {
     );
   };
 
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Enables smooth scrolling
+    });
+  }, [currentPage]);
+  
   return (
     <div className="Restro-Table-Main p-3">
       {loading ? (
@@ -162,6 +170,7 @@ const CustomersTable = () => {
       ) : (
         <>
           <div className="table-responsive mb-5">
+          <h2>Customers</h2>
             <table className="table table-bordered table-user">
               <thead>
                 <tr>
@@ -180,7 +189,7 @@ const CustomersTable = () => {
                     <td>{restaurant.email || "-"}</td>
                     <td>{restaurant.mobile}</td>
                     <td className={`status ${restaurant.active_status}`}>
-                    <div
+                      <div
                         className="status-div"
                         onClick={() => handleRestaurantClick(restaurant)}
                         style={{ cursor: "pointer" }}

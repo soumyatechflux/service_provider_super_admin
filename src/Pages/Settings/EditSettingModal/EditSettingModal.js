@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { TextField } from "@mui/material";
 
 const EditSettingModal = ({ show, onClose, onSave, selectedSetting }) => {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     config_key: "",
     config_value: "",
     description: "",
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
 
   useEffect(() => {
     if (selectedSetting) {
@@ -38,8 +40,9 @@ const EditSettingModal = ({ show, onClose, onSave, selectedSetting }) => {
       description: formData.description,
     });
   };
-  
+
   const handleCancel = () => {
+    setFormData(initialFormData); // Reset the form to initial state
     onClose();
   };
 
@@ -83,10 +86,10 @@ const EditSettingModal = ({ show, onClose, onSave, selectedSetting }) => {
           />
         </div>
         <div className="modal-actions">
-          <button onClick={handleSave} className="btn btn-primary" style={{width:"100%"}}>
+          <button onClick={handleSave} className="btn btn-primary" style={{ width: "100%" }}>
             Save
           </button>
-          <button onClick={handleCancel} className="btn btn-secondary" style={{width:"100%"}}>
+          <button onClick={handleCancel} className="btn btn-secondary" style={{ width: "100%" }}>
             Cancel
           </button>
         </div>

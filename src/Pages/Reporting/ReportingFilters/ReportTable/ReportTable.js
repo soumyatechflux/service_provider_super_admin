@@ -52,6 +52,14 @@ const ReportTable = ({ filters, loading, setLoading }) => {
   useEffect(() => {
     fetchReportData();
   }, [filters]);
+  
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Enables smooth scrolling
+    });
+  }, [currentPage]);
+  
 
   const handleViewDetails = (booking) => {
     setSelectedBooking(booking);

@@ -18,7 +18,7 @@ import {
   QuestionAnswer,
   AccountBox,
 } from "@mui/icons-material";
-import { Gavel, Lock, ReceiptLong, Cancel } from "@mui/icons-material";
+import { Gavel, Lock, ReceiptLong, Cancel } from "@mui/icons-material"; // Add this line
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Tooltip from "@mui/material/Tooltip";
@@ -102,6 +102,10 @@ const Sidebar = ({ isOpen }) => {
     17: <Work />,
     18: <Help />,
     19: <Info />,
+    20: <Gavel />, // Add this line
+    21: <Lock />, // Add this line
+    22: <ReceiptLong />, // Add this line
+    23: <Cancel />, // Add this line
   };
 
   return (
@@ -133,45 +137,6 @@ const Sidebar = ({ isOpen }) => {
               </CustomTooltip>
             );
           })}
-
-          {/* Static Tabs for Terms and Conditions, Privacy Policy, and Cancellation Policy */}
-          {[
-            {
-              path: "/termsconditions",
-              name: "Terms and Conditions",
-              icon: <Gavel />,
-            },
-            { path: "/privacypolicy", name: "Privacy Policy", icon: <Lock /> },
-            {
-              path: "/refundpolicy",
-              name: "Refund Policy",
-              icon: <ReceiptLong />,
-            },
-            {
-              path: "/cancellationplicy",
-              name: "Cancellation Policy",
-              icon: <Cancel />,
-            },
-          ].map((tab) => (
-            <CustomTooltip
-              key={tab.path}
-              title={!isOpen ? tab.name : ""}
-              placement="right"
-              arrow
-            >
-              <Link to={tab.path}>
-                <li
-                  className={`menu-item ${
-                    activeItem === tab.path ? "active" : ""
-                  }`}
-                  onClick={() => handleItemClick(tab.path)}
-                >
-                  {tab.icon}
-                  {isOpen && <span>{tab.name}</span>}
-                </li>
-              </Link>
-            </CustomTooltip>
-          ))}
         </ul>
       </div>
     </div>

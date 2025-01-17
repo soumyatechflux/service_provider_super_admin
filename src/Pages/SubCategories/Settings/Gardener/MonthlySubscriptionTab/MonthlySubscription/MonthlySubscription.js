@@ -142,13 +142,25 @@ const MonthlySubscription = () => {
 
     // Validate required fields
     const isValidData = hourRows.every(
-      (row) => row.visitCount && row.duration && row.price
+        (row) => row.visitCount && row.duration && row.price
     );
 
     if (!isValidData) {
-      toast.error("Please fill in all required fields for each row");
-      return;
+        toast.error("Please fill in all required fields for each row");
+        return;
     }
+
+    // Check for duplicate visit counts
+   // Check for duplicate visit counts
+const visitCounts = hourRows.map((row) => Number(row.visitCount));
+const hasDuplicates = new Set(visitCounts).size !== visitCounts.length;
+
+if (hasDuplicates) {
+    toast.error("Duplicate visit counts are not allowed.");
+    return;
+}
+
+   
 
     // Create FormData object
     const formData = new FormData();
@@ -169,49 +181,50 @@ const MonthlySubscription = () => {
 
     // Format the data according to the expected structure
     const visitCalculations = hourRows.map((row) => ({
-      visit: row.visitCount,
-      hours: row.duration,
-      price: row.price,
+        visit: row.visitCount,
+        hours: row.duration,
+        price: row.price,
     }));
 
     console.log(
-      "gardener_monthly_visit_calculations:",
-      JSON.stringify(visitCalculations)
+        "gardener_monthly_visit_calculations:",
+        JSON.stringify(visitCalculations)
     );
 
     // Append the formatted data
     formData.append(
-      "gardener_monthly_visit_calculations",
-      JSON.stringify(visitCalculations)
+        "gardener_monthly_visit_calculations",
+        JSON.stringify(visitCalculations)
     );
 
     setLoading(true);
 
     try {
-      const response = await axios.patch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/sub_category`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+        const response = await axios.patch(
+            `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/sub_category`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
 
-      if (response.data.success) {
-        toast.success("Sub-category updated successfully!");
-        fetchSubCategoryData();
-      } else {
-        toast.error(response.data.message || "Failed to update sub-category.");
-      }
+        if (response.data.success) {
+            toast.success("Sub-category updated successfully!");
+            fetchSubCategoryData();
+        } else {
+            toast.error(response.data.message || "Failed to update sub-category.");
+        }
     } catch (error) {
-      console.error("Error updating sub-category:", error);
-      toast.error("An error occurred while updating the sub-category.");
+        console.error("Error updating sub-category:", error);
+        toast.error("An error occurred while updating the sub-category.");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   const generateTimeOptions = () => {
     const times = [];
@@ -564,7 +577,15 @@ const MonthlySubscription = () => {
           <button
             type="submit"
             className="btn btn-primary w-50 mt-4"
-            onClick={handleSubmit}
+            onClick={(e) => {
+              handleSubmit(e); 
+              setTimeout(() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth", 
+                });
+              }, 500); 
+            }}
             disabled={loading}
           >
             {loading ? "Submitting..." : "Submit"}

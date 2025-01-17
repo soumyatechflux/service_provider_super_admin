@@ -64,6 +64,7 @@ function CuisinesTable() {
 
   return (
     <div className="container">
+        <h2>Cuisines</h2>
       <button
         className="btn-HomeHeroSectionTable"
         onClick={() => setShowAddModal(true)}

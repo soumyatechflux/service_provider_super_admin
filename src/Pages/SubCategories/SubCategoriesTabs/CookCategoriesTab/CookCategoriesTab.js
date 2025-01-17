@@ -131,6 +131,7 @@ const CookCategoriesTab = ({ category_id }) => {
 
   return (
     <div className="SubCategory-Table-Main p-3">
+        <h2>SubCategory-Cook</h2>
       {loading ? (
         <Loader />
       ) : (
@@ -201,9 +202,9 @@ const CookCategoriesTab = ({ category_id }) => {
                   <td>
                     {expandedDescriptions[item.id]
                       ? item.description
-                      : item.description.split(" ").slice(0, 20).join(" ") +
-                        (item.description.split(" ").length > 20 ? "..." : "")}
-                    {item.description.split(" ").length > 20 && (
+                      : item.description.split(" ").slice(0, 10).join(" ") +
+                        (item.description.split(" ").length > 10 ? "..." : "")}
+                    {item.description.split(" ").length > 10 && (
                       <button
                         onClick={() => handleToggleDescription(item.id)}
                         className="btn btn-link p-0 ms-2"

@@ -36,6 +36,7 @@ const CommonSettingsTab = () => {
 
   return (
     <div className="settings-page">
+        <h2>Settings</h2>
       {/* <h2>Admin Settings</h2> */}
       <form onSubmit={handleSubmit}>
         <div className="form-row">

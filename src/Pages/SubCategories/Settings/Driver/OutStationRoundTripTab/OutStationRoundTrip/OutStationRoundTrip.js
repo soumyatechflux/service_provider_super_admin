@@ -197,6 +197,30 @@ const OutStationRoundTrip = () => {
     // Create FormData object
     const formData = new FormData();
 
+    const invalidHourRow = hourRows.some(
+      (row) =>
+        !row.duration || row.duration <= 0 || !row.price || row.price <= 0
+    );
+    if (invalidHourRow) {
+      toast.error(
+        "Please fill out all duration and price fields before submitting."
+      );
+      return; 
+    }
+
+    const durations = hourRows.map((row) => String(row.duration).trim());
+    console.log("Durations (normalized):", durations); 
+
+    const hasDuplicates = durations.some(
+      (duration, index) => durations.indexOf(duration) !== index
+    );
+    console.log("Has duplicates:", hasDuplicates); 
+
+    if (hasDuplicates) {
+      toast.error("Duplicate durations are not allowed.");
+      console.log("Form submission stopped due to duplicate durations."); 
+      return; 
+    }
     // Add required fields
     formData.append("category_id", 2); // Example category ID for "Driver"
     formData.append("sub_category_id", 7); // Example sub-category ID for "One Day Ride"
@@ -209,7 +233,7 @@ const OutStationRoundTrip = () => {
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("additional_price_hours", additionalPriceHours);
-    formData.append("booking_details",summary)
+    formData.append("booking_details", summary);
 
     // Add driver hours calculations data
     const driverHoursData = hourRows.map((row) => ({
@@ -468,7 +492,6 @@ const OutStationRoundTrip = () => {
                   className="col-12 col-md-2 p-4 mt-4 d-flex align-items-center"
                   style={{ justifyContent: "space-evenly" }}
                 >
-                 
                   <IoMdBackspace
                     className="svg_AddTable"
                     onClick={() => handleRemoveRow(row.id)}
@@ -544,16 +567,14 @@ const OutStationRoundTrip = () => {
                 <div
                   className="col-12 col-md-2 p-4 mt-4 d-flex align-items-center"
                   style={{ justifyContent: "space-evenly" }}
-                >
-                  
-                </div>
+                ></div>
               </div>
             ))}
           </div>
         </div>
 
-       {/* Transmission Type Section */}
-       <div className="MainDining_AddTable mb-5 mt-5">
+        {/* Transmission Type Section */}
+        <div className="MainDining_AddTable mb-5 mt-5">
           <p className="Subheading1_AddTable">Select Transmission Type</p>
           <div className="row">
             {transmissions.map((type, index) => (
@@ -580,81 +601,77 @@ const OutStationRoundTrip = () => {
           </div>
         </div>
 
-
-
-        
-
         <div className="MainDining_AddTable mb-5 mt-5">
-                  <h4 className="form-label">
-                    Additional Details (Booking Details Summary)
-                  </h4>
-                  <ReactQuill
-                    value={summary}
-                    onChange={setSummary}
-                    placeholder="Write the booking details here..."
-                    theme="snow"
-                    modules={{
-                      toolbar: [
-                        [{ header: "1" }, { header: "2" }, { font: [] }],
-                        [{ list: "ordered" }, { list: "bullet" }],
-                        ["bold", "italic", "underline"],
-                        [{ align: [] }],
-                        ["link"],
-                        ["blockquote"],
-                        [{ indent: "-1" }, { indent: "+1" }],
-                        [{ direction: "rtl" }],
-                      ],
-                    }}
-                  />
-                </div>
-        
-                {/* Cancellation Policy Editor */}
-                <div className="MainDining_AddTable mb-5 mt-5">
-                  <h4 className="form-label">Cancellation Policy</h4>
-                  <ReactQuill
-                    value={cancellationPolicy}
-                    onChange={setCancellationPolicy}
-                    placeholder="Write the cancellation policy here..."
-                    theme="snow"
-                    modules={{
-                      toolbar: [
-                        [{ header: "1" }, { header: "2" }, { font: [] }],
-                        [{ list: "ordered" }, { list: "bullet" }],
-                        ["bold", "italic", "underline"],
-                        [{ align: [] }],
-                        ["link"],
-                        ["blockquote"],
-                        [{ indent: "-1" }, { indent: "+1" }],
-                        [{ direction: "rtl" }],
-                      ],
-                    }}
-                  />
-                </div>
-        
-                {/* Booking Summary Page Editor */}
-                <div className="MainDining_AddTable mb-5 mt-5">
-                  <h4 className="form-label">
-                    Additional Details (Booking Summary Page)
-                  </h4>
-                  <ReactQuill
-                    value={bookingSummaryPage}
-                    onChange={setBookingSummaryPage}
-                    placeholder="Write the booking summary page content here..."
-                    theme="snow"
-                    modules={{
-                      toolbar: [
-                        [{ header: "1" }, { header: "2" }, { font: [] }],
-                        [{ list: "ordered" }, { list: "bullet" }],
-                        ["bold", "italic", "underline"],
-                        [{ align: [] }],
-                        ["link"],
-                        ["blockquote"],
-                        [{ indent: "-1" }, { indent: "+1" }],
-                        [{ direction: "rtl" }],
-                      ],
-                    }}
-                  />
-                </div>
+          <h4 className="form-label">
+            Additional Details (Booking Details Summary)
+          </h4>
+          <ReactQuill
+            value={summary}
+            onChange={setSummary}
+            placeholder="Write the booking details here..."
+            theme="snow"
+            modules={{
+              toolbar: [
+                [{ header: "1" }, { header: "2" }, { font: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["bold", "italic", "underline"],
+                [{ align: [] }],
+                ["link"],
+                ["blockquote"],
+                [{ indent: "-1" }, { indent: "+1" }],
+                [{ direction: "rtl" }],
+              ],
+            }}
+          />
+        </div>
+
+        {/* Cancellation Policy Editor */}
+        <div className="MainDining_AddTable mb-5 mt-5">
+          <h4 className="form-label">Cancellation Policy</h4>
+          <ReactQuill
+            value={cancellationPolicy}
+            onChange={setCancellationPolicy}
+            placeholder="Write the cancellation policy here..."
+            theme="snow"
+            modules={{
+              toolbar: [
+                [{ header: "1" }, { header: "2" }, { font: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["bold", "italic", "underline"],
+                [{ align: [] }],
+                ["link"],
+                ["blockquote"],
+                [{ indent: "-1" }, { indent: "+1" }],
+                [{ direction: "rtl" }],
+              ],
+            }}
+          />
+        </div>
+
+        {/* Booking Summary Page Editor */}
+        <div className="MainDining_AddTable mb-5 mt-5">
+          <h4 className="form-label">
+            Additional Details (Booking Summary Page)
+          </h4>
+          <ReactQuill
+            value={bookingSummaryPage}
+            onChange={setBookingSummaryPage}
+            placeholder="Write the booking summary page content here..."
+            theme="snow"
+            modules={{
+              toolbar: [
+                [{ header: "1" }, { header: "2" }, { font: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["bold", "italic", "underline"],
+                [{ align: [] }],
+                ["link"],
+                ["blockquote"],
+                [{ indent: "-1" }, { indent: "+1" }],
+                [{ direction: "rtl" }],
+              ],
+            }}
+          />
+        </div>
 
         <EditPriceModal
           show={showEditModal}
@@ -667,7 +684,15 @@ const OutStationRoundTrip = () => {
           <button
             type="submit"
             className="btn btn-primary w-50 mt-4"
-            onClick={handleSubmit}
+            onClick={(e) => {
+              handleSubmit(e);
+              setTimeout(() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }, 500);
+            }}
             disabled={loading}
           >
             {loading ? "Submitting..." : "Submit"}

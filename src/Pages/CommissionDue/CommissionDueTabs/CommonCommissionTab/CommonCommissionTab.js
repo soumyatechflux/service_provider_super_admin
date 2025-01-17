@@ -62,6 +62,7 @@ const CommonCommissionTab = ({
 
   return (
     <div className="SubCategory-Table-Main p-3">
+        <h2>Commission Due</h2>
       {loading ? (
         <Loader />
       ) : (
@@ -81,45 +82,36 @@ const CommonCommissionTab = ({
                 <th scope="col" style={{ width: "15%" }}>
                   Amount Due
                 </th>
-                {/* <th scope="col" style={{ width: "20%" }}>
-                  Address
-                </th> */}
-                {/* <th scope="col" style={{ width: "15%" }}>
-                  Booking Date
-                </th> */}
                 <th scope="col" style={{ width: "15%" }}>
                   Action
                 </th>
               </tr>
             </thead>
             <tbody>
-              {dummy_Data.map((item, index) => (
-                <tr key={item.id}>
-                  <th scope="row">{index + 1}.</th>
-                  <td>{item.name || "Unknown"}</td>
-                  <td>{item.category_name || "N/A"}</td>
-                  <td>{item.total_partner_amount || "N/A"}</td>
-                  {/* <td>
-                    {item.current_address || "No current_address available."}
-                  </td> */}
-                  
-                  {/* <td>
-                    {new Intl.DateTimeFormat("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    }).format(new Date(item.booking_date))}
-                  </td> */}
-                  <td className="action-btn-pay">
-                    <button
-                      className="payNow-btn"
-                      onClick={() => handlePayNowClick(item)}
-                    >
-                      Pay Now
-                    </button>
+              {dummy_Data.length === 0 ? (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: "center" }}>
+                    No data available
                   </td>
                 </tr>
-              ))}
+              ) : (
+                dummy_Data.map((item, index) => (
+                  <tr key={item.id}>
+                    <th scope="row">{index + 1}.</th>
+                    <td>{item.name || "Unknown"}</td>
+                    <td>{item.category_name || "N/A"}</td>
+                    <td>{item.total_partner_amount || "N/A"}</td>
+                    <td className="action-btn-pay">
+                      <button
+                        className="payNow-btn"
+                        onClick={() => handlePayNowClick(item)}
+                      >
+                        Pay Now
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

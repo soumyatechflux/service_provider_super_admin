@@ -161,6 +161,7 @@ const StaffTable = ({}) => {
 
   return (
     <div className="SubCategory-Table-Main p-3">
+        <h2>Staff</h2>
       <div style={{ float: "right" }}>
         <button className="Discount-btn" onClick={() => setShowAddModal(true)}>
           + Add Staff

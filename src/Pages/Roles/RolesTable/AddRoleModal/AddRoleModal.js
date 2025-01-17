@@ -84,17 +84,48 @@ const AddRoleModal = ({ show, onClose, onSave }) => {
       toast.error("Please fill in all fields.");
       return;
     }
-
+  
+    // Fetch existing roles to check for duplicates
+    try {
+      const existingRolesResponse = await axios.get(
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/roles`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      if (existingRolesResponse.status === 200 && existingRolesResponse.data) {
+        const existingRoles = existingRolesResponse.data.data;
+        const isDuplicate = existingRoles.some(
+          (role) => role.role_name.toLowerCase() === formData.roleName.toLowerCase()
+        );
+  
+        if (isDuplicate) {
+          toast.error("The role name already exists. Please choose a different name.");
+          return;
+        }
+      } else {
+        toast.error("Failed to fetch existing roles.");
+        return;
+      }
+    } catch (error) {
+      console.error("Error fetching existing roles:", error);
+      toast.error("An error occurred while checking for existing roles.");
+      return;
+    }
+  
     // Extract selected permission IDs from formData.permissions
     const selectedPermissionIds = permissionsList
       .filter((permission) => formData.permissions[permission.permission_name])
       .map((permission) => permission.permission_id);
-
+  
     if (selectedPermissionIds.length === 0) {
       toast.error("Please select at least one permission.");
       return;
     }
-
+  
     const payload = {
       role: {
         role_name: formData.roleName,
@@ -102,7 +133,7 @@ const AddRoleModal = ({ show, onClose, onSave }) => {
         permissions: selectedPermissionIds,
       },
     };
-
+  
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/roles/add`,
@@ -113,7 +144,7 @@ const AddRoleModal = ({ show, onClose, onSave }) => {
           },
         }
       );
-
+  
       if (response.status === 200 && response.data) {
         toast.success("Role added successfully!");
         onSave(payload.role);
@@ -127,6 +158,7 @@ const AddRoleModal = ({ show, onClose, onSave }) => {
       toast.error("An error occurred while saving the role.");
     }
   };
+  
 
   if (!show) return null;
 

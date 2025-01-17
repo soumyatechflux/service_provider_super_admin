@@ -118,6 +118,7 @@ const CommonServicesTab = ({ categoryId, subCategoryId }) => {
 
   return (
     <div className="Restro-Table-Main p-3">
+        <h2>Services</h2>
       {loading ? (
         <Loader />
       ) : (

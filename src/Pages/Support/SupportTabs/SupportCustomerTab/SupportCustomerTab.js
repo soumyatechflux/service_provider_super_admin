@@ -71,6 +71,14 @@ const SupportCustomerTab = () => {
     getSupportData();
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Enables smooth scrolling
+    });
+  }, [currentPage]);
+  
+
   // Pagination logic
   const totalPages = Math.ceil(supportData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -96,6 +104,8 @@ const SupportCustomerTab = () => {
 
   const renderPaginationItems = () => {
     const pageRange = getPageRange();
+
+    
 
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
@@ -158,6 +168,7 @@ const SupportCustomerTab = () => {
 
   return (
     <div className="Support-Table-Main p-3">
+      <h2>Customer Support</h2>
       {loading ? (
         <Loader />
       ) : (

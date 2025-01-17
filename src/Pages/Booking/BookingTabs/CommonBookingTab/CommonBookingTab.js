@@ -54,6 +54,14 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     getCommissionData();
   }, [category_id]);
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Enables smooth scrolling
+    });
+  }, [currentPage]);
+  
+
   const handleOpenEditModal = (
     bookingId,
     bookingStatus,
@@ -107,6 +115,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
 
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
+          <h2>Booking</h2>
         {/* First Page Button */}
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
           <button

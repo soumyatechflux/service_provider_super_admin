@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { BiMinus } from "react-icons/bi";
 import { HiPlus } from "react-icons/hi";
 import { HiPlusSmall } from "react-icons/hi2";
@@ -8,7 +9,6 @@ import ReactQuill from "react-quill"; // Import the ReactQuill component
 import "react-quill/dist/quill.snow.css"; // Import the Quill styles
 import { toast } from "react-toastify";
 import FoodItemsEditModal from "../FoodItemsEditModal/FoodItemsEditModal";
-import axios from "axios";
 
 const ChefForParty = () => {
   const [startTime, setStartTime] = useState("");
@@ -176,6 +176,37 @@ const ChefForParty = () => {
     // Create FormData object
     const formData = new FormData();
 
+     // Validate that all guest count and price fields are filled
+  const invalidGuestRow = guestRows.some(
+    (row) => !row.count || row.count < 1 || !row.price || row.price <= 0
+  );
+  if (invalidGuestRow) {
+    toast.error("Please fill out all guest counts and prices before submitting.");
+    return; // Prevent form submission if validation fails
+  }
+
+  const guestCounts = guestRows.map(row => row.count);
+      const hasDuplicateGuestCounts = guestCounts.length !== new Set(guestCounts).size;
+      if (hasDuplicateGuestCounts) {
+        toast.error("Guest counts should be unique. Please add different guest counts.");
+        return;
+      }
+    
+      // Validate that guest counts are in ascending order
+      const isAscendingOrder = guestCounts.every((count, index, array) =>
+        index === 0 || count >= array[index - 1]
+      );
+      if (!isAscendingOrder) {
+        toast.error("Guest counts should be in ascending order.");
+        return;
+      }
+    
+      // Validate that the number of rows does not exceed 15
+      if (guestRows.length > 15) {
+        toast.error("Guest count cannot exceed 15.");
+        return;
+      }
+    
     // Add required fields
     formData.append("category_id", 1); // Add category_id explicitly
     formData.append("sub_category_id", 3); // Add sub_category_id explicitly
@@ -416,12 +447,12 @@ const ChefForParty = () => {
           <p className="Subheading1_AddTable">
             Time duration and price as per guest count
           </p>
-          <div className="row" style={{ justifyContent: "center" }}>
+          <div className="row" style={{ justifyContent: "center"}}>
             {guestRows.map((row, index) => (
               <div
                 key={row.id}
                 className="row mb-3"
-                style={{ backgroundColor: "#F6F8F9", justifyContent: "center" }}
+                style={{ backgroundColor: "#F6F8F9", justifyContent: "center",width:"100%"  }}
               >
                 <div className="col-12 col-md-3 p-4">
                   <div className="Subheading2_AddTable">
@@ -616,7 +647,15 @@ const ChefForParty = () => {
           <button
             type="submit"
             className="btn btn-primary w-50 mt-4"
-            onClick={handleSubmit}
+            onClick={(e) => {
+              handleSubmit(e); 
+              setTimeout(() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth", 
+                });
+              }, 500); 
+            }}
             disabled={loading}
           >
             {loading ? "Submitting..." : "Submit"}

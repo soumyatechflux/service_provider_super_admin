@@ -81,7 +81,6 @@ const VerifyChef = () => {
 
   const [error, setError] = useState("");
 
-
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -97,13 +96,9 @@ const VerifyChef = () => {
     3: "Gardener Verification",
   };
   const heading = verificationHeadings[restaurant] || "Default Verification";
-  
 
-  
   const verifyPartnerDetails = async () => {
     const requiredFields = [
-      
-      // "email",
       "dob",
       "aadhar",
       "address",
@@ -118,22 +113,25 @@ const VerifyChef = () => {
       "bankDetails",
     ];
   
-    // Validate required fields
-    const missingFields = requiredFields.filter(
-      (field) => !cookDetails[field]
-    );
+    // Validate that no required field is missing
+    const missingFields = requiredFields.filter((field) => !cookDetails[field]);
   
     if (missingFields.length > 0) {
-      toast.error(
-        `Please fill all required fields: ${missingFields.join(", ")}`
-      );
+      toast.error(`Please fill all required fields: ${missingFields.join(", ")}`);
       return;
     }
+  
+    // Check if driving license is required for restaurant 2
+    if (restaurant === 2 && !cookDetails.drivingLicense) {
+      toast.error("Please upload the Driving License Photocopy.");
+      return;
+    }
+  
     try {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
-
+  
       const formData = new FormData();
       formData.append("name", cookDetails.name);
       formData.append("email", cookDetails.email);
@@ -163,9 +161,9 @@ const VerifyChef = () => {
       formData.append("address_proof", cookDetails.currentAddressProof);
       formData.append("partner_id", id);
       formData.append("is_verify", isVerify);
-
+  
       setLoading(true);
-
+  
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/partners/verify`,
         formData,
@@ -176,9 +174,9 @@ const VerifyChef = () => {
           },
         }
       );
-
+  
       setLoading(false);
-
+  
       if (response.status === 200 && response.data.success) {
         toast.success("Partner verified successfully!");
         navigate("/partners");
@@ -191,6 +189,7 @@ const VerifyChef = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="verification-container">
@@ -484,17 +483,17 @@ const VerifyChef = () => {
         </div>
 
         <div className="file-input-group">
-          <label htmlFor="drivingLicense">Driving License Photocopy</label>
+  <label htmlFor="drivingLicense">Driving License Photocopy</label>
+  <input
+    type="file"
+    id="drivingLicense"
+    name="drivingLicense"
+    accept=".pdf,.jpg,.jpeg,.png"
+    onChange={handleInputChange}
+    required={restaurant === 2}
+  />
+</div>
 
-          <input
-            type="file"
-            id="drivingLicense"
-            name="drivingLicense"
-            accept=".pdf,.jpg,.jpeg,.png"
-            onChange={handleInputChange}
-            required
-          />
-        </div>
 
         <div className="file-input-group">
           <label htmlFor="currentAddressProof">
@@ -515,13 +514,12 @@ const VerifyChef = () => {
       {/* Verify Button */}
 
       <button
-  onClick={verifyPartnerDetails}
-  className="verify-button"
-  disabled={loading}
->
-  {loading ? "Verifying..." : "Verify"}
-</button>
-
+        onClick={verifyPartnerDetails}
+        className="verify-button"
+        disabled={loading}
+      >
+        {loading ? "Verifying..." : "Verify"}
+      </button>
     </div>
   );
 };

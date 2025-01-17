@@ -156,10 +156,10 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/services" element={<Services/>}/>
           <Route path="/faq" element={<FAQs/>}/>
           <Route path="/about-us" element={<AboutUs/>}/>
-          <Route path="/termsconditions" element={<TermsConditions/>}/>
-          <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>
-          <Route path="/cancellationplicy" element={<CancellationPlicy/>}/>
-          <Route path="/refundpolicy" element={<RefundPolicy/>}/>
+          <Route path="/terms-and-conditions" element={<TermsConditions/>}/>
+          <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
+          <Route path="/cancellation-policy" element={<CancellationPlicy/>}/>
+          <Route path="/refund-policy" element={<RefundPolicy/>}/>
 
 
           <Route path="/serverDown" element={<ServerDown/>}/>

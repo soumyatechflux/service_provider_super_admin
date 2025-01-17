@@ -13,17 +13,22 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
   });
   const [loading, setLoading] = useState(false);
 
+  // Function to reset formData to initialData
+  const resetFormData = () => {
+    setFormData({
+      subCategoryName: initialData.sub_category_name || "",
+      price: initialData.price || "",
+      description: initialData.description || "",
+      image: null, // Reset to null as file uploads are not prefilled
+      imagePreview: initialData.image || "", // If there is an image, set the preview URL
+    });
+  };
+
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        subCategoryName: initialData.sub_category_name || "",
-        price: initialData.price || "",
-        description: initialData.description || "",
-        image: null, // Reset to null as file uploads are not prefilled
-        imagePreview: initialData.image || "", // If there is an image, set the preview URL
-      });
+    if (open) {
+      resetFormData(); // Reset form data when the modal opens
     }
-  }, [initialData]);
+  }, [open]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,17 +50,17 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
-  
+
       const payload = new FormData();
-      payload.append("sub_category_id", initialData.id);  // sub_category_id from initialData
-      payload.append("category_id", initialData.category_id);  // category_id from initialData
+      payload.append("sub_category_id", initialData.id); // sub_category_id from initialData
+      payload.append("category_id", initialData.category_id); // category_id from initialData
       payload.append("sub_category_name", formData.subCategoryName);
       payload.append("price", formData.price);
       payload.append("description", formData.description);
       if (formData.image) {
         payload.append("image", formData.image);
       }
-  
+
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/sub_category`,
         payload,
@@ -66,7 +71,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
           },
         }
       );
-  
+
       if (response?.status === 200 && response?.data?.success) {
         toast.success("Sub-category updated successfully.");
         onSubmit(); // Refresh the parent data
@@ -94,9 +99,11 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
+          height: "80%",
+          overflow: "auto",
         }}
       >
-        <h2 style={{color:"black"}}>Edit Sub-Category</h2>
+        <h2 style={{ color: "black" }}>Edit Sub-Category</h2>
 
         {/* Sub-Category Name */}
         <TextField
@@ -145,7 +152,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
           accept="image/*"
           style={{ marginTop: "16px", marginBottom: "16px", display: "block" }}
         />
-        
+
         {/* Display image preview if available */}
         {formData.imagePreview && (
           <Box sx={{ mt: 2, mb: 2, textAlign: "center" }}>
@@ -161,14 +168,19 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
         <div className="modal-actions">
           <button
             onClick={handleSubmit}
-            className="btn btn-primary" style={{width:"100%"}}
+            className="btn btn-primary"
+            style={{ width: "100%" }}
             disabled={loading}
           >
             {loading ? "Saving..." : "Save Changes"}
           </button>
           <button
-            onClick={onClose}
-            className="btn btn-secondary" style={{width:"100%"}}
+            onClick={() => {
+              resetFormData(); // Reset the form when closing
+              onClose(); // Close the modal
+            }}
+            className="btn btn-secondary"
+            style={{ width: "100%" }}
           >
             Cancel
           </button>

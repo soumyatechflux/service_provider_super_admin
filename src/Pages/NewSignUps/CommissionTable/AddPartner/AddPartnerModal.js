@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
+import { TextField, MenuItem, Select, FormControl } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -42,7 +42,7 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
       toast.error("Years of Experience must be a positive number.");
       return false;
     }
-    
+
     if (!category_id) {
       toast.error("Category is required.");
       return false;
@@ -52,7 +52,7 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
 
   const handleSave = async () => {
     if (!validateFields()) return;
-  
+
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
       const response = await fetch(
@@ -72,30 +72,27 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
           }),
         }
       );
-  
+
       const data = await response.json();
-  
-      // Check if the API responded with success: false
+
       if (data.success === false) {
         toast.error(data.message || "An error occurred while registering the partner.");
-        return; // Stop further execution as registration failed
+        return;
       }
-  
-      // Success flow
+
       toast.success("Partner registered successfully!");
-  
+
       if (typeof onSave === "function") {
-        onSave(data.partner); // Pass the saved partner data to the parent component.
+        onSave(data.partner);
       }
-  
+
       getRestaurantTableData();
       handleCancel();
     } catch (error) {
-      // General error handling
       toast.error(error.message || "Failed to register partner. Please try again.");
     }
   };
-  
+
   const handleCancel = () => {
     setFormData({
       first_name: "",
@@ -195,20 +192,22 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
               onChange={handleChange}
               placeholder="Enter current address"
               fullWidth
-              
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="category_id">Category:</label>
             <FormControl fullWidth required>
-              
               <Select
                 id="category_id"
                 name="category_id"
                 value={formData.category_id}
                 onChange={handleChange}
+                displayEmpty
               >
+                <MenuItem value="" disabled>
+                  Select Category
+                </MenuItem>
                 <MenuItem value={1}>Cook</MenuItem>
                 <MenuItem value={2}>Driver</MenuItem>
                 <MenuItem value={3}>Gardener</MenuItem>
@@ -217,10 +216,10 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
           </div>
 
           <div className="modal-actions">
-            <button onClick={handleSave} className="btn btn-primary" style={{width:"100%"}}>
+            <button onClick={handleSave} className="btn btn-primary" style={{ width: "100%" }}>
               Save
             </button>
-            <button onClick={handleCancel} className="btn btn-secondary"  style={{width:"100%"}}>
+            <button onClick={handleCancel} className="btn btn-secondary" style={{ width: "100%" }}>
               Cancel
             </button>
           </div>
