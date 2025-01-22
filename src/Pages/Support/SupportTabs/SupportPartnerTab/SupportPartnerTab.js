@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Loader from "../../../Loader/Loader";
-import { toast } from "react-toastify";
-import EditStatusModal from "./../SupportCustomerTab/EditStatusModal/EditStatusModal";
 import EditIcon from "@mui/icons-material/Edit";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import Loader from "../../../Loader/Loader";
+import EditStatusModal from "./../SupportCustomerTab/EditStatusModal/EditStatusModal";
 
 const SupportPartnerTab = () => {
   const [supportData, setSupportData] = useState([]);
@@ -11,6 +11,7 @@ const SupportPartnerTab = () => {
   const [selectedSupport, setSelectedSupport] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+   const [searchInput, setSearchInput] = useState(""); // New state for search input
 
   const entriesPerPage = 10;
 
@@ -70,6 +71,11 @@ const SupportPartnerTab = () => {
       behavior: "smooth", // Enables smooth scrolling
     });
   }, [currentPage]);
+
+  const filteredData = supportData.filter(
+    (item) => item.email && item.email.toLowerCase().includes(searchInput.toLowerCase())
+  );
+  
   
   // Pagination logic
   const totalPages = Math.ceil(supportData.length / entriesPerPage);
@@ -158,7 +164,16 @@ const SupportPartnerTab = () => {
 
   return (
     <div className="Support-Table-Main p-3">
-      <h2>Partner Support</h2>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2>Partner Support</h2>
+        <input
+          type="text"
+          className="form-control search-input w-25"
+          placeholder="Search by email..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
+      </div>
       {loading ? (
         <Loader />
       ) : (

@@ -11,6 +11,7 @@ const SupportCustomerTab = () => {
   const [selectedSupport, setSelectedSupport] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchInput, setSearchInput] = useState(""); // New state for search input
 
   const entriesPerPage = 10;
 
@@ -74,16 +75,23 @@ const SupportCustomerTab = () => {
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth", // Enables smooth scrolling
+      behavior: "smooth",
     });
   }, [currentPage]);
-  
+
+  // Filtered entries based on search input
+  const filteredData = supportData.filter((item) =>
+    item.email.toLowerCase().includes(searchInput.toLowerCase())
+  );
 
   // Pagination logic
-  const totalPages = Math.ceil(supportData.length / entriesPerPage);
+  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = supportData.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = filteredData.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   const getPageRange = () => {
     let start = currentPage - 1;
@@ -104,8 +112,6 @@ const SupportCustomerTab = () => {
 
   const renderPaginationItems = () => {
     const pageRange = getPageRange();
-
-    
 
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
@@ -144,20 +150,32 @@ const SupportCustomerTab = () => {
             </button>
           </li>
         ))}
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
           <button
             className="page-link"
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+            style={{
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            }}
           >
             Next
           </button>
         </li>
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
           <button
             className="page-link"
             onClick={() => setCurrentPage(totalPages)}
-            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+            style={{
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            }}
           >
             Last
           </button>
@@ -168,7 +186,16 @@ const SupportCustomerTab = () => {
 
   return (
     <div className="Support-Table-Main p-3">
-      <h2>Customer Support</h2>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2>Customer Support</h2>
+        <input
+          type="text"
+          className="form-control search-input w-25"
+          placeholder="Search by email..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
+      </div>
       {loading ? (
         <Loader />
       ) : (
@@ -182,7 +209,7 @@ const SupportCustomerTab = () => {
                   <th>Role</th>
                   <th>Subject</th>
                   <th>Description</th>
-                  <th  style={{ width: "15%" }}>Status</th>
+                  <th style={{ width: "15%" }}>Status</th>
                   <th>Created At</th>
                   <th>Updated At</th>
                 </tr>
@@ -196,23 +223,31 @@ const SupportCustomerTab = () => {
                     <td>{item.subject}</td>
                     <td>{item.description}</td>
                     <td>
-                    <div className="status-div">
-  <span>{item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>
-  <EditIcon
-    onClick={() => handleEditStatus(item)}
-    style={{ cursor: "pointer" }}
-  />
-</div>
-
+                      <div className="status-div">
+                        <span>
+                          {item.status.charAt(0).toUpperCase() +
+                            item.status.slice(1)}
+                        </span>
+                        <EditIcon
+                          onClick={() => handleEditStatus(item)}
+                          style={{ cursor: "pointer" }}
+                        />
+                      </div>
                     </td>
-                    <td>{new Date(item.created_at).toLocaleDateString()}</td>
-                    <td>{new Date(item.updated_at).toLocaleDateString()}</td>
+                    <td>
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </td>
+                    <td>
+                      {new Date(item.updated_at).toLocaleDateString()}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <nav className="d-flex justify-content-center">{renderPaginationItems()}</nav>
+          <nav className="d-flex justify-content-center">
+            {renderPaginationItems()}
+          </nav>
         </>
       )}
 

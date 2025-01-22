@@ -49,33 +49,35 @@ const PrivacypolicyText = () => {
       toast.error('Please enter some text before saving.');
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
-      const response = await axios.post(
+      const response = await axios.patch(
         `${baseURL}/api/admin/cms/privacy_policy`,
-        { content: editorContent },
+        { title: 'Privacy Policy', content: editorContent },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-
+  
       if (response?.data?.success) {
-        toast.success('Privacy Policy saved successfully!');
+        toast.success('Privacy Policy updated successfully!');
       } else {
-        toast.error(response?.data?.message || 'Failed to save Privacy Policy.');
+        toast.error(response?.data?.message || 'Failed to update Privacy Policy.');
       }
     } catch (error) {
-      console.error('Error saving privacy policy:', error);
-      toast.error('Failed to save Privacy Policy. Please try again.');
+      console.error('Error updating privacy policy:', error);
+      toast.error('Failed to update Privacy Policy. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+  
 
+  
   return (
     <div>
       <h2>Privacy Policy</h2>
@@ -109,13 +111,13 @@ const PrivacypolicyText = () => {
         placeholder="Enter your privacy policy here..."
         style={{ height: '350px', width: '100%' }} 
       />
-      <div style={{ marginTop: '60px' }}>
+      <div style={{ marginTop: '60px', textAlign: 'center' }}>
         <Button
           variant="contained"
           color="primary"
           onClick={handleSave}
           disabled={loading}
-          style={{ width: '100%' }}
+          style={{ width: '50%' }}
         >
           {loading ? 'Saving...' : 'Save Privacy Policy'}
         </Button>

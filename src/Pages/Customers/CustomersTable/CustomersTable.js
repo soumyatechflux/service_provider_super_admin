@@ -4,20 +4,25 @@ import axios from "axios";
 import Loader from "../../Loader/Loader";
 import EditIcon from "@mui/icons-material/Edit";
 import EditCustomerModal from "../EditCustomersModal/EditCustomersModal";
+import "../../Customers/CustomersTable/CustomersTable.css";
 
 const CustomersTable = () => {
   const [restaurants, setRestaurants] = useState([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchInput, setSearchInput] = useState("");
 
   const entriesPerPage = 10;
 
   // Fetch restaurant data with error handling
   const getRestaurantTableData = useCallback(async () => {
     try {
-      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
 
       setLoading(true);
 
@@ -34,6 +39,7 @@ const CustomersTable = () => {
 
       if (response?.data?.message === "customers fetched successfully") {
         setRestaurants(response?.data?.data || []);
+        setFilteredRestaurants(response?.data?.data || []);
       } else {
         toast.error(response.data.message || "Please try again.");
       }
@@ -48,6 +54,13 @@ const CustomersTable = () => {
     getRestaurantTableData();
   }, [getRestaurantTableData]);
 
+  useEffect(() => {
+    const filteredData = restaurants.filter((restaurant) =>
+      restaurant.name.toLowerCase().includes(searchInput.toLowerCase())
+    );
+    setFilteredRestaurants(filteredData);
+  }, [searchInput, restaurants]);
+
   const handleRestaurantClick = (restaurant) => {
     setSelectedRestaurant(restaurant);
     setShowDetailsModal(true);
@@ -59,10 +72,13 @@ const CustomersTable = () => {
   };
 
   // Pagination logic
-  const totalPages = Math.ceil(restaurants.length / entriesPerPage);
+  const totalPages = Math.ceil(filteredRestaurants.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = restaurants.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = filteredRestaurants.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   const getPageRange = () => {
     let start = currentPage - 1;
@@ -131,8 +147,12 @@ const CustomersTable = () => {
         >
           <button
             className="page-link"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            style={{
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            }}
           >
             Next
           </button>
@@ -146,7 +166,9 @@ const CustomersTable = () => {
           <button
             className="page-link"
             onClick={() => setCurrentPage(totalPages)}
-            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+            style={{
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            }}
           >
             Last
           </button>
@@ -159,10 +181,10 @@ const CustomersTable = () => {
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth", // Enables smooth scrolling
+      behavior: "smooth",
     });
   }, [currentPage]);
-  
+
   return (
     <div className="Restro-Table-Main p-3">
       {loading ? (
@@ -170,15 +192,34 @@ const CustomersTable = () => {
       ) : (
         <>
           <div className="table-responsive mb-5">
-          <h2>Customers</h2>
+            <div className="d-flex justify-content-between align-items-center">
+              <h2>Customers</h2>
+              <input
+                type="text"
+                className="form-control search-input w-25"
+                placeholder="Search customers..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </div>
             <table className="table table-bordered table-user">
               <thead>
                 <tr>
-                  <th scope="col" style={{ width: "5%" }}>Sr.</th>
-                  <th scope="col" style={{ width: "15%" }}>Name</th>
-                  <th scope="col" style={{ width: "15%" }}>Email</th>
-                  <th scope="col" style={{ width: "10%" }}>Phone</th>
-                  <th scope="col" style={{ width: "10%" }}>Status</th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Sr.
+                  </th>
+                  <th scope="col" style={{ width: "15%" }}>
+                    Name
+                  </th>
+                  <th scope="col" style={{ width: "15%" }}>
+                    Email
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Phone
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -195,7 +236,8 @@ const CustomersTable = () => {
                         style={{ cursor: "pointer" }}
                       >
                         <span>
-                          {restaurant.active_status.charAt(0).toUpperCase() + restaurant.active_status.slice(1)}
+                          {restaurant.active_status.charAt(0).toUpperCase() +
+                            restaurant.active_status.slice(1)}
                         </span>
                         <EditIcon />
                       </div>

@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-import axios from "axios";
-import Loader from "../../../Loader/Loader";
-import EditRestroModal from "../EditRestroModal/EditRestroModal";
-import EditIcon from "@mui/icons-material/Edit";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import VerifyModal from "../VerifyModal/VerifyModal";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import Loader from "../../../Loader/Loader";
 import VerifyChef from "../../../VerifyPartners/VerifyChef/VerifyChef";
-import DeletePartnerModal from "../DeletePartnerModal/DeletePartnerModal";
 import AddPartnerModal from "../AddPartner/AddPartnerModal"; // Import AddPartnerModal component
+import DeletePartnerModal from "../DeletePartnerModal/DeletePartnerModal";
+import EditRestroModal from "../EditRestroModal/EditRestroModal";
+import VerifyModal from "../VerifyModal/VerifyModal";
 
 const VerifiedPartnerTab = ({
   restaurants,
@@ -35,6 +35,9 @@ const VerifiedPartnerTab = ({
   const [showAddPartnerModal, setShowAddPartnerModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const entriesPerPage = 10;
+  const [searchInput, setSearchInput] = useState("");
+  
+  
 
   const getRestaurantTableData = async () => {
     try {
@@ -95,11 +98,15 @@ const VerifiedPartnerTab = ({
     }
   };
 
+  const filteredRestaurants = restaurants.filter((restaurant) =>
+    restaurant.name.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
   // Pagination logic
   const totalPages = Math.ceil(restaurants.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = restaurants.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = filteredRestaurants.slice(indexOfFirstEntry, indexOfLastEntry);
 
   const getPageRange = () => {
     let start = currentPage - 1;
@@ -215,13 +222,23 @@ const VerifiedPartnerTab = ({
     
   return (
     <div className="Restro-Table-Main p-3">
-     <h2>
+    
+<div className="d-flex justify-content-between align-items-center">
+<h2>
   {restaurants.filter((restaurant) => restaurant.is_verify === 0).length > 0
     ? "Unverified Partners"
     : restaurants.filter((restaurant) => restaurant.is_verify === 1).length > 0
     ? "Verified Partners"
     : "No Partners Available"}
 </h2>
+              <input
+                type="text"
+                className="form-control search-input w-25"
+                placeholder="Search customers..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </div>
 
       <div style={{ float: "right" }}>
         {restaurants.filter((restaurant) => restaurant.is_verify === 0).length >

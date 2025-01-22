@@ -12,7 +12,7 @@ const TermsAndConditionText = () => {
   const token = sessionStorage.getItem('TokenForSuperAdminOfServiceProvider');
   const baseURL = process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL;
 
-  // Fetch terms and conditions from the API
+  
   useEffect(() => {
     const fetchTermsAndConditions = async () => {
       try {
@@ -49,33 +49,36 @@ const TermsAndConditionText = () => {
       toast.error('Please enter some text before saving.');
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
-      const response = await axios.post(
+      const response = await axios.patch(
         `${baseURL}/api/admin/cms/terms_and_conditions`,
-        { content: editorContent },
+        {
+          title: "Terms and Conditions",  // Ensure you send the title
+          content: editorContent,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-
+  
       if (response?.data?.success) {
-        toast.success('Terms and Conditions saved successfully!');
+        toast.success('Terms and Conditions updated successfully!');
       } else {
-        toast.error(response?.data?.message || 'Failed to save Terms and Conditions.');
+        toast.error(response?.data?.message || 'Failed to update Terms and Conditions.');
       }
     } catch (error) {
-      console.error('Error saving terms and conditions:', error);
-      toast.error('Failed to save Terms and Conditions. Please try again.');
+      console.error('Error updating terms and conditions:', error);
+      toast.error('Failed to update Terms and Conditions. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <div>
       <h2>Terms and Conditions</h2>
@@ -109,15 +112,15 @@ const TermsAndConditionText = () => {
         placeholder="Enter your terms and conditions here..."
         style={{ height: '350px', width: '100%' }} 
       />
-      <div style={{ marginTop: '60px' }}>
+      <div style={{ marginTop: '60px', textAlign: 'center' }}>
         <Button
           variant="contained"
           color="primary"
           onClick={handleSave}
           disabled={loading}
-          style={{ width: '100%' }}
+          style={{ width: '50%' }}
         >
-          {loading ? 'Saving...' : 'Save Terms and Conditions'}
+          {loading ? 'Saving...' : 'Update Terms and Conditions'}
         </Button>
       </div>
     </div>
