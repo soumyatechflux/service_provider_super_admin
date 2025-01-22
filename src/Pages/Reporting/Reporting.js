@@ -38,6 +38,10 @@ const Reporting = () => {
   const handleSearch = (filterData) => {
     setFilters(filterData);
   };
+  const handleClearFilters = () => {
+    setFilters({}); // Reset the filters to an empty object
+    setLoading(true); // Set loading to true to show the loader
+  };
 
   return (
     <>
@@ -48,7 +52,7 @@ const Reporting = () => {
         style={{ marginTop: "30px" }}
       >
        {/* <ReportingTabs/> */}
-       <ReportingFilters onSearch={handleSearch} />
+       <ReportingFilters onSearch={handleSearch} onClear={handleClearFilters}/>
        <ReportTable filters={filters} loading={loading} setLoading={setLoading} />
       </div>
     </>

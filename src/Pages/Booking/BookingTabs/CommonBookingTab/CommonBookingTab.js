@@ -67,11 +67,11 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     setSelectedBookingStatus(bookingStatus);
     setPartnerId(partnerId);
     setCategoryId(categoryId);
-    setShowEditModal(true);
+    setShowEditModal(true);  // Open the modal
   };
-
+  
   const handleCloseEditModal = () => {
-    setShowEditModal(false);
+    setShowEditModal(false);  // Close the modal
   };
 
   // Pagination calculations
@@ -251,7 +251,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                         day: "2-digit",
                         month: "short",
                         year: "numeric",
-                      }).format(new Date(item.created_at))}
+                      }).format(new Date(item.visit_date))}
                     </td>
                     <td>{item.booking_status || "No current_address available."}</td>
                     <td>
@@ -304,6 +304,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
         getCommissionData={getCommissionData}
         dummyData={dummy_Data}
         setDummyData={setDummy_Data}
+        setShowEditModal={setShowEditModal} 
       />
     </div>
   );

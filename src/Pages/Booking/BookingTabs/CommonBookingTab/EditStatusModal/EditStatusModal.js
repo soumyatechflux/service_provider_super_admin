@@ -54,16 +54,24 @@ const EditStatusModal = ({
           );
         });
   
-        getCommissionData(); // Refresh the data if needed
         setShowEditModal(false); // Close the modal
+        console.log(setShowEditModal);  // Should log a function
+
+
+// Set a timeout for refreshing the data
+setTimeout(() => {
+    getCommissionData(); // Refresh the data after a delay
+    console.log("Commission data refreshed");
+}, 2000); // Delay in milliseconds (e.g., 2000ms = 2 seconds)
       } else {
         toast.error(response?.data?.message || "Failed to update status.");
       }
     } catch (error) {
       console.error("API Error:", error);
-      toast.error(error.response?.data?.message || "Error updating status. Please try again.");
+      // toast.error(error.response?.data?.message || "Error updating status. Please try again.");
     } finally {
       setLoading(false);
+      
     }
   };
   

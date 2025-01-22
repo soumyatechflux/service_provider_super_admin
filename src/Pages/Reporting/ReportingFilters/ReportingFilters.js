@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './ReportingFilters.css';
 
-const ReportingFilters = ({ onSearch }) => {
+const ReportingFilters = ({ onSearch,onClear }) => {
   const [filters, setFilters] = useState({
     category_id: "",
     sub_category_id: "",
@@ -14,6 +14,7 @@ const ReportingFilters = ({ onSearch }) => {
     from_time: "",
     to_time: "",
   });
+
 
   // Mapping categories to subcategories
   const subCategories = {

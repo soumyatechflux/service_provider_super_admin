@@ -201,7 +201,7 @@ const SupportPartnerTab = () => {
                     <td>{item.support_id}</td>
                     <td>{item.email}</td>
                     <td>{item.user_role}</td>
-                    <td>{item.subject}</td>
+                    <td>{item.subject || 'No subject available'}</td>
                     <td>{item.description}</td>
                     <td>
                       <div className="status-div">
