@@ -293,7 +293,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                     </td>
                     <td>{item.billing_amount || "N/A"}</td>
                     <td>
-                      {item.address_from || "No current_address available."}
+                      {item.visit_address || "No current_address available."}
                     </td>
                     <td>
                       {new Intl.DateTimeFormat("en-GB", {
