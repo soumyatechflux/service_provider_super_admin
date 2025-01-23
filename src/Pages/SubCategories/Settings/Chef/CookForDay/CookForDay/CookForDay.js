@@ -229,7 +229,7 @@ const CookForDay = () => {
     const noOfPeopleData = guestRows.map((row) => ({
       people_count: row.count,
       base_price: row.price,
-      aprox_time: row.duration,
+      aprox_time: "720",
     }));
     formData.append("no_of_people", JSON.stringify(noOfPeopleData));
 

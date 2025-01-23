@@ -62,16 +62,21 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     });
   }, [currentPage]);
 
-  const handleOpenEditModal = (bookingId, bookingStatus, partnerId, categoryId) => {
+  const handleOpenEditModal = (
+    bookingId,
+    bookingStatus,
+    partnerId,
+    categoryId
+  ) => {
     setSelectedBookingId(bookingId);
     setSelectedBookingStatus(bookingStatus);
     setPartnerId(partnerId);
     setCategoryId(categoryId);
-    setShowEditModal(true);  // Open the modal
+    setShowEditModal(true); // Open the modal
   };
-  
+
   const handleCloseEditModal = () => {
-    setShowEditModal(false);  // Close the modal
+    setShowEditModal(false); // Close the modal
   };
 
   // Pagination calculations
@@ -84,7 +89,10 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     item.guest_name.toLowerCase().includes(searchInput.toLowerCase())
   );
 
-  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = filteredData.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   const getPageRange = () => {
     let start = currentPage - 1;
@@ -168,10 +176,16 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
         ))}
 
         {/* Next Page Button */}
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
           <button
             className="page-link"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             style={{
               border: "1px solid #dee2e6",
               borderRadius: "4px",
@@ -186,7 +200,11 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
         </li>
 
         {/* Last Page Button */}
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
           <button
             className="page-link"
             onClick={() => setCurrentPage(totalPages)}
@@ -226,15 +244,39 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
             <table className="table table-bordered table-user">
               <thead className="heading_user">
                 <tr>
-                  <th scope="col" style={{ width: "5%" }}>Sr.</th>
-                  <th scope="col" style={{ width: "10%" }}>Customer Name</th>
-                  <th scope="col" style={{ width: "10%" }}>Partner Name</th>
-                  <th scope="col" style={{ width: "10%" }}>Sub Category</th>
-                  <th scope="col" style={{ width: "5%" }}>Amount</th>
-                  <th scope="col" style={{ width: "10%" }}>Address</th>
-                  <th scope="col" style={{ width: "10%" }}>Booking Date</th>
-                  <th scope="col" style={{ width: "10%" }}>Status</th>
-                  <th scope="col" style={{ width: "5%" }}>Action</th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Sr.
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Customer Name
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Partner Name
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Sub Category
+                  </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Amount
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Address
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Visited Date
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Booking Date
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Booking Time
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Status
+                  </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -242,10 +284,14 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                   <tr key={item.booking_id}>
                     <th scope="row">{indexOfFirstEntry + index + 1}.</th>
                     <td>{item.guest_name || "N/A"}</td>
-                    <td>{item.partner?.name || "Unknown"}</td>
-                    <td>{item.sub_category_name?.sub_category_name || "Unknown"}</td>
-                    <td>{item.price || "N/A"}</td>
-                    <td>{item.address_from || "No current_address available."}</td>
+                    <td>{item.partner?.name || "Not assign yet"}</td>
+                    <td>
+                      {item.sub_category_name?.sub_category_name || "Unknown"}
+                    </td>
+                    <td>{item.billing_amount || "N/A"}</td>
+                    <td>
+                      {item.address_from || "No current_address available."}
+                    </td>
                     <td>
                       {new Intl.DateTimeFormat("en-GB", {
                         day: "2-digit",
@@ -253,9 +299,37 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                         year: "numeric",
                       }).format(new Date(item.visit_date))}
                     </td>
-                    <td>{item.booking_status || "No current_address available."}</td>
+
                     <td>
-                      {["upcoming", "inprogress"].includes(item.booking_status) ? (
+                      {item.created_at
+                        ? new Intl.DateTimeFormat("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          }).format(new Date(item.created_at))
+                        : "N/A"}
+                    </td>
+
+                    <td>
+                      {item.created_at
+                        ? new Intl.DateTimeFormat("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true, // Ensures time is in 12-hour format with AM/PM
+                          }).format(new Date(item.created_at))
+                        : "N/A"}
+                    </td>
+                    <td>
+                      {item.payment_mode || "N/A"}
+                    </td>
+
+                    <td>
+                      {item.booking_status || "No current_address available."}
+                    </td>
+                    <td>
+                      {["upcoming", "inprogress"].includes(
+                        item.booking_status
+                      ) ? (
                         <i
                           className="fa fa-pencil-alt text-primary"
                           style={{ cursor: "pointer", color: "black" }}
@@ -304,7 +378,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
         getCommissionData={getCommissionData}
         dummyData={dummy_Data}
         setDummyData={setDummy_Data}
-        setShowEditModal={setShowEditModal} 
+        setShowEditModal={setShowEditModal}
       />
     </div>
   );

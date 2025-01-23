@@ -227,7 +227,7 @@ const CustomersTable = () => {
                   <tr key={restaurant.id}>
                     <th scope="row">{indexOfFirstEntry + index + 1}.</th>
                     <td>{restaurant.name}</td>
-                    <td>{restaurant.email || "-"}</td>
+                    <td>{restaurant.email || "NA"}</td>
                     <td>{restaurant.mobile}</td>
                     <td className={`status ${restaurant.active_status}`}>
                       <div
