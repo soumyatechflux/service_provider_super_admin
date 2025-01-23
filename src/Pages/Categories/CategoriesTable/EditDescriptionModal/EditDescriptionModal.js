@@ -76,6 +76,7 @@ const EditDescriptionModal = ({ show, onClose, initialData, fetchCategoryData })
             <textarea
               id="description"
               name="description"
+              rows="5"
               value={formData.description}
               onChange={handleChange}
               placeholder="Enter a description"

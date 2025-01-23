@@ -227,7 +227,7 @@ const GardenerCategoriesTab = ({ category_id }) => {
                       <span>
                         {item.active_status === "active"
                           ? "Active"
-                          : "In-Active"}
+                          : "InActive"}
                       </span>
                       <EditIcon
                         onClick={() => handleOpenEditModal(item)}

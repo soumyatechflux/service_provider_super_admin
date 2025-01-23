@@ -1,18 +1,18 @@
-import React, { useState } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  CircularProgress,
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
 } from "@mui/material";
-import { toast } from "react-toastify";
 import axios from "axios"; // Import axios for API calls
+import React, { useState } from "react";
+import { toast } from "react-toastify";
 import Loader from "../../Loader/Loader";
 
 const EditCustomerModal = ({
@@ -30,7 +30,7 @@ const EditCustomerModal = ({
 
   const statusOptions = [
     { key: "active", label: "Active" },
-    { key: "inactive", label: "In-Active" },
+    { key: "inactive", label: "InActive" },
   ];
 
   const handleStatusChange = (e) => {

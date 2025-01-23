@@ -10,52 +10,29 @@ const Reporting = () => {
     return storedValue !== null ? JSON.parse(storedValue) : true;
   });
 
-  // Effect to poll sessionStorage value repeatedly
-  useEffect(() => {
-    const checksessionStorage = () => {
-      const storedValue = sessionStorage.getItem("isSidebarOpen");
-      const parsedValue = storedValue !== null ? JSON.parse(storedValue) : true;
-
-      if (parsedValue !== value) {
-        setValue(parsedValue);
-        console.log("sessionStorage value updated:", parsedValue); // Log the updated value
-      }
-    };
-
-    // Polling interval in milliseconds (e.g., 10ms)
-    const intervalId = setInterval(checksessionStorage, 10);
-
-    // Cleanup function to clear the interval
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [value]);
-
-
   const [filters, setFilters] = useState({});
   const [loading, setLoading] = useState(false);
 
   const handleSearch = (filterData) => {
     setFilters(filterData);
+    setLoading(true); // Trigger a reload in the table
   };
+
   const handleClearFilters = () => {
-    setFilters({}); // Reset the filters to an empty object
-    setLoading(true); // Set loading to true to show the loader
+    setFilters({}); // Reset filters
+    setLoading(true); // Trigger a reload in the table
   };
 
   return (
-    <>
-      <div
-        className={`content-container ${
-          value ? "sidebar-open" : "sidebar-closed"
-        }`}
-        style={{ marginTop: "30px" }}
-      >
-       {/* <ReportingTabs/> */}
-       <ReportingFilters onSearch={handleSearch} onClear={handleClearFilters}/>
-       <ReportTable filters={filters} loading={loading} setLoading={setLoading} />
-      </div>
-    </>
+    <div
+      className={`content-container ${
+        value ? "sidebar-open" : "sidebar-closed"
+      }`}
+      style={{ marginTop: "30px" }}
+    >
+      <ReportingFilters onSearch={handleSearch} onClear={handleClearFilters} />
+      <ReportTable filters={filters} loading={loading} setLoading={setLoading} />
+    </div>
   );
 };
 

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import EditIcon from "@mui/icons-material/Edit";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import Loader from "../../../Loader/Loader";
-import EditIcon from "@mui/icons-material/Edit";
 import AddDiscountModal from "../CommonDiscoutTab/AddDiscountModal/AddDiscountModal";
-import EditDiscountModal from "../CommonDiscoutTab/EditDiscountModal/EditDiscountModal";
 import DeleteDiscountModal from "../CommonDiscoutTab/DeleteDiscountModal/DeleteDiscountModal";
+import EditDiscountModal from "../CommonDiscoutTab/EditDiscountModal/EditDiscountModal";
 import "./CommonDiscount.css";
 import EditDiscountStatusModal from "./EditDiscountStatusModal/EditDiscountStatusModal";
 
@@ -189,7 +189,7 @@ const CommonDiscountTab = () => {
                   </td>
                   <td>
                     <div className="status-div">
-                      <span>{item.active_status === "active" ? "Active" : "In-Active"}</span>
+                      <span>{item.active_status === "active" ? "Active" : "InActive"}</span>
                       <EditIcon
                         onClick={() => handleOpenStatusModal(item)}
                         style={{ cursor: "pointer", marginLeft: "10px" }}

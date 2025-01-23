@@ -86,7 +86,7 @@ const EditCategoriesModal = ({ category, onClose, onStatusUpdateSuccess }) => {
             label="Active Status"
           >
             <MenuItem value="active">Active</MenuItem>
-            <MenuItem value="inactive">In-Active</MenuItem>
+            <MenuItem value="inactive">InActive</MenuItem>
           </Select>
         </FormControl>
       </DialogContent>

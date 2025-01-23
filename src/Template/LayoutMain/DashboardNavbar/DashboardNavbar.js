@@ -42,15 +42,28 @@ const DashboardNavbar = ({ toggleSidebar, isSidebarOpen }) => {
       <div className="leftside_navbar_dashboard">
         <div className="DineRightLogo_Dashboard">
         {!isSidebarOpen && (
-                <span  style={{cursor:"default"}} className="navbar-brand font-serif">
-                Servyo
-              </span>
+              //   <span  style={{cursor:"default"}} className="navbar-brand font-serif">
+              //   Servyo
+              // </span>
+
+              <img 
+              src="/images/SP_Logo.png" 
+              alt="Servyo Logo" 
+              className="navbar-brand-logo" 
+              style={{ height: "40px", cursor: "pointer" }}
+            />
           )}
 
           {isSidebarOpen && (
-                 <span  style={{cursor:"default"}} className="navbar-brand font-serif">
-                 Servyo
-               </span>
+              //    <span  style={{cursor:"default"}} className="navbar-brand font-serif">
+              //    Servyo
+              //  </span>
+              <img 
+              src="/images/SP_Logo.png" 
+              alt="Servyo Logo" 
+              className="navbar-brand-logo" 
+              style={{ height: "40px", cursor: "pointer" }}
+            />
           )}
         </div>
         <div className="Hamburger_Dashboard">

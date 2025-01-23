@@ -159,7 +159,7 @@ const CategoriesTable = () => {
                         <span>
                           {item.active_status === "active"
                             ? "Active"
-                            : "In-Active"}
+                            : "InActive"}
                         </span>
                         <EditIcon
                           onClick={() => handleEditStatus(item)}

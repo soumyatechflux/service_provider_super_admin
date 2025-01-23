@@ -272,6 +272,9 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                     Booking Time
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
+                    Payment Mode
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
                     Status
                   </th>
                   <th scope="col" style={{ width: "5%" }}>

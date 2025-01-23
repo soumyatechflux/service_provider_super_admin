@@ -62,12 +62,14 @@ const ReportingFilters = ({ onSearch,onClear }) => {
       from_time: "",
       to_time: "",
     });
+
+    onClear(); // Notify the parent to clear filters
   };
 
   const handleSearch = () => {
-    // Send the filter data back to the parent component
-    onSearch(filters);
+    onSearch(filters); // Send filters to the parent
   };
+
 
   return (
     <div className="filter-page">

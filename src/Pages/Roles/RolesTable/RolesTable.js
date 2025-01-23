@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import Loader from "../../Loader/Loader";
-import axios from "axios";
-import { toast } from "react-toastify";
-import "./RolesTable.css";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteRoleModal from "./DeleteRoleModal/DeleteRoleModal";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import Loader from "../../Loader/Loader";
 import AddRoleModal from "./AddRoleModal/AddRoleModal";
+import DeleteRoleModal from "./DeleteRoleModal/DeleteRoleModal";
 import EditRoleModal from "./EditRoleModal/EditRoleModal";
 import EditRoleStatusModal from "./EditRoleStatusModal/EditRoleStatusModal";
+import "./RolesTable.css";
 
 const RolesTable = () => {
   const [loading, setLoading] = useState(false); // Simulating loader state
@@ -204,7 +204,7 @@ const RolesTable = () => {
                         <span>
                           {item.active_status === "active"
                             ? "Active"
-                            : "In-Active"}
+                            : "InActive"}
                         </span>
                         <EditIcon
                           onClick={() => handleStatusClick(item)}

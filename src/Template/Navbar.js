@@ -8,10 +8,7 @@ const Navbar = () => {
         <div className="container nav-container nav-container-flex">
 
 
-          {/* <a href="/" className="navbar-brand font-serif">
-            Servyo
-          </a> */}
-
+       
           <span  style={{cursor:"default"}} className="navbar-brand font-serif">
             Servyo
           </span>

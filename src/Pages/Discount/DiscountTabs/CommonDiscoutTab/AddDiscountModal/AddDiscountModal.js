@@ -221,6 +221,7 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
               id="description"
               name="description"
               value={formData.description}
+                 rows="5"
               onChange={handleChange}
               placeholder="Enter description"
               fullWidth

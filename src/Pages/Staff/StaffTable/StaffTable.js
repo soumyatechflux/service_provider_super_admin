@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import Loader from "../../Loader/Loader";
-import axios from "axios";
-import { toast } from "react-toastify";
 import EditIcon from "@mui/icons-material/Edit";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import Loader from "../../Loader/Loader";
 import AddStaffModal from "./AddStaffModal/AddStaffModal";
+import DeleteStaffModal from "./DeleteStaffModal/DeleteStaffModal";
 import EditStaffModal from "./EditStaffModal/EditStaffModal";
 import EditStaffStatusModal from "./EditStaffStatusModal/EditStaffStatusModal";
-import DeleteStaffModal from "./DeleteStaffModal/DeleteStaffModal";
 
 const StaffTable = ({}) => {
   const [loading, setLoading] = useState(false); 
@@ -206,7 +206,7 @@ const StaffTable = ({}) => {
                       <span>
                         {item.active_status === "active"
                           ? "Active"
-                          : "In-Active"}
+                          : "InActive"}
                       </span>
                       <EditIcon
                         onClick={() => handleStatusClick(item)}

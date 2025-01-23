@@ -416,7 +416,7 @@ const VerifiedPartnerTab = ({
                           <span>
                             {restaurant.active_status === "active"
                               ? "Active"
-                              : "In-Active"}
+                              : "InActive"}
                           </span>
                           <div
                             onClick={() => handleRestaurantClick(restaurant)}

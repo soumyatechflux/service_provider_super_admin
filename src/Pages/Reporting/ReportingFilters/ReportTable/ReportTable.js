@@ -13,17 +13,15 @@ const ReportTable = ({ filters, loading, setLoading }) => {
 
   const fetchReportData = async () => {
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
       setLoading(true);
-
+  
       const validFilters = Object.fromEntries(
         Object.entries(filters).filter(
           ([_, value]) => value !== "" && value !== null
         )
       );
-
+  
       const response = await axios.get(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/reporting/bookings`,
         {
@@ -33,9 +31,9 @@ const ReportTable = ({ filters, loading, setLoading }) => {
           },
         }
       );
-
+  
       setLoading(false);
-
+  
       if (response?.status === 200 && response?.data?.success) {
         setReportData(response?.data?.data || []);
       } else {
@@ -48,7 +46,7 @@ const ReportTable = ({ filters, loading, setLoading }) => {
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
     fetchReportData();
   }, [filters]);
@@ -61,6 +59,12 @@ const ReportTable = ({ filters, loading, setLoading }) => {
   }, [currentPage]);
   
 
+  useEffect(() => {
+    if (loading) {
+      fetchReportData();
+    }
+  }, [filters, loading]); // Trigger fetch when filters or loading change
+  
   const handleViewDetails = (booking) => {
     setSelectedBooking(booking);
     setIsModalOpen(true);
