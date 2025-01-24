@@ -56,6 +56,9 @@ const CommissionTable = () => {
   );
 
   return (
+    <>
+       <h2>Partners</h2>
+   
     <Tabs
       defaultActiveKey="verified-partners"
       id="justify-tab-example"
@@ -121,6 +124,7 @@ const CommissionTable = () => {
         />
       </Tab>
     </Tabs>
+    </>
   );
 };
 

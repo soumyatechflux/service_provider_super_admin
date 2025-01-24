@@ -52,7 +52,7 @@ const PaymentHistoryTable = ({
 
   return (
     <div className="SubCategory-Table-Main p-3">
-        <h2>Payment History</h2>
+        {/* <h2>Payment History</h2> */}
       {loading ? (
         <Loader />
       ) : (

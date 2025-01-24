@@ -18,7 +18,7 @@ import {
   QuestionAnswer,
   AccountBox,
 } from "@mui/icons-material";
-import { Gavel, Lock, ReceiptLong, Cancel } from "@mui/icons-material"; // Add this line
+import { Gavel, Lock, ReceiptLong, Cancel } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Tooltip from "@mui/material/Tooltip";
@@ -82,6 +82,18 @@ const Sidebar = ({ isOpen }) => {
     setActiveItem(path);
   };
 
+  const hoveredPaths = [
+    "/cook_for_one_meal",
+    "/cook-for-day",
+    "/chef-for-party",
+    "/outstaion-round-trip",
+    "/outstaion-trip",
+    "/round-trip",
+    "/one-way-trip",
+    "/monthly-subscription",
+    "/gardner-visit",
+  ];
+
   const iconMapping = {
     1: <Home />,
     2: <AttachMoney />,
@@ -102,10 +114,10 @@ const Sidebar = ({ isOpen }) => {
     17: <Work />,
     18: <Help />,
     19: <Info />,
-    20: <Gavel />, // Add this line
-    21: <Lock />, // Add this line
-    22: <ReceiptLong />, // Add this line
-    23: <Cancel />, // Add this line
+    20: <Gavel />,
+    21: <Lock />,
+    22: <ReceiptLong />,
+    23: <Cancel />,
   };
 
   return (
@@ -116,6 +128,9 @@ const Sidebar = ({ isOpen }) => {
             const { permission_id, permission_name, path } = permission;
             const itemPath =
               path || `/${permission_name.toLowerCase().replace(/\s+/g, "-")}`;
+            const isHovered =
+              permission_id === 7 && hoveredPaths.includes(location.pathname);
+
             return (
               <CustomTooltip
                 key={permission_id}
@@ -126,12 +141,26 @@ const Sidebar = ({ isOpen }) => {
                 <Link to={itemPath}>
                   <li
                     className={`menu-item ${
-                      activeItem === itemPath ? "active" : ""
+                      activeItem === itemPath || isHovered ? "active" : ""
                     }`}
                     onClick={() => handleItemClick(itemPath)}
                   >
-                    {iconMapping[permission_id] || <Info />}
-                    {isOpen && <span>{permission_name}</span>}
+                    <span
+                      style={{
+                        color: isHovered ? "#fff" : undefined,
+                      }}
+                    >
+                      {iconMapping[permission_id] || <Info />}
+                    </span>
+                    {isOpen && (
+                      <span
+                        style={{
+                          color: isHovered ? "#fff" : undefined,
+                        }}
+                      >
+                        {permission_name}
+                      </span>
+                    )}
                   </li>
                 </Link>
               </CustomTooltip>

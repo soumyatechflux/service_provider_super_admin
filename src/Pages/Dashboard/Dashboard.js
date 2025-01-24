@@ -39,8 +39,8 @@ const Dashboard = () => {
         </div>
 
         <div className="row">
-          <div className="col-12 col-md-6"><ProfitLossGraph/></div>
-          <div className="col-12 col-md-6"><BookingsGraph/></div>
+          {/* <div className="col-12 col-md-6"><ProfitLossGraph/></div> */}
+          <div className="col-12"><BookingsGraph/></div>
         </div>
         <BookingTable/>
       </div>

@@ -20,6 +20,8 @@ const FAQsTabs = () => {
   };
 
   return (
+    <>
+    <h2>FAQs</h2>
     <Tabs
       activeKey={activeTab}
       onSelect={(key) => setActiveTab(key)}
@@ -37,6 +39,7 @@ const FAQsTabs = () => {
         <CommonFAQsTab categoryID={getCategoryID()} />
       </Tab>
     </Tabs>
+    </>
   );
 };
 

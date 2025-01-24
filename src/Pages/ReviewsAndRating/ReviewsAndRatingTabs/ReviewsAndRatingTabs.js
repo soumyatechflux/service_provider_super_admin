@@ -7,6 +7,8 @@ import './ReviewsAndRatingTabs.css'
 
 const ReviewsAndRatingTabs = () => {
   return (
+    <>
+    <h2>Reviews and Ratings</h2>
     <Tabs
       defaultActiveKey="customer-reviews"
       id="justify-tab-example"
@@ -23,6 +25,7 @@ const ReviewsAndRatingTabs = () => {
         <PartnerReviewTabs/>
       </Tab>
     </Tabs>
+    </>
   );
 };
 

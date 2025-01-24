@@ -1,17 +1,17 @@
-import React, { useState } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-  CircularProgress,
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
 } from "@mui/material";
 import axios from "axios";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 
 const EditFAQStatusModal = ({
@@ -92,7 +92,7 @@ const EditFAQStatusModal = ({
             label="Status"
           >
             <MenuItem value="active">Active</MenuItem>
-            <MenuItem value="inactive">Inactive</MenuItem>
+            <MenuItem value="inactive">InActive</MenuItem>
           </Select>
         </FormControl>
       </DialogContent>

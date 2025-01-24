@@ -11,7 +11,7 @@ const SupportPartnerTab = () => {
   const [selectedSupport, setSelectedSupport] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-   const [searchInput, setSearchInput] = useState(""); // New state for search input
+  const [searchInput, setSearchInput] = useState(""); // New state for search input
 
   const entriesPerPage = 10;
 
@@ -39,7 +39,9 @@ const SupportPartnerTab = () => {
         const data = response?.data?.data || [];
         setSupportData(data);
       } else {
-        toast.error(response.data.message || "Failed to fetch support tickets.");
+        toast.error(
+          response.data.message || "Failed to fetch support tickets."
+        );
         setLoading(false);
       }
     } catch (error) {
@@ -64,7 +66,6 @@ const SupportPartnerTab = () => {
     getSupportData();
   }, []);
 
-
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -73,8 +74,10 @@ const SupportPartnerTab = () => {
   }, [currentPage]);
 
   const filteredData = supportData.filter(
-    (item) => item.email && item.email.toLowerCase().includes(searchInput.toLowerCase())
+    (item) =>
+      item.name && item.name.toLowerCase().includes(searchInput.toLowerCase())
   );
+  
   
   
   // Pagination logic
@@ -140,20 +143,34 @@ const SupportPartnerTab = () => {
             </button>
           </li>
         ))}
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
           <button
             className="page-link"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            style={{
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            }}
           >
             Next
           </button>
         </li>
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
           <button
             className="page-link"
             onClick={() => setCurrentPage(totalPages)}
-            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+            style={{
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            }}
           >
             Last
           </button>
@@ -164,15 +181,15 @@ const SupportPartnerTab = () => {
 
   return (
     <div className="Support-Table-Main p-3">
-      <div className="d-flex justify-content-between align-items-center">
-        <h2>Partner Support</h2>
-        <input
-          type="text"
-          className="form-control search-input w-25"
-          placeholder="Search by email..."
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-        />
+      <div className="d-flex justify-content-end align-items-center">
+      <input
+  type="text"
+  className="form-control search-input w-25"
+  placeholder="Search by name..."
+  value={searchInput}
+  onChange={(e) => setSearchInput(e.target.value)}
+/>
+
       </div>
       {loading ? (
         <Loader />
@@ -185,10 +202,10 @@ const SupportPartnerTab = () => {
             >
               <thead className="heading_user">
                 <tr>
-                  <th>ID</th>
-                  <th>Email</th>
+                  <th>Sr. No.</th>
+                  <th>Name</th> {/* Added Name column */}
+                  {/* <th>Email</th> */}
                   <th>Role</th>
-                  <th>Subject</th>
                   <th>Description</th>
                   <th style={{ width: "15%" }}>Status</th>
                   <th>Created At</th>
@@ -196,17 +213,18 @@ const SupportPartnerTab = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentEntries.map((item) => (
+                {currentEntries.map((item, index) => (
                   <tr key={item.support_id}>
-                    <td>{item.support_id}</td>
-                    <td>{item.email}</td>
+                    <td>{index + 1}</td> {/* Sr. No. column */}
+                    <td>{item.name || "N/A"}</td> {/* Name column */}
+                    {/* <td>{item.email}</td> */}
                     <td>{item.user_role}</td>
-                    <td>{item.subject || 'No subject available'}</td>
                     <td>{item.description}</td>
                     <td>
                       <div className="status-div">
                         <span>
-                          {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                          {item.status.charAt(0).toUpperCase() +
+                            item.status.slice(1)}
                         </span>
                         <EditIcon
                           onClick={() => handleEditStatus(item)}
@@ -214,14 +232,28 @@ const SupportPartnerTab = () => {
                         />
                       </div>
                     </td>
-                    <td>{new Date(item.created_at).toLocaleDateString()}</td>
-                    <td>{new Date(item.updated_at).toLocaleDateString()}</td>
+                    <td>
+                      {new Intl.DateTimeFormat("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }).format(new Date(item.created_at))}
+                    </td>
+                    <td>
+                      {new Intl.DateTimeFormat("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }).format(new Date(item.updated_at))}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <nav className="d-flex justify-content-center">{renderPaginationItems()}</nav>
+          <nav className="d-flex justify-content-center">
+            {renderPaginationItems()}
+          </nav>
         </>
       )}
       {showModal && (

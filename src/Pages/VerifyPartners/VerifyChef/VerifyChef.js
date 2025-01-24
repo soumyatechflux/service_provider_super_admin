@@ -80,16 +80,15 @@ const VerifyChef = () => {
   }, []);
 
   const [error, setError] = useState("");
-
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-
+  
     setCookDetails((prevState) => ({
       ...prevState,
       [name]: files ? files[0] : value,
     }));
   };
-
+  
   const verificationHeadings = {
     1: "Cook Verification",
     2: "Driver Verification",
@@ -228,12 +227,13 @@ const VerifyChef = () => {
           <label>Email</label>
 
           <input
-            type="email"
-            name="email"
-            value={partnerDetails?.email}
-            onChange={handleInputChange}
-            placeholder="Enter email address"
-          />
+  type="text"
+  name="email"
+  value={cookDetails.email}
+  onChange={handleInputChange}
+  placeholder="Enter email"
+/>
+
         </div>
       </div>
 

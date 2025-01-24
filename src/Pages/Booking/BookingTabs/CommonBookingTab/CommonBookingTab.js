@@ -55,6 +55,22 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     getCommissionData();
   }, [category_id]);
 
+  const convertToAMPM = (time) => {
+    if (!time) return "N/A";
+
+    const [hours, minutes] = time.split(":");
+    let hoursInt = parseInt(hours, 10);
+    const ampm = hoursInt >= 12 ? "PM" : "AM";
+
+    hoursInt = hoursInt % 12;
+    hoursInt = hoursInt ? hoursInt : 12;
+
+    // Ensure minutes are always 2 digits
+    const formattedMinutes = minutes.padStart(2, "0");
+
+    return `${hoursInt}:${formattedMinutes} ${ampm}`;
+  };
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -226,8 +242,8 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
 
   return (
     <div className="SubCategory-Table-Main p-3">
-      <div className="d-flex justify-content-between align-items-center">
-        <h2>Bookings</h2>
+      <div className="d-flex justify-content-end align-items-center">
+        {/* <h2>Bookings</h2> */}
         <input
           type="text"
           className="form-control search-input w-25"
@@ -236,6 +252,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
           onChange={(e) => setSearchInput(e.target.value)}
         />
       </div>
+
       {loading ? (
         <Loader />
       ) : (
@@ -313,18 +330,20 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                         : "N/A"}
                     </td>
 
-                    <td>
+                    {/* <td>
                       {item.created_at
                         ? new Intl.DateTimeFormat("en-GB", {
                             hour: "2-digit",
                             minute: "2-digit",
                             hour12: true, // Ensures time is in 12-hour format with AM/PM
-                          }).format(new Date(item.created_at))
+                          }).format(new Date(item.visit_time))
                         : "N/A"}
-                    </td>
+                    </td> */}
                     <td>
-                      {item.payment_mode || "N/A"}
+                      {item.visit_time ? convertToAMPM(item.visit_time) : "N/A"}
                     </td>
+
+                    <td>{item.payment_mode || "N/A"}</td>
 
                     <td>
                       {item.booking_status || "No current_address available."}

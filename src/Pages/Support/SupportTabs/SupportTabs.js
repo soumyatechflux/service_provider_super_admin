@@ -7,6 +7,8 @@ import "./SupportTabs.css"; // Import custom CSS
 
 const SupportTabs = () => {
   return (
+    <>
+    <h2>Support</h2>
     <Tabs
       defaultActiveKey="customer"
       id="justify-tab-example"
@@ -20,6 +22,7 @@ const SupportTabs = () => {
         <SupportPartnerTab />
       </Tab>
     </Tabs>
+    </>
   );
 };
 

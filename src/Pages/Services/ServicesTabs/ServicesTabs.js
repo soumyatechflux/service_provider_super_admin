@@ -20,6 +20,8 @@ const ServicesTabs = () => {
   };
 
   return (
+    <>
+     <h2>Services</h2>
     <Tabs
       activeKey={activeTab}
       onSelect={(key) => setActiveTab(key)}
@@ -37,6 +39,7 @@ const ServicesTabs = () => {
         <CommonServicesTab categoryId={getCategoryID()} />
       </Tab>
     </Tabs>
+    </>
   );
 };
 

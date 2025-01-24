@@ -12,10 +12,10 @@ import {
   CircularProgress,
 } from "@mui/material";
 import axios from "axios";
-import { toast } from "react-toastify"; // Import toast
+import { toast } from "react-toastify";
 
 const EditStatusModal = ({ support, onClose, onStatusChange }) => {
-  const [status, setStatus] = useState(support?.status || "open");
+  const [status, setStatus] = useState(support?.status || "open"); // Default to "open" if no status is provided
   const [loading, setLoading] = useState(false);
 
   const handleStatusUpdate = async () => {
@@ -28,7 +28,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
           status: status,
         },
       };
-  
+
       // Make the PATCH request with the payload
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/supports/action`,
@@ -39,10 +39,9 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
           },
         }
       );
-  
-      // Check if the response is successful and contains the message
+
       if (response?.status === 200 && response?.data?.success) {
-        onStatusChange(); // Trigger status change in the parent component to refresh data
+        onStatusChange(); // Refresh data in parent component
         toast.success(response?.data?.message || "Status updated successfully!");
       } else {
         toast.error("Failed to update status. Please try again.");
@@ -55,8 +54,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
       onClose();
     }
   };
-  
-  
+
   return (
     <Dialog
       open={true}
@@ -78,17 +76,21 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
           </InputLabel>
           <Select
             labelId="status-label"
-            value={status}
+            value={status === "open" ? "open" : status} // Ensure "open" is shown even if not in dropdown
             onChange={(e) => setStatus(e.target.value)}
             fullWidth
             label="Status"
           >
-            <MenuItem value="in-progress">In Progress</MenuItem> 
-            <MenuItem value="resolved">Resolved</MenuItem>       
-            <MenuItem value="closed">Closed</MenuItem> 
+            {status === "open" && ( // Show "Open" as a static disabled option
+              <MenuItem value="open" disabled>
+                Open
+              </MenuItem>
+            )}
+            <MenuItem value="in-progress">In Progress</MenuItem>
+            <MenuItem value="resolved">Resolved</MenuItem>
+            <MenuItem value="closed">Closed</MenuItem>
           </Select>
         </FormControl>
-        {/* {loading && <CircularProgress size={40} style={{ margin: "20px auto", display: "block" }} />} Display loader in content */}
       </DialogContent>
       <DialogActions>
         <Button

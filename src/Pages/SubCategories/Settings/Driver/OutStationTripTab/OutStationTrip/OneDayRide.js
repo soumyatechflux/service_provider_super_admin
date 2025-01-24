@@ -213,6 +213,7 @@ const OutStationTrip = () => {
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("additional_price_hours", additionalPriceHours);
+    formData.append("booking_details", summary);
     formData.append("gst", gst || "");
     formData.append("secure_fee", secureFees || "");
     formData.append("platform_fee", platformFees || "");

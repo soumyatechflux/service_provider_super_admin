@@ -62,7 +62,7 @@ const CommonCommissionTab = ({
 
   return (
     <div className="SubCategory-Table-Main p-3">
-        <h2>Commission Due</h2>
+        {/* <h2>Commission Due</h2> */}
       {loading ? (
         <Loader />
       ) : (

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Loader from "../../../Loader/Loader";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddFAQModal from "../AddFAQModal/AddFAQModal";
-import EditFAQModal from "../EditFAQModal/EditFAQModal";
-import DeleteFAQModal from "../DeleteFAQModal/DeleteFAQModal";
-import EditFAQStatusModal from "../EditFAQStatusModal/EditFAQStatusModal";
+import EditIcon from "@mui/icons-material/Edit";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import Loader from "../../../Loader/Loader";
+import AddFAQModal from "../AddFAQModal/AddFAQModal";
+import DeleteFAQModal from "../DeleteFAQModal/DeleteFAQModal";
+import EditFAQModal from "../EditFAQModal/EditFAQModal";
+import EditFAQStatusModal from "../EditFAQStatusModal/EditFAQStatusModal";
 
 const CommonFAQsTab = ({ categoryID }) => {
   const [loading, setLoading] = useState(false);
@@ -58,7 +58,7 @@ const CommonFAQsTab = ({ categoryID }) => {
 
   return (
     <div className="Restro-Table-Main p-3">
-         <h2>FAQs</h2>
+         {/* <h2>FAQs</h2> */}
       {loading ? (
         <Loader />
       ) : (
@@ -101,7 +101,7 @@ const CommonFAQsTab = ({ categoryID }) => {
                         <span>
                           {faq.active_status === "active"
                             ? "Active"
-                            : "Inactive"}
+                            : "InActive"}
                         </span>
                         <EditIcon
                           onClick={() => {
