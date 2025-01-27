@@ -124,13 +124,13 @@ const DriverCategoriesTab = ({ category_id }) => {
   }, []);
    const handleNavigateToSettings = (id) => {
       if (id === 4) {
-        navigate("/round-trip");
+        navigate("/sub-categories-round-trip");
       } else if (id === 5) {
-        navigate("/one-way-trip");
+        navigate("/sub-categories-one-way-trip");
       } else if (id === 6) {
-        navigate("/outstaion-trip");
+        navigate("/sub-categories-outstaion-trip");
       } else if (id === 7) {
-        navigate("/outstaion-round-trip");
+        navigate("/sub-categories-outstaion-round-trip");
       } else {
         toast.error("Invalid ID");
       }
@@ -138,6 +138,7 @@ const DriverCategoriesTab = ({ category_id }) => {
 
   return (
     <div className="SubCategory-Table-Main p-3">
+      <h2>SubCategory-Driver</h2>
       {loading ? (
         <Loader />
       ) : (
@@ -162,9 +163,9 @@ const DriverCategoriesTab = ({ category_id }) => {
                   Image
                 </th>
                 {/* New column header */}
-                {/* <th scope="col" style={{ width: "8%" }}>
+                <th scope="col" style={{ width: "8%" }}>
                   Price
-                </th> */}
+                </th>
                 <th scope="col" style={{ width: "20%" }}>
                   Description
                 </th>
@@ -204,7 +205,7 @@ const DriverCategoriesTab = ({ category_id }) => {
               )}
                   </td>
                   {/* New image cell */}
-                  {/* <td>{item.price || "N/A"}</td> */}
+                  <td>{item.price || "N/A"}</td>
                   <td>
                     {expandedDescriptions[item.id]
                       ? item.description

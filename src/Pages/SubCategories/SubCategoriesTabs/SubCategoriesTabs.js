@@ -23,8 +23,6 @@ const SubCategoriesTabs = () => {
   };
 
   return (
-    <>
-    <h2>SubCategory</h2>
     <Tabs
       activeKey={activeTab}
       onSelect={(key) => setActiveTab(key)}
@@ -42,7 +40,6 @@ const SubCategoriesTabs = () => {
         <GardenerSubCategoryTab category_id={getCategoryID()} />
       </Tab>
     </Tabs>
-    </>
   );
 };
 

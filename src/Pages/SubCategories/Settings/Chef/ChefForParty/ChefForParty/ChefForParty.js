@@ -14,6 +14,7 @@ const ChefForParty = () => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [nightChargesStartAt, setNightChargesStartAt] = useState("");
+  const [nightChargesEndAt, setNightChargesEndAt] = useState(""); // New Field
   const [bookBefore, setBookBefore] = useState(1);
   const [cancellationBefore, setCancellationBefore] = useState(1);
   const [guestRows, setGuestRows] = useState([
@@ -22,7 +23,6 @@ const ChefForParty = () => {
   const [summary, setSummary] = useState("");
   const [cancellationPolicy, setCancellationPolicy] = useState("");
   const [bookingSummaryPage, setBookingSummaryPage] = useState("");
-  const [nightChargesEndAt, setNightChargesEndAt] = useState(""); // New Field
   const [freeCancellationBefore, setFreeCancellationBefore] = useState(1); // New Field
   const [nightCharge, setNightCharge] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -229,7 +229,6 @@ setPlatformFees(data.platform_fee || null);
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("night_charge", nightCharge || "");
-
     formData.append("gst", gst || "");
     formData.append("secure_fee", secureFees || "");
     formData.append("platform_fee", platformFees || "");

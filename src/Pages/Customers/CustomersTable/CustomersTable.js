@@ -226,7 +226,13 @@ const CustomersTable = () => {
                 {currentEntries.map((restaurant, index) => (
                   <tr key={restaurant.id}>
                     <th scope="row">{indexOfFirstEntry + index + 1}.</th>
-                    <td>{restaurant.name}</td>
+                    <td>
+                      {restaurant.name
+                        ? restaurant.name.charAt(0).toUpperCase() +
+                          restaurant.name.slice(1)
+                        : "N/A"}
+                    </td>
+
                     <td>{restaurant.email || "NA"}</td>
                     <td>{restaurant.mobile}</td>
                     <td className={`status ${restaurant.active_status}`}>

@@ -73,18 +73,16 @@ const SupportPartnerTab = () => {
     });
   }, [currentPage]);
 
+  // Filter and paginate data
   const filteredData = supportData.filter(
     (item) =>
       item.name && item.name.toLowerCase().includes(searchInput.toLowerCase())
   );
-  
-  
-  
-  // Pagination logic
-  const totalPages = Math.ceil(supportData.length / entriesPerPage);
+
+  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = supportData.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
 
   const getPageRange = () => {
     let start = currentPage - 1;
@@ -182,14 +180,13 @@ const SupportPartnerTab = () => {
   return (
     <div className="Support-Table-Main p-3">
       <div className="d-flex justify-content-end align-items-center">
-      <input
-  type="text"
-  className="form-control search-input w-25"
-  placeholder="Search by name..."
-  value={searchInput}
-  onChange={(e) => setSearchInput(e.target.value)}
-/>
-
+        <input
+          type="text"
+          className="form-control search-input w-25"
+          placeholder="Search by name..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
       </div>
       {loading ? (
         <Loader />
@@ -202,22 +199,20 @@ const SupportPartnerTab = () => {
             >
               <thead className="heading_user">
                 <tr>
-                  <th>Sr. No.</th>
-                  <th>Name</th> {/* Added Name column */}
-                  {/* <th>Email</th> */}
-                  <th>Role</th>
-                  <th>Description</th>
-                  <th style={{ width: "15%" }}>Status</th>
-                  <th>Created At</th>
-                  <th>Updated At</th>
+                <th style={{ width: "5%" }}>Sr. No.</th>
+                <th style={{ width: "10%" }}>Name</th>
+                <th style={{ width: "10%" }}>Role</th>
+                <th style={{ width: "25%" }}>Description</th>
+                  <th style={{ width: "10%" }}>Status</th>
+                  <th style={{ width: "10%" }}>Created At</th>
+                  <th style={{ width: "10%" }}>Updated At</th>
                 </tr>
               </thead>
               <tbody>
                 {currentEntries.map((item, index) => (
                   <tr key={item.support_id}>
-                    <td>{index + 1}</td> {/* Sr. No. column */}
-                    <td>{item.name || "N/A"}</td> {/* Name column */}
-                    {/* <td>{item.email}</td> */}
+                    <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
+                    <td>{item.name || "N/A"}</td>
                     <td>{item.user_role}</td>
                     <td>{item.description}</td>
                     <td>

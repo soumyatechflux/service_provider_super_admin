@@ -14,7 +14,7 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const EditStatusModal = ({ support, onClose, onStatusChange }) => {
+const EditStatusModal = ({ support, onClose, onStatusChange,getSupportData }) => {
   const [status, setStatus] = useState(support?.status || "open"); // Default to "open" if no status is provided
   const [loading, setLoading] = useState(false);
 
@@ -43,12 +43,13 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
       if (response?.status === 200 && response?.data?.success) {
         onStatusChange(); // Refresh data in parent component
         toast.success(response?.data?.message || "Status updated successfully!");
+        getSupportData();
       } else {
         toast.error("Failed to update status. Please try again.");
       }
     } catch (error) {
       console.error("Error updating status:", error);
-      toast.error("Failed to update status. Please try again.");
+      // toast.error("Failed to update status. Please try again.");
     } finally {
       setLoading(false);
       onClose();
@@ -86,7 +87,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange }) => {
                 Open
               </MenuItem>
             )}
-            <MenuItem value="in-progress">In Progress</MenuItem>
+            <MenuItem value="in-progress">In-Progress</MenuItem>
             <MenuItem value="resolved">Resolved</MenuItem>
             <MenuItem value="closed">Closed</MenuItem>
           </Select>

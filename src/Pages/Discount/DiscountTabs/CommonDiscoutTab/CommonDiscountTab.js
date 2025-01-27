@@ -20,10 +20,15 @@ const CommonDiscountTab = () => {
   const [showEditStatusModal, setShowEditStatusModal] = useState(false);
 
   const [expandedDescriptions, setExpandedDescriptions] = useState({});
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const [itemsPerPage] = useState(10); // Items per page
+  const [searchQuery, setSearchQuery] = useState(""); // Search query state
 
   const fetchDiscountData = async () => {
     try {
-      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
 
       setLoading(true);
       const response = await axios.get(
@@ -50,6 +55,21 @@ const CommonDiscountTab = () => {
   useEffect(() => {
     fetchDiscountData();
   }, []);
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  // Filtered data based on the search query
+  const filteredData = discountData.filter(
+    (item) =>
+      item.voucher_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.discount_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const handleToggleDescription = (voucher_id) => {
     setExpandedDescriptions((prev) => ({
@@ -92,7 +112,9 @@ const CommonDiscountTab = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount/${selectedItem.voucher_id}`,
         {
@@ -108,7 +130,9 @@ const CommonDiscountTab = () => {
           prevData.filter((item) => item.voucher_id !== selectedItem.voucher_id)
         );
       } else {
-        toast.error(response?.data?.message || "Failed to delete the discount.");
+        toast.error(
+          response?.data?.message || "Failed to delete the discount."
+        );
       }
     } catch (error) {
       toast.error("Failed to delete the discount. Please try again.");
@@ -117,103 +141,224 @@ const CommonDiscountTab = () => {
     }
   };
 
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="Discount-Table-Main p-3">
-        <h2>Discount</h2>
+      <h2>Discount</h2>
       <ToastContainer />
       {loading ? (
         <Loader />
       ) : (
         <div className="table-responsive mb-5">
-          <button className="Discount-btn" onClick={() => setShowAddModal(true)}>
-            Add Discount
-          </button>
+          <div
+            className="mb-3"
+            style={{
+              display: "flex",
+              flexDirection: "row-reverse",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <button
+              className="Discount-btn mb-0"
+              onClick={() => setShowAddModal(true)}
+            >
+              Add Discount
+            </button>
+
+            {/* Search Bar */}
+            <div className="search-bar " style={{ width: "350px" }}>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search by voucher code, type, or description"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
           <table className="table table-bordered table-user">
             <thead className="heading_user">
               <tr>
-                <th scope="col" style={{ width: "2%" }}>Sr.</th>
-                <th scope="col" style={{ width: "10%" }}>Discount Type</th>
-                <th scope="col" style={{ width: "10%" }}>Discount Value</th>
-                <th scope="col" style={{ width: "8%" }}>Usage Limit</th>
-                <th scope="col" style={{ width: "10%" }}>Minimum Price</th>
-                <th scope="col" style={{ width: "10%" }}>Voucher Code</th>
-                <th scope="col" style={{ width: "10%" }}>Start Date</th>
-                <th scope="col" style={{ width: "10%" }}>End Date</th>
-                <th scope="col" style={{ width: "10%" }}>Description</th>
-                <th scope="col" style={{ width: "25%" }}>Status</th>
-                <th scope="col" style={{ width: "10%" }}>Used Count</th>
-                <th scope="col" style={{ width: "5%" }}>Action</th>
+                <th scope="col" style={{ width: "2%" }}>
+                  Sr.
+                </th>
+                <th scope="col" style={{ width: "10%" }}>
+                  Discount Type
+                </th>
+                <th scope="col" style={{ width: "10%" }}>
+                  Discount Value
+                </th>
+                <th scope="col" style={{ width: "8%" }}>
+                  Usage Limit
+                </th>
+                <th scope="col" style={{ width: "10%" }}>
+                  Minimum Price
+                </th>
+                <th scope="col" style={{ width: "10%" }}>
+                  Voucher Code
+                </th>
+                <th scope="col" style={{ width: "10%" }}>
+                  Start Date
+                </th>
+                <th scope="col" style={{ width: "10%" }}>
+                  End Date
+                </th>
+                <th scope="col" style={{ width: "15%" }}>
+                  Description
+                </th>
+                <th scope="col" style={{ width: "10%" }}>
+                  Status
+                </th>
+                <th scope="col" style={{ width: "10%" }}>
+                  Used Count
+                </th>
+                <th scope="col" style={{ width: "5%" }}>
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
-              {discountData.map((item, index) => (
-                <tr key={item.voucher_id}>
-                  <th scope="row">{index + 1}.</th>
-                  <td>{item.discount_type || "N/A"}</td>
-                  <td>{item.discount_value || "N/A"}</td>
-                  <td>{item.usage_limit || "N/A"}</td>
-                  <td>{item.minimum_order_amount || "N/A"}</td>
-                  <td>{item.voucher_code || "N/A"}</td>
-                  <td>
-                    {item.start_date
-                      ? new Intl.DateTimeFormat("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "2-digit",
-                        }).format(new Date(item.start_date))
-                      : "N/A"}
-                  </td>
-                  <td>
-                    {item.end_date
-                      ? new Intl.DateTimeFormat("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "2-digit",
-                        }).format(new Date(item.end_date))
-                      : "N/A"}
-                  </td>
-                  <td>
-                    {expandedDescriptions[item.voucher_id]
-                      ? item.description
-                      : item.description.split(" ").slice(0, 10).join(" ") +
-                        (item.description.split(" ").length > 10 ? "..." : "")}
-                    {item.description.split(" ").length > 10 && (
-                      <button
-                        onClick={() => handleToggleDescription(item.voucher_id)}
-                        className="btn btn-link p-0 ms-2"
-                        style={{ boxShadow: "none" }}
-                      >
-                        {expandedDescriptions[item.voucher_id] ? "View Less" : "View More"}
-                      </button>
-                    )}
-                  </td>
-                  <td>
-                    <div className="status-div">
-                      <span>{item.active_status === "active" ? "Active" : "InActive"}</span>
-                      <EditIcon
-                        onClick={() => handleOpenStatusModal(item)}
-                        style={{ cursor: "pointer", marginLeft: "10px" }}
-                      />
-                    </div>
-                  </td>
-                  <td>{item.used_count === 0 ? "0" : item.used_count || "N/A"}</td>
-                  <td>
-                    <div className="status-div">
-                      <EditIcon
-                        style={{ cursor: "pointer", marginLeft: "10px" }}
-                        onClick={() => handleEdit(item)}
-                      />
-                      <i
-                        className="fa fa-trash text-danger"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => handleDelete(item)}
-                      />
-                    </div>
+              {currentItems.length > 0 ? (
+                currentItems.map((item, index) => (
+                  <tr key={item.voucher_id}>
+                    <th scope="row">{index + 1}.</th>
+                    <td>
+                      {item.discount_type
+                        ? item.discount_type.charAt(0).toUpperCase() +
+                          item.discount_type.slice(1)
+                        : "N/A"}
+                    </td>
+
+                    <td>{item.discount_value || "N/A"}</td>
+                    <td>{item.usage_limit || "N/A"}</td>
+                    <td>{item.minimum_order_amount || "N/A"}</td>
+                    <td>{item.voucher_code || "N/A"}</td>
+                    <td>
+                      {item.start_date
+                        ? new Intl.DateTimeFormat("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "2-digit",
+                          }).format(new Date(item.start_date))
+                        : "N/A"}
+                    </td>
+                    <td>
+                      {item.end_date
+                        ? new Intl.DateTimeFormat("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "2-digit",
+                          }).format(new Date(item.end_date))
+                        : "N/A"}
+                    </td>
+                    <td>
+                      {expandedDescriptions[item.voucher_id]
+                        ? item.description
+                        : item.description.split(" ").slice(0, 10).join(" ") +
+                          (item.description.split(" ").length > 10
+                            ? "..."
+                            : "")}
+                      {item.description.split(" ").length > 10 && (
+                        <button
+                          onClick={() =>
+                            handleToggleDescription(item.voucher_id)
+                          }
+                          className="btn btn-link p-0 ms-2"
+                          style={{ boxShadow: "none" }}
+                        >
+                          {expandedDescriptions[item.voucher_id]
+                            ? "View Less"
+                            : "View More"}
+                        </button>
+                      )}
+                    </td>
+                    <td>
+                      <div className="status-div">
+                        <span>
+                          {item.active_status === "active"
+                            ? "Active"
+                            : "InActive"}
+                        </span>
+                        <EditIcon
+                          onClick={() => handleOpenStatusModal(item)}
+                          style={{ cursor: "pointer", marginLeft: "10px" }}
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      {item.used_count === 0 ? "0" : item.used_count || "N/A"}
+                    </td>
+                    <td>
+                      <div className="status-div">
+                        <EditIcon
+                          style={{ cursor: "pointer", marginLeft: "10px" }}
+                          onClick={() => handleEdit(item)}
+                        />
+                        <i
+                          className="fa fa-trash text-danger"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleDelete(item)}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="12" className="text-center">
+                    No data available
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
+
+          {/* Pagination Controls */}
+          <nav>
+            <ul
+              className="pagination justify-content-center"
+              style={{ gap: "5px" }}
+            >
+              <li className="page-item">
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+              </li>
+              {[...Array(totalPages)].map((_, index) => (
+                <li key={index} className="page-item">
+                  <button
+                    className={`page-link ${
+                      currentPage === index + 1 ? "active" : ""
+                    }`}
+                    onClick={() => handlePageChange(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+              <li className="page-item">
+                <button
+                  className="page-link"
+                  onClick={() =>
+                    setCurrentPage(Math.min(totalPages, currentPage + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
       )}
       <AddDiscountModal

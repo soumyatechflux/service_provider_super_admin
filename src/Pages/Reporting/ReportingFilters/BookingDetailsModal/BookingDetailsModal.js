@@ -19,6 +19,11 @@ const BookingDetailsModal = ({ booking, onClose }) => {
 
   if (!booking) return null;
 
+  const capitalizeFirstLetter = (text) => {
+    if (!text) return "N/A"; // Handle null or undefined values
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  };
+
   return (
     <Modal
       isOpen={true}
@@ -34,18 +39,56 @@ const BookingDetailsModal = ({ booking, onClose }) => {
         </button>
       </div>
       <div className="modal-body">
-        <p><strong>Customer Name:</strong> {booking.guest_name || "N/A"}</p>
-        <p><strong>Partner Name:</strong> {booking.partner?.name || "Unknown"}</p>
-        <p><strong>Sub Category:</strong> {booking.sub_category_name?.sub_category_name || "N/A"}</p>
-        <p><strong>Price:</strong> {booking.price || "N/A"}</p>
-        <p><strong>Address From:</strong> {booking.address_from || "N/A"}</p>
-        <p><strong>Address To:</strong> {booking.address_to || "N/A"}</p>
-        <p><strong>Status:</strong> {booking.booking_status || "N/A"}</p>
-        <p><strong>Payment Mode:</strong> {booking.payment_mode || "N/A"}</p>
-        <p><strong>Payment Status:</strong> {booking.payment_status || "N/A"}</p>
-        <p><strong>Booking Date:</strong> {new Date(booking.created_at).toLocaleDateString()}</p>
-        <p><strong>Visit Date:</strong> {new Date(booking.visit_date).toLocaleDateString()}</p>
-        <p><strong>Visit Time:</strong> {booking.visit_time || "N/A"}</p>
+        <p>
+          <strong>Customer Name:</strong> {booking.guest_name || "N/A"}
+        </p>
+        <p>
+          <strong>Partner Name:</strong> {booking.partner?.name || "Unknown"}
+        </p>
+        <p>
+          <strong>Sub Category:</strong>{" "}
+          {booking.sub_category_name?.sub_category_name || "N/A"}
+        </p>
+        <p>
+          <strong>Price:</strong> {booking.price || "N/A"}
+        </p>
+        <p>
+          <strong>Address From:</strong>{" "}
+          {capitalizeFirstLetter(booking.address_from)}
+        </p>
+        <p>
+          <strong>Address To:</strong>{" "}
+          {capitalizeFirstLetter(booking.address_to)}
+        </p>
+
+        <p>
+          <strong>Status:</strong>{" "}
+          {capitalizeFirstLetter(booking.booking_status)}
+        </p>
+        <p>
+          <strong>Payment Mode:</strong>{" "}
+          {booking.payment_mode === "online"
+            ? "Online"
+            : booking.payment_mode === "cod"
+            ? "COD"
+            : "N/A"}
+        </p>
+
+        <p>
+          <strong>Payment Status:</strong>{" "}
+          {capitalizeFirstLetter(booking.payment_status)}
+        </p>
+        <p>
+          <strong>Booking Date:</strong>{" "}
+          {new Date(booking.created_at).toLocaleDateString()}
+        </p>
+        <p>
+          <strong>Visit Date:</strong>{" "}
+          {new Date(booking.visit_date).toLocaleDateString()}
+        </p>
+        <p>
+          <strong>Visit Time:</strong> {booking.visit_time || "N/A"}
+        </p>
       </div>
       <div className="modal-footer">
         <button className="btn btn-secondary" onClick={onClose}>

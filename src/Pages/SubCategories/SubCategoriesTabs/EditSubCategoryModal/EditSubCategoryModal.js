@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
     subCategoryName: "",
-    // price: "",
+    price: "",
     description: "",
     image: null, // For file upload
     imagePreview: "", // For storing the image preview URL
@@ -17,7 +17,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
   const resetFormData = () => {
     setFormData({
       subCategoryName: initialData.sub_category_name || "",
-      // price: initialData.price || "",
+      price: initialData.price || "",
       description: initialData.description || "",
       image: null, // Reset to null as file uploads are not prefilled
       imagePreview: initialData.image || "", // If there is an image, set the preview URL
@@ -55,7 +55,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
       payload.append("sub_category_id", initialData.id); // sub_category_id from initialData
       payload.append("category_id", initialData.category_id); // category_id from initialData
       payload.append("sub_category_name", formData.subCategoryName);
-      // payload.append("price", formData.price);
+      payload.append("price", formData.price);
       payload.append("description", formData.description);
       if (formData.image) {
         payload.append("image", formData.image);
@@ -118,7 +118,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
         />
 
         {/* Price */}
-        {/* <TextField
+        <TextField
           id="price"
           name="price"
           label="Price"
@@ -127,7 +127,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
           fullWidth
           margin="dense"
           variant="outlined"
-        /> */}
+        />
 
         {/* Description */}
         <TextField

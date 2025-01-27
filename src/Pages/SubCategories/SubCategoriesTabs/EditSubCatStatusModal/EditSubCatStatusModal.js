@@ -1,17 +1,17 @@
+import React, { useState, useEffect } from "react";
 import {
-    Button,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
+  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const EditSubCatStatusModal = ({
@@ -101,7 +101,7 @@ const EditSubCatStatusModal = ({
             label="Status"
           >
             <MenuItem value="active">Active</MenuItem>
-            <MenuItem value="inactive">InActive</MenuItem>
+            <MenuItem value="inactive">Inactive</MenuItem>
           </Select>
         </FormControl>
       </DialogContent>

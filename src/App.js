@@ -165,17 +165,17 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/serverDown" element={<ServerDown/>}/>
           <Route path="/underconstruction" element={<UnderConstruction/>}/>
 
-          <Route path="/cook_for_one_meal" element={<CookForOneMeal/>}/>
-          <Route path="/cook-for-day" element={<CookForDayTab/>}/>
-          <Route path="/chef-for-party" element={<ChefForPartyTab/>}/>
+          <Route path="/sub-categories-cook-for-one-meal" element={<CookForOneMeal/>}/>
+          <Route path="/sub-categories-cook-for-day" element={<CookForDayTab/>}/>
+          <Route path="/sub-categories-chef-for-party" element={<ChefForPartyTab/>}/>
 
-          <Route path="/outstaion-round-trip" element={<OutStationRoundTripTab/>}/>
-          <Route path="/outstaion-trip" element={<OutStationTripTab/>}/>
-          <Route path="/round-trip" element={<RoundTripTab/>}/>
-          <Route path="/one-way-trip" element={<OneWayTripTab/>}/>
+          <Route path="/sub-categories-outstaion-round-trip" element={<OutStationRoundTripTab/>}/>
+          <Route path="/sub-categories-outstaion-trip" element={<OutStationTripTab/>}/>
+          <Route path="/sub-categories-round-trip" element={<RoundTripTab/>}/>
+          <Route path="/sub-categories-one-way-trip" element={<OneWayTripTab/>}/>
 
-          <Route path="/monthly-subscription" element={<MonthlySubscriptionTab/>}/>
-          <Route path="/gardner-visit" element={<GardnerDayVisitTab/>}/>
+          <Route path="/sub-categories/monthly-subscription" element={<MonthlySubscriptionTab/>}/>
+          <Route path="/sub-categories/gardner-visit" element={<GardnerDayVisitTab/>}/>
 
         </Route>
       </Routes>

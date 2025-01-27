@@ -13,15 +13,17 @@ const ReportTable = ({ filters, loading, setLoading }) => {
 
   const fetchReportData = async () => {
     try {
-      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
       setLoading(true);
-  
+
       const validFilters = Object.fromEntries(
         Object.entries(filters).filter(
           ([_, value]) => value !== "" && value !== null
         )
       );
-  
+
       const response = await axios.get(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/reporting/bookings`,
         {
@@ -31,9 +33,9 @@ const ReportTable = ({ filters, loading, setLoading }) => {
           },
         }
       );
-  
+
       setLoading(false);
-  
+
       if (response?.status === 200 && response?.data?.success) {
         setReportData(response?.data?.data || []);
       } else {
@@ -46,25 +48,24 @@ const ReportTable = ({ filters, loading, setLoading }) => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchReportData();
   }, [filters]);
-  
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth", // Enables smooth scrolling
     });
   }, [currentPage]);
-  
 
   useEffect(() => {
     if (loading) {
       fetchReportData();
     }
   }, [filters, loading]); // Trigger fetch when filters or loading change
-  
+
   const handleViewDetails = (booking) => {
     setSelectedBooking(booking);
     setIsModalOpen(true);
@@ -95,9 +96,29 @@ const ReportTable = ({ filters, loading, setLoading }) => {
 
   const renderPaginationItems = () => {
     const pageRange = getPageRange();
-
+  
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
+        {/* First Page Button */}
+        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage(1)}
+            style={{
+              border: "1px solid #dee2e6",
+              borderRadius: "4px",
+              padding: "8px 12px",
+              color: currentPage === 1 ? "#6c757d" : "#007bff",
+              backgroundColor: "white",
+              cursor: currentPage === 1 ? "not-allowed" : "pointer",
+              textDecoration: "none",
+            }}
+          >
+            First
+          </button>
+        </li>
+  
+        {/* Previous Page Button */}
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
           <button
             className="page-link"
@@ -115,7 +136,8 @@ const ReportTable = ({ filters, loading, setLoading }) => {
             Previous
           </button>
         </li>
-
+  
+        {/* Page Numbers */}
         {pageRange.map((number) => (
           <li
             key={number}
@@ -140,7 +162,8 @@ const ReportTable = ({ filters, loading, setLoading }) => {
             </button>
           </li>
         ))}
-
+  
+        {/* Next Page Button */}
         <li
           className={`page-item ${
             currentPage === totalPages ? "disabled" : ""
@@ -164,9 +187,33 @@ const ReportTable = ({ filters, loading, setLoading }) => {
             Next
           </button>
         </li>
+  
+        {/* Last Page Button */}
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage(totalPages)}
+            style={{
+              border: "1px solid #dee2e6",
+              borderRadius: "4px",
+              padding: "8px 12px",
+              color: currentPage === totalPages ? "#6c757d" : "#007bff",
+              backgroundColor: "white",
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+              textDecoration: "none",
+            }}
+          >
+            Last
+          </button>
+        </li>
       </ul>
     );
   };
+  
 
   return (
     <div className="report-table p-3">
@@ -194,10 +241,13 @@ const ReportTable = ({ filters, loading, setLoading }) => {
                     Partner Name
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
-                   Category
+                    Category
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Sub Category
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Visit Slot Count
                   </th>
                   <th scope="col" style={{ width: "5%" }}>
                     Amount
@@ -222,20 +272,23 @@ const ReportTable = ({ filters, loading, setLoading }) => {
                     <th scope="row">{indexOfFirstEntry + index + 1}.</th>
                     <td>{item.guest_name || "N/A"}</td>
                     <td>{item.partner?.name || "Unknown"}</td>
-                    <td>
-  {item.category?.category_name || "N/A"}
-</td>
+                    <td>{item.category?.category_name || "N/A"}</td>
 
                     <td>
                       {item.sub_category_name?.sub_category_name || "N/A"}
                     </td>
+                    <td>{item.gardener_visiting_slot_count || "NA"}</td>
                     <td>{item.price || "No status"}</td>
                     <td>
                       {item.address_from || "No current_address available."}
                     </td>
                     <td>
-                      {item.booking_status || "No current_address available."}
+                      {item.booking_status
+                        ? item.booking_status.charAt(0).toUpperCase() +
+                          item.booking_status.slice(1)
+                        : "No current_address available."}
                     </td>
+
                     <td>
                       {new Intl.DateTimeFormat("en-GB", {
                         day: "2-digit",

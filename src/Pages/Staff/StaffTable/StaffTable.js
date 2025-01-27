@@ -9,7 +9,7 @@ import EditStaffModal from "./EditStaffModal/EditStaffModal";
 import EditStaffStatusModal from "./EditStaffStatusModal/EditStaffStatusModal";
 
 const StaffTable = ({}) => {
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const [staff, setStaff] = useState([]);
   const [dummy_Data, setDummy_Data] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -19,6 +19,9 @@ const StaffTable = ({}) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedStaffId, setSelectedStaffId] = useState(null);
   const [staffData, setStaffData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [currentPage, setCurrentPage] = useState(1); // Current page state
+  const [itemsPerPage] = useState(10); // Number of items per page
 
   const getStaffData = async () => {
     try {
@@ -26,7 +29,7 @@ const StaffTable = ({}) => {
         "TokenForSuperAdminOfServiceProvider"
       );
       setLoading(true);
-  
+
       const response = await axios.get(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/staff`,
         {
@@ -35,17 +38,16 @@ const StaffTable = ({}) => {
           },
         }
       );
-  
+
       setLoading(false);
-  
+
       if (response?.status === 200) {
         const data = response?.data?.data || [];
         const normalizedData = data.map((item, index) => ({
-          id: item.id || index + 1, 
+          id: item.id || index + 1,
           ...item,
         }));
         setDummy_Data(normalizedData);
-        // Removed the toast.success message
       } else {
         toast.error(response.data.message || "Failed to fetch staff.");
       }
@@ -54,7 +56,6 @@ const StaffTable = ({}) => {
       setLoading(false);
     }
   };
-  
 
   const handleSaveRole = (newRole) => {
     setDummy_Data((prevData) => [
@@ -66,7 +67,6 @@ const StaffTable = ({}) => {
 
   const handleSaveEditRole = (updatedRole) => {
     if (!updatedRole?.id) {
-      // toast.error("Updated role is missing an id.");
       return;
     }
 
@@ -86,7 +86,6 @@ const StaffTable = ({}) => {
   };
 
   const handleEdit = (role) => {
-    console.log("Editing role:", role); 
     if (!role || !role.id) {
       toast.error("Invalid role selected for editing.");
       return;
@@ -101,11 +100,11 @@ const StaffTable = ({}) => {
 
   const handleSave = (updatedRole) => {
     setStaff((prevStaff) =>
-      prevStaff.map(
-        (role) => (role.role_id === updatedRole.role_id ? updatedRole : role) 
+      prevStaff.map((role) =>
+        role.role_id === updatedRole.role_id ? updatedRole : role
       )
     );
-    getStaffData(); 
+    getStaffData();
   };
 
   const handleEditClick = (role) => {
@@ -113,60 +112,89 @@ const StaffTable = ({}) => {
     setShowEditModal(true);
   };
 
- 
-
- 
-  
-
-  useEffect(() => {
-    getStaffData();
-  }, []);
-
-
-
-
-
-
-
   const handleDeleteClick = (staffId) => {
-    setSelectedStaffId(staffId); // Set the staff ID to delete
-    setShowDeleteModal(true); // Show the delete modal
+    setSelectedStaffId(staffId);
+    setShowDeleteModal(true);
   };
 
   const handleConfirmDelete = (deletedStaffId) => {
     setStaffData((prevData) =>
       prevData.filter((staff) => staff.staff_id !== deletedStaffId)
     );
-    setShowDeleteModal(false); // Close the modal
+    setShowDeleteModal(false);
   };
 
   const handleStatusClick = (item) => {
-    console.log("Selected Staff:", item);
-    setSelectedRole(item); // Correctly pass the entire item
+    setSelectedRole(item);
     setShowStatusModal(true);
   };
-  
-  
-  
 
   const handleStatusChange = (newStatus) => {
     setDummy_Data((prevData) =>
       prevData.map((item) =>
-        item.id === selectedRole.id ? { ...item, active_status: newStatus } : item
+        item.id === selectedRole.id
+          ? { ...item, active_status: newStatus }
+          : item
       )
     );
     setShowStatusModal(false);
-    // toast.success("Role status updated successfully!");
   };
+
+  // Search Logic
+// Search Logic
+const filteredData = dummy_Data.filter(
+  (item) =>
+    (item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (item.email && item.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (item.role_name && item.role_name.toLowerCase().includes(searchQuery.toLowerCase()))
+);
+
+
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Generate page numbers
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(filteredData.length / itemsPerPage); i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <div className="SubCategory-Table-Main p-3">
-        <h2>Staff</h2>
-      <div style={{ float: "right" }}>
-        <button className="Discount-btn" onClick={() => setShowAddModal(true)}>
+      <h2>Staff</h2>
+      <div
+        className="mb-3"
+        style={{
+          display: "flex",
+          flexDirection: "row-reverse",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <button
+          className="Discount-btn mb-0"
+          onClick={() => setShowAddModal(true)}
+        >
           + Add Staff
         </button>
+
+        {/* Search Input */}
+        <div className="search-bar " style={{ width: "350px" }}>
+          <input
+            type="text"
+            placeholder="Search by Name, Email, Role"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input mb-0"
+          />
+        </div>
       </div>
+
       {loading ? (
         <Loader />
       ) : (
@@ -183,26 +211,30 @@ const StaffTable = ({}) => {
                 <th scope="col" style={{ width: "20%" }}>
                   Email
                 </th>
-                <th scope="col" style={{ width: "20%" }}>
+                <th scope="col" style={{ width: "10%" }}>
                   Phone No.
                 </th>
                 <th scope="col" style={{ width: "15%" }}>
-                  Status
+                  Role Assigned
                 </th>
                 <th scope="col" style={{ width: "10%" }}>
+                  Status
+                </th>
+                <th scope="col" style={{ width: "5%" }}>
                   Action
                 </th>
               </tr>
             </thead>
             <tbody>
-              {dummy_Data.map((item, index) => (
+              {currentItems.map((item, index) => (
                 <tr key={item.id || index}>
                   <th scope="row">{index + 1}.</th>
                   <td>{item.name || "No staff available"}</td>
                   <td>{item.email || "No staff available"}</td>
                   <td>{item.mobile || "No staff available"}</td>
+                  <td>{item.role_name || "No role available"}</td>
                   <td>
-                  <div className="status-div">
+                    <div className="status-div">
                       <span>
                         {item.active_status === "active"
                           ? "Active"
@@ -220,7 +252,7 @@ const StaffTable = ({}) => {
                         style={{ cursor: "pointer", marginLeft: "10px" }}
                         onClick={() => handleEdit(item)}
                       />
-                     <i
+                      <i
                         className="fa fa-trash text-danger"
                         style={{ cursor: "pointer", marginLeft: "10px" }}
                         onClick={() => handleDeleteClick(item.id)}
@@ -233,6 +265,8 @@ const StaffTable = ({}) => {
           </table>
         </div>
       )}
+
+      {/* Pagination Controls */}
 
       <AddStaffModal
         show={showAddModal}
@@ -251,23 +285,28 @@ const StaffTable = ({}) => {
           name: selectedRole?.name,
           email: selectedRole?.email,
           mobile: selectedRole?.mobile,
+          role_id: selectedRole?.role_id,
         }}
+        roles={dummy_Data.map((item) => ({
+          role_id: item.role_id,
+          role_name: item.role_name,
+        }))}
       />
 
-<DeleteStaffModal
+      <DeleteStaffModal
         show={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleConfirmDelete}
         staffId={selectedStaffId}
-        getStaffData = {getStaffData}
+        getStaffData={getStaffData}
       />
 
       <EditStaffStatusModal
         open={showStatusModal}
         onClose={() => setShowStatusModal(false)}
         onStatusChange={handleStatusChange}
-        staff={selectedRole} // Pass the selected role (should be staff)
-        initialStatus={selectedRole?.active_status} // Pass the active status
+        staff={selectedRole}
+        initialStatus={selectedRole?.active_status}
       />
     </div>
   );

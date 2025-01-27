@@ -34,6 +34,7 @@
 .leftside_navbar_dashboard {
   display: flex;
   gap: 30px;
+  align-items: center;
 }
 .Hamburger_MobileResponsive {
   cursor: pointer;

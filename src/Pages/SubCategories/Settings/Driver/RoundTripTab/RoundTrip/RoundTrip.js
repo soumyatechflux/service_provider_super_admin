@@ -11,6 +11,8 @@ const RoundTrip = () => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [nightChargesStartAt, setNightChargesStartAt] = useState("");
+    const [nightChargesEndAt, setNightChargesEndAt] = useState(""); // New Field
+  
   const [bookBefore, setBookBefore] = useState(1);
   const [cancellationBefore, setCancellationBefore] = useState(1);
   const [freeCancellationBefore, setFreeCancellationBefore] = useState(1); // New Field
@@ -50,6 +52,8 @@ const RoundTrip = () => {
         setStartTime(data.service_start_time.slice(0, 5));
         setEndTime(data.service_end_time.slice(0, 5));
         setNightChargesStartAt(data.night_charge_start_time.slice(0, 5));
+        setNightChargesEndAt(data.night_charge_end_time.slice(0, 5));
+
         setBookBefore(data.booking_time_before);
         setCancellationBefore(data.cancellation_time_before);
         setFreeCancellationBefore(data.free_cancellation_time_before);
@@ -219,6 +223,7 @@ const RoundTrip = () => {
     formData.append("service_start_time", startTime);
     formData.append("service_end_time", endTime);
     formData.append("night_charge_start_time", nightChargesStartAt);
+    formData.append("night_charge_end_time", nightChargesEndAt);
     formData.append("booking_time_before", bookBefore);
     formData.append("cancellation_time_before", cancellationBefore);
     formData.append("free_cancellation_time_before", freeCancellationBefore);
@@ -226,7 +231,6 @@ const RoundTrip = () => {
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("booking_details", summary);
     formData.append("additional_price_hours", additionalPriceHours);
-
     formData.append("gst", gst || "");
     formData.append("secure_fee", secureFees || "");
     formData.append("platform_fee", platformFees || "");
@@ -347,10 +351,100 @@ const RoundTrip = () => {
     setShowEditModal(false);
   };
 
+  const timeOptions = generateTimeOptions();
+
   return (
     <div className="container mt-5">
       <h3 className="text-center mb-4">Round Trip</h3>
       <form onSubmit={handleSubmit}>
+
+      <div className="row mb-3 align-items-center">
+          <div className="col-md-3">
+            <label htmlFor="startTime" className="form-label">
+              Start Time
+            </label>
+            <select
+              className="form-control"
+              id="startTime"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              required
+            >
+              <option value="" disabled>
+                Select start time
+              </option>
+              {timeOptions.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="endTime" className="form-label">
+              End Time
+            </label>
+            <select
+              className="form-control"
+              id="endTime"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              required
+            >
+              <option value="" disabled>
+                Select end time
+              </option>
+              {timeOptions.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="nightChargesStartAt" className="form-label">
+              Night Charges Start At
+            </label>
+            <select
+              className="form-control"
+              id="nightChargesStartAt"
+              value={nightChargesStartAt}
+              onChange={(e) => setNightChargesStartAt(e.target.value)}
+              required
+            >
+              <option value="" disabled>
+                Select time
+              </option>
+              {timeOptions.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="col-md-3">
+            <label htmlFor="nightChargesEndAt" className="form-label">
+              Night Charges End At
+            </label>
+            <select
+              className="form-control"
+              id="nightChargesEndAt"
+              value={nightChargesEndAt}
+              onChange={(e) => setNightChargesEndAt(e.target.value)}
+              required
+            >
+              <option value="" disabled>
+                Select time
+              </option>
+              {timeOptions.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
         <div className="row mb-3 align-items-center">
           <div className="col-md-3">
             <label htmlFor="bookBefore" className="form-label">

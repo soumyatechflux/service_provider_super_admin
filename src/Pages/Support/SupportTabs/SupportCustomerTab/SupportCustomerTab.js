@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Loader from "../../../Loader/Loader";
 import { toast } from "react-toastify";
@@ -11,16 +11,16 @@ const SupportCustomerTab = () => {
   const [selectedSupport, setSelectedSupport] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchInput, setSearchInput] = useState(""); // New state for search input
+  const [searchInput, setSearchInput] = useState("");
 
   const entriesPerPage = 10;
 
-  const getSupportData = async () => {
+  // Fetch Support Data
+  const getSupportData = useCallback(async () => {
     try {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
-
       setLoading(true);
 
       const response = await axios.get(
@@ -35,28 +35,41 @@ const SupportCustomerTab = () => {
       setLoading(false);
 
       if (response?.status === 200 && response?.data?.success) {
-        const data = response?.data?.data || [];
-        setSupportData(data); // Update support data
+        setSupportData(response?.data?.data || []);
       } else {
         toast.error(
-          response.data.message || "Failed to fetch support tickets."
+          response?.data?.message || "Failed to fetch support tickets."
         );
-        setLoading(false);
       }
     } catch (error) {
       console.error("Error fetching support tickets:", error);
       toast.error("Failed to load support tickets. Please try again.");
       setLoading(false);
     }
-  };
+  }, []);
 
-  const onStatusChange = (newStatus) => {
-    updateSupportStatus(selectedSupport.support_id, newStatus);
+  useEffect(() => {
     getSupportData();
-  };
+  }, [getSupportData]);
+
+  // Filtered Data Based on Search Input
+  const filteredData = supportData.filter(
+    (item) =>
+      item.email.toLowerCase().includes(searchInput.toLowerCase()) ||
+      item.name?.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = filteredData.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   const handleEditStatus = (support) => {
-    setSelectedSupport(support); // Set the selected support with the current status
+    setSelectedSupport(support);
     setShowModal(true);
   };
 
@@ -68,50 +81,11 @@ const SupportCustomerTab = () => {
     );
   };
 
-  useEffect(() => {
-    getSupportData();
-  }, []);
-
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }, [currentPage]);
-
-  // Filtered entries based on search input
-  const filteredData = supportData.filter((item) =>
-    item.email.toLowerCase().includes(searchInput.toLowerCase())
-  );
-
-  // Pagination logic
-  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
-  const indexOfLastEntry = currentPage * entriesPerPage;
-  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredData.slice(
-    indexOfFirstEntry,
-    indexOfLastEntry
-  );
-
-  const getPageRange = () => {
-    let start = currentPage - 1;
-    let end = currentPage + 1;
-
-    if (start < 1) {
-      start = 1;
-      end = Math.min(3, totalPages);
-    }
-
-    if (end > totalPages) {
-      end = totalPages;
-      start = Math.max(1, totalPages - 2);
-    }
-
-    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-  };
-
   const renderPaginationItems = () => {
-    const pageRange = getPageRange();
+    const pageRange = Array.from(
+      { length: Math.min(3, totalPages) },
+      (_, i) => i + 1
+    );
 
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
@@ -122,15 +96,6 @@ const SupportCustomerTab = () => {
             style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
           >
             First
-          </button>
-        </li>
-        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-          <button
-            className="page-link"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
-          >
-            Previous
           </button>
         </li>
         {pageRange.map((number) => (
@@ -151,22 +116,9 @@ const SupportCustomerTab = () => {
           </li>
         ))}
         <li
-          className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
-        >
-          <button
-            className="page-link"
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            style={{
-              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-            }}
-          >
-            Next
-          </button>
-        </li>
-        <li
-          className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
         >
           <button
             className="page-link"
@@ -184,49 +136,46 @@ const SupportCustomerTab = () => {
 
   return (
     <div className="Support-Table-Main p-3">
-      <div className="d-flex justify-content-end align-items-center">
-        {/* <h2>Customer Support</h2> */}
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>Customer Support</h2>
         <input
           type="text"
-          className="form-control search-input w-25"
-          placeholder="Search by email..."
+          className="form-control w-25"
+          placeholder="Search by email or name..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
       </div>
+
       {loading ? (
         <Loader />
       ) : (
         <>
           <div className="table-responsive mb-5">
-            <table className="table table-bordered table-user">
+            <table className="table table-bordered">
               <thead>
                 <tr>
-                  <th>Sr. No.</th> {/* Changed ID to Sr. No. */}
-                  <th>Name</th> {/* Added Name column */}
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Description</th>
-                  <th style={{ width: "15%" }}>Status</th>
-                  <th>Created At</th>
-                  <th>Updated At</th>
+                  <th style={{ width: "5%" }}>Sr. No.</th>
+                  <th style={{ width: "10%" }}>Name</th>
+                  <th style={{ width: "20%" }}>Email</th>
+                  <th style={{ width: "10%" }}>Role</th>
+                  <th style={{ width: "25%" }}>Description</th>
+                  <th style={{ width: "10%" }}>Status</th>
+                  <th style={{ width: "10%" }}>Created At</th>
+                  <th style={{ width: "10%" }}>Updated At</th>
                 </tr>
               </thead>
               <tbody>
                 {currentEntries.map((item, index) => (
                   <tr key={item.support_id}>
-                    <td>{index + 1}</td> {/* Sr. No. */}
-                    <td>{item.name || "No name available"}</td> {/* Name column */}
+                    <td>{indexOfFirstEntry + index + 1}</td>
+                    <td>{item.name || "No name available"}</td>
                     <td>{item.email}</td>
                     <td>{item.user_role}</td>
                     <td>{item.description}</td>
                     <td>
                       <div className="status-div">
-                        <span>
-                          {item.status.charAt(0).toUpperCase() +
-                            item.status.slice(1)}
-                        </span>
-                        <EditIcon
+                      <span>{item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : ''}</span>                        <EditIcon
                           onClick={() => handleEditStatus(item)}
                           style={{ cursor: "pointer" }}
                         />
@@ -236,15 +185,19 @@ const SupportCustomerTab = () => {
                       {new Intl.DateTimeFormat("en-GB", {
                         day: "2-digit",
                         month: "short",
-                        year: "numeric",
-                      }).format(new Date(item.created_at))}
+                        year: "2-digit",
+                      })
+                        .format(new Date(item.created_at))
+                        .replace(",", "")}
                     </td>
                     <td>
                       {new Intl.DateTimeFormat("en-GB", {
                         day: "2-digit",
                         month: "short",
-                        year: "numeric",
-                      }).format(new Date(item.updated_at))}
+                        year: "2-digit",
+                      })
+                        .format(new Date(item.updated_at))
+                        .replace(",", "")}
                     </td>
                   </tr>
                 ))}
@@ -259,9 +212,11 @@ const SupportCustomerTab = () => {
 
       {showModal && (
         <EditStatusModal
-          support={selectedSupport} // Pass the selected support ticket to the modal
+          support={selectedSupport}
           onClose={() => setShowModal(false)}
-          onStatusChange={onStatusChange}
+          onStatusChange={(newStatus) =>
+            updateSupportStatus(selectedSupport.support_id, newStatus)
+          }
         />
       )}
     </div>

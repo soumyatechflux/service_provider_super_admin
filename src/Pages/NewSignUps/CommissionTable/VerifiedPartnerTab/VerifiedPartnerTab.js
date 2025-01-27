@@ -132,7 +132,8 @@ const VerifiedPartnerTab = ({
   }, [restaurants]);
 
   const renderPaginationItems = () => {
-    if (!restaurants?.length) return null;
+    // Don't render pagination if filtered data is less than or equal to entriesPerPage
+    if (filteredRestaurants.length <= entriesPerPage) return null;
 
     const pageRange = getPageRange();
 
@@ -223,14 +224,16 @@ const VerifiedPartnerTab = ({
 
   return (
     <div className="Restro-Table-Main p-3">
-      <div className="d-flex justify-flexend align-items-center">
-        {/* <h2>
-  {restaurants.filter((restaurant) => restaurant.is_verify === 0).length > 0
-    ? "Unverified Partners"
-    : restaurants.filter((restaurant) => restaurant.is_verify === 1).length > 0
-    ? "Verified Partners"
-    : "No Partners Available"}
-</h2> */}
+      <div className="d-flex justify-content-between align-items-center">
+        <h2>
+          {restaurants.filter((restaurant) => restaurant.is_verify === 0)
+            .length > 0
+            ? "Unverified Partners"
+            : restaurants.filter((restaurant) => restaurant.is_verify === 1)
+                .length > 0
+            ? "Verified Partners"
+            : "No Partners Available"}
+        </h2>
         <input
           type="text"
           className="form-control search-input w-25"
@@ -316,7 +319,13 @@ const VerifiedPartnerTab = ({
                       <th scope="row" className="id-user">
                         {indexOfFirstEntry + index + 1}.
                       </th>
-                      <td className="text-user">{restaurant.name}</td>
+                      <td className="text-user">
+                        {restaurant.name
+                          ? restaurant.name.charAt(0).toUpperCase() +
+                            restaurant.name.slice(1)
+                          : "N/A"}
+                      </td>
+
                       <td className="text-user">
                         {restaurant.category_id === 1
                           ? "Cook"
@@ -327,16 +336,25 @@ const VerifiedPartnerTab = ({
                           : "Unknown"}
                       </td>
                       <td className="text-user">
-                        {restaurant.email ? restaurant.email : "NA"}
+                        {restaurant.email ? (
+                          restaurant.email
+                        ) : (
+                          <span style={{ color: "red", fontWeight: "bold" }}>
+                            -
+                          </span>
+                        )}
                       </td>
-
                       <td className="text-user">{restaurant.mobile}</td>
                       <td className="text-user">
                         {restaurant.years_of_experience}
                       </td>
                       <td className="text-user">
-                        {restaurant.current_address ? restaurant.current_address: "NA" }
+                        {restaurant.current_address
+                          ? restaurant.current_address.charAt(0).toUpperCase() +
+                            restaurant.current_address.slice(1)
+                          : "N/A"}
                       </td>
+
                       <td className="text-user">
                         {new Intl.DateTimeFormat("en-GB", {
                           day: "2-digit",
@@ -436,12 +454,14 @@ const VerifiedPartnerTab = ({
               </tbody>
             </table>
           </div>
-          <nav
-            aria-label="Page navigation"
-            className="d-flex justify-content-center"
-          >
-            {renderPaginationItems()}
-          </nav>
+          {totalPages > 1 && (
+            <nav
+              aria-label="Page navigation"
+              className="d-flex justify-content-center"
+            >
+              {renderPaginationItems()}
+            </nav>
+          )}
         </>
       )}
 

@@ -22,8 +22,6 @@ const BookingTabs = () => {
 
 
   return (
-    <>
-    <h2>Bookings</h2>
     <Tabs
       defaultActiveKey="customer"
       id="justify-tab-example"
@@ -67,7 +65,6 @@ const BookingTabs = () => {
         />
       </Tab>
     </Tabs>
-    </>
   );
 };
 

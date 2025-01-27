@@ -144,12 +144,12 @@ const CommonServicesTab = ({ categoryId, subCategoryId }) => {
                 <th scope="col" style={{ width: "40%" }}>
                   Description
                 </th>
-                <th scope="col" style={{ width: "25%" }}>
+                {/* <th scope="col" style={{ width: "25%" }}>
                   URL
                 </th>
                 <th scope="col" style={{ width: "10%" }}>
                   Sub-Category ID
-                </th>
+                </th> */}
                 <th scope="col" style={{ width: "15%" }}>
                   Status
                 </th>
@@ -186,8 +186,8 @@ const CommonServicesTab = ({ categoryId, subCategoryId }) => {
                         </button>
                       )}
                     </td>
-                    <td>{service.url}</td>
-                    <td>{service.sub_category_id}</td>
+                    {/* <td>{service.url}</td>
+                    <td>{service.sub_category_id}</td> */}
                     <td>
                       <div className="status-div" style={{gap:"10px"}}>
                         {service.active_status.charAt(0).toUpperCase() + service.active_status.slice(1)}

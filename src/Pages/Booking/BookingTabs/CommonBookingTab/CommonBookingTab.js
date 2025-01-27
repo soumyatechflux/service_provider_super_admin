@@ -3,16 +3,55 @@ import Loader from "../../../Loader/Loader";
 import axios from "axios";
 import { toast } from "react-toastify";
 import EditStatusModal from "./EditStatusModal/EditStatusModal";
+import AttachmentModal from "./AttachmentModal/AttachmentModal";
 
 const CommonBookingTab = ({ category_id, loading, setLoading }) => {
+  function formatDateWithTime(dateString) {
+    const date = new Date(dateString);
+
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+      return "N/A";
+    }
+
+    // Date format (Day Month Year)
+    const formattedDate = new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(date);
+
+    // Time format (AM/PM)
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+
+    // Convert to 12-hour format
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 12 AM/PM instead of 0
+    minutes = minutes < 10 ? "0" + minutes : minutes; // Add leading zero to minutes if necessary
+
+    const formattedTime = `${hours}:${minutes} ${ampm}`;
+
+    return `${formattedDate}, ${formattedTime}`;
+  }
+
+  const formatPaymentMode = (mode) => {
+    if (!mode) return "N/A"; // Handle null/undefined
+    if (mode.toLowerCase() === "online") return "Online";
+    if (mode.toLowerCase() === "cod") return "COD";
+    return mode.charAt(0).toUpperCase() + mode.slice(1); // Default behavior
+  };
   const [dummy_Data, setDummy_Data] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchInput, setSearchInput] = useState(""); // Add search input state
+  const [searchInput, setSearchInput] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   const [selectedBookingStatus, setSelectedBookingStatus] = useState(null);
   const [partnerId, setPartnerId] = useState(null);
   const [categoryId, setCategoryId] = useState(null);
+  const [showAttachmentModal, setShowAttachmentModal] = useState(false);
+  const [attachmentsData, setAttachmentsData] = useState({});
 
   const entriesPerPage = 10;
 
@@ -55,22 +94,6 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     getCommissionData();
   }, [category_id]);
 
-  const convertToAMPM = (time) => {
-    if (!time) return "N/A";
-
-    const [hours, minutes] = time.split(":");
-    let hoursInt = parseInt(hours, 10);
-    const ampm = hoursInt >= 12 ? "PM" : "AM";
-
-    hoursInt = hoursInt % 12;
-    hoursInt = hoursInt ? hoursInt : 12;
-
-    // Ensure minutes are always 2 digits
-    const formattedMinutes = minutes.padStart(2, "0");
-
-    return `${hoursInt}:${formattedMinutes} ${ampm}`;
-  };
-
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -88,19 +111,26 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     setSelectedBookingStatus(bookingStatus);
     setPartnerId(partnerId);
     setCategoryId(categoryId);
-    setShowEditModal(true); // Open the modal
+    setShowEditModal(true);
   };
 
   const handleCloseEditModal = () => {
-    setShowEditModal(false); // Close the modal
+    setShowEditModal(false);
   };
 
-  // Pagination calculations
-  const totalPages = Math.ceil(dummy_Data.length / entriesPerPage);
+  const handleOpenAttachmentModal = (attachments) => {
+    setAttachmentsData(attachments);
+    setShowAttachmentModal(true);
+  };
+
+  const handleCloseAttachmentModal = () => {
+    setShowAttachmentModal(false);
+  };
+
+  // const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
 
-  // Filter data based on search input
   const filteredData = dummy_Data.filter((item) =>
     item.guest_name.toLowerCase().includes(searchInput.toLowerCase())
   );
@@ -110,140 +140,75 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     indexOfLastEntry
   );
 
-  const getPageRange = () => {
-    let start = currentPage - 1;
-    let end = currentPage + 1;
-
-    if (start < 1) {
-      start = 1;
-      end = Math.min(3, totalPages);
-    }
-
-    if (end > totalPages) {
-      end = totalPages;
-      start = Math.max(1, totalPages - 2);
-    }
-
-    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
-  const renderPaginationItems = () => {
-    const pageRange = getPageRange();
+  const renderPagination = () => {
+    // Hide pagination if filtered data is less than or equal to entriesPerPage
+    if (filteredData.length <= entriesPerPage) return null;
+
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i);
+    }
 
     return (
-      <ul className="pagination mb-0" style={{ gap: "5px" }}>
-        {/* First Page Button */}
-        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-          <button
-            className="page-link"
-            onClick={() => setCurrentPage(1)}
-            style={{
-              border: "1px solid #dee2e6",
-              borderRadius: "4px",
-              padding: "8px 12px",
-              color: currentPage === 1 ? "#6c757d" : "#007bff",
-              backgroundColor: "white",
-              cursor: currentPage === 1 ? "not-allowed" : "pointer",
-            }}
-          >
-            First
-          </button>
-        </li>
-
-        {/* Previous Page Button */}
-        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-          <button
-            className="page-link"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            style={{
-              border: "1px solid #dee2e6",
-              borderRadius: "4px",
-              padding: "8px 12px",
-              color: currentPage === 1 ? "#6c757d" : "#007bff",
-              backgroundColor: "white",
-              cursor: currentPage === 1 ? "not-allowed" : "pointer",
-            }}
-          >
-            Previous
-          </button>
-        </li>
-
-        {/* Page Number Buttons */}
-        {pageRange.map((number) => (
+      <nav>
+        <ul
+          className="pagination justify-content-center"
+          style={{ gap: "5px" }}
+        >
+          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => handlePageChange(currentPage - 1)}
+            >
+              Previous
+            </button>
+          </li>
+          {pageNumbers.map((number) => (
+            <li
+              key={number}
+              className={`page-item ${currentPage === number ? "active" : ""}`}
+            >
+              <button
+                className="page-link"
+                onClick={() => handlePageChange(number)}
+              >
+                {number}
+              </button>
+            </li>
+          ))}
           <li
-            key={number}
-            className={`page-item ${currentPage === number ? "active" : ""}`}
+            className={`page-item ${
+              currentPage === totalPages ? "disabled" : ""
+            }`}
           >
             <button
               className="page-link"
-              onClick={() => setCurrentPage(number)}
-              style={{
-                border: "1px solid #dee2e6",
-                borderRadius: "4px",
-                padding: "8px 12px",
-                backgroundColor: currentPage === number ? "#007bff" : "white",
-                color: currentPage === number ? "white" : "#007bff",
-                cursor: "pointer",
-              }}
+              onClick={() => handlePageChange(currentPage + 1)}
             >
-              {number}
+              Next
             </button>
           </li>
-        ))}
-
-        {/* Next Page Button */}
-        <li
-          className={`page-item ${
-            currentPage === totalPages ? "disabled" : ""
-          }`}
-        >
-          <button
-            className="page-link"
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            style={{
-              border: "1px solid #dee2e6",
-              borderRadius: "4px",
-              padding: "8px 12px",
-              color: currentPage === totalPages ? "#6c757d" : "#007bff",
-              backgroundColor: "white",
-              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-            }}
-          >
-            Next
-          </button>
-        </li>
-
-        {/* Last Page Button */}
-        <li
-          className={`page-item ${
-            currentPage === totalPages ? "disabled" : ""
-          }`}
-        >
-          <button
-            className="page-link"
-            onClick={() => setCurrentPage(totalPages)}
-            style={{
-              border: "1px solid #dee2e6",
-              borderRadius: "4px",
-              padding: "8px 12px",
-              color: currentPage === totalPages ? "#6c757d" : "#007bff",
-              backgroundColor: "white",
-              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-            }}
-          >
-            Last
-          </button>
-        </li>
-      </ul>
+        </ul>
+      </nav>
     );
   };
 
+  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
+
   return (
     <div className="SubCategory-Table-Main p-3">
-      <div className="d-flex justify-content-end align-items-center">
-        {/* <h2>Bookings</h2> */}
+      <div className="d-flex justify-content-between align-items-center">
+        <h2>Bookings</h2>
         <input
           type="text"
           className="form-control search-input w-25"
@@ -252,7 +217,6 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
           onChange={(e) => setSearchInput(e.target.value)}
         />
       </div>
-
       {loading ? (
         <Loader />
       ) : (
@@ -279,20 +243,36 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                   <th scope="col" style={{ width: "10%" }}>
                     Address
                   </th>
-                  <th scope="col" style={{ width: "10%" }}>
+                  {category_id === "2" && (
+                    <th scope="col" style={{ width: "10%" }}>
+                      Address From
+                    </th>
+                  )}
+                  {category_id === "2" && (
+                    <th scope="col" style={{ width: "10%" }}>
+                      Address To
+                    </th>
+                  )}
+                  <th scope="col" style={{ width: "15%" }}>
                     Visited Date
                   </th>
-                  <th scope="col" style={{ width: "10%" }}>
+                  <th scope="col" style={{ width: "15%" }}>
                     Booking Date
                   </th>
-                  <th scope="col" style={{ width: "10%" }}>
-                    Booking Time
-                  </th>
+
                   <th scope="col" style={{ width: "10%" }}>
                     Payment Mode
                   </th>
+                  {category_id === "3" && (
+                    <th scope="col" style={{ width: "10%" }}>
+                      Visit Slot Count
+                    </th>
+                  )}
                   <th scope="col" style={{ width: "10%" }}>
                     Status
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Attachments
                   </th>
                   <th scope="col" style={{ width: "5%" }}>
                     Action
@@ -304,7 +284,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                   <tr key={item.booking_id}>
                     <th scope="row">{indexOfFirstEntry + index + 1}.</th>
                     <td>{item.guest_name || "N/A"}</td>
-                    <td>{item.partner?.name || "Not assign yet"}</td>
+                    <td>{item.partner?.name || "Not assigned yet"}</td>
                     <td>
                       {item.sub_category_name?.sub_category_name || "Unknown"}
                     </td>
@@ -312,85 +292,103 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                     <td>
                       {item.visit_address || "No current_address available."}
                     </td>
+                    {category_id === "2" && (
+                      <td>
+                        {item.address_from || "No current_address available."}
+                      </td>
+                    )}
+                    {category_id === "2" && (
+                      <td>
+                        {item.address_to || "No current_address available."}
+                      </td>
+                    )}
                     <td>
-                      {new Intl.DateTimeFormat("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      }).format(new Date(item.visit_date))}
+                      {item.visit_date
+                        ? formatDateWithTime(item.visit_date)
+                        : "N/A"}
                     </td>
 
                     <td>
                       {item.created_at
-                        ? new Intl.DateTimeFormat("en-GB", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          }).format(new Date(item.created_at))
+                        ? formatDateWithTime(item.created_at)
                         : "N/A"}
                     </td>
 
-                    {/* <td>
-                      {item.created_at
-                        ? new Intl.DateTimeFormat("en-GB", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true, // Ensures time is in 12-hour format with AM/PM
-                          }).format(new Date(item.visit_time))
-                        : "N/A"}
-                    </td> */}
-                    <td>
-                      {item.visit_time ? convertToAMPM(item.visit_time) : "N/A"}
-                    </td>
+                    <td>{formatPaymentMode(item.payment_mode)}</td>
 
-                    <td>{item.payment_mode || "N/A"}</td>
+                    {category_id === "3" && (
+                      <td>{item.gardener_visiting_slot_count || "NA"}</td>
+                    )}
 
                     <td>
-                      {item.booking_status || "No current_address available."}
+                      {item.booking_status
+                        ? item.booking_status.charAt(0).toUpperCase() +
+                          item.booking_status.slice(1)
+                        : "No current_address available."}
                     </td>
+
                     <td>
-                      {["upcoming", "inprogress"].includes(
-                        item.booking_status
-                      ) ? (
+                      {item.start_job_attachments.length > 0 ||
+                      item.end_job_attachments.length > 0 ? (
                         <i
-                          className="fa fa-pencil-alt text-primary"
-                          style={{ cursor: "pointer", color: "black" }}
+                          className="fa fa-eye text-primary"
+                          style={{ cursor: "pointer" }}
                           onClick={() =>
-                            handleOpenEditModal(
-                              item.booking_id,
-                              item.booking_status,
-                              item.partner_id,
-                              item.category_id
-                            )
+                            handleOpenAttachmentModal({
+                              start: item.start_job_attachments,
+                              end: item.end_job_attachments,
+                            })
                           }
                         />
                       ) : (
-                        <i
-                          className="fa fa-pencil-alt"
-                          style={{
-                            cursor: "not-allowed",
-                            color: "gray",
-                          }}
-                        />
+                        "No Attachments"
                       )}
+                    </td>
+                    <td>
+                      <i
+                        className={`fa fa-pencil-alt ${
+                          ["upcoming", "inprogress"].includes(
+                            item.booking_status
+                          )
+                            ? "text-primary"
+                            : "text-muted"
+                        }`}
+                        style={{
+                          cursor: ["upcoming", "inprogress"].includes(
+                            item.booking_status
+                          )
+                            ? "pointer"
+                            : "not-allowed",
+                        }}
+                        onClick={() =>
+                          ["upcoming", "inprogress"].includes(
+                            item.booking_status
+                          )
+                            ? handleOpenEditModal(
+                                item.booking_id,
+                                item.booking_status,
+                                item.partner_id,
+                                item.category_id
+                              )
+                            : null
+                        }
+                      />
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-
-          {/* Pagination Controls */}
-          <nav
-            aria-label="Page navigation"
-            className="d-flex justify-content-center"
-          >
-            {renderPaginationItems()}
-          </nav>
+          {renderPagination()}
         </>
       )}
 
-      {/* Edit Status Modal */}
+      <AttachmentModal
+        open={showAttachmentModal}
+        attachments={attachmentsData}
+        onClose={handleCloseAttachmentModal}
+      />
+
       <EditStatusModal
         open={showEditModal}
         onClose={handleCloseEditModal}

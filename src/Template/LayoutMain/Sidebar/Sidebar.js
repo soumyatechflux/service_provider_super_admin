@@ -18,7 +18,7 @@ import {
   QuestionAnswer,
   AccountBox,
 } from "@mui/icons-material";
-import { Gavel, Lock, ReceiptLong, Cancel } from "@mui/icons-material";
+import { Gavel, Lock, ReceiptLong, Cancel } from "@mui/icons-material"; // Add this line
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Tooltip from "@mui/material/Tooltip";
@@ -75,24 +75,21 @@ const Sidebar = ({ isOpen }) => {
   }, [token]);
 
   useEffect(() => {
-    setActiveItem(location.pathname);
+    const path = location.pathname;
+    if (path.startsWith("/sub-categories")) {
+      setActiveItem("/sub-categories"); // Ensure that sub-categories paths are active
+    } else {
+      setActiveItem(path);
+    }
   }, [location]);
 
   const handleItemClick = (path) => {
-    setActiveItem(path);
+    if (path.startsWith("/sub-categories")) {
+      setActiveItem("/sub-categories");
+    } else {
+      setActiveItem(path);
+    }
   };
-
-  const hoveredPaths = [
-    "/cook_for_one_meal",
-    "/cook-for-day",
-    "/chef-for-party",
-    "/outstaion-round-trip",
-    "/outstaion-trip",
-    "/round-trip",
-    "/one-way-trip",
-    "/monthly-subscription",
-    "/gardner-visit",
-  ];
 
   const iconMapping = {
     1: <Home />,
@@ -128,9 +125,6 @@ const Sidebar = ({ isOpen }) => {
             const { permission_id, permission_name, path } = permission;
             const itemPath =
               path || `/${permission_name.toLowerCase().replace(/\s+/g, "-")}`;
-            const isHovered =
-              permission_id === 7 && hoveredPaths.includes(location.pathname);
-
             return (
               <CustomTooltip
                 key={permission_id}
@@ -141,26 +135,12 @@ const Sidebar = ({ isOpen }) => {
                 <Link to={itemPath}>
                   <li
                     className={`menu-item ${
-                      activeItem === itemPath || isHovered ? "active" : ""
+                      activeItem === itemPath ? "active" : ""
                     }`}
                     onClick={() => handleItemClick(itemPath)}
                   >
-                    <span
-                      style={{
-                        color: isHovered ? "#fff" : undefined,
-                      }}
-                    >
-                      {iconMapping[permission_id] || <Info />}
-                    </span>
-                    {isOpen && (
-                      <span
-                        style={{
-                          color: isHovered ? "#fff" : undefined,
-                        }}
-                      >
-                        {permission_name}
-                      </span>
-                    )}
+                    {iconMapping[permission_id] || <Info />}
+                    {isOpen && <span>{permission_name}</span>}
                   </li>
                 </Link>
               </CustomTooltip>
@@ -172,4 +152,6 @@ const Sidebar = ({ isOpen }) => {
   );
 };
 
+
 export default Sidebar;
+

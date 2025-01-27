@@ -119,11 +119,11 @@ const CookCategoriesTab = ({ category_id }) => {
 
   const handleNavigateToSettings = (id) => {
     if (id === 1) {
-      navigate("/cook_for_one_meal");
+      navigate("/sub-categories-cook-for-one-meal");
     } else if (id === 2) {
-      navigate("/cook-for-day");
+      navigate("/sub-categories-cook-for-day");
     } else if (id === 3) {
-      navigate("/chef-for-party");
+      navigate("/sub-categories-chef-for-party");
     } else {
       toast.error("Invalid ID");
     }
@@ -131,6 +131,7 @@ const CookCategoriesTab = ({ category_id }) => {
 
   return (
     <div className="SubCategory-Table-Main p-3">
+        <h2>SubCategory-Cook</h2>
       {loading ? (
         <Loader />
       ) : (
@@ -153,9 +154,9 @@ const CookCategoriesTab = ({ category_id }) => {
                 <th scope="col" style={{ width: "15%" }}>
                   Image
                 </th>
-                {/* <th scope="col" style={{ width: "8%" }}>
+                <th scope="col" style={{ width: "8%" }}>
                   Price
-                </th> */}
+                </th>
                 <th scope="col" style={{ width: "20%" }}>
                   Description
                 </th>
@@ -197,7 +198,7 @@ const CookCategoriesTab = ({ category_id }) => {
                       "No image"
                     )}
                   </td>
-                  {/* <td>{item.price || "N/A"}</td> */}
+                  <td>{item.price || "N/A"}</td>
                   <td>
                     {expandedDescriptions[item.id]
                       ? item.description

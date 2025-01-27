@@ -90,6 +90,37 @@ const SettingsTable = () => {
   
   
   
+  const formatConfigKey = (key) => {
+    if (!key) return "N/A"; // Handle null/undefined
+    const formattedKey = key
+      .split('_') // Split by underscores
+      .map((word, index) => {
+        if (index === 0) {
+          // Capitalize the first word only
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        }
+        return word.toLowerCase(); // Keep other words in lowercase
+      })
+      .join(' '); // Join the words with spaces
+    return formattedKey;
+  };
+  
+
+  const formatText = (text) => {
+    if (!text) return "N/A"; // Handle null/undefined
+    const formattedText = text
+      .split('_') // Split by underscores
+      .map((word, index) => {
+        if (index === 0) {
+          // Capitalize the first word only
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        }
+        return word.toLowerCase(); // Keep other words in lowercase
+      })
+      .join(' '); // Join the words with spaces
+    return formattedText;
+  };
+  
   
   
   return (
@@ -123,9 +154,11 @@ const SettingsTable = () => {
               {settings.map((setting, index) => (
                 <tr key={setting.config_id}>
                   <td>{index + 1}</td>
-                  <td>{setting.config_key}</td>
+                  <td>{formatConfigKey(setting.config_key)}</td>
+
                   <td>{setting.config_value}</td>
-                  <td>{setting.description || "N/A"}</td>
+                  <td>{formatText(setting.description)}</td>
+
                   <td>
                     <EditIcon
                       onClick={() => handleEditClick(setting)}

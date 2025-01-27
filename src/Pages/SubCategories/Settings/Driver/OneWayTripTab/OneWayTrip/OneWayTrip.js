@@ -10,9 +10,11 @@ import axios from "axios";
 const OneWayTrip = () => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  const [nightChargesStartAt, setNightChargesStartAt] = useState("");
+  const [nightChargesEndAt, setNightChargesEndAt] = useState(""); // New Field
+  const [cancellationBefore, setCancellationBefore] = useState(1);
   const [nightCharge, setNightCharge] = useState("");
   const [bookBefore, setBookBefore] = useState(1);
-  const [cancellationBefore, setCancellationBefore] = useState(1);
   const [freeCancellationBefore, setFreeCancellationBefore] = useState(1); // New Field
   const [summary, setSummary] = useState("");
   const [selectedTransmission, setSelectedTransmission] = useState([]);
@@ -24,9 +26,8 @@ const OneWayTrip = () => {
   const [additionalPriceHours, setAdditionalPriceHours] = useState("");
 
   const [gst, setGst] = useState(null);
-      const [secureFees, setSecureFees] = useState(null);
-      const [platformFees, setPlatformFees] = useState(null);
-    
+  const [secureFees, setSecureFees] = useState(null);
+  const [platformFees, setPlatformFees] = useState(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -124,27 +125,34 @@ const OneWayTrip = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const invalidHourRow = hourRows.some(
-      (row) => !row.duration || row.duration <= 0 || !row.price || row.price <= 0
+      (row) =>
+        !row.duration || row.duration <= 0 || !row.price || row.price <= 0
     );
     if (invalidHourRow) {
-      toast.error("Please fill out all duration and price fields before submitting.");
+      toast.error(
+        "Please fill out all duration and price fields before submitting."
+      );
       return; // Prevent form submission if validation fails
     }
-     const durations = hourRows.map((row) => String(row.duration).trim());
-        console.log("Durations (normalized):", durations); // Log the normalized durations array
-      
-        const hasDuplicates = durations.some((duration, index) => durations.indexOf(duration) !== index);
-        console.log("Has duplicates:", hasDuplicates); // Log whether duplicates are found
-        
-        if (hasDuplicates) {
-          toast.error("Duplicate durations are not allowed.");
-          console.log("Form submission stopped due to duplicate durations."); // Log the reason for stopping the form submission
-          return; // Stop execution to prevent form submission
-        }
+    const durations = hourRows.map((row) => String(row.duration).trim());
+    console.log("Durations (normalized):", durations); // Log the normalized durations array
+
+    const hasDuplicates = durations.some(
+      (duration, index) => durations.indexOf(duration) !== index
+    );
+    console.log("Has duplicates:", hasDuplicates); // Log whether duplicates are found
+
+    if (hasDuplicates) {
+      toast.error("Duplicate durations are not allowed.");
+      console.log("Form submission stopped due to duplicate durations."); // Log the reason for stopping the form submission
+      return; // Stop execution to prevent form submission
+    }
 
     const formData = new FormData();
     formData.append("category_id", 2);
     formData.append("sub_category_id", 5);
+    formData.append("service_start_time", startTime);
+    formData.append("service_end_time", endTime);
     formData.append("night_charge", nightCharge);
     formData.append("booking_time_before", bookBefore);
     formData.append("cancellation_time_before", cancellationBefore);
@@ -153,8 +161,8 @@ const OneWayTrip = () => {
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("booking_details", summary);
     formData.append("additional_price_hours", additionalPriceHours);
-
-    
+    formData.append("night_charge_start_time", nightChargesStartAt);
+    formData.append("night_charge_end_time", nightChargesEndAt);
     formData.append("gst", gst || "");
     formData.append("secure_fee", secureFees || "");
     formData.append("platform_fee", platformFees || "");
@@ -279,6 +287,8 @@ const OneWayTrip = () => {
       );
       if (response.data.success) {
         const data = response.data.data;
+        setNightChargesStartAt(data.night_charge_start_time.slice(0, 5));
+        setNightChargesEndAt(data.night_charge_end_time.slice(0, 5));
         setStartTime(data.service_start_time.slice(0, 5));
         setEndTime(data.service_end_time.slice(0, 5));
         setNightCharge(data.night_charge.slice(0, 5));
@@ -289,7 +299,6 @@ const OneWayTrip = () => {
         setCancellationPolicy(data.cancellation_policy || "");
         setBookingSummaryPage(data.booking_summary || "");
         setSelectedTransmission(data.transmission_types || []);
-
         setGst(data.gst || null);
         setSecureFees(data.secure_fee || null);
         setPlatformFees(data.platform_fee || null);
@@ -322,10 +331,99 @@ const OneWayTrip = () => {
     fetchSubCategoryData();
   }, []);
 
+  const timeOptions = generateTimeOptions();
+
   return (
     <div className="container mt-5">
       <h3 className="text-center mb-4">One Way Trip</h3>
       <form onSubmit={handleSubmit}>
+        <div className="row mb-3 align-items-center">
+          <div className="col-md-3">
+            <label htmlFor="startTime" className="form-label">
+              Start Time
+            </label>
+            <select
+              className="form-control"
+              id="startTime"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              required
+            >
+              <option value="" disabled>
+                Select start time
+              </option>
+              {timeOptions.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="endTime" className="form-label">
+              End Time
+            </label>
+            <select
+              className="form-control"
+              id="endTime"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              required
+            >
+              <option value="" disabled>
+                Select end time
+              </option>
+              {timeOptions.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="nightChargesStartAt" className="form-label">
+              Night Charges Start At
+            </label>
+            <select
+              className="form-control"
+              id="nightChargesStartAt"
+              value={nightChargesStartAt}
+              onChange={(e) => setNightChargesStartAt(e.target.value)}
+              required
+            >
+              <option value="" disabled>
+                Select time
+              </option>
+              {timeOptions.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="col-md-3">
+            <label htmlFor="nightChargesEndAt" className="form-label">
+              Night Charges End At
+            </label>
+            <select
+              className="form-control"
+              id="nightChargesEndAt"
+              value={nightChargesEndAt}
+              onChange={(e) => setNightChargesEndAt(e.target.value)}
+              required
+            >
+              <option value="" disabled>
+                Select time
+              </option>
+              {timeOptions.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
         <div className="row mb-3 align-items-center">
           <div className="col-md-3">
             <label htmlFor="bookBefore" className="form-label">
@@ -405,43 +503,59 @@ const OneWayTrip = () => {
         </div>
 
         <div className="row mb-3 align-items-center">
-  <div className="col-md-3">
-    <label htmlFor="gst" className="form-label">GST</label>
-    <input
-      type="number"
-      className="form-control"
-      id="gst"
-      value={gst === null ? "" : gst} // Set value to empty string when null
-      onChange={(e) => setGst(e.target.value === "" ? null : Number(e.target.value))}
-      min="1"
-      required
-    />
-  </div>
-  <div className="col-md-3">
-    <label htmlFor="secureFees" className="form-label">Secure Fees</label>
-    <input
-      type="number"
-      className="form-control"
-      id="secureFees"
-      value={secureFees === null ? "" : secureFees} // Set value to empty string when null
-      onChange={(e) => setSecureFees(e.target.value === "" ? null : Number(e.target.value))}
-      min="1"
-      required
-    />
-  </div>
-  <div className="col-md-3">
-    <label htmlFor="platformFees" className="form-label">Platform Fees</label>
-    <input
-      type="number"
-      className="form-control"
-      id="platformFees"
-      value={platformFees === null ? "" : platformFees} // Set value to empty string when null
-      onChange={(e) => setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
-      min="1"
-      required
-    />
-  </div>
-</div>
+          <div className="col-md-3">
+            <label htmlFor="gst" className="form-label">
+              GST
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="gst"
+              value={gst === null ? "" : gst} // Set value to empty string when null
+              onChange={(e) =>
+                setGst(e.target.value === "" ? null : Number(e.target.value))
+              }
+              min="1"
+              required
+            />
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="secureFees" className="form-label">
+              Secure Fees
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="secureFees"
+              value={secureFees === null ? "" : secureFees} // Set value to empty string when null
+              onChange={(e) =>
+                setSecureFees(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
+              min="1"
+              required
+            />
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="platformFees" className="form-label">
+              Platform Fees
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="platformFees"
+              value={platformFees === null ? "" : platformFees} // Set value to empty string when null
+              onChange={(e) =>
+                setPlatformFees(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
+              min="1"
+              required
+            />
+          </div>
+        </div>
 
         {/* Guest Time Slot Section */}
         <div className="MainDining_AddTable mb-5 mt-5">
@@ -603,8 +717,6 @@ const OneWayTrip = () => {
           </div>
         </div>
 
-
-
         <div className="MainDining_AddTable mb-5 mt-5">
           <h4 className="form-label">
             Additional Details (Booking Details Summary)
@@ -682,13 +794,13 @@ const OneWayTrip = () => {
             type="submit"
             className="btn btn-primary w-50 mt-4"
             onClick={(e) => {
-              handleSubmit(e); 
+              handleSubmit(e);
               setTimeout(() => {
                 window.scrollTo({
                   top: 0,
-                  behavior: "smooth", 
+                  behavior: "smooth",
                 });
-              }, 500); 
+              }, 500);
             }}
             disabled={loading}
           >
