@@ -171,7 +171,7 @@ const SupportCustomerTab = () => {
                     <td>{indexOfFirstEntry + index + 1}</td>
                     <td>{item.name || "No name available"}</td>
                     <td>{item.email}</td>
-                    <td>{item.user_role}</td>
+                    <td>{item.user_role.charAt(0).toUpperCase() + item.user_role.slice(1)}</td>
                     <td>{item.description}</td>
                     <td>
                       <div className="status-div">
@@ -217,6 +217,7 @@ const SupportCustomerTab = () => {
           onStatusChange={(newStatus) =>
             updateSupportStatus(selectedSupport.support_id, newStatus)
           }
+          getSupportData={getSupportData}
         />
       )}
     </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './ReportingFilters.css';
 
-const ReportingFilters = ({ onSearch,onClear }) => {
+const ReportingFilters = ({ onSearch, onClear }) => {
   const [filters, setFilters] = useState({
     category_id: "",
     sub_category_id: "",
@@ -14,7 +14,6 @@ const ReportingFilters = ({ onSearch,onClear }) => {
     from_time: "",
     to_time: "",
   });
-
 
   // Mapping categories to subcategories
   const subCategories = {
@@ -34,11 +33,13 @@ const ReportingFilters = ({ onSearch,onClear }) => {
       { value: "9", label: "Monthly subscription" }
     ],
   };
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
 
     // Reset sub_category_id if category_id changes
     if (name === "category_id") {
@@ -70,6 +71,54 @@ const ReportingFilters = ({ onSearch,onClear }) => {
     onSearch(filters); // Send filters to the parent
   };
 
+  const handleExport = (exportType) => {
+    const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+    const apiUrl = `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/reporting/bookings`;
+
+    // Add the filters to the request
+    const queryParams = new URLSearchParams(filters).toString();
+    const url = `${apiUrl}?${queryParams}&export_type=${exportType}`;
+
+    fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          if (exportType === "pdf") {
+            exportPDF(data.base64);
+          } else if (exportType === "csv") {
+            exportCSV(data.base64);
+          }
+        } else {
+          console.error("Export failed", data.message);
+        }
+      })
+      .catch((error) => console.error("Error fetching export data", error));
+  };
+
+  const exportPDF = (base64Data) => {
+    const pdfData = atob(base64Data);
+    const blob = new Blob([pdfData], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'report.pdf';
+    link.click();
+  };
+
+  const exportCSV = (base64Data) => {
+    const csvData = atob(base64Data);
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'report.csv';
+    link.click();
+  };
 
   return (
     <div className="filter-page">
@@ -162,17 +211,24 @@ const ReportingFilters = ({ onSearch,onClear }) => {
           </div>
         </div>
         <div className="filter-buttons">
-        <button type="button" onClick={handleSearch} className="Discount-btn">
-          Search
-        </button>
-
-        <button type="button" onClick={handleClearFilters} className="Discount-btn">
-            Clear Filter
+          <button type="button" onClick={() => handleExport("pdf")} className="Discount-btn">
+            Export to PDF
           </button>
 
+          <button type="button" onClick={() => handleExport("csv")} className="Discount-btn">
+            Export to CSV
+          </button>
+
+          <button type="button" onClick={handleSearch} className="Discount-btn">
+            Search
+          </button>
+
+          <button type="button" onClick={handleClearFilters} className="Discount-btn">
+            Clear Filter
+          </button>
         </div>
       </form>
-      <hr/>
+      <hr />
     </div>
   );
 };

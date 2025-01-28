@@ -99,6 +99,7 @@ const VerifyChef = () => {
   const verifyPartnerDetails = async () => {
     const requiredFields = [
       "dob",
+      "email",
       "aadhar",
       "address",
       "permanentAddress",

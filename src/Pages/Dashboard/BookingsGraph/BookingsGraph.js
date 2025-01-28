@@ -195,10 +195,35 @@ const BookingsGraph = () => {
     plugins: {
       legend: {
         position: "top",
+        labels: {
+          font: {
+            size: 14,
+            family: "'Roboto', sans-serif", // Use a custom font
+          },
+          color: "#333", // Change legend text color
+        },
       },
       title: {
         display: true,
-        text: "Bookings Overview",
+        font: {
+          size: 20,
+          weight: "bold",
+          family: "'Poppins', sans-serif",
+        },
+        color: "#007bff", // Title color
+      },
+      tooltip: {
+        backgroundColor: "#f9f9f9", // Tooltip background
+        borderColor: "#ccc", // Tooltip border
+        borderWidth: 1,
+        titleFont: {
+          size: 16,
+          weight: "bold",
+        },
+        bodyFont: {
+          size: 14,
+        },
+        bodyColor: "#333",
       },
     },
     scales: {
@@ -206,6 +231,15 @@ const BookingsGraph = () => {
         title: {
           display: true,
           text: timeRange === "weekly" ? `Week ${selectedWeek}` : "Weeks",
+          font: {
+            size: 16,
+            weight: "500",
+            family: "'Poppins', sans-serif",
+          },
+          color: "#555",
+        },
+        grid: {
+          display: false, // Remove gridlines for the x-axis
         },
       },
       y: {
@@ -213,19 +247,48 @@ const BookingsGraph = () => {
         title: {
           display: true,
           text: "Number of Bookings",
+          font: {
+            size: 16,
+            weight: "500",
+            family: "'Poppins', sans-serif",
+          },
+          color: "#555",
+        },
+        grid: {
+          color: "rgba(200, 200, 200, 0.2)", // Subtle gridline color
+          borderDash: [5, 5], // Dashed gridlines
         },
       },
     },
+    animation: {
+      duration: 1000, // Animation duration in milliseconds
+      easing: "easeInOutQuad", // Animation easing
+    },
+    elements: {
+      bar: {
+        backgroundColor: (context) => {
+          // Apply gradient color
+          const ctx = context.chart.ctx;
+          const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+          gradient.addColorStop(0, "#007bff");
+          gradient.addColorStop(1, "#00c6ff");
+          return gradient;
+        },
+        borderRadius: 10, // Round the corners of bars
+        borderWidth: 1,
+        borderColor: "#007bff",
+      },
+    },
   };
+  
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-
+  
       try {
         let apiUrl = `${baseUrl}/api/admin/dashboard/bookings`;
-
-        // Check if the selected timeRange is "today"
+  
         if (timeRange === "today") {
           apiUrl += `?today=true`;
         } else if (timeRange === "weekly") {
@@ -233,51 +296,42 @@ const BookingsGraph = () => {
         } else {
           apiUrl += `?month=${timeRange}`;
         }
-
+  
         const response = await axios.get(apiUrl, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
+  
         const { data } = response.data;
-
+  
         // Handle response for "Today"
         if (timeRange === "today") {
-          const todayData = data[0] ? data[0] : null;
-
-          if (todayData) {
-            setChartData({
-              labels: [todayData.day_name], // Display the day name (e.g., "Monday")
-              datasets: [
-                {
-                  label: "Bookings Today",
-                  data: [todayData.booking_count], // Display the booking count for today
-                  backgroundColor: "rgba(0, 123, 255, 0.6)", // Blue color
-                },
-              ],
-            });
-          } else {
-            setChartData({
-              labels: ["Today"],
-              datasets: [
-                {
-                  label: "Bookings Today",
-                  data: [0], // If no data for today, show 0
-                  backgroundColor: "rgba(0, 123, 255, 0.6)", // Blue color
-                },
-              ],
-            });
-          }
+          const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+          const todayData = data[0] || null; // Assume the API returns today's data
+          const todayName = todayData ? todayData.day_name : new Date().toLocaleDateString("en-US", { weekday: "long" });
+          const todayCount = todayData ? todayData.booking_count : 0;
+  
+          const dayData = allDays.map((day) => (day === todayName ? todayCount : 0));
+  
+          setChartData({
+            labels: allDays, // Show all days of the week
+            datasets: [
+              {
+                label: "Bookings Today",
+                data: dayData, // Only today's day will have data; others will be 0
+                backgroundColor: "rgba(0, 123, 255, 0.6)", // Blue color
+              },
+            ],
+          });
         } else if (timeRange === "weekly") {
-          // Weekly case - Ensure all days are displayed
           const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
           const dayData = data.reduce((acc, item) => {
             acc[item.day_name] = item.booking_count;
             return acc;
           }, {});
-
+  
           const dayLabels = allDays;
           const bookingCounts = allDays.map((day) => dayData[day] || 0);
-
+  
           setChartData({
             labels: dayLabels,
             datasets: [
@@ -289,18 +343,17 @@ const BookingsGraph = () => {
             ],
           });
         } else {
-          // Monthly case
           const maxWeekNumber = Math.max(...data.map((item) => item.week_number));
           const weekLabels = Array.from(
             { length: maxWeekNumber },
             (_, i) => `Week ${i + 1}`
           );
           const weekData = Array(maxWeekNumber).fill(0);
-
+  
           data.forEach((item) => {
             weekData[item.week_number - 1] = item.booking_count;
           });
-
+  
           setChartData({
             labels: weekLabels,
             datasets: [
@@ -320,9 +373,10 @@ const BookingsGraph = () => {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [timeRange, selectedWeek]);
+  
 
   const handleExport = async (format) => {
     setLoading(true);

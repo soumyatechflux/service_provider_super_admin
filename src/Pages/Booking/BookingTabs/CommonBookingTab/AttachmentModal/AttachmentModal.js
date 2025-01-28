@@ -18,11 +18,11 @@ const AttachmentModal = ({ open, attachments, onClose }) => {
                     className="img-fluid"
                     style={{ maxWidth: "150px", maxHeight: "150px" }}
                   />
-                  <p>
+                  {/* <p>
                     {attachment.file_title
                       .replace(/_/g, " ")
                       .replace(/\b\w/g, char => char.toUpperCase())}
-                  </p>
+                  </p> */}
                 </div>
               ))}
             </div>

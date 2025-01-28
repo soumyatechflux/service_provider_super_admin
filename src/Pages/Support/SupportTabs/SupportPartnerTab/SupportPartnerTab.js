@@ -213,7 +213,7 @@ const SupportPartnerTab = () => {
                   <tr key={item.support_id}>
                     <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
                     <td>{item.name || "N/A"}</td>
-                    <td>{item.user_role}</td>
+                    <td>{item.user_role.charAt(0).toUpperCase() + item.user_role.slice(1)}</td>
                     <td>{item.description}</td>
                     <td>
                       <div className="status-div">
@@ -256,6 +256,7 @@ const SupportPartnerTab = () => {
           support={selectedSupport}
           onClose={() => setShowModal(false)}
           onStatusChange={handleStatusChange}
+          getSupportData={getSupportData}
         />
       )}
     </div>

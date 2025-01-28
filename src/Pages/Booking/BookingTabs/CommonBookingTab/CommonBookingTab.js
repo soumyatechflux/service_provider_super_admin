@@ -240,9 +240,12 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                   <th scope="col" style={{ width: "5%" }}>
                     Amount
                   </th>
-                  <th scope="col" style={{ width: "10%" }}>
-                    Address
-                  </th>
+                  {(category_id === "1" || category_id === "3") && (
+  <th scope="col" style={{ width: "10%" }}>
+    Address 
+  </th>
+)}
+
                   {category_id === "2" && (
                     <th scope="col" style={{ width: "10%" }}>
                       Address From
@@ -289,9 +292,12 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                       {item.sub_category_name?.sub_category_name || "Unknown"}
                     </td>
                     <td>{item.billing_amount || "N/A"}</td>
+
+                    {(category_id === "1" || category_id === "3") && (
                     <td>
                       {item.visit_address || "No current_address available."}
                     </td>
+                    )}
                     {category_id === "2" && (
                       <td>
                         {item.address_from || "No current_address available."}

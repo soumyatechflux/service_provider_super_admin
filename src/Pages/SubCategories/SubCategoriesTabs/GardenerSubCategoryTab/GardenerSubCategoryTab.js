@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import EditIcon from "@mui/icons-material/Edit";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "../../../Loader/Loader";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteSubCategoryModal from "./../DeleteSubCategoryModal/DeleteSubCategoryModal";
-import EditSubCatStatusModal from "./../EditSubCatStatusModal/EditSubCatStatusModal";
 import AddSubCategoryModal from "../AddSubCategoryModal/AddSubCategoryModal";
 import EditSubCategoryModal from "../EditSubCategoryModal/EditSubCategoryModal";
-import { useNavigate } from "react-router-dom";
+import DeleteSubCategoryModal from "./../DeleteSubCategoryModal/DeleteSubCategoryModal";
+import EditSubCatStatusModal from "./../EditSubCatStatusModal/EditSubCatStatusModal";
 
 const GardenerCategoriesTab = ({ category_id }) => {
   const [subCategoryData, setSubCategoryData] = useState([]);
@@ -125,9 +125,9 @@ const GardenerCategoriesTab = ({ category_id }) => {
 
   const handleNavigateToSettings = (id) => {
         if (id === 8) {
-          navigate("/sub-categories-gardner-visit");
+          navigate("/sub-categories/gardner-visit");
         } else if (id === 9) {
-          navigate("/sub-categories-monthly-subscription");
+          navigate("/sub-categories/monthly-subscription");
         }
       };
 

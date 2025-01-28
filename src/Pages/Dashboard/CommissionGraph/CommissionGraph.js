@@ -196,11 +196,11 @@ const CommissionGraph = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-
+  
       try {
         // Remove the year parameter from the API URL
         let apiUrl = `${baseUrl}/api/admin/dashboard/commision`; // No year parameter
-
+  
         // Add time range and week/month conditions
         if (timeRange === "today") {
           apiUrl += `?timeRange=today`;
@@ -209,17 +209,20 @@ const CommissionGraph = () => {
         } else if (timeRange.match(/^\d+$/)) {
           apiUrl += `?month=${timeRange}`;
         }
-
+  
         const response = await axios.get(apiUrl, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
+  
         const { data } = response.data;
-
-        if (timeRange === "today") {
+  
+        // Set today=true if timeRange is "today"
+        const isToday = timeRange === "today";
+  
+        if (isToday) {
           // Handle "Today" data
           const todayCommission = data[0] ? parseFloat(data[0].commission) : 0; // Get today's Commission value
-
+  
           setChartData({
             labels: [""], // No labels for today, just one point in the center
             datasets: [
@@ -243,7 +246,7 @@ const CommissionGraph = () => {
             "Friday",
             "Saturday",
           ];
-
+  
           const processedData = allDaysOfWeek.map((dayName) => {
             const dayData = data.find((day) => day.day_name === dayName);
             return {
@@ -251,7 +254,7 @@ const CommissionGraph = () => {
               data: dayData ? parseFloat(dayData.commission) : 0, // Default Commission to 0 if no data
             };
           });
-
+  
           setChartData({
             labels: processedData.map((day) => day.label),
             datasets: [
@@ -280,7 +283,7 @@ const CommissionGraph = () => {
               };
             }
           );
-
+  
           setChartData({
             labels: processedData.map((week) => week.label),
             datasets: [
@@ -302,10 +305,10 @@ const CommissionGraph = () => {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [timeRange, selectedWeek]);
-
+  
   const handleExport = async (format) => {
     setLoading(true);
 

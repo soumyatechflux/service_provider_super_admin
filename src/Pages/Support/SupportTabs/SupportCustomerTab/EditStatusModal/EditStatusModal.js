@@ -87,7 +87,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange,getSupportData }) =>
                 Open
               </MenuItem>
             )}
-            <MenuItem value="in-progress">In-Progress</MenuItem>
+            <MenuItem value="in-progress">In-progress</MenuItem>
             <MenuItem value="resolved">Resolved</MenuItem>
             <MenuItem value="closed">Closed</MenuItem>
           </Select>

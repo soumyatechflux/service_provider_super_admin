@@ -157,7 +157,7 @@ const AddPartnerModal = ({ show, handleClose, onSave, getRestaurantTableData }) 
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email (optional):</label>
+            <label htmlFor="email">Email :</label>
             <TextField
               id="email"
               name="email"

@@ -190,118 +190,120 @@ const SalesGraph = () => {
     { value: 4, label: "Week 4" },
   ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+ useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
 
-      try {
-        // Remove the year parameter from the API URL
-        let apiUrl = `${baseUrl}/api/admin/dashboard/sales`; // No year parameter
+    try {
+      // Remove the year parameter from the API URL
+      let apiUrl = `${baseUrl}/api/admin/dashboard/sales`; // No year parameter
 
-        // Add time range and week/month conditions
-        if (timeRange === "today") {
-          apiUrl += `?timeRange=today`;
+      // Add time range and week/month conditions
+      if (timeRange === "today") {
+        apiUrl += `?timeRange=today`;
+      } else if (timeRange === "weekly") {
+        apiUrl += `?timeRange=weekly&week=${selectedWeek}`;
+      } else if (timeRange.match(/^\d+$/)) {
+        apiUrl += `?month=${timeRange}`;
+      }
+
+      const response = await axios.get(apiUrl, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const { data } = response.data;
+
+       if (timeRange === "today") {
+          const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+          const todayData = data[0] || null; // Assume the API returns today's data
+          const todayName = todayData ? todayData.day_name : new Date().toLocaleDateString("en-US", { weekday: "long" });
+          const todayCount = todayData ? todayData.booking_count : 0;
+  
+          const dayData = allDays.map((day) => (day === todayName ? todayCount : 0));
+  
+          setChartData({
+            labels: allDays, // Show all days of the week
+            datasets: [
+              {
+                label: "Bookings Today",
+                data: dayData, // Only today's day will have data; others will be 0
+                backgroundColor: "rgba(0, 123, 255, 0.6)", // Blue color
+              },
+            ],
+          });
         } else if (timeRange === "weekly") {
-          apiUrl += `?timeRange=weekly&week=${selectedWeek}`;
-        } else if (timeRange.match(/^\d+$/)) {
-          apiUrl += `?month=${timeRange}`;
-        }
+        // Handle "Weekly" data (display days on x-axis, Sunday to Saturday)
+        const allDaysOfWeek = [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ];
 
-        const response = await axios.get(apiUrl, {
-          headers: { Authorization: `Bearer ${token}` },
+        const processedData = allDaysOfWeek.map((dayName) => {
+          const dayData = data.find((day) => day.day_name === dayName);
+          return {
+            label: dayName, // Day name for the x-axis
+            data: dayData ? parseFloat(dayData.sales) : 0, // Default sales to 0 if no data
+          };
         });
 
-        const { data } = response.data;
-
-        if (timeRange === "today") {
-          // Handle "Today" data
-          const todaySales = data[0] ? parseFloat(data[0].sales) : 0; // Get today's sales value
-
-          setChartData({
-            labels: [""], // No labels for today, just one point in the center
-            datasets: [
-              {
-                label: "Sales Today",
-                data: [todaySales], // Sales for today
-                borderColor: "rgba(0, 123, 255, 1)",
-                backgroundColor: "rgba(0, 123, 255, 0.2)",
-                fill: true,
-              },
-            ],
-          });
-        } else if (timeRange === "weekly") {
-          // Handle "Weekly" data (display days on x-axis, Sunday to Saturday)
-          const allDaysOfWeek = [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-          ];
-
-          const processedData = allDaysOfWeek.map((dayName) => {
-            const dayData = data.find((day) => day.day_name === dayName);
+        setChartData({
+          labels: processedData.map((day) => day.label),
+          datasets: [
+            {
+              label: `Sales for Week ${selectedWeek}`,
+              data: processedData.map((day) => day.data),
+              borderColor: "rgba(0, 123, 255, 1)",
+              backgroundColor: "rgba(0, 123, 255, 0.2)",
+              fill: true,
+            },
+          ],
+        });
+      } else if (timeRange.match(/^\d+$/)) {
+        // Handle "Monthly" data (display sales for weeks of the month)
+        const totalWeeks = 4; // Assuming 4 weeks in a month
+        const processedData = Array.from(
+          { length: totalWeeks },
+          (_, index) => {
+            const weekNumber = index + 1;
+            const weekData = data.find(
+              (week) => week.week_number === weekNumber
+            );
             return {
-              label: dayName, // Day name for the x-axis
-              data: dayData ? parseFloat(dayData.sales) : 0, // Default sales to 0 if no data
+              label: `Week ${weekNumber}`,
+              data: weekData ? parseFloat(weekData.sales) : 0,
             };
-          });
+          }
+        );
 
-          setChartData({
-            labels: processedData.map((day) => day.label),
-            datasets: [
-              {
-                label: `Sales for Week ${selectedWeek}`,
-                data: processedData.map((day) => day.data),
-                borderColor: "rgba(0, 123, 255, 1)",
-                backgroundColor: "rgba(0, 123, 255, 0.2)",
-                fill: true,
-              },
-            ],
-          });
-        } else if (timeRange.match(/^\d+$/)) {
-          // Handle "Monthly" data (display sales for weeks of the month)
-          const totalWeeks = 4; // Assuming 4 weeks in a month
-          const processedData = Array.from(
-            { length: totalWeeks },
-            (_, index) => {
-              const weekNumber = index + 1;
-              const weekData = data.find(
-                (week) => week.week_number === weekNumber
-              );
-              return {
-                label: `Week ${weekNumber}`,
-                data: weekData ? parseFloat(weekData.sales) : 0,
-              };
-            }
-          );
-
-          setChartData({
-            labels: processedData.map((week) => week.label),
-            datasets: [
-              {
-                label: `Sales in ${
-                  timeRangeOptions.find((opt) => opt.value === timeRange)?.label
-                }`,
-                data: processedData.map((week) => week.data),
-                borderColor: "rgba(0, 123, 255, 1)",
-                backgroundColor: "rgba(0, 123, 255, 0.2)",
-                fill: true,
-              },
-            ],
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching sales data:", error);
-      } finally {
-        setLoading(false);
+        setChartData({
+          labels: processedData.map((week) => week.label),
+          datasets: [
+            {
+              label: `Sales in ${
+                timeRangeOptions.find((opt) => opt.value === timeRange)?.label
+              }`,
+              data: processedData.map((week) => week.data),
+              borderColor: "rgba(0, 123, 255, 1)",
+              backgroundColor: "rgba(0, 123, 255, 0.2)",
+              fill: true,
+            },
+          ],
+        });
       }
-    };
+    } catch (error) {
+      console.error("Error fetching sales data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [timeRange, selectedWeek]);
+  fetchData();
+}, [timeRange, selectedWeek]);
 
   const handleExport = async (format) => {
     setLoading(true);
