@@ -142,12 +142,15 @@ const StaffTable = ({}) => {
 
   // Search Logic
 // Search Logic
+const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+
 const filteredData = dummy_Data.filter(
   (item) =>
-    (item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    (item.email && item.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    (item.role_name && item.role_name.toLowerCase().includes(searchQuery.toLowerCase()))
+    (item.name && normalizeString(item.name).includes(normalizeString(searchQuery))) ||
+    (item.email && item.email.includes(searchQuery)) ||  // Exact match for email (case-sensitive)
+    (item.role_name && normalizeString(item.role_name).includes(normalizeString(searchQuery)))
 );
+
 
 
   // Pagination Logic
