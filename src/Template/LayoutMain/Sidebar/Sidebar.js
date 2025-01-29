@@ -146,12 +146,29 @@ const Sidebar = ({ isOpen }) => {
               </CustomTooltip>
             );
           })}
+
+          {/* Static Help Centre Menu Item */}
+          <CustomTooltip
+            title={!isOpen ? "Help Centre" : ""}
+            placement="right"
+            arrow
+          >
+            <Link to="/help-centre">
+              <li
+                className={`menu-item ${
+                  activeItem === "/help-centre" ? "active" : ""
+                }`}
+                onClick={() => handleItemClick("/help-centre")}
+              >
+                <Help />
+                {isOpen && <span>Help Centre</span>}
+              </li>
+            </Link>
+          </CustomTooltip>
         </ul>
       </div>
     </div>
   );
 };
 
-
 export default Sidebar;
-

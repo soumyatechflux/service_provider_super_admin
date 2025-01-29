@@ -51,6 +51,7 @@ import RoundTripTab from "./Pages/SubCategories/Settings/Driver/RoundTripTab/Rou
 import OneWayTripTab from "./Pages/SubCategories/Settings/Driver/OneWayTripTab/OneWayTripTab";
 import MonthlySubscriptionTab from "./Pages/SubCategories/Settings/Gardener/MonthlySubscriptionTab/MonthlySubscriptionTab";
 import GardnerDayVisitTab from "./Pages/SubCategories/Settings/Gardener/GardnerDayVisitTab/GardnerDayVisitTab";
+import HelpCentre from "./Pages/HelpCentre/HelpCentre";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -160,6 +161,7 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
           <Route path="/cancellation-policy" element={<CancellationPlicy/>}/>
           <Route path="/refund-policy" element={<RefundPolicy/>}/>
+          <Route path="/help-centre" element={<HelpCentre/>}/>
 
 
           <Route path="/serverDown" element={<ServerDown/>}/>

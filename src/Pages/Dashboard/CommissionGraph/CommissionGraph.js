@@ -107,7 +107,6 @@
 
 
 
-
 import React, { useState, useEffect } from "react";
 import {
   Chart as ChartJS,
@@ -145,30 +144,6 @@ const CommissionGraph = () => {
   const baseUrl =
     process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL;
 
-  const options = {
-    scales: {
-      x: {
-        type: "category",
-        title: {
-          display: true,
-          text:
-            timeRange === "weekly"
-              ? `Week ${selectedWeek}`
-              : timeRange === "month"
-              ? "Weeks 1-4"
-              : "Commission (in units)",
-        },
-      },
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "Rupees",
-        },
-      },
-    },
-  };
-
   const timeRangeOptions = [
     { value: "today", label: "Today" },
     { value: "weekly", label: "Weekly" },
@@ -193,15 +168,37 @@ const CommissionGraph = () => {
     { value: 4, label: "Week 4" },
   ];
 
+  const options = {
+    scales: {
+      x: {
+        type: "category",
+        title: {
+          display: true,
+          text:
+            timeRange === "weekly"
+              ? `Week ${selectedWeek}`
+              : timeRange === "month"
+              ? "Weeks 1-4"
+              : "Commission (in units)",
+        },
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Rupees",
+        },
+      },
+    },
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-  
+
       try {
-        // Remove the year parameter from the API URL
         let apiUrl = `${baseUrl}/api/admin/dashboard/commision`; // No year parameter
-  
-        // Add time range and week/month conditions
+
         if (timeRange === "today") {
           apiUrl += `?timeRange=today`;
         } else if (timeRange === "weekly") {
@@ -209,26 +206,24 @@ const CommissionGraph = () => {
         } else if (timeRange.match(/^\d+$/)) {
           apiUrl += `?month=${timeRange}`;
         }
-  
+
         const response = await axios.get(apiUrl, {
           headers: { Authorization: `Bearer ${token}` },
         });
-  
+
         const { data } = response.data;
-  
-        // Set today=true if timeRange is "today"
+
         const isToday = timeRange === "today";
-  
+
         if (isToday) {
-          // Handle "Today" data
           const todayCommission = data[0] ? parseFloat(data[0].commission) : 0; // Get today's Commission value
-  
+
           setChartData({
-            labels: [""], // No labels for today, just one point in the center
+            labels: [""], // One label for today
             datasets: [
               {
                 label: "Commission Today",
-                data: [todayCommission], // Commission for today
+                data: [todayCommission],
                 borderColor: "rgba(0, 123, 255, 1)",
                 backgroundColor: "rgba(0, 123, 255, 0.2)",
                 fill: true,
@@ -236,62 +231,45 @@ const CommissionGraph = () => {
             ],
           });
         } else if (timeRange === "weekly") {
-          // Handle "Weekly" data (display days on x-axis, Sunday to Saturday)
-          const allDaysOfWeek = [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-          ];
-  
-          const processedData = allDaysOfWeek.map((dayName) => {
-            const dayData = data.find((day) => day.day_name === dayName);
-            return {
-              label: dayName, // Day name for the x-axis
-              data: dayData ? parseFloat(dayData.commission) : 0, // Default Commission to 0 if no data
-            };
-          });
-  
+          const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+          const weekData = data.reduce((acc, item) => {
+            acc[item.day_name] = item.commission;
+            return acc;
+          }, {});
+
+          const weekLabels = allDays;
+          const commissionAmounts = allDays.map((day) => weekData[day] || 0);
+
           setChartData({
-            labels: processedData.map((day) => day.label),
+            labels: weekLabels,
             datasets: [
               {
                 label: `Commission for Week ${selectedWeek}`,
-                data: processedData.map((day) => day.data),
+                data: commissionAmounts,
                 borderColor: "rgba(0, 123, 255, 1)",
                 backgroundColor: "rgba(0, 123, 255, 0.2)",
                 fill: true,
               },
             ],
           });
-        } else if (timeRange.match(/^\d+$/)) {
-          // Handle "Monthly" data (display Commission for weeks of the month)
-          const totalWeeks = 4; // Assuming 4 weeks in a month
-          const processedData = Array.from(
-            { length: totalWeeks },
-            (_, index) => {
-              const weekNumber = index + 1;
-              const weekData = data.find(
-                (week) => week.week_number === weekNumber
-              );
-              return {
-                label: `Week ${weekNumber}`,
-                data: weekData ? parseFloat(weekData.commission) : 0,
-              };
-            }
+        } else {
+          const maxWeekNumber = Math.max(...data.map((item) => item.week_number));
+          const weekLabels = Array.from(
+            { length: maxWeekNumber },
+            (_, i) => `Week ${i + 1}`
           );
-  
+          const weekData = Array(maxWeekNumber).fill(0);
+
+          data.forEach((item) => {
+            weekData[item.week_number - 1] = item.commission;
+          });
+
           setChartData({
-            labels: processedData.map((week) => week.label),
+            labels: weekLabels,
             datasets: [
               {
-                label: `Commission in ${
-                  timeRangeOptions.find((opt) => opt.value === timeRange)?.label
-                }`,
-                data: processedData.map((week) => week.data),
+                label: `Commission for ${timeRangeOptions.find((opt) => opt.value === timeRange)?.label}`,
+                data: weekData,
                 borderColor: "rgba(0, 123, 255, 1)",
                 backgroundColor: "rgba(0, 123, 255, 0.2)",
                 fill: true,
@@ -300,22 +278,21 @@ const CommissionGraph = () => {
           });
         }
       } catch (error) {
-        console.error("Error fetching Commission data:", error);
+        console.error("Error fetching commission data:", error);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, [timeRange, selectedWeek]);
-  
+
   const handleExport = async (format) => {
     setLoading(true);
 
     try {
       let apiUrl = `${baseUrl}/api/admin/dashboard/commision`; // No year parameter
 
-      // Add time range and week or month parameters
       if (timeRange === "today") {
         apiUrl += `?timeRange=today`;
       } else if (timeRange === "weekly") {
@@ -324,34 +301,27 @@ const CommissionGraph = () => {
         apiUrl += `?month=${timeRange}`;
       }
 
-      // Add export type parameter (csv, excel, or pdf)
       apiUrl += `&exportType=${format}`;
 
-      // Make the API request for export data
       const response = await axios.get(apiUrl, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const { success, message, exportType, base64 } = response.data;
 
-      // If export is successful, handle the base64 response
       if (success) {
-        // Decode the base64 string to binary data
         const decodedData = atob(base64);
-
-        // Convert the decoded data into a Blob (binary large object)
         const blob = new Blob(
           [new Uint8Array([...decodedData].map((char) => char.charCodeAt(0)))],
           {
-            type: exportType === "csv" ? "text/csv" : "application/pdf", // Adjust MIME type based on export type
+            type: exportType === "csv" ? "text/csv" : "application/pdf",
           }
         );
 
-        // Create a link to trigger the file download
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `export.${exportType}`; // Use export type as file extension (csv or pdf)
-        link.click(); // Trigger the download
+        link.download = `commission_export.${exportType}`;
+        link.click();
       } else {
         console.error("Export failed:", message);
       }

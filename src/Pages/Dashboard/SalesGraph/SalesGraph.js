@@ -105,6 +105,7 @@
 
 // export default SalesGraph;
 
+
 import React, { useState, useEffect } from "react";
 import {
   Chart as ChartJS,
@@ -121,7 +122,6 @@ import Select from "react-select";
 import { saveAs } from "file-saver";
 import axios from "axios";
 
-// Register the components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -139,8 +139,23 @@ const SalesGraph = () => {
   const [loading, setLoading] = useState(false);
 
   const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-  const baseUrl =
-    process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL;
+  const baseUrl = process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL;
+
+  const timeRangeOptions = [
+    { value: "today", label: "Today" },
+    { value: "weekly", label: "Weekly" },
+    ...Array.from({ length: 12 }, (_, i) => ({
+      value: (i + 1).toString(),
+      label: new Date(0, i).toLocaleString("default", { month: "long" }),
+    })),
+  ];
+
+  const weekOptions = [
+    { value: 1, label: "Week 1" },
+    { value: 2, label: "Week 2" },
+    { value: 3, label: "Week 3" },
+    { value: 4, label: "Week 4" },
+  ];
 
   const options = {
     scales: {
@@ -148,12 +163,7 @@ const SalesGraph = () => {
         type: "category",
         title: {
           display: true,
-          text:
-            timeRange === "weekly"
-              ? `Week ${selectedWeek}`
-              : timeRange === "month"
-              ? "Weeks 1-4"
-              : "Sales (in units)",
+          text: timeRange === "weekly" ? `Week ${selectedWeek}` : "Sales (in units)",
         },
       },
       y: {
@@ -166,152 +176,109 @@ const SalesGraph = () => {
     },
   };
 
-  const timeRangeOptions = [
-    { value: "today", label: "Today" },
-    { value: "weekly", label: "Weekly" },
-    { value: "1", label: "January" },
-    { value: "2", label: "February" },
-    { value: "3", label: "March" },
-    { value: "4", label: "April" },
-    { value: "5", label: "May" },
-    { value: "6", label: "June" },
-    { value: "7", label: "July" },
-    { value: "8", label: "August" },
-    { value: "9", label: "September" },
-    { value: "10", label: "October" },
-    { value: "11", label: "November" },
-    { value: "12", label: "December" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        let apiUrl = `${baseUrl}/api/admin/dashboard/sales`;
 
-  const weekOptions = [
-    { value: 1, label: "Week 1" },
-    { value: 2, label: "Week 2" },
-    { value: 3, label: "Week 3" },
-    { value: 4, label: "Week 4" },
-  ];
+        if (timeRange === "today") {
+          apiUrl += `?today=true`;
+        } else if (timeRange === "weekly") {
+          apiUrl += `?timeRange=weekly&week=${selectedWeek}`;
+        } else {
+          apiUrl += `?month=${timeRange}`;
+        }
 
- useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
+        const response = await axios.get(apiUrl, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-    try {
-      // Remove the year parameter from the API URL
-      let apiUrl = `${baseUrl}/api/admin/dashboard/sales`; // No year parameter
+        const { data } = response.data;
 
-      // Add time range and week/month conditions
-      if (timeRange === "today") {
-        apiUrl += `?timeRange=today`;
-      } else if (timeRange === "weekly") {
-        apiUrl += `?timeRange=weekly&week=${selectedWeek}`;
-      } else if (timeRange.match(/^\d+$/)) {
-        apiUrl += `?month=${timeRange}`;
-      }
-
-      const response = await axios.get(apiUrl, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const { data } = response.data;
-
-       if (timeRange === "today") {
+        if (timeRange === "today") {
           const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-          const todayData = data[0] || null; // Assume the API returns today's data
+          const todayData = data[0] || null;
           const todayName = todayData ? todayData.day_name : new Date().toLocaleDateString("en-US", { weekday: "long" });
-          const todayCount = todayData ? todayData.booking_count : 0;
-  
-          const dayData = allDays.map((day) => (day === todayName ? todayCount : 0));
-  
+          const todayAmount = todayData ? todayData.sales : 0;
+
+          const dayData = allDays.map((day) => (day === todayName ? todayAmount : 0));
+
           setChartData({
-            labels: allDays, // Show all days of the week
+            labels: allDays,
             datasets: [
               {
-                label: "Bookings Today",
-                data: dayData, // Only today's day will have data; others will be 0
-                backgroundColor: "rgba(0, 123, 255, 0.6)", // Blue color
+                label: "Sales Today",
+                data: dayData,
+                borderColor: "rgba(0, 123, 255, 1)",
+                backgroundColor: "rgba(0, 123, 255, 0.2)",
+                fill: true,
               },
             ],
           });
         } else if (timeRange === "weekly") {
-        // Handle "Weekly" data (display days on x-axis, Sunday to Saturday)
-        const allDaysOfWeek = [
-          "Sunday",
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-        ];
+          const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+          const dayData = data.reduce((acc, item) => {
+            acc[item.day_name] = item.sales;
+            return acc;
+          }, {});
 
-        const processedData = allDaysOfWeek.map((dayName) => {
-          const dayData = data.find((day) => day.day_name === dayName);
-          return {
-            label: dayName, // Day name for the x-axis
-            data: dayData ? parseFloat(dayData.sales) : 0, // Default sales to 0 if no data
-          };
-        });
+          const dayLabels = allDays;
+          const salesAmounts = allDays.map((day) => dayData[day] || 0);
 
-        setChartData({
-          labels: processedData.map((day) => day.label),
-          datasets: [
-            {
-              label: `Sales for Week ${selectedWeek}`,
-              data: processedData.map((day) => day.data),
-              borderColor: "rgba(0, 123, 255, 1)",
-              backgroundColor: "rgba(0, 123, 255, 0.2)",
-              fill: true,
-            },
-          ],
-        });
-      } else if (timeRange.match(/^\d+$/)) {
-        // Handle "Monthly" data (display sales for weeks of the month)
-        const totalWeeks = 4; // Assuming 4 weeks in a month
-        const processedData = Array.from(
-          { length: totalWeeks },
-          (_, index) => {
-            const weekNumber = index + 1;
-            const weekData = data.find(
-              (week) => week.week_number === weekNumber
-            );
-            return {
-              label: `Week ${weekNumber}`,
-              data: weekData ? parseFloat(weekData.sales) : 0,
-            };
-          }
-        );
+          setChartData({
+            labels: dayLabels,
+            datasets: [
+              {
+                label: `Sales for Week ${selectedWeek}`,
+                data: salesAmounts,
+                borderColor: "rgba(0, 123, 255, 1)",
+                backgroundColor: "rgba(0, 123, 255, 0.2)",
+                fill: true,
+              },
+            ],
+          });
+        } else {
+          const maxWeekNumber = Math.max(...data.map((item) => item.week_number));
+          const weekLabels = Array.from(
+            { length: maxWeekNumber },
+            (_, i) => `Week ${i + 1}`
+          );
+          const weekData = Array(maxWeekNumber).fill(0);
 
-        setChartData({
-          labels: processedData.map((week) => week.label),
-          datasets: [
-            {
-              label: `Sales in ${
-                timeRangeOptions.find((opt) => opt.value === timeRange)?.label
-              }`,
-              data: processedData.map((week) => week.data),
-              borderColor: "rgba(0, 123, 255, 1)",
-              backgroundColor: "rgba(0, 123, 255, 0.2)",
-              fill: true,
-            },
-          ],
-        });
+          data.forEach((item) => {
+            weekData[item.week_number - 1] = item.sales;
+          });
+
+          setChartData({
+            labels: weekLabels,
+            datasets: [
+              {
+                label: `Sales for ${timeRangeOptions.find((opt) => opt.value === timeRange)?.label}`,
+                data: weekData,
+                borderColor: "rgba(0, 123, 255, 1)",
+                backgroundColor: "rgba(0, 123, 255, 0.2)",
+                fill: true,
+              },
+            ],
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching sales data:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching sales data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchData();
-}, [timeRange, selectedWeek]);
+    fetchData();
+  }, [timeRange, selectedWeek]);
 
   const handleExport = async (format) => {
     setLoading(true);
 
     try {
-      let apiUrl = `${baseUrl}/api/admin/dashboard/sales`; // No year parameter
+      let apiUrl = `${baseUrl}/api/admin/dashboard/sales`;
 
-      // Add time range and week or month parameters
       if (timeRange === "today") {
         apiUrl += `?timeRange=today`;
       } else if (timeRange === "weekly") {
@@ -320,34 +287,27 @@ const SalesGraph = () => {
         apiUrl += `?month=${timeRange}`;
       }
 
-      // Add export type parameter (csv, excel, or pdf)
       apiUrl += `&exportType=${format}`;
 
-      // Make the API request for export data
       const response = await axios.get(apiUrl, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const { success, message, exportType, base64 } = response.data;
 
-      // If export is successful, handle the base64 response
       if (success) {
-        // Decode the base64 string to binary data
         const decodedData = atob(base64);
-
-        // Convert the decoded data into a Blob (binary large object)
         const blob = new Blob(
           [new Uint8Array([...decodedData].map((char) => char.charCodeAt(0)))],
           {
-            type: exportType === "csv" ? "text/csv" : "application/pdf", // Adjust MIME type based on export type
+            type: exportType === "csv" ? "text/csv" : "application/pdf",
           }
         );
 
-        // Create a link to trigger the file download
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `export.${exportType}`; // Use export type as file extension (csv or pdf)
-        link.click(); // Trigger the download
+        link.download = `sales_export.${exportType}`;
+        link.click();
       } else {
         console.error("Export failed:", message);
       }
