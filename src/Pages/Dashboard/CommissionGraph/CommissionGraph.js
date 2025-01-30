@@ -195,35 +195,37 @@ const CommissionGraph = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-
       try {
-        let apiUrl = `${baseUrl}/api/admin/dashboard/commision`; // No year parameter
-
+        let apiUrl = `${baseUrl}/api/admin/dashboard/commision`;
+  
         if (timeRange === "today") {
-          apiUrl += `?timeRange=today`;
+          apiUrl += `?today=true`;
         } else if (timeRange === "weekly") {
           apiUrl += `?timeRange=weekly&week=${selectedWeek}`;
-        } else if (timeRange.match(/^\d+$/)) {
+        } else {
           apiUrl += `?month=${timeRange}`;
         }
-
+  
         const response = await axios.get(apiUrl, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
+  
         const { data } = response.data;
-
-        const isToday = timeRange === "today";
-
-        if (isToday) {
-          const todayCommission = data[0] ? parseFloat(data[0].commission) : 0; // Get today's Commission value
-
+  
+        if (timeRange === "today") {
+          const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+          const todayData = data[0] || null;
+          const todayName = todayData ? todayData.day_name : new Date().toLocaleDateString("en-US", { weekday: "long" });
+          const todayAmount = todayData ? todayData.commission : 0;
+  
+          const dayData = allDays.map((day) => (day === todayName ? todayAmount : 0));
+  
           setChartData({
-            labels: [""], // One label for today
+            labels: allDays,
             datasets: [
               {
                 label: "Commission Today",
-                data: [todayCommission],
+                data: dayData,
                 borderColor: "rgba(0, 123, 255, 1)",
                 backgroundColor: "rgba(0, 123, 255, 0.2)",
                 fill: true,
@@ -232,16 +234,16 @@ const CommissionGraph = () => {
           });
         } else if (timeRange === "weekly") {
           const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-          const weekData = data.reduce((acc, item) => {
+          const dayData = data.reduce((acc, item) => {
             acc[item.day_name] = item.commission;
             return acc;
           }, {});
-
-          const weekLabels = allDays;
-          const commissionAmounts = allDays.map((day) => weekData[day] || 0);
-
+  
+          const dayLabels = allDays;
+          const commissionAmounts = allDays.map((day) => dayData[day] || 0);
+  
           setChartData({
-            labels: weekLabels,
+            labels: dayLabels,
             datasets: [
               {
                 label: `Commission for Week ${selectedWeek}`,
@@ -254,16 +256,13 @@ const CommissionGraph = () => {
           });
         } else {
           const maxWeekNumber = Math.max(...data.map((item) => item.week_number));
-          const weekLabels = Array.from(
-            { length: maxWeekNumber },
-            (_, i) => `Week ${i + 1}`
-          );
+          const weekLabels = Array.from({ length: maxWeekNumber }, (_, i) => `Week ${i + 1}`);
           const weekData = Array(maxWeekNumber).fill(0);
-
+  
           data.forEach((item) => {
             weekData[item.week_number - 1] = item.commission;
           });
-
+  
           setChartData({
             labels: weekLabels,
             datasets: [
@@ -283,9 +282,10 @@ const CommissionGraph = () => {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [timeRange, selectedWeek]);
+  
 
   const handleExport = async (format) => {
     setLoading(true);
