@@ -60,13 +60,15 @@ const CommonDiscountTab = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  // Filtered data based on the search query
+  const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+
   const filteredData = discountData.filter(
     (item) =>
-      item.voucher_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.discount_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      normalizeString(item.voucher_code).includes(normalizeString(searchQuery)) ||
+      normalizeString(item.discount_type).includes(normalizeString(searchQuery)) ||
+      normalizeString(item.description).includes(normalizeString(searchQuery))
   );
+  
 
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);

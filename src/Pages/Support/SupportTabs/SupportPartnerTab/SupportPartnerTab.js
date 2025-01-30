@@ -74,10 +74,13 @@ const SupportPartnerTab = () => {
   }, [currentPage]);
 
   // Filter and paginate data
+  const normalizeString = (str) => str.replace(/\s+/g, ' ').trim().toLowerCase();
+
   const filteredData = supportData.filter(
     (item) =>
-      item.name && item.name.toLowerCase().includes(searchInput.toLowerCase())
+      item.name && normalizeString(item.name).includes(normalizeString(searchInput))
   );
+  
 
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -103,13 +106,18 @@ const SupportPartnerTab = () => {
 
   const renderPaginationItems = () => {
     const pageRange = getPageRange();
-
+  
+    const handlePageChange = (page) => {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+  
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
           <button
             className="page-link"
-            onClick={() => setCurrentPage(1)}
+            onClick={() => handlePageChange(1)}
             style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
           >
             First
@@ -118,7 +126,7 @@ const SupportPartnerTab = () => {
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
           <button
             className="page-link"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
             style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
           >
             Previous
@@ -131,7 +139,7 @@ const SupportPartnerTab = () => {
           >
             <button
               className="page-link"
-              onClick={() => setCurrentPage(number)}
+              onClick={() => handlePageChange(number)}
               style={{
                 backgroundColor: currentPage === number ? "#007bff" : "white",
                 color: currentPage === number ? "white" : "#007bff",
@@ -141,16 +149,10 @@ const SupportPartnerTab = () => {
             </button>
           </li>
         ))}
-        <li
-          className={`page-item ${
-            currentPage === totalPages ? "disabled" : ""
-          }`}
-        >
+        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
           <button
             className="page-link"
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
+            onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
             style={{
               cursor: currentPage === totalPages ? "not-allowed" : "pointer",
             }}
@@ -158,14 +160,10 @@ const SupportPartnerTab = () => {
             Next
           </button>
         </li>
-        <li
-          className={`page-item ${
-            currentPage === totalPages ? "disabled" : ""
-          }`}
-        >
+        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
           <button
             className="page-link"
-            onClick={() => setCurrentPage(totalPages)}
+            onClick={() => handlePageChange(totalPages)}
             style={{
               cursor: currentPage === totalPages ? "not-allowed" : "pointer",
             }}
@@ -176,6 +174,7 @@ const SupportPartnerTab = () => {
       </ul>
     );
   };
+  
 
   return (
     <div className="Support-Table-Main p-3">

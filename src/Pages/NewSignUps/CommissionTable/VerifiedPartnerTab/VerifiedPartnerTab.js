@@ -96,9 +96,12 @@ const VerifiedPartnerTab = ({
     }
   };
 
+  const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+
   const filteredRestaurants = restaurants.filter((restaurant) =>
-    restaurant.name.toLowerCase().includes(searchInput.toLowerCase())
+    normalizeString(restaurant.name).includes(normalizeString(searchInput))
   );
+  
 
   // Pagination logic
   const totalPages = Math.ceil(restaurants.length / entriesPerPage);

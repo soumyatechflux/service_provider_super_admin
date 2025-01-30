@@ -55,11 +55,15 @@ const CustomersTable = () => {
   }, [getRestaurantTableData]);
 
   useEffect(() => {
+    const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+  
     const filteredData = restaurants.filter((restaurant) =>
-      restaurant.name.toLowerCase().includes(searchInput.toLowerCase())
+      normalizeString(restaurant.name).includes(normalizeString(searchInput))
     );
+  
     setFilteredRestaurants(filteredData);
   }, [searchInput, restaurants]);
+  
 
   const handleRestaurantClick = (restaurant) => {
     setSelectedRestaurant(restaurant);
