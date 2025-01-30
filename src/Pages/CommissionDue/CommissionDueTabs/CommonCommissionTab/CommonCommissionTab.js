@@ -58,11 +58,14 @@ const CommonCommissionTab = ({
   }, [category_id]);
 
   // Filter data based on search input
+  const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+
   const filteredData = dummy_Data.filter(
     (item) =>
-      item.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-      item.category_name.toLowerCase().includes(searchInput.toLowerCase())
+      normalizeString(item.name).includes(normalizeString(searchInput)) ||
+      normalizeString(item.category_name).includes(normalizeString(searchInput))
   );
+  
 
   // Pagination logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
@@ -240,9 +243,12 @@ const CommonCommissionTab = ({
       )}
 
       {/* Pagination */}
-      <nav className="d-flex justify-content-center">
-        {renderPaginationItems()}
-      </nav>
+      {filteredData.length > 0 && (
+  <nav className="d-flex justify-content-center">
+    {renderPaginationItems()}
+  </nav>
+)}
+
     </div>
   );
 };

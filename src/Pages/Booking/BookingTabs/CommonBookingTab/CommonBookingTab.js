@@ -131,9 +131,12 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
 
+  const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+
   const filteredData = dummy_Data.filter((item) =>
-    item.guest_name.toLowerCase().includes(searchInput.toLowerCase())
+    normalizeString(item.guest_name).includes(normalizeString(searchInput))
   );
+  
 
   const currentEntries = filteredData.slice(
     indexOfFirstEntry,

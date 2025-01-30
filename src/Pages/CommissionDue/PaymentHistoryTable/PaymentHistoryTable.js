@@ -49,11 +49,14 @@ const PaymentHistoryTable = ({
   }, []);
 
   // Filter data based on search input
+  const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+
   const filteredData = dummy_Data.filter(
     (item) =>
-      item.partner_name.toLowerCase().includes(searchInput.toLowerCase()) ||
-      item.category_name.toLowerCase().includes(searchInput.toLowerCase())
+      normalizeString(item.partner_name).includes(normalizeString(searchInput)) ||
+      normalizeString(item.category_name).includes(normalizeString(searchInput))
   );
+  
 
   // Pagination logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
