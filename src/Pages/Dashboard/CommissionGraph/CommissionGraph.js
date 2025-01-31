@@ -203,7 +203,7 @@ const CommissionGraph = () => {
         } else if (timeRange === "weekly") {
           apiUrl += `?timeRange=weekly&week=${selectedWeek}`;
         } else {
-          apiUrl += `?month=${timeRange}`;
+          apiUrl = `${baseUrl}/api/admin/dashboard/sales?month=${timeRange}`; // Ensure correct API endpoint for monthly data
         }
   
         const response = await axios.get(apiUrl, {
@@ -255,19 +255,26 @@ const CommissionGraph = () => {
             ],
           });
         } else {
-          const maxWeekNumber = Math.max(...data.map((item) => item.week_number));
+          // Ensure maxWeekNumber is always valid
+          const maxWeekNumber = data.length > 0 ? Math.max(...data.map((item) => item.week_number)) : 4; // Default to 4 weeks if no data
+  
+          // Create labels for each week in the month (Week 1, Week 2, etc.)
           const weekLabels = Array.from({ length: maxWeekNumber }, (_, i) => `Week ${i + 1}`);
+  
+          // Initialize sales data array with 0 for all weeks
           const weekData = Array(maxWeekNumber).fill(0);
   
+          // Populate the sales data for existing weeks
           data.forEach((item) => {
-            weekData[item.week_number - 1] = item.commission;
+            weekData[item.week_number - 1] = parseFloat(item.sales); // Ensure correct index (0-based)
           });
   
+          // Update the chart with the sales data
           setChartData({
             labels: weekLabels,
             datasets: [
               {
-                label: `Commission for ${timeRangeOptions.find((opt) => opt.value === timeRange)?.label}`,
+                label: `Sales for ${timeRangeOptions.find((opt) => opt.value === timeRange)?.label || "Selected Month"}`,
                 data: weekData,
                 borderColor: "rgba(0, 123, 255, 1)",
                 backgroundColor: "rgba(0, 123, 255, 0.2)",
@@ -285,6 +292,7 @@ const CommissionGraph = () => {
   
     fetchData();
   }, [timeRange, selectedWeek]);
+  
   
 
   const handleExport = async (format) => {

@@ -154,7 +154,8 @@ const SettingsTable = () => {
               {settings.map((setting, index) => (
                 <tr key={setting.config_id}>
                   <td>{index + 1}</td>
-                  <td>{formatConfigKey(setting.config_key)}</td>
+                  <td>{setting.config_key}</td>
+                  {/* <td>{formatConfigKey(setting.config_key)}</td> */}
 
                   <td>{setting.config_value}</td>
                   <td>{formatText(setting.description)}</td>

@@ -354,35 +354,29 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                       )}
                     </td>
                     <td>
-                      <i
-                        className={`fa fa-pencil-alt ${
-                          ["upcoming", "inprogress"].includes(
-                            item.booking_status
-                          )
-                            ? "text-primary"
-                            : "text-muted"
-                        }`}
-                        style={{
-                          cursor: ["upcoming", "inprogress"].includes(
-                            item.booking_status
-                          )
-                            ? "pointer"
-                            : "not-allowed",
-                        }}
-                        onClick={() =>
-                          ["upcoming", "inprogress"].includes(
-                            item.booking_status
-                          )
-                            ? handleOpenEditModal(
-                                item.booking_id,
-                                item.booking_status,
-                                item.partner_id,
-                                item.category_id
-                              )
-                            : null
-                        }
-                      />
-                    </td>
+  <i
+    className={`fa fa-pencil-alt ${
+      ["upcoming", "inprogress"].includes(item.booking_status)
+        ? "text-primary"
+        : "text-muted"
+    }`}
+    style={{
+      cursor: item.booking_status === "inprogress" ? "not-allowed" : "pointer",
+      opacity: item.booking_status === "inprogress" ? 0.5 : 1,
+    }}
+    onClick={() =>
+      item.booking_status === "upcoming"
+        ? handleOpenEditModal(
+            item.booking_id,
+            item.booking_status,
+            item.partner_id,
+            item.category_id
+          )
+        : null
+    }
+  />
+</td>
+
                   </tr>
                 ))}
               </tbody>
