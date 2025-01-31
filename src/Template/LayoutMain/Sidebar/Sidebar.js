@@ -164,6 +164,18 @@ const Sidebar = ({ isOpen }) => {
                 {isOpen && <span>Help Centre</span>}
               </li>
             </Link>
+
+            <Link to="/contact-us">
+              <li
+                className={`menu-item ${
+                  activeItem === "/contact-us" ? "active" : ""
+                }`}
+                onClick={() => handleItemClick("/contact-us")}
+              >
+                <Help />
+                {isOpen && <span>Contact Us</span>}
+              </li>
+            </Link>
           </CustomTooltip>
         </ul>
       </div>
