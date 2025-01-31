@@ -1,7 +1,6 @@
 
 import React, { useState } from "react";
 import "./VerifyDriver.css";
-import { Pen, Pencil } from "react-bootstrap-icons";
 
 const VerifyDriver = () => {
   const [driverDetails, setDriverDetails] = useState({
@@ -112,7 +111,7 @@ const VerifyDriver = () => {
         <label>Car Type</label>
         <select value={carType} onChange={(e) => setCarType(e.target.value)}>
           <option value="" disabled>
-            Select Car Type
+          Select Car Type
           </option>
           <option value="rent">Rent</option>
           <option value="own">Own</option>

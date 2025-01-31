@@ -1,13 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { HiPlus, HiPlusSm } from "react-icons/hi";
-import { IoMdBackspace } from "react-icons/io";
-import { HiPlusSmall } from "react-icons/hi2";
-import { BiMinus } from "react-icons/bi";
-import { toast } from "react-toastify";
-import ReactQuill from "react-quill";
-import { FaEdit } from "react-icons/fa";
-import EditPriceModal from "../EditPriceModal/EditPriceModal";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { HiPlus } from "react-icons/hi";
+import { IoMdBackspace } from "react-icons/io";
+import ReactQuill from "react-quill";
+import { toast } from "react-toastify";
 
 const OutStationTrip = () => {
 
@@ -696,7 +692,7 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
 
         {/* Transmission Type Section */}
         <div className="MainDining_AddTable mb-5 mt-5">
-          <p className="Subheading1_AddTable">Select Transmission Type</p>
+          <p className="Subheading1_AddTable">Transmission Type</p>
           <div className="row">
             {transmissions.map((type, index) => (
               <div key={type} className="col-md-4 d-flex align-items-center">
@@ -710,7 +706,7 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
 
         {/* Car Type Section */}
         <div className="MainDining_AddTable mb-5 mt-5">
-          <p className="Subheading1_AddTable">Select Car Type</p>
+          <p className="Subheading1_AddTable"> Car Type</p>
           <div className="row">
             {carTypes.map((type, index) => (
               <div key={type} className="col-md-4 d-flex align-items-center">

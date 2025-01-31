@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { HiPlus, HiPlusSm } from "react-icons/hi";
-import { IoMdBackspace } from "react-icons/io";
-import { toast } from "react-toastify";
-import ReactQuill from "react-quill";
-import { FaEdit } from "react-icons/fa";
-import EditPriceOneWayModal from "../EditPriceOneWayModal/EditPriceOneWayModal";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { HiPlus } from "react-icons/hi";
+import { IoMdBackspace } from "react-icons/io";
+import ReactQuill from "react-quill";
+import { toast } from "react-toastify";
 
 const OneWayTrip = () => {
   const [partnerTax, setPartnerTax] = useState(null);
@@ -765,7 +763,7 @@ const OneWayTrip = () => {
 
         {/* Transmission Type Section */}
         <div className="MainDining_AddTable mb-5 mt-5">
-          <p className="Subheading1_AddTable">Select Transmission Type</p>
+          <p className="Subheading1_AddTable">Transmission Type</p>
           <div className="row">
             {transmissions.map((type, index) => (
               <div key={type} className="col-md-4 d-flex align-items-center">
@@ -779,7 +777,7 @@ const OneWayTrip = () => {
 
         {/* Car Type Section */}
         <div className="MainDining_AddTable mb-5 mt-5">
-          <p className="Subheading1_AddTable">Select Car Type</p>
+          <p className="Subheading1_AddTable">SeleCar Type</p>
           <div className="row">
             {carTypes.map((type, index) => (
               <div key={type} className="col-md-4 d-flex align-items-center">
