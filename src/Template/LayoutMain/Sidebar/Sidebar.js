@@ -18,7 +18,7 @@ import {
   QuestionAnswer,
   AccountBox,
 } from "@mui/icons-material";
-import { Gavel, Lock, ReceiptLong, Cancel } from "@mui/icons-material"; // Add this line
+import { Gavel, Lock, ReceiptLong, ContactMail } from "@mui/icons-material"; // Add this line
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Tooltip from "@mui/material/Tooltip";
@@ -114,7 +114,7 @@ const Sidebar = ({ isOpen }) => {
     20: <Gavel />,
     21: <Lock />,
     22: <ReceiptLong />,
-    23: <Cancel />,
+    23: <ContactMail  />,
   };
 
   return (
@@ -146,37 +146,7 @@ const Sidebar = ({ isOpen }) => {
               </CustomTooltip>
             );
           })}
-
-          {/* Static Help Centre Menu Item */}
-          <CustomTooltip
-            title={!isOpen ? "Help Centre" : ""}
-            placement="right"
-            arrow
-          >
-            <Link to="/help-centre">
-              <li
-                className={`menu-item ${
-                  activeItem === "/help-centre" ? "active" : ""
-                }`}
-                onClick={() => handleItemClick("/help-centre")}
-              >
-                <Help />
-                {isOpen && <span>Help Centre</span>}
-              </li>
-            </Link>
-
-            <Link to="/contact-us">
-              <li
-                className={`menu-item ${
-                  activeItem === "/contact-us" ? "active" : ""
-                }`}
-                onClick={() => handleItemClick("/contact-us")}
-              >
-                <Help />
-                {isOpen && <span>Contact Us</span>}
-              </li>
-            </Link>
-          </CustomTooltip>
+         
         </ul>
       </div>
     </div>
