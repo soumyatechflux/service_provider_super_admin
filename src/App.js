@@ -53,6 +53,7 @@ import MonthlySubscriptionTab from "./Pages/SubCategories/Settings/Gardener/Mont
 import GardnerDayVisitTab from "./Pages/SubCategories/Settings/Gardener/GardnerDayVisitTab/GardnerDayVisitTab";
 import HelpCentre from "./Pages/HelpCentre/HelpCentre";
 import ContactUs from "./Pages/ContactUs/ContactUs";
+import RewardPoints from "./Pages/RewardPoints/RewardPoints";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -164,6 +165,7 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/refund-policy" element={<RefundPolicy/>}/>
           <Route path="/help-centre" element={<HelpCentre/>}/>
           <Route path="/contact-us" element={<ContactUs/>}/>
+          <Route path="/reward-points" element={<RewardPoints/>} />
 
 
           <Route path="/serverDown" element={<ServerDown/>}/>

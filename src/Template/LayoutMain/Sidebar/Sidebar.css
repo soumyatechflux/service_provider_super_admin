@@ -45,6 +45,12 @@
   gap: 5px;
   align-items: center;
   color:#3F3F46 ;
+  /* justify-content: center ; */
+}
+
+.sidebar.closed .menu-item {
+  justify-content: center ;
+
 }
 
 .menu-item i {
@@ -138,6 +144,9 @@ a {
   font-size: 20px;
 }
 
+.sidebar.closed {
+  width: 70px;
+}
 
 /* Tablet screens */
 @media (max-width: 1024px) {
