@@ -42,7 +42,14 @@ const AlertCustomerTable = () => {
 
       // Assuming the API returns data in the format { success: true, data: [...] }
       if (data.success) {
-        setAlertData(data.data || []);
+        // Filter notifications from the last 24 hours
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const filteredNotifications = (data.data || []).filter(notification => {
+          const notificationDate = new Date(notification.created_at);
+          return notificationDate >= twentyFourHoursAgo;
+        });
+
+        setAlertData(filteredNotifications);
       } else {
         console.error("Failed to fetch valid alert data.");
         setAlertData([]);
@@ -99,17 +106,17 @@ const AlertCustomerTable = () => {
                   <th>Sr. No.</th>
                   <th>Title</th>
                   <th>Message</th>
-                  <th>Notification Type</th> {/* New column for notification type */}
+                  <th>Notification Type</th>
                 </tr>
               </thead>
               <tbody>
                 {currentEntries.length > 0 ? (
                   currentEntries.map((item, index) => (
-                    <tr key={item.alert_id}>
+                    <tr key={item.notification_id}>
                       <td>{indexOfFirstEntry + index + 1}</td>
                       <td>{item.title}</td>
                       <td>{item.message}</td>
-                      <td>{item.notification_type}</td> {/* Display notification type */}
+                      <td>{item.notification_type}</td>
                     </tr>
                   ))
                 ) : (
@@ -123,49 +130,51 @@ const AlertCustomerTable = () => {
             </table>
           </div>
 
-          <nav className="d-flex justify-content-center">
-            <ul className="pagination mb-0" style={{ gap: "5px" }}>
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(1)}
-                  style={{
-                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                  }}
-                >
-                  First
-                </button>
-              </li>
-              {[...Array(totalPages)].map((_, number) => (
-                <li
-                  key={number}
-                  className={`page-item ${currentPage === number + 1 ? "active" : ""}`}
-                >
+          {totalPages > 1 && (
+            <nav className="d-flex justify-content-center">
+              <ul className="pagination mb-0" style={{ gap: "5px" }}>
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                   <button
                     className="page-link"
-                    onClick={() => setCurrentPage(number + 1)}
+                    onClick={() => setCurrentPage(1)}
                     style={{
-                      backgroundColor: currentPage === number + 1 ? "#007bff" : "white",
-                      color: currentPage === number + 1 ? "white" : "#007bff",
+                      cursor: currentPage === 1 ? "not-allowed" : "pointer",
                     }}
                   >
-                    {number + 1}
+                    First
                   </button>
                 </li>
-              ))}
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(totalPages)}
-                  style={{
-                    cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-                  }}
-                >
-                  Last
-                </button>
-              </li>
-            </ul>
-          </nav>
+                {[...Array(totalPages)].map((_, number) => (
+                  <li
+                    key={number}
+                    className={`page-item ${currentPage === number + 1 ? "active" : ""}`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => setCurrentPage(number + 1)}
+                      style={{
+                        backgroundColor: currentPage === number + 1 ? "#007bff" : "white",
+                        color: currentPage === number + 1 ? "white" : "#007bff",
+                      }}
+                    >
+                      {number + 1}
+                    </button>
+                  </li>
+                ))}
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage(totalPages)}
+                    style={{
+                      cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    Last
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          )}
         </>
       )}
 
@@ -174,7 +183,14 @@ const AlertCustomerTable = () => {
         onClose={() => setModalOpen(false)}
         onSave={(newAlert) => {
           // Add the new alert to the existing list and close the modal
-          setAlertData([...alertData, { alert_id: (alertData.length + 1).toString(), ...newAlert }]);
+          const currentTime = new Date();
+          const updatedAlert = {
+            ...newAlert, 
+            notification_id: Date.now(), // Using timestamp as a unique ID
+            created_at: currentTime.toISOString(),
+            role: 'customer'
+          };
+          setAlertData([updatedAlert, ...alertData]);
           setModalOpen(false);
         }}
       />
