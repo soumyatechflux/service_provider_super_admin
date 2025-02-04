@@ -181,7 +181,7 @@ const SalesGraph = () => {
       setLoading(true);
       try {
         let apiUrl = `${baseUrl}/api/admin/dashboard/sales`;
-
+  
         if (timeRange === "today") {
           apiUrl += `?today=true`;
         } else if (timeRange === "weekly") {
@@ -189,21 +189,21 @@ const SalesGraph = () => {
         } else {
           apiUrl += `?month=${timeRange}`;
         }
-
+  
         const response = await axios.get(apiUrl, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
+  
         const { data } = response.data;
-
+  
         if (timeRange === "today") {
           const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
           const todayData = data[0] || null;
           const todayName = todayData ? todayData.day_name : new Date().toLocaleDateString("en-US", { weekday: "long" });
           const todayAmount = todayData ? todayData.sales : 0;
-
+  
           const dayData = allDays.map((day) => (day === todayName ? todayAmount : 0));
-
+  
           setChartData({
             labels: allDays,
             datasets: [
@@ -222,10 +222,10 @@ const SalesGraph = () => {
             acc[item.day_name] = item.sales;
             return acc;
           }, {});
-
+  
           const dayLabels = allDays;
           const salesAmounts = allDays.map((day) => dayData[day] || 0);
-
+  
           setChartData({
             labels: dayLabels,
             datasets: [
@@ -239,22 +239,26 @@ const SalesGraph = () => {
             ],
           });
         } else {
-          const maxWeekNumber = Math.max(...data.map((item) => item.week_number));
-          const weekLabels = Array.from(
-            { length: maxWeekNumber },
-            (_, i) => `Week ${i + 1}`
-          );
+          // Ensure maxWeekNumber is always valid
+          const maxWeekNumber = data.length > 0 ? Math.max(...data.map((item) => item.week_number)) : 4; // Default to 4 weeks if no data
+  
+          // Create labels for each week in the month (Week 1, Week 2, etc.)
+          const weekLabels = Array.from({ length: maxWeekNumber }, (_, i) => `Week ${i + 1}`);
+  
+          // Initialize sales data array with 0 for all weeks
           const weekData = Array(maxWeekNumber).fill(0);
-
+  
+          // Populate the sales data for existing weeks
           data.forEach((item) => {
-            weekData[item.week_number - 1] = item.sales;
+            weekData[item.week_number - 1] = parseFloat(item.sales); // Ensure correct index (0-based)
           });
-
+  
+          // Update the chart with the sales data
           setChartData({
             labels: weekLabels,
             datasets: [
               {
-                label: `Sales for ${timeRangeOptions.find((opt) => opt.value === timeRange)?.label}`,
+                label: `Sales for ${timeRangeOptions.find((opt) => opt.value === timeRange)?.label || "Selected Month"}`,
                 data: weekData,
                 borderColor: "rgba(0, 123, 255, 1)",
                 backgroundColor: "rgba(0, 123, 255, 0.2)",
@@ -269,9 +273,10 @@ const SalesGraph = () => {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [timeRange, selectedWeek]);
+  
 
   const handleExport = async (format) => {
     setLoading(true);

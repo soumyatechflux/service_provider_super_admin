@@ -52,6 +52,7 @@ import OneWayTripTab from "./Pages/SubCategories/Settings/Driver/OneWayTripTab/O
 import MonthlySubscriptionTab from "./Pages/SubCategories/Settings/Gardener/MonthlySubscriptionTab/MonthlySubscriptionTab";
 import GardnerDayVisitTab from "./Pages/SubCategories/Settings/Gardener/GardnerDayVisitTab/GardnerDayVisitTab";
 import HelpCentre from "./Pages/HelpCentre/HelpCentre";
+import ContactUs from "./Pages/ContactUs/ContactUs";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -162,6 +163,7 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/cancellation-policy" element={<CancellationPlicy/>}/>
           <Route path="/refund-policy" element={<RefundPolicy/>}/>
           <Route path="/help-centre" element={<HelpCentre/>}/>
+          <Route path="/contact-us" element={<ContactUs/>}/>
 
 
           <Route path="/serverDown" element={<ServerDown/>}/>

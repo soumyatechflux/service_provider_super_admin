@@ -10,6 +10,11 @@ import { toast } from "react-toastify";
 import "./OneMealTab.css"; // Import your CSS for styling
 
 const OneMealTab = () => {
+
+  const [partnerTax, setPartnerTax] = useState(null);
+    const [commission, setCommission] = useState(null);
+    const [partnersPayPercentage, setPartnersPayPercentage] = useState(null);
+    
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [nightChargesStartAt, setNightChargesStartAt] = useState("");
@@ -32,6 +37,13 @@ const OneMealTab = () => {
   const [gst, setGst] = useState(null);
   const [secureFees, setSecureFees] = useState(null);
   const [platformFees, setPlatformFees] = useState(null);
+
+
+  const handleCommissionChange = (e) => {
+    const value = e.target.value === "" ? null : Number(e.target.value);
+    setCommission(value);
+    setPartnersPayPercentage(value !== null ? 100 - value : null);
+  };
 
   const fetchSubCategoryData = async () => {
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
@@ -78,6 +90,12 @@ const OneMealTab = () => {
         setCancellationPolicy(data.cancellation_policy || "");
         setBookingSummaryPage(data.booking_summary || "");
         setNightCharge(data.night_charge || "");
+        setPartnerTax(data.partner_tax || null);
+        setCommission(data.commission || null);
+setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null);
+
+        
+
 
 
         setGst(data.gst || null);
@@ -252,6 +270,10 @@ setPlatformFees(data.platform_fee || null);
     formData.append("gst", gst || "");
     formData.append("secure_fee", secureFees || "");
     formData.append("platform_fee", platformFees || "");
+
+    formData.append("partner_tax", partnerTax || "");
+    formData.append("commission", commission || "");
+
   
   
     // Add `no_of_people` data
@@ -488,7 +510,7 @@ setPlatformFees(data.platform_fee || null);
 
         <div className="row mb-3 align-items-center">
   <div className="col-md-3">
-    <label htmlFor="gst" className="form-label">GST</label>
+    <label htmlFor="gst" className="form-label">Tax on commission & Platform Fee</label>
     <input
       type="number"
       className="form-control"
@@ -499,7 +521,8 @@ setPlatformFees(data.platform_fee || null);
       required
     />
   </div>
-  <div className="col-md-3">
+
+  {/* <div className="col-md-3">
     <label htmlFor="secureFees" className="form-label">Secure Fees</label>
     <input
       type="number"
@@ -510,8 +533,54 @@ setPlatformFees(data.platform_fee || null);
       min="1"
       required
     />
-  </div>
+  </div> */}
+
+  
+
   <div className="col-md-3">
+  <label htmlFor="partnerTax" className="form-label">Tax on Partner's Pay</label>
+  <input
+    type="number"
+    className="form-control"
+    id="partnerTax"
+    value={partnerTax === null ? "" : partnerTax}
+    onChange={(e) => setPartnerTax(e.target.value === "" ? null : Number(e.target.value))}
+    min="1"
+    required
+  />
+</div>
+
+  
+
+<div className="col-md-3">
+  <label htmlFor="commission" className="form-label">Servyo Commission %</label>
+  <input
+    type="number"
+    className="form-control"
+    id="commission"
+    value={commission === null ? "" : commission}
+    onChange={handleCommissionChange}
+    min="1"
+    max="100"
+    required
+  />
+</div>
+
+
+
+      {/* Partner's Pay Percentage (Automatically calculated) */}
+      <div className="col-md-3">
+  <label htmlFor="partnersPay" className="form-label">Partner's Commission %</label>
+  <input
+    type="number"
+    className="form-control"
+    id="partnersPay"
+    value={partnersPayPercentage === null ? "" : partnersPayPercentage}
+    disabled // Prevents manual editing
+  />
+</div>
+
+<div className="col-md-3">
     <label htmlFor="platformFees" className="form-label">Platform Fees</label>
     <input
       type="number"
@@ -523,6 +592,7 @@ setPlatformFees(data.platform_fee || null);
       required
     />
   </div>
+
 </div>
 
 

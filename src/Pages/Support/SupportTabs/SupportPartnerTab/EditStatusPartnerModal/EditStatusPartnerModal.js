@@ -13,7 +13,7 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) => {
+const EditStatusPartnerModal = ({ support, onClose, onStatusChange, getSupportData }) => {
   const [status, setStatus] = useState(support?.status || "open");
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +34,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
       };
   
       const response = await axios.patch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/help_center/status`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/help_center_partner/status`,
         payload,
         {
           headers: {
@@ -117,4 +117,4 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
   );
 };
 
-export default EditStatusModal;
+export default EditStatusPartnerModal;

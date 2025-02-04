@@ -24,7 +24,7 @@ const SupportCustomerTab = () => {
       setLoading(true);
 
       const response = await axios.get(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/supports/?user_role=customer`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/help_center`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -83,115 +83,6 @@ const SupportCustomerTab = () => {
     );
   };
 
-  const renderPaginationItems = () => {
-    const pageRange = [];
-    const rangeSize = 3;
-  
-    // Logic to display page range dynamically
-    let startPage = Math.max(1, currentPage - 1); // Ensure it doesn't go below 1
-    let endPage = Math.min(totalPages, currentPage + 1); // Ensure it doesn't go above totalPages
-  
-    // Adjust the range if needed to maintain the range size
-    if (endPage - startPage < rangeSize - 1) {
-      if (startPage === 1) {
-        endPage = Math.min(totalPages, startPage + rangeSize - 1);
-      } else {
-        startPage = Math.max(1, endPage - rangeSize + 1);
-      }
-    }
-  
-    // Build the page range array
-    for (let i = startPage; i <= endPage; i++) {
-      pageRange.push(i);
-    }
-  
-    const handlePageChange = (page) => {
-      setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-  
-    return (
-      <ul className="pagination mb-0" style={{ gap: "5px" }}>
-        {/* First Page Button */}
-        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-          <button
-            className="page-link"
-            onClick={() => handlePageChange(1)}
-            style={{
-              cursor: currentPage === 1 ? "not-allowed" : "pointer",
-            }}
-          >
-            First
-          </button>
-        </li>
-  
-        {/* Previous Button */}
-        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-          <button
-            className="page-link"
-            onClick={() => handlePageChange(currentPage - 1)}
-            style={{
-              cursor: currentPage === 1 ? "not-allowed" : "pointer",
-            }}
-          >
-            Previous
-          </button>
-        </li>
-  
-        {/* Page Numbers */}
-        {pageRange.map((number) => (
-          <li
-            key={number}
-            className={`page-item ${currentPage === number ? "active" : ""}`}
-          >
-            <button
-              className="page-link"
-              onClick={() => handlePageChange(number)}
-              style={{
-                backgroundColor: currentPage === number ? "#007bff" : "white",
-                color: currentPage === number ? "white" : "#007bff",
-              }}
-            >
-              {number}
-            </button>
-          </li>
-        ))}
-  
-        {/* Next Button */}
-        <li
-          className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
-        >
-          <button
-            className="page-link"
-            onClick={() => handlePageChange(currentPage + 1)}
-            style={{
-              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-            }}
-          >
-            Next
-          </button>
-        </li>
-  
-        {/* Last Page Button */}
-        <li
-          className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
-        >
-          <button
-            className="page-link"
-            onClick={() => handlePageChange(totalPages)}
-            style={{
-              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-            }}
-          >
-            Last
-          </button>
-        </li>
-      </ul>
-    );
-  };
-  
-  
-
   return (
     <div className="Support-Table-Main p-3">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -213,14 +104,14 @@ const SupportCustomerTab = () => {
             <table className="table table-bordered">
               <thead>
                 <tr>
-                  <th style={{ width: "5%" }}>Sr. No.</th>
-                  <th style={{ width: "10%" }}>Name</th>
-                  <th style={{ width: "20%" }}>Email</th>
-                  <th style={{ width: "10%" }}>Role</th>
-                  <th style={{ width: "25%" }}>Description</th>
-                  <th style={{ width: "10%" }}>Status</th>
-                  <th style={{ width: "10%" }}>Created At</th>
-                  <th style={{ width: "10%" }}>Updated At</th>
+                  <th>Sr. No.</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                  <th>Created At</th>
+                  <th>Updated At</th>
                 </tr>
               </thead>
               <tbody>
@@ -229,11 +120,13 @@ const SupportCustomerTab = () => {
                     <td>{indexOfFirstEntry + index + 1}</td>
                     <td>{item.name || "No name available"}</td>
                     <td>{item.email}</td>
-                    <td>{item.user_role.charAt(0).toUpperCase() + item.user_role.slice(1)}</td>
+                    <td>{item.user_role ? item.user_role.charAt(0).toUpperCase() + item.user_role.slice(1) : "N/A"}</td>
+
                     <td>{item.description}</td>
                     <td>
                       <div className="status-div">
-                      <span>{item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : ''}</span>                        <EditIcon
+                        <span>{item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : ''}</span>
+                        <EditIcon
                           onClick={() => handleEditStatus(item)}
                           style={{ cursor: "pointer" }}
                         />
@@ -262,22 +155,18 @@ const SupportCustomerTab = () => {
               </tbody>
             </table>
           </div>
-          <nav className="d-flex justify-content-center">
-            {renderPaginationItems()}
-          </nav>
         </>
       )}
 
-      {showModal && (
-        <EditStatusModal
-          support={selectedSupport}
-          onClose={() => setShowModal(false)}
-          onStatusChange={(newStatus) =>
-            updateSupportStatus(selectedSupport.support_id, newStatus)
-          }
-          getSupportData={getSupportData}
-        />
-      )}
+{showModal && selectedSupport && (
+  <EditStatusModal
+    support={selectedSupport} // Ensure this is not undefined
+    onClose={() => setShowModal(false)}
+    onStatusChange={(newStatus) => updateSupportStatus(selectedSupport.support_id, newStatus)}
+    getSupportData={getSupportData}
+  />
+)}
+
     </div>
   );
 };

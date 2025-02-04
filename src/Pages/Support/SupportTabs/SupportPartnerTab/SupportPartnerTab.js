@@ -3,7 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Loader from "../../../Loader/Loader";
-import EditStatusModal from "./../SupportCustomerTab/EditStatusModal/EditStatusModal";
+import EditStatusPartnerModal from "./EditStatusPartnerModal/EditStatusPartnerModal";
 
 const SupportPartnerTab = () => {
   const [supportData, setSupportData] = useState([]);
@@ -11,7 +11,7 @@ const SupportPartnerTab = () => {
   const [selectedSupport, setSelectedSupport] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchInput, setSearchInput] = useState(""); // New state for search input
+  const [searchInput, setSearchInput] = useState("");
 
   const entriesPerPage = 10;
 
@@ -25,7 +25,7 @@ const SupportPartnerTab = () => {
       setLoading(true);
 
       const response = await axios.get(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/supports/?user_role=partner`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/help_center_partner`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -40,9 +40,8 @@ const SupportPartnerTab = () => {
         setSupportData(data);
       } else {
         toast.error(
-          response.data.message || "Failed to fetch support tickets."
+          response.data?.message || "Failed to fetch support tickets."
         );
-        setLoading(false);
       }
     } catch (error) {
       console.error("Error fetching support tickets:", error);
@@ -51,13 +50,11 @@ const SupportPartnerTab = () => {
     }
   };
 
-  // Handle status edit click
   const handleEditStatus = (support) => {
     setSelectedSupport(support);
     setShowModal(true);
   };
 
-  // Handle status change after updating
   const handleStatusChange = () => {
     getSupportData();
   };
@@ -69,18 +66,19 @@ const SupportPartnerTab = () => {
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth", // Enables smooth scrolling
+      behavior: "smooth",
     });
   }, [currentPage]);
 
-  // Filter and paginate data
-  const normalizeString = (str) => str.replace(/\s+/g, ' ').trim().toLowerCase();
+  const normalizeString = (str) => {
+    if (!str) return '';
+    return str.replace(/\s+/g, ' ').trim().toLowerCase();
+  };
 
   const filteredData = supportData.filter(
     (item) =>
-      item.name && normalizeString(item.name).includes(normalizeString(searchInput))
+      item?.name && normalizeString(item.name).includes(normalizeString(searchInput))
   );
-  
 
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -102,6 +100,24 @@ const SupportPartnerTab = () => {
     }
 
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      return new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }).format(new Date(dateString));
+    } catch (error) {
+      return "Invalid Date";
+    }
+  };
+
+  const capitalizeFirstLetter = (string) => {
+    if (!string) return "N/A";
+    return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
   const renderPaginationItems = () => {
@@ -174,7 +190,6 @@ const SupportPartnerTab = () => {
       </ul>
     );
   };
-  
 
   return (
     <div className="Support-Table-Main p-3">
@@ -208,47 +223,27 @@ const SupportPartnerTab = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentEntries.length > 0 ? (
-                  currentEntries.map((item, index) => (
-                    <tr key={item.support_id}>
-                      <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
-                      <td>{item.name || "N/A"}</td>
-                      <td>{item.user_role.charAt(0).toUpperCase() + item.user_role.slice(1)}</td>
-                      <td>{item.description}</td>
-                      <td>
-                        <div className="status-div">
-                          <span>
-                            {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                          </span>
-                          <EditIcon
-                            onClick={() => handleEditStatus(item)}
-                            style={{ cursor: "pointer" }}
-                          />
-                        </div>
-                      </td>
-                      <td>
-                        {new Intl.DateTimeFormat("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        }).format(new Date(item.created_at))}
-                      </td>
-                      <td>
-                        {new Intl.DateTimeFormat("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        }).format(new Date(item.updated_at))}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" className="text-center">
-                      No records found
+                {currentEntries.map((item, index) => (
+                  <tr key={item.id || index}>
+                    <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
+                    <td>{item?.name || "N/A"}</td>
+                    <td>{item?.user_role ? capitalizeFirstLetter(item.user_role) : "N/A"}</td>
+                    <td>{item?.description || "N/A"}</td>
+                    <td>
+                      <div className="status-div">
+                        <span>
+                          {item?.status ? capitalizeFirstLetter(item.status) : "N/A"}
+                        </span>
+                        <EditIcon
+                          onClick={() => handleEditStatus(item)}
+                          style={{ cursor: "pointer" }}
+                        />
+                      </div>
                     </td>
+                    <td>{formatDate(item?.created_at)}</td>
+                    <td>{formatDate(item?.updated_at)}</td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
@@ -260,7 +255,7 @@ const SupportPartnerTab = () => {
         </>
       )}
       {showModal && (
-        <EditStatusModal
+        <EditStatusPartnerModal
           support={selectedSupport}
           onClose={() => setShowModal(false)}
           onStatusChange={handleStatusChange}
