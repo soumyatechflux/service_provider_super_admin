@@ -18,7 +18,7 @@ import {
   QuestionAnswer,
   AccountBox,
 } from "@mui/icons-material";
-import { Gavel, Lock, ReceiptLong, ContactMail } from "@mui/icons-material"; // Add this line
+import { Gavel, Lock, ReceiptLong, ContactMail,Notifications  } from "@mui/icons-material"; 
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Tooltip from "@mui/material/Tooltip";
@@ -115,6 +115,7 @@ const Sidebar = ({ isOpen }) => {
     21: <Lock />,
     22: <ReceiptLong />,
     23: <ContactMail  />,
+    24: <Notifications />,
   };
 
   return (
