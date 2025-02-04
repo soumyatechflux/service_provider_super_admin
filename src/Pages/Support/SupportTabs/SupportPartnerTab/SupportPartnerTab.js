@@ -178,7 +178,7 @@ const SupportPartnerTab = () => {
 
   return (
     <div className="Support-Table-Main p-3">
-      <div className="d-flex justify-content-end align-items-center">
+      <div className="d-flex justify-content-end align-items-center mb-3">
         <input
           type="text"
           className="form-control search-input w-25"
@@ -198,56 +198,65 @@ const SupportPartnerTab = () => {
             >
               <thead className="heading_user">
                 <tr>
-                <th style={{ width: "5%" }}>Sr. No.</th>
-                <th style={{ width: "10%" }}>Name</th>
-                <th style={{ width: "10%" }}>Role</th>
-                <th style={{ width: "25%" }}>Description</th>
+                  <th style={{ width: "5%" }}>Sr. No.</th>
+                  <th style={{ width: "10%" }}>Name</th>
+                  <th style={{ width: "10%" }}>Role</th>
+                  <th style={{ width: "25%" }}>Description</th>
                   <th style={{ width: "10%" }}>Status</th>
                   <th style={{ width: "10%" }}>Created At</th>
                   <th style={{ width: "10%" }}>Updated At</th>
                 </tr>
               </thead>
               <tbody>
-                {currentEntries.map((item, index) => (
-                  <tr key={item.support_id}>
-                    <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
-                    <td>{item.name || "N/A"}</td>
-                    <td>{item.user_role.charAt(0).toUpperCase() + item.user_role.slice(1)}</td>
-                    <td>{item.description}</td>
-                    <td>
-                      <div className="status-div">
-                        <span>
-                          {item.status.charAt(0).toUpperCase() +
-                            item.status.slice(1)}
-                        </span>
-                        <EditIcon
-                          onClick={() => handleEditStatus(item)}
-                          style={{ cursor: "pointer" }}
-                        />
-                      </div>
-                    </td>
-                    <td>
-                      {new Intl.DateTimeFormat("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      }).format(new Date(item.created_at))}
-                    </td>
-                    <td>
-                      {new Intl.DateTimeFormat("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      }).format(new Date(item.updated_at))}
+                {currentEntries.length > 0 ? (
+                  currentEntries.map((item, index) => (
+                    <tr key={item.support_id}>
+                      <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
+                      <td>{item.name || "N/A"}</td>
+                      <td>{item.user_role.charAt(0).toUpperCase() + item.user_role.slice(1)}</td>
+                      <td>{item.description}</td>
+                      <td>
+                        <div className="status-div">
+                          <span>
+                            {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                          </span>
+                          <EditIcon
+                            onClick={() => handleEditStatus(item)}
+                            style={{ cursor: "pointer" }}
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        {new Intl.DateTimeFormat("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        }).format(new Date(item.created_at))}
+                      </td>
+                      <td>
+                        {new Intl.DateTimeFormat("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        }).format(new Date(item.updated_at))}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="text-center">
+                      No records found
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
-          <nav className="d-flex justify-content-center">
-            {renderPaginationItems()}
-          </nav>
+          {totalPages > 1 && (
+            <nav className="d-flex justify-content-center">
+              {renderPaginationItems()}
+            </nav>
+          )}
         </>
       )}
       {showModal && (
@@ -260,6 +269,7 @@ const SupportPartnerTab = () => {
       )}
     </div>
   );
+  
 };
 
 export default SupportPartnerTab;

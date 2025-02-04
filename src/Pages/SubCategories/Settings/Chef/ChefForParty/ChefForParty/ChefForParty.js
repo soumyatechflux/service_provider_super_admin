@@ -34,8 +34,22 @@ const ChefForParty = () => {
   const [selectedFoodItem, setSelectedFoodItem] = useState(null);
 
   const [gst, setGst] = useState(null);
-    const [secureFees, setSecureFees] = useState(null);
-    const [platformFees, setPlatformFees] = useState(null);
+  const [secureFees, setSecureFees] = useState(null);
+  const [platformFees, setPlatformFees] = useState(null);
+
+
+
+  const [commissionPercentage, setCommissionPercentage] = useState("");
+
+  const handleCommissionChange = (e) => {
+    let value = e.target.value;
+    if (value === "") {
+      setCommissionPercentage(""); // Reset when input is empty
+    } else {
+      const commission = Math.min(Math.max(Number(value), 1), 100); // Ensure it's between 1-100
+      setCommissionPercentage(commission);
+    }
+  };
 
   const fetchSubCategoryData = async () => {
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
@@ -87,8 +101,8 @@ const ChefForParty = () => {
         setNightCharge(data.night_charge || "");
 
         setGst(data.gst || null);
-setSecureFees(data.secure_fee || null);
-setPlatformFees(data.platform_fee || null);
+        setSecureFees(data.secure_fee || null);
+        setPlatformFees(data.platform_fee || null);
 
         // Populate guestRows based on API response (if provided)
         if (data.no_of_people && data.no_of_people.length > 0) {
@@ -184,37 +198,42 @@ setPlatformFees(data.platform_fee || null);
     // Create FormData object
     const formData = new FormData();
 
-     // Validate that all guest count and price fields are filled
-  const invalidGuestRow = guestRows.some(
-    (row) => !row.count || row.count < 1 || !row.price || row.price <= 0
-  );
-  if (invalidGuestRow) {
-    toast.error("Please fill out all guest counts and prices before submitting.");
-    return; // Prevent form submission if validation fails
-  }
-
-  const guestCounts = guestRows.map(row => row.count);
-      const hasDuplicateGuestCounts = guestCounts.length !== new Set(guestCounts).size;
-      if (hasDuplicateGuestCounts) {
-        toast.error("Guest counts should be unique. Please add different guest counts.");
-        return;
-      }
-    
-      // Validate that guest counts are in ascending order
-      const isAscendingOrder = guestCounts.every((count, index, array) =>
-        index === 0 || count >= array[index - 1]
+    // Validate that all guest count and price fields are filled
+    const invalidGuestRow = guestRows.some(
+      (row) => !row.count || row.count < 1 || !row.price || row.price <= 0
+    );
+    if (invalidGuestRow) {
+      toast.error(
+        "Please fill out all guest counts and prices before submitting."
       );
-      if (!isAscendingOrder) {
-        toast.error("Guest counts should be in ascending order.");
-        return;
-      }
-    
-      // Validate that the number of rows does not exceed 15
-      if (guestRows.length > 15) {
-        toast.error("Guest count cannot exceed 15.");
-        return;
-      }
-    
+      return; // Prevent form submission if validation fails
+    }
+
+    const guestCounts = guestRows.map((row) => row.count);
+    const hasDuplicateGuestCounts =
+      guestCounts.length !== new Set(guestCounts).size;
+    if (hasDuplicateGuestCounts) {
+      toast.error(
+        "Guest counts should be unique. Please add different guest counts."
+      );
+      return;
+    }
+
+    // Validate that guest counts are in ascending order
+    const isAscendingOrder = guestCounts.every(
+      (count, index, array) => index === 0 || count >= array[index - 1]
+    );
+    if (!isAscendingOrder) {
+      toast.error("Guest counts should be in ascending order.");
+      return;
+    }
+
+    // Validate that the number of rows does not exceed 15
+    if (guestRows.length > 15) {
+      toast.error("Guest count cannot exceed 15.");
+      return;
+    }
+
     // Add required fields
     formData.append("category_id", 1); // Add category_id explicitly
     formData.append("sub_category_id", 3); // Add sub_category_id explicitly
@@ -232,6 +251,8 @@ setPlatformFees(data.platform_fee || null);
     formData.append("gst", gst || "");
     formData.append("secure_fee", secureFees || "");
     formData.append("platform_fee", platformFees || "");
+
+    
 
     // Add `no_of_people` data
     const noOfPeopleData = guestRows.map((row) => ({
@@ -455,55 +476,121 @@ setPlatformFees(data.platform_fee || null);
         </div>
 
         <div className="row mb-3 align-items-center">
-  <div className="col-md-3">
-    <label htmlFor="gst" className="form-label">GST</label>
-    <input
-      type="number"
-      className="form-control"
-      id="gst"
-      value={gst === null ? "" : gst} // Set value to empty string when null
-      onChange={(e) => setGst(e.target.value === "" ? null : Number(e.target.value))}
-      min="1"
-      required
-    />
-  </div>
-  <div className="col-md-3">
-    <label htmlFor="secureFees" className="form-label">Secure Fees</label>
-    <input
-      type="number"
-      className="form-control"
-      id="secureFees"
-      value={secureFees === null ? "" : secureFees} // Set value to empty string when null
-      onChange={(e) => setSecureFees(e.target.value === "" ? null : Number(e.target.value))}
-      min="1"
-      required
-    />
-  </div>
-  <div className="col-md-3">
-    <label htmlFor="platformFees" className="form-label">Platform Fees</label>
-    <input
-      type="number"
-      className="form-control"
-      id="platformFees"
-      value={platformFees === null ? "" : platformFees} // Set value to empty string when null
-      onChange={(e) => setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
-      min="1"
-      required
-    />
-  </div>
-</div>
+          <div className="col-md-3">
+            <label htmlFor="gst" className="form-label">
+            Tax on Commission & Cooks Pay
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="gst"
+              value={gst === null ? "" : gst} // Set value to empty string when null
+              onChange={(e) =>
+                setGst(e.target.value === "" ? null : Number(e.target.value))
+              }
+              min="1"
+              required
+            />
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="secureFees" className="form-label">
+              Secure Fees
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="secureFees"
+              value={secureFees === null ? "" : secureFees} // Set value to empty string when null
+              onChange={(e) =>
+                setSecureFees(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
+              min="1"
+              required
+            />
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="platformFees" className="form-label">
+              Platform Fees
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="platformFees"
+              value={platformFees === null ? "" : platformFees} // Set value to empty string when null
+              onChange={(e) =>
+                setPlatformFees(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
+              min="1"
+              required
+            />
+          </div>
+        </div>
+        <div className="row mb-3 align-items-center">
+          <div className="col-md-3">
+            <label htmlFor="gst" className="form-label">
+              Tax on Cook's Pay
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="gst"
+              // value={gst === null ? "" : gst} // Set value to empty string when null
+              // onChange={(e) =>
+              //   setGst(e.target.value === "" ? null : Number(e.target.value))
+              // }
+              min="1"
+              required
+            />
+          </div>
+          <div className="col-md-3">
+        <label htmlFor="commissionPercentage" className="form-label">
+          Commission Percentage
+        </label>
+        <input
+          type="number"
+          className="form-control"
+          id="commissionPercentage"
+          value={commissionPercentage}
+          onChange={handleCommissionChange}
+          min="1"
+          max="100"
+          required
+        />
+      </div>
 
+      {/* Partner's Pay Percentage (Automatically calculated) */}
+      <div className="col-md-3">
+        <label htmlFor="partnersPay" className="form-label">
+          Partner's Pay Percentage
+        </label>
+        <input
+          type="number"
+          className="form-control"
+          id="partnersPay"
+          value={commissionPercentage ? 100 - commissionPercentage : ""}
+          disabled // Prevents manual editing
+        />
+      </div>
+        </div>
 
         <div className="MainDining_AddTable mb-5 mt-5">
           <p className="Subheading1_AddTable">
             Time duration and price as per guest count
           </p>
-          <div className="row" style={{ justifyContent: "center"}}>
+          <div className="row" style={{ justifyContent: "center" }}>
             {guestRows.map((row, index) => (
               <div
                 key={row.id}
                 className="row mb-3"
-                style={{ backgroundColor: "#F6F8F9", justifyContent: "center",width:"100%"  }}
+                style={{
+                  backgroundColor: "#F6F8F9",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
               >
                 <div className="col-12 col-md-3 p-4">
                   <div className="Subheading2_AddTable">
@@ -699,13 +786,13 @@ setPlatformFees(data.platform_fee || null);
             type="submit"
             className="btn btn-primary w-50 mt-4"
             onClick={(e) => {
-              handleSubmit(e); 
+              handleSubmit(e);
               setTimeout(() => {
                 window.scrollTo({
                   top: 0,
-                  behavior: "smooth", 
+                  behavior: "smooth",
                 });
-              }, 500); 
+              }, 500);
             }}
             disabled={loading}
           >
