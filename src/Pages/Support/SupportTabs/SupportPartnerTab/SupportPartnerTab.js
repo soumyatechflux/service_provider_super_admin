@@ -193,7 +193,7 @@ const SupportPartnerTab = () => {
 
   return (
     <div className="Support-Table-Main p-3">
-      <div className="d-flex justify-content-end align-items-center">
+      <div className="d-flex justify-content-end align-items-center mb-3">
         <input
           type="text"
           className="form-control search-input w-25"
@@ -247,9 +247,11 @@ const SupportPartnerTab = () => {
               </tbody>
             </table>
           </div>
-          <nav className="d-flex justify-content-center">
-            {renderPaginationItems()}
-          </nav>
+          {totalPages > 1 && (
+            <nav className="d-flex justify-content-center">
+              {renderPaginationItems()}
+            </nav>
+          )}
         </>
       )}
       {showModal && (
@@ -262,6 +264,7 @@ const SupportPartnerTab = () => {
       )}
     </div>
   );
+  
 };
 
 export default SupportPartnerTab;

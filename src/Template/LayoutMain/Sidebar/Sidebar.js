@@ -17,6 +17,7 @@ import {
   GridView,
   QuestionAnswer,
   AccountBox,
+  Loyalty, // Import the Reward Points Icon
 } from "@mui/icons-material";
 import { Gavel, Lock, ReceiptLong, ContactMail,Notifications  } from "@mui/icons-material"; 
 import React, { useEffect, useState } from "react";
@@ -116,6 +117,8 @@ const Sidebar = ({ isOpen }) => {
     22: <ReceiptLong />,
     23: <ContactMail  />,
     24: <Notifications />,
+    23: <ContactMail />,
+    25: <Loyalty />, // Added Loyalty icon for Reward Points
   };
 
   return (
@@ -147,7 +150,6 @@ const Sidebar = ({ isOpen }) => {
               </CustomTooltip>
             );
           })}
-         
         </ul>
       </div>
     </div>

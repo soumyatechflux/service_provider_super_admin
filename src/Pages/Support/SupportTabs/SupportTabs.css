@@ -2,7 +2,7 @@
   overflow: hidden; /* Keep content within bounds */
   display: flex;
   justify-content: flex-start; /* Align tabs to the left */
-  gap: 18px;
+  gap: 10px;
 }
 
 .custom-tabs .nav-link {
