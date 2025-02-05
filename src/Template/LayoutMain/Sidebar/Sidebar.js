@@ -117,7 +117,7 @@ const Sidebar = ({ isOpen }) => {
     22: <ReceiptLong />,
     23: <ContactMail  />,
     24: <Notifications />,
-    25: <Loyalty />, // Added Loyalty icon for Reward Points
+    // 25: <Loyalty />, 
   };
 
   return (

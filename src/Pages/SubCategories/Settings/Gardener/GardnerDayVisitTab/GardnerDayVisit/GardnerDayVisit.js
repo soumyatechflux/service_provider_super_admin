@@ -628,7 +628,7 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
         </div>
 
         {/* Extra Charges Section */}
-        <div className="MainDining_AddTable mb-5 mt-5">
+        {/* <div className="MainDining_AddTable mb-5 mt-5">
           <p className="Subheading1_AddTable">
             Extra Charges According to Minutes
           </p>
@@ -683,7 +683,7 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
         <div className="MainDining_AddTable mb-5 mt-5">
           <h4 className="form-label">

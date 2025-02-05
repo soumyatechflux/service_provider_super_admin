@@ -140,6 +140,9 @@ const SettingsTable = () => {
                   Title
                 </th>
                 <th scope="col" style={{ width: "20%" }}>
+                  Key
+                </th>
+                <th scope="col" style={{ width: "20%" }}>
                   Value
                 </th>
                 <th scope="col" style={{ width: "25%" }}>
@@ -154,6 +157,7 @@ const SettingsTable = () => {
               {settings.map((setting, index) => (
                 <tr key={setting.config_id}>
                   <td>{index + 1}</td>
+                  <td>{setting?.title || "N/A"}</td>
                   <td>{setting.config_key}</td>
                   {/* <td>{formatConfigKey(setting.config_key)}</td> */}
 

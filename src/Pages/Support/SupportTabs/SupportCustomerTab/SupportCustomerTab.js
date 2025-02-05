@@ -4,12 +4,14 @@ import Loader from "../../../Loader/Loader";
 import { toast } from "react-toastify";
 import EditStatusModal from "./../SupportCustomerTab/EditStatusModal/EditStatusModal";
 import EditIcon from "@mui/icons-material/Edit";
+import ViewSupportDetails from "../ViewSupportDetails/ViewSupportDetails";
 
 const SupportCustomerTab = () => {
   const [supportData, setSupportData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedSupport, setSelectedSupport] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState(null); // State for View modal
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
 
@@ -52,23 +54,20 @@ const SupportCustomerTab = () => {
     getSupportData();
   }, [getSupportData]);
 
-  const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+  const normalizeString = (str) =>
+    str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
 
   const filteredData = supportData.filter(
     (item) =>
       normalizeString(item.email).includes(normalizeString(searchInput)) ||
       normalizeString(item.name).includes(normalizeString(searchInput))
   );
-  
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredData.slice(
-    indexOfFirstEntry,
-    indexOfLastEntry
-  );
+  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
 
   const handleEditStatus = (support) => {
     setSelectedSupport(support);
@@ -78,7 +77,7 @@ const SupportCustomerTab = () => {
   const updateSupportStatus = (supportId, newStatus) => {
     setSupportData((prevData) =>
       prevData.map((item) =>
-        item.support_id === supportId ? { ...item, status: newStatus } : item
+        item.id === supportId ? { ...item, status: newStatus } : item
       )
     );
   };
@@ -112,16 +111,16 @@ const SupportCustomerTab = () => {
                   <th>Status</th>
                   <th>Created At</th>
                   <th>Updated At</th>
+                  <th scope="col" style={{ width: "5%" }}>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {currentEntries.map((item, index) => (
-                  <tr key={item.support_id}>
+                  <tr key={item.id}>
                     <td>{indexOfFirstEntry + index + 1}</td>
                     <td>{item.name || "No name available"}</td>
                     <td>{item.email}</td>
                     <td>{item.user_role ? item.user_role.charAt(0).toUpperCase() + item.user_role.slice(1) : "N/A"}</td>
-
                     <td>{item.description}</td>
                     <td>
                       <div className="status-div">
@@ -132,23 +131,15 @@ const SupportCustomerTab = () => {
                         />
                       </div>
                     </td>
+                    <td>{new Date(item.created_at).toLocaleDateString()}</td>
+                    <td>{new Date(item.updated_at).toLocaleDateString()}</td>
                     <td>
-                      {new Intl.DateTimeFormat("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "2-digit",
-                      })
-                        .format(new Date(item.created_at))
-                        .replace(",", "")}
-                    </td>
-                    <td>
-                      {new Intl.DateTimeFormat("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "2-digit",
-                      })
-                        .format(new Date(item.updated_at))
-                        .replace(",", "")}
+                      <button
+                        className="btn Discount-btn"
+                        onClick={() => setSelectedBookingId(item.booking_id)} // Open ViewSupportDetails modal
+                      >
+                        View
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -158,15 +149,23 @@ const SupportCustomerTab = () => {
         </>
       )}
 
-{showModal && selectedSupport && (
-  <EditStatusModal
-    support={selectedSupport} // Ensure this is not undefined
-    onClose={() => setShowModal(false)}
-    onStatusChange={(newStatus) => updateSupportStatus(selectedSupport.support_id, newStatus)}
-    getSupportData={getSupportData}
-  />
-)}
+      {/* Edit Status Modal */}
+      {showModal && selectedSupport && (
+        <EditStatusModal
+          support={selectedSupport}
+          onClose={() => setShowModal(false)}
+          onStatusChange={(newStatus) => updateSupportStatus(selectedSupport.id, newStatus)}
+          getSupportData={getSupportData}
+        />
+      )}
 
+      {/* View Support Details Modal */}
+      {selectedBookingId && (
+        <ViewSupportDetails
+          bookingId={selectedBookingId}
+          onClose={() => setSelectedBookingId(null)}
+        />
+      )}
     </div>
   );
 };
