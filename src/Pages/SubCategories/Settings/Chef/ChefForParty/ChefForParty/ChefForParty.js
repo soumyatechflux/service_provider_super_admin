@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { BiMinus } from "react-icons/bi";
@@ -13,8 +12,8 @@ import FoodItemsEditModal from "../FoodItemsEditModal/FoodItemsEditModal";
 
 const ChefForParty = () => {
   const [partnerTax, setPartnerTax] = useState(null);
-    const [commission, setCommission] = useState(null);
-    const [partnersPayPercentage, setPartnersPayPercentage] = useState(null);
+  const [commission, setCommission] = useState(null);
+  const [partnersPayPercentage, setPartnersPayPercentage] = useState(null);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [nightChargesStartAt, setNightChargesStartAt] = useState("");
@@ -38,14 +37,14 @@ const ChefForParty = () => {
   const [selectedFoodItem, setSelectedFoodItem] = useState(null);
 
   const [gst, setGst] = useState(null);
-    const [secureFees, setSecureFees] = useState(null);
-    const [platformFees, setPlatformFees] = useState(null);
+  const [secureFees, setSecureFees] = useState(null);
+  const [platformFees, setPlatformFees] = useState(null);
 
-    const handleCommissionChange = (e) => {
-      const value = e.target.value === "" ? null : Number(e.target.value);
-      setCommission(value);
-      setPartnersPayPercentage(value !== null ? 100 - value : null);
-    };
+  const handleCommissionChange = (e) => {
+    const value = e.target.value === "" ? null : Number(e.target.value);
+    setCommission(value);
+    setPartnersPayPercentage(value !== null ? 100 - value : null);
+  };
 
   const fetchSubCategoryData = async () => {
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
@@ -89,7 +88,7 @@ const ChefForParty = () => {
         setNightChargesStartAt(data.night_charge_start_time.slice(0, 5));
         setNightChargesEndAt(data.night_charge_end_time.slice(0, 5));
         setBookBefore(data.booking_time_before || 1);
-        setCancellationBefore(data.free_cancellation_time_before || 1);
+        setCancellationBefore(data.cancellation_time_before || 1);
         setFreeCancellationBefore(data.free_cancellation_time_before || 1);
         setSummary(data.booking_details || "");
         setCancellationPolicy(data.cancellation_policy || "");
@@ -97,13 +96,14 @@ const ChefForParty = () => {
         setNightCharge(data.night_charge || "");
 
         setGst(data.gst || null);
-setSecureFees(data.secure_fee || null);
-setPlatformFees(data.platform_fee || null);
+        setSecureFees(data.secure_fee || null);
+        setPlatformFees(data.platform_fee || null);
 
-setPartnerTax(data.partner_tax || null);
+        setPartnerTax(data.partner_tax || null);
         setCommission(data.commission || null);
-setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null);
-
+        setPartnersPayPercentage(
+          data.commission !== null ? 100 - data.commission : null
+        );
 
         // Populate guestRows based on API response (if provided)
         if (data.no_of_people && data.no_of_people.length > 0) {
@@ -126,10 +126,10 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
       guestRows.length > 0 ? guestRows[guestRows.length - 1].count : 0;
 
     // Check if the new count exceeds the max limit
-    if (lastCount >= 15) {
-      toast.error("Guest count cannot exceed 15.");
-      return;
-    }
+    // if (lastCount >= 15) {
+    //   toast.error("Guest count cannot exceed 15.");
+    //   return;
+    // }
 
     // Add the new row with incremented count
     setGuestRows([
@@ -150,10 +150,10 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     const newRows = [...guestRows];
 
     // Check if the count exceeds the maximum limit
-    if (increment && newRows[index].count >= 15) {
-      toast.error("Guest count cannot exceed 15.");
-      return;
-    }
+    // if (increment && newRows[index].count >= 15) {
+    //   toast.error("Guest count cannot exceed 15.");
+    //   return;
+    // }
 
     // Update count
     newRows[index].count = increment
@@ -199,37 +199,42 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     // Create FormData object
     const formData = new FormData();
 
-     // Validate that all guest count and price fields are filled
-  const invalidGuestRow = guestRows.some(
-    (row) => !row.count || row.count < 1 || !row.price || row.price <= 0
-  );
-  if (invalidGuestRow) {
-    toast.error("Please fill out all guest counts and prices before submitting.");
-    return; // Prevent form submission if validation fails
-  }
-
-  const guestCounts = guestRows.map(row => row.count);
-      const hasDuplicateGuestCounts = guestCounts.length !== new Set(guestCounts).size;
-      if (hasDuplicateGuestCounts) {
-        toast.error("Guest counts should be unique. Please add different guest counts.");
-        return;
-      }
-    
-      // Validate that guest counts are in ascending order
-      const isAscendingOrder = guestCounts.every((count, index, array) =>
-        index === 0 || count >= array[index - 1]
+    // Validate that all guest count and price fields are filled
+    const invalidGuestRow = guestRows.some(
+      (row) => !row.count || row.count < 1 || !row.price || row.price <= 0
+    );
+    if (invalidGuestRow) {
+      toast.error(
+        "Please fill out all guest counts and prices before submitting."
       );
-      if (!isAscendingOrder) {
-        toast.error("Guest counts should be in ascending order.");
-        return;
-      }
-    
-      // Validate that the number of rows does not exceed 15
-      if (guestRows.length > 15) {
-        toast.error("Guest count cannot exceed 15.");
-        return;
-      }
-    
+      return; // Prevent form submission if validation fails
+    }
+
+    const guestCounts = guestRows.map((row) => row.count);
+    const hasDuplicateGuestCounts =
+      guestCounts.length !== new Set(guestCounts).size;
+    if (hasDuplicateGuestCounts) {
+      toast.error(
+        "Guest counts should be unique. Please add different guest counts."
+      );
+      return;
+    }
+
+    // Validate that guest counts are in ascending order
+    const isAscendingOrder = guestCounts.every(
+      (count, index, array) => index === 0 || count >= array[index - 1]
+    );
+    if (!isAscendingOrder) {
+      toast.error("Guest counts should be in ascending order.");
+      return;
+    }
+
+    // Validate that the number of rows does not exceed 15
+    // if (guestRows.length > 15) {
+    //   toast.error("Guest count cannot exceed 15.");
+    //   return;
+    // }
+
     // Add required fields
     formData.append("category_id", 1); // Add category_id explicitly
     formData.append("sub_category_id", 3); // Add sub_category_id explicitly
@@ -243,14 +248,12 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     formData.append("booking_details", summary);
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
-    formData.append("night_charge", nightCharge || "");
+    formData.append("night_charge", nightCharge ?? "");
     formData.append("gst", gst || "");
     formData.append("secure_fee", secureFees || "");
-    formData.append("platform_fee", platformFees || "");
-
+    formData.append("platform_fee", platformFees ?? "");
     formData.append("partner_tax", partnerTax || "");
     formData.append("commission", commission || "");
-
 
     // Add `no_of_people` data
     const noOfPeopleData = guestRows.map((row) => ({
@@ -462,10 +465,10 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
               id="nightCharges"
               placeholder="Enter charges"
               min="0"
-              value={nightCharge === null ? "" : nightCharge} // Set value to empty string when null
+              value={nightCharge ?? ""} // Ensures 0 is not replaced
               onChange={(e) =>
                 setNightCharge(
-                  e.target.value === "" ? null : Number(e.target.value) // Correct state update
+                  e.target.value === "" ? null : Number(e.target.value)
                 )
               }
               required
@@ -474,19 +477,23 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
         </div>
 
         <div className="row mb-3 align-items-center">
-  <div className="col-md-3">
-    <label htmlFor="gst" className="form-label">Tax on commission & Platform Fee</label>
-    <input
-      type="number"
-      className="form-control"
-      id="gst"
-      value={gst === null ? "" : gst} // Set value to empty string when null
-      onChange={(e) => setGst(e.target.value === "" ? null : Number(e.target.value))}
-      min="1"
-      required
-    />
-  </div>
-  {/* <div className="col-md-3">
+          <div className="col-md-3">
+            <label htmlFor="gst" className="form-label">
+              Tax on commission & Platform Fee
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="gst"
+              value={gst === null ? "" : gst} // Set value to empty string when null
+              onChange={(e) =>
+                setGst(e.target.value === "" ? null : Number(e.target.value))
+              }
+              min="1"
+              required
+            />
+          </div>
+          {/* <div className="col-md-3">
     <label htmlFor="secureFees" className="form-label">Secure Fees</label>
     <input
       type="number"
@@ -498,76 +505,92 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
       required
     />
   </div> */}
-  
 
-  <div className="col-md-3">
-  <label htmlFor="partnerTax" className="form-label">Tax on Partner's Pay</label>
-  <input
-    type="number"
-    className="form-control"
-    id="partnerTax"
-    value={partnerTax === null ? "" : partnerTax}
-    onChange={(e) => setPartnerTax(e.target.value === "" ? null : Number(e.target.value))}
-    min="1"
-    required
-  />
-</div>
+          <div className="col-md-3">
+            <label htmlFor="partnerTax" className="form-label">
+              Tax on Partner's Pay
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="partnerTax"
+              value={partnerTax === null ? "" : partnerTax}
+              onChange={(e) =>
+                setPartnerTax(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
+              min="1"
+              required
+            />
+          </div>
 
-  
+          <div className="col-md-3">
+            <label htmlFor="commission" className="form-label">
+              Servyo Commission %
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="commission"
+              value={commission === null ? "" : commission}
+              onChange={handleCommissionChange}
+              min="1"
+              max="100"
+              required
+            />
+          </div>
 
-<div className="col-md-3">
-  <label htmlFor="commission" className="form-label">Servyo Commission %</label>
-  <input
-    type="number"
-    className="form-control"
-    id="commission"
-    value={commission === null ? "" : commission}
-    onChange={handleCommissionChange}
-    min="1"
-    max="100"
-    required
-  />
-</div>
+          {/* Partner's Pay Percentage (Automatically calculated) */}
+          <div className="col-md-3">
+            <label htmlFor="partnersPay" className="form-label">
+              Partner's Commission %
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="partnersPay"
+              value={
+                partnersPayPercentage === null ? "" : partnersPayPercentage
+              }
+              disabled // Prevents manual editing
+            />
+          </div>
 
-
-
-      {/* Partner's Pay Percentage (Automatically calculated) */}
-      <div className="col-md-3">
-  <label htmlFor="partnersPay" className="form-label">Partner's Commission %</label>
-  <input
-    type="number"
-    className="form-control"
-    id="partnersPay"
-    value={partnersPayPercentage === null ? "" : partnersPayPercentage}
-    disabled // Prevents manual editing
-  />
-</div>
-
-<div className="col-md-3">
-    <label htmlFor="platformFees" className="form-label">Platform Fees</label>
-    <input
-      type="number"
-      className="form-control"
-      id="platformFees"
-      value={platformFees === null ? "" : platformFees} // Set value to empty string when null
-      onChange={(e) => setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
-      min="1"
-      required
-    />
-  </div>
-</div>
-
+          <div className="col-md-3">
+            <label htmlFor="platformFees" className="form-label">
+              Platform Fees
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="platformFees"
+              value={platformFees ?? ""} // Set value to empty string when null
+              onChange={(e) =>
+                setPlatformFees(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
+              min="1"
+              required
+            />
+          </div>
+        </div>
 
         <div className="MainDining_AddTable mb-5 mt-5">
           <p className="Subheading1_AddTable">
             Time duration and price as per guest count
           </p>
-          <div className="row" style={{ justifyContent: "center"}}>
+          <div className="row" style={{ justifyContent: "center" }}>
             {guestRows.map((row, index) => (
               <div
                 key={row.id}
                 className="row mb-3"
-                style={{ backgroundColor: "#F6F8F9", justifyContent: "center",width:"100%"  }}
+                style={{
+                  backgroundColor: "#F6F8F9",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
               >
                 <div className="col-12 col-md-3 p-4">
                   <div className="Subheading2_AddTable">
@@ -600,7 +623,7 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
                       onChange={(e) => handlePriceChange(index, e.target.value)}
                       className="form-control"
                       placeholder="Enter price"
-                      min="0"
+                      // min="0"
                       required
                     />
                   </div>
@@ -763,13 +786,13 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
             type="submit"
             className="btn btn-primary w-50 mt-4"
             onClick={(e) => {
-              handleSubmit(e); 
+              handleSubmit(e);
               setTimeout(() => {
                 window.scrollTo({
                   top: 0,
-                  behavior: "smooth", 
+                  behavior: "smooth",
                 });
-              }, 500); 
+              }, 500);
             }}
             disabled={loading}
           >

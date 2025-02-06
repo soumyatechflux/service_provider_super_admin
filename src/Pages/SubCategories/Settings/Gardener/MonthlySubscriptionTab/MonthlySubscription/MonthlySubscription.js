@@ -203,13 +203,12 @@ if (hasDuplicates) {
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("booking_details", summary);
-
     formData.append("gst", gst || "");
-    formData.append("secure_fee", secureFees || "");
-    formData.append("platform_fee", platformFees || "");
-
+    formData.append("secure_fee", secureFees ?? "");
+    formData.append("platform_fee", platformFees ?? "");
     formData.append("partner_tax", partnerTax || "");
     formData.append("commission", commission || "");
+    formData.append("night_charge", nightCharge ?? "");
 
 
     // Format the data according to the expected structure
@@ -433,7 +432,7 @@ if (hasDuplicates) {
               id="nightCharges"
               placeholder="Enter charges"
               min="0"
-              value={nightCharge === null ? "" : nightCharge} // Set value to empty string when null
+              value={nightCharge ?? ""} // Set value? to empty string when null
               onChange={(e) =>
                 setNightCharge(
                   e.target.value === "" ? null : Number(e.target.value) // Correct state update
@@ -522,7 +521,7 @@ if (hasDuplicates) {
       type="number"
       className="form-control"
       id="platformFees"
-      value={platformFees === null ? "" : platformFees} // Set value to empty string when null
+      value={platformFees ?? "" } // Set value to empty string when null
       onChange={(e) => setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
       min="1"
       required

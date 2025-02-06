@@ -64,16 +64,16 @@ const OutStationTrip = () => {
         setNightChargesStartAt(data.night_charge_start_time.slice(0, 5));
         setNightChargesEndAt(data.night_charge_end_time.slice(0, 5));
         setBookBefore(data.booking_time_before || 1);
-        setCancellationBefore(data.free_cancellation_time_before || 1);
+        setCancellationBefore(data.cancellation_time_before || 1);
         setFreeCancellationBefore(data.free_cancellation_time_before || 1);
         setSummary(data.booking_details || "");
         setCancellationPolicy(data.cancellation_policy || "");
         setBookingSummaryPage(data.booking_summary || "");
-        setNightCharge(data.night_charge || "");
+        setNightCharge(data.night_charge ?? "");
         setAdditionalPriceHours(data.additional_price_hours || {});
         setGst(data.gst || null);
         setSecureFees(data.secure_fee || null);
-        setPlatformFees(data.platform_fee || null);
+        setPlatformFees(data.platform_fee ?? null);
 
         setPartnerTax(data.partner_tax || null);
         setCommission(data.commission || null);
@@ -232,11 +232,11 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     formData.append("additional_price_hours", additionalPriceHours);
     formData.append("booking_details", summary);
     formData.append("gst", gst || ""); 
-    formData.append("secure_fee", secureFees || "");
-    formData.append("platform_fee", platformFees || "");
-
+    formData.append("secure_fee", secureFees ?? "");
+    formData.append("platform_fee", platformFees ?? "");
     formData.append("partner_tax", partnerTax || "");
     formData.append("commission", commission || "");
+    formData.append("night_charge", nightCharge ?? "");
 
 
   
@@ -248,7 +248,6 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     formData.append("driver_hours_calculations", JSON.stringify(driverHoursData));
   
     // Add other optional fields if required
-    formData.append("night_charge", nightCharge || "");
   
     // Loading state
     setLoading(true);
@@ -459,7 +458,7 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
               id="nightCharges"
               placeholder="Enter charges"
               min="0"
-              value={nightCharge === null ? "" : nightCharge} // Set value to empty string when null
+              value={nightCharge ?? ""} // Set value to empty string when null
               onChange={(e) =>
                 setNightCharge(
                   e.target.value === "" ? null : Number(e.target.value) // Correct state update
@@ -478,7 +477,7 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
       type="number"
       className="form-control"
       id="secureFees"
-      value={secureFees === null ? "" : secureFees} // Set value to empty string when null
+      value={secureFees ?? "" } // Set value to empty string when null
       onChange={(e) => setSecureFees(e.target.value === "" ? null : Number(e.target.value))}
       min="1"
       required
@@ -490,8 +489,9 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
       type="number"
       className="form-control"
       id="platformFees"
-      value={platformFees === null ? "" : platformFees} // Set value to empty string when null
-      onChange={(e) => setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
+      value={platformFees ?? ""} // Set value to empty string when null
+      onChange={(e) => 
+        setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
       min="1"
       required
     />

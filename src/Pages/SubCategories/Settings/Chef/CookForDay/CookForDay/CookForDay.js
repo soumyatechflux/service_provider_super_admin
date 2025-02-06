@@ -85,7 +85,7 @@ const CookForDay = () => {
         setNightChargesStartAt(data.night_charge_start_time.slice(0, 5));
         setNightChargesEndAt(data.night_charge_end_time.slice(0, 5));
         setBookBefore(data.booking_time_before || 1);
-        setCancellationBefore(data.free_cancellation_time_before || 1);
+        setCancellationBefore(data.cancellation_time_before || 1);
         setFreeCancellationBefore(data.free_cancellation_time_before || 1);
         setSummary(data.booking_details || "");
         setCancellationPolicy(data.cancellation_policy || "");
@@ -263,12 +263,12 @@ const CookForDay = () => {
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("booking_details", summary);
-    formData.append("night_charge", nightCharge || "");
+    formData.append("night_charge", nightCharge ?? "");
     formData.append("duration", "720 minutes");
 
     formData.append("gst", gst || "");
-    formData.append("secure_fee", secureFees || "");
-    formData.append("platform_fee", platformFees || "");
+    formData.append("secure_fee", secureFees ?? "");
+    formData.append("platform_fee", platformFees ?? "");
 
     formData.append("partner_tax", partnerTax || "");
     formData.append("commission", commission || "");
@@ -524,7 +524,7 @@ const CookForDay = () => {
               id="nightCharges"
               placeholder="Enter charges"
               min="0"
-              value={nightCharge === null ? "" : nightCharge} // Set value to empty string when null
+              value={nightCharge ?? ""} // Set value to empty string when null
               onChange={(e) =>
                 setNightCharge(
                   e.target.value === "" ? null : Number(e.target.value) // Correct state update
@@ -624,7 +624,7 @@ const CookForDay = () => {
               type="number"
               className="form-control"
               id="platformFees"
-              value={platformFees === null ? "" : platformFees} // Set value to empty string when null
+              value={platformFees ?? ""} // Set value to empty string when null
               onChange={(e) =>
                 setPlatformFees(
                   e.target.value === "" ? null : Number(e.target.value)

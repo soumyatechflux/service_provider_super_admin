@@ -131,12 +131,12 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
 
-  const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+  const normalizeString = (str) =>
+    str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
 
   const filteredData = dummy_Data.filter((item) =>
     normalizeString(item.guest_name).includes(normalizeString(searchInput))
   );
-  
 
   const currentEntries = filteredData.slice(
     indexOfFirstEntry,
@@ -244,10 +244,10 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                     Amount
                   </th>
                   {(category_id === "1" || category_id === "3") && (
-  <th scope="col" style={{ width: "10%" }}>
-    Address 
-  </th>
-)}
+                    <th scope="col" style={{ width: "10%" }}>
+                      Address
+                    </th>
+                  )}
 
                   {category_id === "2" && (
                     <th scope="col" style={{ width: "10%" }}>
@@ -297,9 +297,9 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                     <td>{item.billing_amount || "N/A"}</td>
 
                     {(category_id === "1" || category_id === "3") && (
-                    <td>
-                      {item.visit_address || "No current_address available."}
-                    </td>
+                      <td>
+                        {item.visit_address || "No current_address available."}
+                      </td>
                     )}
                     {category_id === "2" && (
                       <td>
@@ -312,9 +312,24 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                       </td>
                     )}
                     <td>
-                      {item.visit_date
-                        ? formatDateWithTime(item.visit_date)
-                        : "N/A"}
+                      {new Intl.DateTimeFormat("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "2-digit",
+                      })
+                        .format(new Date(item.visit_date))
+                        .replace(",", "")},{" "}
+                      {(() => {
+                        const [hour, minute] = item.visit_time.split(":"); // Extract hour and minute
+                        const date = new Date();
+                        date.setHours(hour, minute); // Set extracted time
+
+                        return date.toLocaleTimeString("en-US", {
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true, // Convert to 12-hour format
+                        });
+                      })()}
                     </td>
 
                     <td>
@@ -354,29 +369,34 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                       )}
                     </td>
                     <td>
-  <i
-    className={`fa fa-pencil-alt ${
-      ["upcoming", "inprogress"].includes(item.booking_status)
-        ? "text-primary"
-        : "text-muted"
-    }`}
-    style={{
-      cursor: item.booking_status === "inprogress" ? "not-allowed" : "pointer",
-      opacity: item.booking_status === "inprogress" ? 0.5 : 1,
-    }}
-    onClick={() =>
-      item.booking_status === "upcoming"
-        ? handleOpenEditModal(
-            item.booking_id,
-            item.booking_status,
-            item.partner_id,
-            item.category_id
-          )
-        : null
-    }
-  />
-</td>
-
+                      <i
+                        className={`fa fa-pencil-alt ${
+                          ["upcoming", "inprogress"].includes(
+                            item.booking_status
+                          )
+                            ? "text-primary"
+                            : "text-muted"
+                        }`}
+                        style={{
+                          cursor:
+                            item.booking_status === "inprogress"
+                              ? "not-allowed"
+                              : "pointer",
+                          opacity:
+                            item.booking_status === "inprogress" ? 0.5 : 1,
+                        }}
+                        onClick={() =>
+                          item.booking_status === "upcoming"
+                            ? handleOpenEditModal(
+                                item.booking_id,
+                                item.booking_status,
+                                item.partner_id,
+                                item.category_id
+                              )
+                            : null
+                        }
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>

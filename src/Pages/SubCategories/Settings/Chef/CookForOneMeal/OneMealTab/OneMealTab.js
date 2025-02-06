@@ -84,7 +84,7 @@ const OneMealTab = () => {
         setNightChargesStartAt(data.night_charge_start_time.slice(0, 5));
         setNightChargesEndAt(data.night_charge_end_time.slice(0, 5));
         setBookBefore(data.booking_time_before);
-        setCancellationBefore(data.booking_time_before);
+        setCancellationBefore(data.cancellation_time_before);
         setFreeCancellationBefore(data.free_cancellation_time_before);
         setSummary(data.booking_details || "");
         setCancellationPolicy(data.cancellation_policy || "");
@@ -160,10 +160,10 @@ setPlatformFees(data.platform_fee || null);
   };
 
   const handleAddRow = () => {
-    if (guestRows.length >= 15) {
-      toast.error("Guest count cannot exceed 15.");
-      return;
-    }
+    // if (guestRows.length >= 15) {
+    //   toast.error("Guest count cannot exceed 15.");
+    //   return;
+    // }
     const newRow = {
       id: guestRows.length, // Use length as the ID for simplicity
       count: guestRows.length + 1, // Increment count based on the number of rows
@@ -265,11 +265,11 @@ setPlatformFees(data.platform_fee || null);
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("booking_details", summary);
-    formData.append("night_charge", night_charge || "");
+    formData.append("night_charge", night_charge ?? "");
 
     formData.append("gst", gst || "");
-    formData.append("secure_fee", secureFees || "");
-    formData.append("platform_fee", platformFees || "");
+    formData.append("secure_fee", secureFees ?? "");
+    formData.append("platform_fee", platformFees ?? "");
 
     formData.append("partner_tax", partnerTax || "");
     formData.append("commission", commission || "");
@@ -493,7 +493,7 @@ setPlatformFees(data.platform_fee || null);
               id="nightCharges"
               placeholder="Enter charges"
               min="0"
-              value={night_charge === null ? "" : night_charge} // Set value to empty string when null
+              value={night_charge ?? ""} // Set value to empty string when null
               onChange={(e) =>
                 setNightCharge(
                   e.target.value === "" ? null : Number(e.target.value) // Correct state update
@@ -586,7 +586,7 @@ setPlatformFees(data.platform_fee || null);
       type="number"
       className="form-control"
       id="platformFees"
-      value={platformFees === null ? "" : platformFees} // Set value to empty string when null
+      value={platformFees ?? "" } // Set value to empty string when null
       onChange={(e) => setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
       min="1"
       required

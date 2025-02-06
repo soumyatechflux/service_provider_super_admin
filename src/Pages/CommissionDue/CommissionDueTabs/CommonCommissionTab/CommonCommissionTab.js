@@ -23,7 +23,9 @@ const CommonCommissionTab = ({
 
   const getCommissionData = async (category_id) => {
     try {
-      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
 
       setLoading(true);
 
@@ -58,20 +60,23 @@ const CommonCommissionTab = ({
   }, [category_id]);
 
   // Filter data based on search input
-  const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+  const normalizeString = (str) =>
+    str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
 
   const filteredData = dummy_Data.filter(
     (item) =>
       normalizeString(item.name).includes(normalizeString(searchInput)) ||
       normalizeString(item.category_name).includes(normalizeString(searchInput))
   );
-  
 
   // Pagination logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = filteredData.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   const getPageRange = () => {
     let start = currentPage - 1;
@@ -204,29 +209,34 @@ const CommonCommissionTab = ({
               </tr>
             </thead>
             <tbody>
-              {currentEntries.length === 0 ? (
+              {currentEntries.filter((item) => item.total_partner_amount > 0)
+                .length === 0 ? (
                 <tr>
                   <td colSpan="5" style={{ textAlign: "center" }}>
                     No data available
                   </td>
                 </tr>
               ) : (
-                currentEntries.map((item, index) => (
-                  <tr key={item.id}>
-                    <th scope="row">{index + 1 + (currentPage - 1) * entriesPerPage}.</th>
-                    <td>{item.name || "Unknown"}</td>
-                    <td>{item.category_name || "N/A"}</td>
-                    <td>{item.total_partner_amount || "N/A"}</td>
-                    <td className="action-btn-pay">
-                      <button
-                        className="payNow-btn"
-                        onClick={() => handlePayNowClick(item)}
-                      >
-                        Pay Now
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                currentEntries
+                  .filter((item) => item.total_partner_amount > 0) // Exclude rows with amount_due <= 0
+                  .map((item, index) => (
+                    <tr key={item.id}>
+                      <th scope="row">
+                        {index + 1 + (currentPage - 1) * entriesPerPage}.
+                      </th>
+                      <td>{item.name || "Unknown"}</td>
+                      <td>{item.category_name || "N/A"}</td>
+                      <td>{item.total_partner_amount || "N/A"}</td>
+                      <td className="action-btn-pay">
+                        <button
+                          className="payNow-btn"
+                          onClick={() => handlePayNowClick(item)}
+                        >
+                          Pay Now
+                        </button>
+                      </td>
+                    </tr>
+                  ))
               )}
             </tbody>
           </table>
@@ -244,11 +254,10 @@ const CommonCommissionTab = ({
 
       {/* Pagination */}
       {filteredData.length > 0 && (
-  <nav className="d-flex justify-content-center">
-    {renderPaginationItems()}
-  </nav>
-)}
-
+        <nav className="d-flex justify-content-center">
+          {renderPaginationItems()}
+        </nav>
+      )}
     </div>
   );
 };
