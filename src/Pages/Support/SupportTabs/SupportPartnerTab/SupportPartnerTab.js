@@ -215,6 +215,7 @@ const SupportPartnerTab = () => {
                 <tr>
                   <th style={{ width: "5%" }}>Sr. No.</th>
                   <th style={{ width: "10%" }}>Name</th>
+                  <th style={{ width: "10%" }}>Mobile</th>
                   <th style={{ width: "10%" }}>Role</th>
                   <th style={{ width: "25%" }}>Description</th>
                   <th style={{ width: "10%" }}>Status</th>

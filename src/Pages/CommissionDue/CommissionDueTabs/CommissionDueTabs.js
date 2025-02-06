@@ -23,7 +23,7 @@ const CommissionDueTabs = () => {
 
   return (
     <>
-    <h2>Commission Due</h2>
+    <h2>Weekly Payouts</h2>
     <Tabs
       defaultActiveKey="customer"
       id="justify-tab-example"

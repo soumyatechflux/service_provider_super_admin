@@ -39,32 +39,25 @@ const AddCustomerModal = ({ show, onClose, onSave }) => {
         body: JSON.stringify({
           title: formData.title,
           body: formData.message,
-          notification_type: formData.notification_type,  // Include notification_type in request body
+          notification_type: formData.notification_type,
         }),
       });
   
       const data = await response.json();
-      console.log("Full response data:", data);  // Log the response for debugging
+      console.log("Full response data:", data); // Log response for debugging
   
       if (!response.ok) {
-        throw new Error("Failed to send notification");
+        throw new Error(data.message || "Failed to send notification");
       }
   
       if (data.success) {
-        // Check if any valid message IDs were returned (not null)
-        const successfulMessages = data.data.filter((messageId) => messageId !== null);
+        toast.success(data.message); // Use message from response
   
-        if (successfulMessages.length > 0) {
-          // Show success message
-          toast.success("Notification sent successfully!");
-          onSave(formData);  // Assuming onSave handles saving the customer data
-          setFormData({ title: "", message: "", notification_type: "" }); // Clear fields after success
-          onClose();
-        } else {
-          toast.error("No valid tokens found for sending notifications.");
-        }
+        onSave(formData); // Assuming onSave handles saving customer data
+        setFormData({ title: "", message: "", notification_type: "" }); // Clear fields after success
+        onClose();
       } else {
-        toast.error("Failed to send notification.");
+        toast.error(data.message || "Failed to send notification.");
       }
     } catch (error) {
       toast.error("An error occurred: " + error.message);

@@ -28,7 +28,7 @@ const AlertCustomerTable = () => {
         {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
@@ -44,10 +44,12 @@ const AlertCustomerTable = () => {
       if (data.success) {
         // Filter notifications from the last 24 hours
         const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const filteredNotifications = (data.data || []).filter(notification => {
-          const notificationDate = new Date(notification.created_at);
-          return notificationDate >= twentyFourHoursAgo;
-        });
+        const filteredNotifications = (data.data || []).filter(
+          (notification) => {
+            const notificationDate = new Date(notification.created_at);
+            return notificationDate >= twentyFourHoursAgo;
+          }
+        );
 
         setAlertData(filteredNotifications);
       } else {
@@ -77,12 +79,18 @@ const AlertCustomerTable = () => {
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = filteredData.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   return (
     <div className="Alert-Table-Main p-3">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <button className="Discount-btn mb-0" onClick={() => setModalOpen(true)}>
+        <button
+          className="Discount-btn mb-0"
+          onClick={() => setModalOpen(true)}
+        >
           Add Notification
         </button>
 
@@ -107,6 +115,7 @@ const AlertCustomerTable = () => {
                   <th>Title</th>
                   <th>Message</th>
                   <th>Notification Type</th>
+                  <th>Created At</th> {/* Added new column */}
                 </tr>
               </thead>
               <tbody>
@@ -117,11 +126,18 @@ const AlertCustomerTable = () => {
                       <td>{item.title}</td>
                       <td>{item.message}</td>
                       <td>{item.notification_type}</td>
+                      <td>
+                        {new Date(item.created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })}
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className="text-center">
+                    <td colSpan="5" className="text-center">
                       No data available
                     </td>
                   </tr>
@@ -133,7 +149,9 @@ const AlertCustomerTable = () => {
           {totalPages > 1 && (
             <nav className="d-flex justify-content-center">
               <ul className="pagination mb-0" style={{ gap: "5px" }}>
-                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
                   <button
                     className="page-link"
                     onClick={() => setCurrentPage(1)}
@@ -147,13 +165,16 @@ const AlertCustomerTable = () => {
                 {[...Array(totalPages)].map((_, number) => (
                   <li
                     key={number}
-                    className={`page-item ${currentPage === number + 1 ? "active" : ""}`}
+                    className={`page-item ${
+                      currentPage === number + 1 ? "active" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
                       onClick={() => setCurrentPage(number + 1)}
                       style={{
-                        backgroundColor: currentPage === number + 1 ? "#007bff" : "white",
+                        backgroundColor:
+                          currentPage === number + 1 ? "#007bff" : "white",
                         color: currentPage === number + 1 ? "white" : "#007bff",
                       }}
                     >
@@ -161,12 +182,17 @@ const AlertCustomerTable = () => {
                     </button>
                   </li>
                 ))}
-                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
                   <button
                     className="page-link"
                     onClick={() => setCurrentPage(totalPages)}
                     style={{
-                      cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                      cursor:
+                        currentPage === totalPages ? "not-allowed" : "pointer",
                     }}
                   >
                     Last
@@ -185,10 +211,10 @@ const AlertCustomerTable = () => {
           // Add the new alert to the existing list and close the modal
           const currentTime = new Date();
           const updatedAlert = {
-            ...newAlert, 
+            ...newAlert,
             notification_id: Date.now(), // Using timestamp as a unique ID
             created_at: currentTime.toISOString(),
-            role: 'customer'
+            role: "customer",
           };
           setAlertData([updatedAlert, ...alertData]);
           setModalOpen(false);

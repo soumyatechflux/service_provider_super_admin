@@ -105,8 +105,8 @@ const SupportCustomerTab = () => {
                 <tr>
                   <th>Sr. No.</th>
                   <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
+                  <th>Mobile</th>
+                  {/* <th>Role</th> */}
                   <th>Description</th>
                   <th>Status</th>
                   <th>Created At</th>
@@ -119,8 +119,8 @@ const SupportCustomerTab = () => {
                   <tr key={item.id}>
                     <td>{indexOfFirstEntry + index + 1}</td>
                     <td>{item.name || "No name available"}</td>
-                    <td>{item.email}</td>
-                    <td>{item.user_role ? item.user_role.charAt(0).toUpperCase() + item.user_role.slice(1) : "N/A"}</td>
+                    <td>{item.mobile}</td>
+                    {/* <td>{item.user_role ? item.user_role.charAt(0).toUpperCase() + item.user_role.slice(1) : "N/A"}</td> */}
                     <td>{item.description}</td>
                     <td>
                       <div className="status-div">

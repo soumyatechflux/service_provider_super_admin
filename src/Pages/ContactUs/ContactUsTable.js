@@ -36,7 +36,9 @@ const ContactUsTable = () => {
       if (response?.status === 200 && response?.data?.success) {
         setContactData(response?.data?.data || []);
       } else {
-        toast.error(response?.data?.message || "Failed to fetch contact messages.");
+        toast.error(
+          response?.data?.message || "Failed to fetch contact messages."
+        );
       }
     } catch (error) {
       console.error("Error fetching contact messages:", error);
@@ -49,7 +51,8 @@ const ContactUsTable = () => {
     getContactData();
   }, [getContactData]);
 
-  const normalizeString = (str) => str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
+  const normalizeString = (str) =>
+    str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
 
   const filteredData = contactData.filter(
     (item) =>
@@ -61,7 +64,10 @@ const ContactUsTable = () => {
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = filteredData.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   const renderPaginationItems = () => {
     const pageRange = [];
@@ -96,27 +102,50 @@ const ContactUsTable = () => {
         </li>
 
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-          <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
             Previous
           </button>
         </li>
 
         {pageRange.map((number) => (
-          <li key={number} className={`page-item ${currentPage === number ? "active" : ""}`}>
-            <button className="page-link" onClick={() => handlePageChange(number)}>
+          <li
+            key={number}
+            className={`page-item ${currentPage === number ? "active" : ""}`}
+          >
+            <button
+              className="page-link"
+              onClick={() => handlePageChange(number)}
+            >
               {number}
             </button>
           </li>
         ))}
 
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-          <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
             Next
           </button>
         </li>
 
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-          <button className="page-link" onClick={() => handlePageChange(totalPages)}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(totalPages)}
+          >
             Last
           </button>
         </li>
@@ -148,7 +177,9 @@ const ContactUsTable = () => {
                   <th style={{ width: "5%" }}>Sr. No.</th>
                   <th style={{ width: "25%" }}>Name</th>
                   <th style={{ width: "25%" }}>Email</th>
+                  <th style={{ width: "25%" }}>Mobile</th>
                   <th style={{ width: "20%" }}>Location</th>
+                  <th style={{ width: "20%" }}>Created At</th>
                   <th style={{ width: "25%" }}>Message</th>
                 </tr>
               </thead>
@@ -159,7 +190,13 @@ const ContactUsTable = () => {
                       <td>{indexOfFirstEntry + index + 1}</td>
                       <td>{item.name || "No name available"}</td>
                       <td>{item.email}</td>
+                      <td>{item.mobile}</td>
                       <td>{item.location || "Not provided"}</td>
+                      {new Date(item.created_at).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })}
                       <td>{item.message}</td>
                     </tr>
                   ))
@@ -173,7 +210,9 @@ const ContactUsTable = () => {
               </tbody>
             </table>
           </div>
-          <nav className="d-flex justify-content-center">{renderPaginationItems()}</nav>
+          <nav className="d-flex justify-content-center">
+            {renderPaginationItems()}
+          </nav>
         </>
       )}
     </div>

@@ -108,9 +108,9 @@ const PartnerReviewTabs = () => {
                 <th scope="col" style={{ width: "10%" }}>
                   Created At
                 </th>
-                <th scope="col" style={{ width: "10%" }}>
+                {/* <th scope="col" style={{ width: "10%" }}>
                   Updated At
-                </th>
+                </th> */}
                 <th scope="col" style={{ width: "10%" }}>
                   Action
                 </th>{" "}
@@ -132,13 +132,13 @@ const PartnerReviewTabs = () => {
                         year: "numeric",
                       }).format(new Date(item.created_at))}
                     </td>
-                    <td>
+                    {/* <td>
                       {new Intl.DateTimeFormat("en-GB", {
                         day: "2-digit",
                         month: "short",
                         year: "numeric",
                       }).format(new Date(item.updated_at))}
-                    </td>
+                    </td> */}
                     <td className="action-btn-trash">
                       <i
                         className="fa fa-trash text-danger"

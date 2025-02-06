@@ -278,9 +278,9 @@ const VerifiedPartnerTab = ({
                   <th scope="col" style={{ width: "10%" }}>
                     Category
                   </th>
-                  <th scope="col" style={{ width: "10%" }}>
+                  {/* <th scope="col" style={{ width: "10%" }}>
                     Email
-                  </th>
+                  </th> */}
                   <th scope="col" style={{ width: "10%" }}>
                     Phone
                   </th>
@@ -338,7 +338,7 @@ const VerifiedPartnerTab = ({
                           ? "Gardener"
                           : "Unknown"}
                       </td>
-                      <td className="text-user">
+                      {/* <td className="text-user">
                         {restaurant.email ? (
                           restaurant.email
                         ) : (
@@ -346,7 +346,7 @@ const VerifiedPartnerTab = ({
                             -
                           </span>
                         )}
-                      </td>
+                      </td> */}
                       <td className="text-user">{restaurant.mobile}</td>
                       <td className="text-user">
                         {restaurant.years_of_experience}
