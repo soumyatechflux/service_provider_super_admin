@@ -96,12 +96,12 @@ const VerifiedPartnerTab = ({
     }
   };
 
-  const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+  const normalizeString = (str) =>
+    str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
 
   const filteredRestaurants = restaurants.filter((restaurant) =>
     normalizeString(restaurant.name).includes(normalizeString(searchInput))
   );
-  
 
   // Pagination logic
   const totalPages = Math.ceil(restaurants.length / entriesPerPage);
@@ -296,9 +296,13 @@ const VerifiedPartnerTab = ({
                   <th scope="col" style={{ width: "5%" }}>
                     Verify
                   </th>
-                  <th scope="col" style={{ width: "10%" }}>
-                    Status
-                  </th>
+                  {restaurants.some(
+                    (restaurant) => restaurant.is_verify === 1
+                  ) && (
+                    <th scope="col" style={{ width: "10%" }}>
+                      Status
+                    </th>
+                  )}
                   <th scope="col" style={{ width: "5%" }}>
                     Action
                   </th>
@@ -422,28 +426,31 @@ const VerifiedPartnerTab = ({
                           </div>
                         </div>
                       </td>
-                      <td className={`status ${restaurant.active_status}`}>
-                        <div
-                          className={`status-background-${restaurant.active_status}`}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <span>
-                            {restaurant.active_status === "active"
-                              ? "Active"
-                              : "InActive"}
-                          </span>
+                      {restaurant.is_verify === 1 && (
+                        <td className={`status ${restaurant.active_status}`}>
                           <div
-                            onClick={() => handleRestaurantClick(restaurant)}
-                            style={{ cursor: "pointer", opacity: 1 }}
+                            className={`status-background-${restaurant.active_status}`}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                            }}
                           >
-                            <EditIcon />
+                            <span>
+                              {restaurant.active_status === "active"
+                                ? "Active"
+                                : "InActive"}
+                            </span>
+                            <div
+                              onClick={() => handleRestaurantClick(restaurant)}
+                              style={{ cursor: "pointer", opacity: 1 }}
+                            >
+                              <EditIcon />
+                            </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
+                      )}
+
                       <td
                         className="edit_users action-btn-trash"
                         style={{ cursor: "pointer", opacity: 1 }}
