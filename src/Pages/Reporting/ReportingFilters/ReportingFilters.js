@@ -13,6 +13,7 @@ const ReportingFilters = ({ onSearch, onClear }) => {
     to_date: "",
     from_time: "",
     to_time: "",
+    user_type: "",
   });
 
   // Mapping categories to subcategories
@@ -39,15 +40,8 @@ const ReportingFilters = ({ onSearch, onClear }) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
       [name]: value,
+      ...(name === "category_id" ? { sub_category_id: "" } : {}),
     }));
-
-    // Reset sub_category_id if category_id changes
-    if (name === "category_id") {
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        sub_category_id: "",
-      }));
-    }
   };
 
   const handleClearFilters = () => {
@@ -62,20 +56,18 @@ const ReportingFilters = ({ onSearch, onClear }) => {
       to_date: "",
       from_time: "",
       to_time: "",
+      user_type: "",
     });
-
-    onClear(); // Notify the parent to clear filters
+    onClear();
   };
 
   const handleSearch = () => {
-    onSearch(filters); // Send filters to the parent
+    onSearch(filters);
   };
 
   const handleExport = (exportType) => {
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
     const apiUrl = `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/reporting/bookings`;
-
-    // Add the filters to the request
     const queryParams = new URLSearchParams(filters).toString();
     const url = `${apiUrl}?${queryParams}&export_type=${exportType}`;
 
@@ -154,44 +146,6 @@ const ReportingFilters = ({ onSearch, onClear }) => {
         </div>
         <div className="filter-row">
           <div className="filter-item">
-            <label>Payment Mode :</label>
-            <select name="payment_mode" value={filters.payment_mode} onChange={handleChange}>
-              <option value="">Select Payment Mode</option>
-              <option value="cash">Cash</option>
-              <option value="online">Online</option>
-            </select>
-          </div>
-          <div className="filter-item">
-            <label>Booking Status :</label>
-            <select name="booking_status" value={filters.booking_status} onChange={handleChange}>
-              <option value="">Select Booking Status</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="pending">Pending</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
-        </div>
-        <div className="filter-row">
-          <div className="filter-item">
-            <label>Payment Status :</label>
-            <select name="payment_status" value={filters.payment_status} onChange={handleChange}>
-              <option value="">Select Payment Status</option>
-              <option value="paid">Paid</option>
-              <option value="unpaid">Unpaid</option>
-            </select>
-          </div>
-          <div className="filter-item">
-            <label>Month Duration :</label>
-            <select name="month_duration" value={filters.month_duration} onChange={handleChange}>
-              <option value="">Select Duration</option>
-              <option value="1">1 Month</option>
-              <option value="3">3 Months</option>
-              <option value="6">6 Months</option>
-            </select>
-          </div>
-        </div>
-        <div className="filter-row">
-          <div className="filter-item">
             <label>From Date :</label>
             <input type="date" name="from_date" value={filters.from_date} onChange={handleChange} />
           </div>
@@ -210,19 +164,64 @@ const ReportingFilters = ({ onSearch, onClear }) => {
             <input type="time" name="to_time" value={filters.to_time} onChange={handleChange} />
           </div>
         </div>
+        <div className="filter-row">
+          <div className="filter-item">
+            <label>Month Duration :</label>
+            <select name="month_duration" value={filters.month_duration} onChange={handleChange}>
+              <option value="">Select Duration</option>
+              <option value="1">1 Month</option>
+              <option value="3">3 Months</option>
+              <option value="6">6 Months</option>
+            </select>
+          </div>
+          <div className="filter-item">
+            <label>Booking Status :</label>
+            <select name="booking_status" value={filters.booking_status} onChange={handleChange}>
+              <option value="">Select Booking Status</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="pending">Pending</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+        <div className="filter-row">
+          <div className="filter-item">
+            <label>Payment Mode :</label>
+            <select name="payment_mode" value={filters.payment_mode} onChange={handleChange}>
+              <option value="">Select Payment Mode</option>
+              <option value="cash">Cash</option>
+              <option value="online">Online</option>
+            </select>
+          </div>
+          <div className="filter-item">
+            <label>Payment Status :</label>
+            <select name="payment_status" value={filters.payment_status} onChange={handleChange}>
+              <option value="">Select Payment Status</option>
+              <option value="paid">Paid</option>
+              <option value="unpaid">Unpaid</option>
+            </select>
+          </div>
+        </div>
+        <div className="filter-row">
+          <div className="filter-item">
+            <label>Customer/Partner :</label>
+            <select name="user_type" value={filters.user_type} onChange={handleChange} style={{width:"50%"}}>
+              <option value="">Select Type</option>
+              <option value="customer">Customer</option>
+              <option value="partner">Partner</option>
+            </select>
+          </div>
+        </div>
         <div className="filter-buttons">
           <button type="button" onClick={() => handleExport("pdf")} className="Discount-btn">
             Export to PDF
           </button>
-
           <button type="button" onClick={() => handleExport("csv")} className="Discount-btn">
             Export to CSV
           </button>
-
           <button type="button" onClick={handleSearch} className="Discount-btn">
             Search
           </button>
-
           <button type="button" onClick={handleClearFilters} className="Discount-btn">
             Clear Filter
           </button>

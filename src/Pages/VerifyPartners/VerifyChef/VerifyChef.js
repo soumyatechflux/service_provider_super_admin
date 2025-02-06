@@ -432,7 +432,7 @@ const VerifyChef = () => {
         <h2>Documents</h2>
 
         <div className="file-input-group">
-          <label htmlFor="bankDetails">Bank Passbook Photocopy</label>
+          <label htmlFor="bankDetails">Bank Details Photocopy</label>
 
           <input
             type="file"

@@ -297,7 +297,7 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
   
   return (
     <div className="container mt-5">
-      <h3 className="text-center mb-4">Gardener Day visit</h3>
+      <h3 className="text-center mb-4">Gardener One Time Visit</h3>
       <form onSubmit={handleSubmit}>
         {/* Start Time, End Time, Night Charges Start At */}
         <div className="row mb-3 align-items-center">
