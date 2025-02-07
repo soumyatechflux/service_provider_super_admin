@@ -275,6 +275,9 @@ const VerifiedPartnerTab = ({
                   <th scope="col" style={{ width: "12%" }}>
                     Name
                   </th>
+                  <th scope="col" style={{ width: "12%" }}>
+                    Gender
+                  </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Category
                   </th>
@@ -292,6 +295,9 @@ const VerifiedPartnerTab = ({
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Sign-Up
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Ratings
                   </th>
                   <th scope="col" style={{ width: "5%" }}>
                     Verify
@@ -332,6 +338,12 @@ const VerifiedPartnerTab = ({
                             restaurant.name.slice(1)
                           : "N/A"}
                       </td>
+                      <td className="text-user">
+                        {restaurant.gender
+                          ? restaurant.gender.charAt(0).toUpperCase() +
+                            restaurant.gender.slice(1)
+                          : "N/A"}
+                      </td>
 
                       <td className="text-user">
                         {restaurant.category_id === 1
@@ -361,7 +373,6 @@ const VerifiedPartnerTab = ({
                             restaurant.current_address.slice(1)
                           : "N/A"}
                       </td>
-
                       <td className="text-user">
                         {new Intl.DateTimeFormat("en-GB", {
                           day: "2-digit",
@@ -371,6 +382,10 @@ const VerifiedPartnerTab = ({
                           .format(new Date(restaurant.created_at))
                           .replace(",", "")}
                       </td>
+                      <td className="text-user">
+                        <strong>{restaurant.rating}</strong>
+                      </td>
+
                       <td>
                         <div
                           style={{
@@ -437,10 +452,14 @@ const VerifiedPartnerTab = ({
                             }}
                           >
                             <span>
-                              {restaurant.active_status === "active"
-                                ? "Active"
-                                : "InActive"}
+                              {{
+                                active: "Active",
+                                inactive: "Inactive",
+                                suspended: "Suspended",
+                                blocked: "Blocked",
+                              }[restaurant.active_status] || "Unknown Status"}
                             </span>
+
                             <div
                               onClick={() => handleRestaurantClick(restaurant)}
                               style={{ cursor: "pointer", opacity: 1 }}
