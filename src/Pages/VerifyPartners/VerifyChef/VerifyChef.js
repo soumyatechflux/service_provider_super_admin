@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import Select from "react-select";
 import "./VerifyChef.css";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -11,6 +12,42 @@ const VerifyChef = () => {
   const { restaurant, id, isVerify } = location.state || {};
   const [partnerDetails, setPartnerDetails] = useState([]);
   const navigate = useNavigate();
+
+  // Car Type Options
+  const carTypeOptions = [
+    { value: "sedan", label: "Sedan" },
+    { value: "suv", label: "SUV" },
+    { value: "hatchback", label: "Hatchback" },
+    { value: "luxury", label: "Luxury" }
+  ];
+
+  // Veg/Non-Veg Options
+  const vegNonVegOptions = [
+    { value: "veg", label: "Veg" },
+    { value: "non-veg", label: "Non-Veg" },
+    { value: "vegan", label: "Vegan" },
+    { value: "vegetarian", label: "Vegetarian" }
+  ];
+
+  // Transmission Type Options
+  const transmissionOptions = [
+    { value: "automatic", label: "Automatic" },
+    { value: "manual", label: "Manual" }
+  ];
+
+
+
+  const handleMultiSelectChange = (selectedOptions, name) => {
+    const selectedValues = selectedOptions?.map(option => option.value) || [];
+    setCookDetails(prevState => ({
+      ...prevState,
+      [name]: selectedValues, // Keep as an array for UI
+    }));
+  };
+  
+  
+  
+  
 
   const [cookDetails, setCookDetails] = useState({
     name: "",
@@ -29,15 +66,18 @@ const VerifyChef = () => {
     languages: "",
     drivingLicenseNumber: "",
     licenseExpiryDate: "",
-    carType: "",
+    // carType: "",
     cuisines: "",
-    vegNonVeg: "",
+    // vegNonVeg: "",
     aadharFront: null,
     aadharBack: null,
     panCard: null,
     bankDetails: null,
     drivingLicense: null,
     currentAddressProof: null,
+    carType: [],
+    vegNonVeg: [],
+    transmissionType: []
   });
 
   const getVerifyDetails = async () => {
@@ -153,6 +193,8 @@ const VerifyChef = () => {
         cookDetails.licenseExpiryDate
       );
       formData.append("car_type", cookDetails.carType);
+      formData.append("veg_non_veg", cookDetails.vegNonVeg);
+      formData.append("transmission_type", cookDetails.transmissionType);
       formData.append("aadhar_front", cookDetails.aadharFront);
       formData.append("aadhar_back", cookDetails.aadharBack);
       formData.append("pancard", cookDetails.panCard);
@@ -242,70 +284,40 @@ const VerifyChef = () => {
 
       {restaurant === 1 && (
         <>
-          <label>Cuisines</label>
-
-          <input
-            type="text"
-            name="cuisines"
-            value={cookDetails?.cuisines}
-            onChange={handleInputChange}
-            placeholder="Enter cuisines"
-            required
-          />
-
-          <label>Veg / Non-Veg</label>
-
-          <select
-            name="vegNonVeg"
-            value={cookDetails?.vegNonVeg}
-            onChange={handleInputChange}
-          >
-            <option value="">Select</option>
-
-            <option value="Veg">Veg</option>
-
-            <option value="Non-Veg">Non-Veg</option>
-          </select>
+          <label>Veg / Non-Veg (Multiple Selection)</label>
+          <Select
+  name="vegNonVeg"
+  options={vegNonVegOptions}
+  isMulti
+  value={vegNonVegOptions.filter(option => cookDetails.vegNonVeg.includes(option.value))}
+  onChange={(options) => handleMultiSelectChange(options, "vegNonVeg")}
+  placeholder="Select Veg/Non-Veg Options"
+/>
         </>
       )}
 
       {restaurant === 2 && (
         <>
-          <label>Driving License Number</label>
+          <label>Car Type (Multiple Selection)</label>
+          <Select
+  name="carType"
+  options={carTypeOptions}
+  isMulti
+  value={carTypeOptions.filter(option => cookDetails.carType.includes(option.value))}
+  onChange={(options) => handleMultiSelectChange(options, "carType")}
+  placeholder="Select Car Types"
+/>
 
-          <input
-            type="text"
-            name="drivingLicenseNumber"
-            value={cookDetails?.drivingLicenseNumber}
-            onChange={handleInputChange}
-            placeholder="Enter driving license number"
-            required
-          />
 
-          <label>License Expiry Date</label>
-
-          <input
-            type="date"
-            name="licenseExpiryDate"
-            value={cookDetails?.licenseExpiryDate}
-            onChange={handleInputChange}
-            required
-          />
-
-          <label>Car Type</label>
-
-          <select
-            name="carType"
-            value={cookDetails?.carType}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="">Select Car Type</option>
-
-            <option value="automatic">Automatic</option>
-
-            <option value="manual">Manual</option>
-          </select>
+          <label>Transmission Type (Multiple Selection)</label>
+          <Select
+  name="transmissionType"
+  options={transmissionOptions}
+  isMulti
+  value={transmissionOptions.filter(option => cookDetails.transmissionType.includes(option.value))}
+  onChange={(options) => handleMultiSelectChange(options, "transmissionType")}
+  placeholder="Select Transmission Types"
+/>
         </>
       )}
 

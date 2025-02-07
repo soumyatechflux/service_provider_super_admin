@@ -17,9 +17,7 @@ const ReportTable = ({ filters, loading, setLoading }) => {
       setLoading(true);
 
       const validFilters = Object.fromEntries(
-        Object.entries(filters).filter(
-          ([_, value]) => value !== "" && value !== null
-        )
+        Object.entries(filters).filter(([_, value]) => value !== "" && value !== null)
       );
 
       const response = await axios.get(
@@ -52,10 +50,7 @@ const ReportTable = ({ filters, loading, setLoading }) => {
   }, [filters]);
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
   const handleViewDetails = (booking) => {
@@ -63,13 +58,12 @@ const ReportTable = ({ filters, loading, setLoading }) => {
     setIsModalOpen(true);
   };
 
-  // Pagination calculations remain the same
+  // Pagination calculations
   const totalPages = Math.ceil(reportData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = reportData.slice(indexOfFirstEntry, indexOfLastEntry);
 
-  // Pagination rendering functions remain the same
   const getPageRange = () => {
     let start = currentPage - 1;
     let end = currentPage + 1;
@@ -87,12 +81,66 @@ const ReportTable = ({ filters, loading, setLoading }) => {
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const renderPaginationItems = () => {
     const pageRange = getPageRange();
-    
+
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
-        {/* Pagination buttons remain the same */}
+        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(1)}
+            style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
+          >
+            First
+          </button>
+        </li>
+        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+            style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
+          >
+            Previous
+          </button>
+        </li>
+        {pageRange.map((number) => (
+          <li key={number} className={`page-item ${currentPage === number ? "active" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => handlePageChange(number)}
+              style={{
+                backgroundColor: currentPage === number ? "#007bff" : "white",
+                color: currentPage === number ? "white" : "#007bff",
+              }}
+            >
+              {number}
+            </button>
+          </li>
+        ))}
+        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+          >
+            Next
+          </button>
+        </li>
+        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(totalPages)}
+            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+          >
+            Last
+          </button>
+        </li>
       </ul>
     );
   };
@@ -147,47 +195,15 @@ const ReportTable = ({ filters, loading, setLoading }) => {
                     <td>{item.price || "No status"}</td>
                     <td>{item.commission_amount || "0.00"}</td>
                     <td>{item.address_from || "No address available."}</td>
-                    <td>
-                      {item.booking_status
-                        ? item.booking_status.charAt(0).toUpperCase() +
-                          item.booking_status.slice(1)
-                        : "N/A"}
-                    </td>
-                    <td>
-                      {new Intl.DateTimeFormat("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      }).format(new Date(item.created_at))}
-                    </td>
-                    <td>
-                      <button
-                        className="btn Discount-btn"
-                        onClick={() => handleViewDetails(item)}
-                      >
-                        View
-                      </button>
-                    </td>
+                    <td>{item.booking_status?.charAt(0).toUpperCase() + item.booking_status.slice(1) || "N/A"}</td>
+                    <td>{new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(item.created_at))}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-
-          <nav
-            aria-label="Page navigation"
-            className="d-flex justify-content-center"
-          >
-            {renderPaginationItems()}
-          </nav>
+          <nav className="d-flex justify-content-center">{renderPaginationItems()}</nav>
         </>
-      )}
-
-      {isModalOpen && (
-        <BookingDetailsModal
-          booking={selectedBooking}
-          onClose={() => setIsModalOpen(false)}
-        />
       )}
     </div>
   );

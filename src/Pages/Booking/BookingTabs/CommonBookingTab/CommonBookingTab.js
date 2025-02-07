@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import EditStatusModal from "./EditStatusModal/EditStatusModal";
 import AttachmentModal from "./AttachmentModal/AttachmentModal";
+import PriceDetailModal from "./PriceDetailModal/PriceDetailModal";
 
 const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   function formatDateWithTime(dateString) {
@@ -147,6 +148,18 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     setCurrentPage(pageNumber);
   };
 
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [showPriceDetailModal, setShowPriceDetailModal] = useState(false);
+
+  const handleOpenPriceDetailModal = (booking) => {
+    setSelectedBooking(booking);
+    setShowPriceDetailModal(true);
+  };
+
+  const handleClosePriceDetailModal = () => {
+    setShowPriceDetailModal(false);
+  };
+
   const renderPagination = () => {
     // Hide pagination if filtered data is less than or equal to entriesPerPage
     if (filteredData.length <= entriesPerPage) return null;
@@ -231,6 +244,9 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                   <th scope="col" style={{ width: "5%" }}>
                     Sr.
                   </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Booking Id
+                  </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Customer Name
                   </th>
@@ -260,7 +276,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                     </th>
                   )}
                   <th scope="col" style={{ width: "15%" }}>
-                    Visited Date
+                    Visit Date
                   </th>
                   <th scope="col" style={{ width: "15%" }}>
                     Booking Date
@@ -274,6 +290,15 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                       Visit Slot Count
                     </th>
                   )}
+                  {category_id !== "1" && ( // Hide if category_id is "1"
+  <th scope="col" style={{ width: "10%" }}>
+    Hours Booked
+  </th>
+)}
+
+                  <th scope="col" style={{ width: "10%" }}>
+                    Special Request
+                  </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Status
                   </th>
@@ -289,12 +314,19 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                 {currentEntries.map((item, index) => (
                   <tr key={item.booking_id}>
                     <th scope="row">{indexOfFirstEntry + index + 1}.</th>
+                    <td>{item.booking_id || "N/A"}</td>
                     <td>{item.guest_name || "N/A"}</td>
                     <td>{item.partner?.name || "Not assigned yet"}</td>
                     <td>
                       {item.sub_category_name?.sub_category_name || "Unknown"}
                     </td>
-                    <td>{item.billing_amount || "N/A"}</td>
+                    <td>{item.billing_amount || "N/A"}
+                    <i
+                    className="fa fa-eye text-primary ml-2"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleOpenPriceDetailModal(item)} // Open modal on click
+                  />
+                    </td>
 
                     {(category_id === "1" || category_id === "3") && (
                       <td>
@@ -340,10 +372,16 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
 
                     <td>{formatPaymentMode(item.payment_mode)}</td>
 
-                    {category_id === "3" && (
+                    {category_id == "3" && (
                       <td>{item.gardener_visiting_slot_count || "NA"}</td>
                     )}
+                    {category_id !== "1" && ( // Hide if category_id is "1"
+                      <td>{item.no_of_hours_booked || "NA"}</td>
+                    )}
 
+                    <td>
+                      {item.instructions || "N/A"}
+                    </td>
                     <td>
                       {item.booking_status
                         ? item.booking_status.charAt(0).toUpperCase() +
@@ -410,6 +448,12 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
         open={showAttachmentModal}
         attachments={attachmentsData}
         onClose={handleCloseAttachmentModal}
+      />
+
+<PriceDetailModal
+        show={showPriceDetailModal}
+        onHide={handleClosePriceDetailModal}
+        bookingData={selectedBooking}
       />
 
       <EditStatusModal

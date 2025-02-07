@@ -216,11 +216,12 @@ const SupportPartnerTab = () => {
                   <th style={{ width: "5%" }}>Sr. No.</th>
                   <th style={{ width: "10%" }}>Name</th>
                   <th style={{ width: "10%" }}>Mobile</th>
-                  <th style={{ width: "10%" }}>Role</th>
+                  <th style={{ width: "10%" }}>Email</th>
+                  
                   <th style={{ width: "25%" }}>Description</th>
                   <th style={{ width: "10%" }}>Status</th>
                   <th style={{ width: "10%" }}>Created At</th>
-                  <th style={{ width: "10%" }}>Updated At</th>
+                 
                 </tr>
               </thead>
               <tbody>
@@ -228,7 +229,8 @@ const SupportPartnerTab = () => {
                   <tr key={item.id || index}>
                     <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
                     <td>{item?.name || "N/A"}</td>
-                    <td>{item?.user_role ? capitalizeFirstLetter(item.user_role) : "N/A"}</td>
+                    <td>{item?.mobile || "N/A"}</td>
+                    <td>{item?.email || "N/A"}</td>
                     <td>{item?.description || "N/A"}</td>
                     <td>
                       <div className="status-div">
@@ -242,7 +244,7 @@ const SupportPartnerTab = () => {
                       </div>
                     </td>
                     <td>{formatDate(item?.created_at)}</td>
-                    <td>{formatDate(item?.updated_at)}</td>
+                    
                   </tr>
                 ))}
               </tbody>

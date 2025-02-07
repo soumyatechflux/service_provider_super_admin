@@ -5,6 +5,8 @@ import Loader from "../../Loader/Loader";
 import EditIcon from "@mui/icons-material/Edit";
 import EditCustomerModal from "../EditCustomersModal/EditCustomersModal";
 import "../../Customers/CustomersTable/CustomersTable.css";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteCustomerModal from "../DeleteCustomerModal/DeleteCustomerModal";
 
 const CustomersTable = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -14,6 +16,9 @@ const CustomersTable = () => {
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+const [customerToDelete, setCustomerToDelete] = useState(null);
 
   const entriesPerPage = 10;
 
@@ -49,6 +54,38 @@ const CustomersTable = () => {
       toast.error("Failed to load customers data. Please try again.");
     }
   }, []);
+
+    const handleDeleteCustomer = async (customer) => {
+      try {
+        const token = sessionStorage.getItem(
+          "TokenForSuperAdminOfServiceProvider"
+        );
+  
+        const response = await axios.delete(
+          `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/customers/${customer.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        if (response?.data?.message === "Customer deleted successfully") {
+          toast.success("Customer deleted successfully.");
+          getRestaurantTableData(); // Refresh the table data
+        } else {
+          toast.error(response?.data?.message || "Failed to delete customer.");
+        }
+      } catch (error) {
+        console.error("Error deleting customer:", error);
+        toast.error("Failed to delete customer. Please try again.");
+      }
+    };
+
+    const handleDeleteClick = (customer) => {
+      setCustomerToDelete(customer);
+      setShowDeleteModal(true);
+    };
 
   useEffect(() => {
     getRestaurantTableData();
@@ -224,6 +261,9 @@ const CustomersTable = () => {
                   <th scope="col" style={{ width: "10%" }}>
                     Status
                   </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -252,6 +292,13 @@ const CustomersTable = () => {
                         <EditIcon />
                       </div>
                     </td>
+                    <td
+                        className="edit_users action-btn-trash"
+                        style={{ cursor: "pointer", opacity: 1 }}
+                        onClick={() => handleDeleteClick(restaurant)}
+                      >
+                        <DeleteIcon style={{ color: "red" }} />
+                      </td>
                   </tr>
                 ))}
               </tbody>
@@ -276,6 +323,13 @@ const CustomersTable = () => {
           getRestaurantTableData={getRestaurantTableData}
         />
       )}
+<DeleteCustomerModal
+  show={showDeleteModal}
+  handleClose={() => setShowDeleteModal(false)}
+  handleDelete={handleDeleteCustomer}
+  customer={customerToDelete}
+/>
+
     </div>
   );
 };
