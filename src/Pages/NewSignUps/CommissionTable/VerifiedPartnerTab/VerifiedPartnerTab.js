@@ -335,7 +335,7 @@ const VerifiedPartnerTab = ({
                 {restaurants.length === 0 ? (
                   <tr>
                     <td
-                      colSpan="11"
+                      colSpan="13"
                       style={{
                         textAlign: "center",
                       }}
@@ -495,14 +495,14 @@ const VerifiedPartnerTab = ({
                       >
                         <DeleteIcon style={{ color: "red" }} />
                       </td>
-
-                      <td>
+                      <td className="text-user">
                         <i
                           className="fa fa-eye text-primary"
                           style={{ cursor: "pointer" }}
                           onClick={() => handleOpenAttachmentModal(restaurant)} // Ensure full object is passed
                         />
                       </td>
+
                     </tr>
                   ))
                 )}

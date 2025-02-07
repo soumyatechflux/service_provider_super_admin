@@ -13,7 +13,8 @@ const AttachmentModalPartner = ({ open, attachments, onClose }) => {
       value !== undefined &&
       key !== "is_verify" &&
       key !== "registered_by_id" &&
-      key !== "firebase_token" 
+      key !== "firebase_token"  &&
+      key !== "category_id"  
   );
 
   // Function to format keys (remove underscores and capitalize words)
