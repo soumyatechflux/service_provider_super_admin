@@ -119,10 +119,10 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     const lastVisitCount =
       hourRows.length > 0 ? hourRows[hourRows.length - 1].visitCount : 0;
 
-    if (lastVisitCount >= 15) {
-      toast.error("Visit count cannot exceed 15.");
-      return;
-    }
+    // if (lastVisitCount >= 15) {
+    //   toast.error("Visit count cannot exceed 15.");
+    //   return;
+    // }
 
     setHourRows([
       ...hourRows,
@@ -178,12 +178,12 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     // Check for duplicate visit counts
    // Check for duplicate visit counts
 const visitCounts = hourRows.map((row) => Number(row.visitCount));
-const hasDuplicates = new Set(visitCounts).size !== visitCounts.length;
+// const hasDuplicates = new Set(visitCounts).size !== visitCounts.length;
 
-if (hasDuplicates) {
-    toast.error("Duplicate visit counts are not allowed.");
-    return;
-}
+// if (hasDuplicates) {
+//     toast.error("Duplicate visit counts are not allowed.");
+//     return;
+// }
 
    
 
@@ -564,7 +564,7 @@ if (hasDuplicates) {
 
                 <div className="col-12 col-md-3 p-4">
                   <div className="Subheading2_AddTable">
-                    DURATION (in hours) <span className="text-danger">*</span>
+                    DURATION (in Minutes) <span className="text-danger">*</span>
                   </div>
                   <div className="seating_AddTable">
                     <input

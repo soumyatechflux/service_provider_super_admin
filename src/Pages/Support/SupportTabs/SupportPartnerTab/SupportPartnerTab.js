@@ -233,16 +233,19 @@ const SupportPartnerTab = () => {
                     <td>{item?.email || "N/A"}</td>
                     <td>{item?.description || "N/A"}</td>
                     <td>
-                      <div className="status-div">
-                        <span>
-                          {item?.status ? capitalizeFirstLetter(item.status) : "N/A"}
-                        </span>
-                        <EditIcon
-                          onClick={() => handleEditStatus(item)}
-                          style={{ cursor: "pointer" }}
-                        />
-                      </div>
-                    </td>
+  <div className="status-div">
+    <span>
+      {item.status
+        ? item.status.charAt(0).toUpperCase() + item.status.slice(1)
+        : "New"}
+    </span>
+    <EditIcon
+      onClick={() => handleEditStatus(item)}
+      style={{ cursor: "pointer" }}
+    />
+  </div>
+</td>
+
                     <td>{formatDate(item?.created_at)}</td>
                     
                   </tr>

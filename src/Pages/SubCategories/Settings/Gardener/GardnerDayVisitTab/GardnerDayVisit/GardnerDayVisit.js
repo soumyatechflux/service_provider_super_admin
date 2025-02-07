@@ -568,7 +568,7 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
               >
                 <div className="col-12 col-md-5 p-4">
                   <div className="Subheading2_AddTable">
-                    DURATION (in hours) <span className="text-danger">*</span>
+                    DURATION (in Minutes) <span className="text-danger">*</span>
                   </div>
                   <div className="seating_AddTable">
                     <div className="component-guest1">

@@ -9,12 +9,14 @@ import {
   Select,
   MenuItem,
   Button,
+  TextField,
 } from "@mui/material";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) => {
-  const [status, setStatus] = useState(support?.status || "open");
+  const [status, setStatus] = useState(support?.status || "New"); // Ensure proper casing
+  const [note, setNote] = useState(support?.note || ""); // Load existing note if available
   const [loading, setLoading] = useState(false);
 
   const handleStatusUpdate = async () => {
@@ -23,16 +25,17 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
       toast.error("Support ID is missing. Please try again.");
       return;
     }
-  
+
     setLoading(true);
     try {
       const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-  
+
       const payload = {
         id: support.id,
-        status: status,
+        status: status, // Corrected status keys
+        note: note, // Include note in payload
       };
-  
+
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/help_center/status`,
         payload,
@@ -42,9 +45,9 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
           },
         }
       );
-  
+
       if (response?.status === 200 && response?.data?.success) {
-        onStatusChange(support.id, status);
+        onStatusChange(support.id, status, note);
         toast.success(response?.data?.message || "Status updated successfully!");
         getSupportData();
       } else {
@@ -75,6 +78,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
     >
       <DialogTitle>Edit Status</DialogTitle>
       <DialogContent>
+        {/* Status Dropdown */}
         <FormControl fullWidth margin="normal">
           <InputLabel id="status-label">Status</InputLabel>
           <Select
@@ -84,17 +88,29 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
             fullWidth
             label="Status"
           >
-            {/* Only show "open" option if current status is "open" */}
-            {status === "open" && (
-              <MenuItem value="open" disabled>
-                Open
+            {status === "New" && (
+              <MenuItem value="New" disabled>
+                New
               </MenuItem>
             )}
-            <MenuItem value="inprogress">In Progress</MenuItem>
-            <MenuItem value="resolved">Resolved</MenuItem>
-            <MenuItem value="closed">Closed</MenuItem>
+            <MenuItem value="In-review">In Review</MenuItem>
+            <MenuItem value="Resolved">Resolved</MenuItem>
+            <MenuItem value="Rejected">Rejected</MenuItem>
           </Select>
         </FormControl>
+
+        {/* Note TextArea */}
+        <TextField
+          label="Note"
+          multiline
+          rows={3}
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="Add a note (optional)"
+        />
       </DialogContent>
       <DialogActions>
         <Button
@@ -105,11 +121,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
         >
           {loading ? "Saving..." : "Save"}
         </Button>
-        <Button
-          variant="contained"
-          onClick={onClose}
-          color="error"
-        >
+        <Button variant="contained" onClick={onClose} color="error">
           Cancel
         </Button>
       </DialogActions>
@@ -118,3 +130,15 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
 };
 
 export default EditStatusModal;
+
+
+
+
+
+
+
+
+
+
+
+

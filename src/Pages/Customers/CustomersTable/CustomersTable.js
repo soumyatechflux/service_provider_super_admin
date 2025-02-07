@@ -249,7 +249,7 @@ const [customerToDelete, setCustomerToDelete] = useState(null);
                   <th scope="col" style={{ width: "5%" }}>
                     Sr.
                   </th>
-                  <th scope="col" style={{ width: "15%" }}>
+                  <th scope="col" style={{ width: "10%" }}>
                     Name
                   </th>
                   <th scope="col" style={{ width: "15%" }}>
@@ -257,6 +257,12 @@ const [customerToDelete, setCustomerToDelete] = useState(null);
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Phone
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Gender
+                  </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Rating
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Status
@@ -279,6 +285,8 @@ const [customerToDelete, setCustomerToDelete] = useState(null);
 
                     <td>{restaurant.email || "NA"}</td>
                     <td>{restaurant.mobile}</td>
+                    <td>{restaurant.gender ? restaurant.gender : "Not Provided"}</td>
+                    <td>{restaurant.rating}</td>
                     <td className={`status ${restaurant.active_status}`}>
                       <div
                         className="status-div"

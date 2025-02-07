@@ -67,7 +67,10 @@ const SupportCustomerTab = () => {
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = filteredData.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   const handleEditStatus = (support) => {
     setSelectedSupport(support);
@@ -111,7 +114,9 @@ const SupportCustomerTab = () => {
                   <th>Status</th>
                   <th>Created At</th>
                   <th>Updated At</th>
-                  <th scope="col" style={{ width: "5%" }}>Action</th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -124,13 +129,19 @@ const SupportCustomerTab = () => {
                     <td>{item.description}</td>
                     <td>
                       <div className="status-div">
-                        <span>{item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : ''}</span>
+                        <span>
+                          {item.status
+                            ? item.status.charAt(0).toUpperCase() +
+                              item.status.slice(1)
+                            : "New"}
+                        </span>
                         <EditIcon
                           onClick={() => handleEditStatus(item)}
                           style={{ cursor: "pointer" }}
                         />
                       </div>
                     </td>
+
                     <td>{new Date(item.created_at).toLocaleDateString()}</td>
                     <td>{new Date(item.updated_at).toLocaleDateString()}</td>
                     <td>
@@ -154,7 +165,9 @@ const SupportCustomerTab = () => {
         <EditStatusModal
           support={selectedSupport}
           onClose={() => setShowModal(false)}
-          onStatusChange={(newStatus) => updateSupportStatus(selectedSupport.id, newStatus)}
+          onStatusChange={(newStatus) =>
+            updateSupportStatus(selectedSupport.id, newStatus)
+          }
           getSupportData={getSupportData}
         />
       )}

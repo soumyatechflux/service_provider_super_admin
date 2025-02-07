@@ -1,17 +1,18 @@
 import {
-    Button,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField
 } from "@mui/material";
 import axios from "axios"; // Import axios for API calls
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Loader from "../../Loader/Loader";
 
@@ -23,18 +24,34 @@ const EditCustomerModal = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [restaurant, setRestaurant] = useState({
-    status: restaurantDetails?.active_status,
+    status: restaurantDetails?.active_status || "",
+    note: restaurantDetails?.note || "", // Pre-fill note if available
   });
+
+  useEffect(() => {
+    if (restaurantDetails) {
+      setRestaurant({
+        status: restaurantDetails.active_status || "",
+        note: restaurantDetails.note || "", // Ensure previous note is loaded
+      });
+    }
+  }, [restaurantDetails]);
 
   const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
   const statusOptions = [
     { key: "active", label: "Active" },
     { key: "inactive", label: "InActive" },
+    { key: "suspended", label: "Suspended" },
+    { key: "blocked", label: "Blocked" },
   ];
 
   const handleStatusChange = (e) => {
     setRestaurant({ ...restaurant, status: e.target.value });
+  };
+
+  const handleNoteChange = (e) => {
+    setRestaurant({ ...restaurant, note: e.target.value });
   };
 
   const handleFormSubmit = async (e) => {
@@ -45,6 +62,7 @@ const EditCustomerModal = ({
       customer: {
         customer_id: restaurantDetails?.id,
         active_status: restaurant.status,
+        note: restaurant.note, // Sending the previous/new note
       },
     };
 
@@ -56,15 +74,11 @@ const EditCustomerModal = ({
       );
 
       if (response?.data?.success) {
-        toast.success(
-          response.data.message || "Customer status updated successfully!"
-        );
+        toast.success(response.data.message || "Customer status updated successfully!");
         getRestaurantTableData();
         handleClose();
       } else {
-        toast.error(
-          response.data?.message || "Failed to update. Please try again."
-        );
+        toast.error(response.data?.message || "Failed to update. Please try again.");
       }
     } catch (error) {
       toast.error("Failed to update partner. Please try again.");
@@ -89,7 +103,7 @@ const EditCustomerModal = ({
           },
         }}
       >
-        <DialogTitle>Change Partner Status</DialogTitle>
+        <DialogTitle>Change Customer Status</DialogTitle>
         <DialogContent>
           <form onSubmit={handleFormSubmit}>
             <div
@@ -121,6 +135,7 @@ const EditCustomerModal = ({
                 {restaurantDetails?.name || "N/A"}
               </span>
             </div>
+            {/* Status Dropdown */}
             <FormControl fullWidth margin="normal">
               <InputLabel id="status-label" shrink>
                 Status
@@ -139,6 +154,19 @@ const EditCustomerModal = ({
                 ))}
               </Select>
             </FormControl>
+
+            {/* Note TextArea */}
+            <TextField
+              label="Note"
+              multiline
+              rows={3}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={restaurant.note}
+              onChange={handleNoteChange}
+              placeholder="Add a note (optional)"
+            />
           </form>
         </DialogContent>
         <DialogActions>
