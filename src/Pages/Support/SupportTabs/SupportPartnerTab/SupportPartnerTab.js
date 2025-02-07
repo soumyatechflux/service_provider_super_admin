@@ -18,9 +18,7 @@ const SupportPartnerTab = () => {
   // Fetch support data
   const getSupportData = async () => {
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
       setLoading(true);
 
@@ -39,9 +37,7 @@ const SupportPartnerTab = () => {
         const data = response?.data?.data || [];
         setSupportData(data);
       } else {
-        toast.error(
-          response.data?.message || "Failed to fetch support tickets."
-        );
+        toast.error(response.data?.message || "Failed to fetch support tickets.");
       }
     } catch (error) {
       console.error("Error fetching support tickets:", error);
@@ -70,15 +66,24 @@ const SupportPartnerTab = () => {
     });
   }, [currentPage]);
 
+  // Helper function to normalize strings for comparison
   const normalizeString = (str) => {
-    if (!str) return '';
-    return str.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (!str) return "";
+    return str.replace(/\s+/g, " ").trim().toLowerCase();
   };
 
-  const filteredData = supportData.filter(
-    (item) =>
-      item?.name && normalizeString(item.name).includes(normalizeString(searchInput))
-  );
+  // Updated filtering logic: search by name, email, mobile, description, created_at, or updated_at
+  const filteredData = supportData.filter((item) => {
+    const searchTerm = normalizeString(searchInput);
+    return (
+      normalizeString(item?.name ?? "").includes(searchTerm) ||
+      normalizeString(item?.email ?? "").includes(searchTerm) ||
+      normalizeString(item?.mobile ?? "").includes(searchTerm) ||
+      normalizeString(item?.description ?? "").includes(searchTerm) ||
+      normalizeString(item?.created_at ?? "").includes(searchTerm) ||
+      normalizeString(item?.updated_at ?? "").includes(searchTerm)
+    );
+  });
 
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -115,19 +120,14 @@ const SupportPartnerTab = () => {
     }
   };
 
-  const capitalizeFirstLetter = (string) => {
-    if (!string) return "N/A";
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  };
-
   const renderPaginationItems = () => {
     const pageRange = getPageRange();
-  
+
     const handlePageChange = (page) => {
       setCurrentPage(page);
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
-  
+
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
@@ -149,10 +149,7 @@ const SupportPartnerTab = () => {
           </button>
         </li>
         {pageRange.map((number) => (
-          <li
-            key={number}
-            className={`page-item ${currentPage === number ? "active" : ""}`}
-          >
+          <li key={number} className={`page-item ${currentPage === number ? "active" : ""}`}>
             <button
               className="page-link"
               onClick={() => handlePageChange(number)}
@@ -169,9 +166,7 @@ const SupportPartnerTab = () => {
           <button
             className="page-link"
             onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-            style={{
-              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-            }}
+            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
           >
             Next
           </button>
@@ -180,9 +175,7 @@ const SupportPartnerTab = () => {
           <button
             className="page-link"
             onClick={() => handlePageChange(totalPages)}
-            style={{
-              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-            }}
+            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
           >
             Last
           </button>
@@ -197,7 +190,7 @@ const SupportPartnerTab = () => {
         <input
           type="text"
           className="form-control search-input w-25"
-          placeholder="Search by name..."
+          placeholder="Search by name, email, mobile, description, or date..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
@@ -207,21 +200,16 @@ const SupportPartnerTab = () => {
       ) : (
         <>
           <div className="table-responsive mb-5">
-            <table
-              style={{ cursor: "default" }}
-              className="table table-bordered table-user"
-            >
+            <table style={{ cursor: "default" }} className="table table-bordered table-user">
               <thead className="heading_user">
                 <tr>
                   <th style={{ width: "5%" }}>Sr. No.</th>
                   <th style={{ width: "10%" }}>Name</th>
                   <th style={{ width: "10%" }}>Mobile</th>
                   <th style={{ width: "10%" }}>Email</th>
-                  
                   <th style={{ width: "25%" }}>Description</th>
                   <th style={{ width: "10%" }}>Status</th>
                   <th style={{ width: "10%" }}>Created At</th>
-                 
                 </tr>
               </thead>
               <tbody>
@@ -233,21 +221,19 @@ const SupportPartnerTab = () => {
                     <td>{item?.email || "N/A"}</td>
                     <td>{item?.description || "N/A"}</td>
                     <td>
-  <div className="status-div">
-    <span>
-      {item.status
-        ? item.status.charAt(0).toUpperCase() + item.status.slice(1)
-        : "New"}
-    </span>
-    <EditIcon
-      onClick={() => handleEditStatus(item)}
-      style={{ cursor: "pointer" }}
-    />
-  </div>
-</td>
-
+                      <div className="status-div">
+                        <span>
+                          {item.status
+                            ? item.status.charAt(0).toUpperCase() + item.status.slice(1)
+                            : "New"}
+                        </span>
+                        <EditIcon
+                          onClick={() => handleEditStatus(item)}
+                          style={{ cursor: "pointer" }}
+                        />
+                      </div>
+                    </td>
                     <td>{formatDate(item?.created_at)}</td>
-                    
                   </tr>
                 ))}
               </tbody>
@@ -268,11 +254,8 @@ const SupportPartnerTab = () => {
           getSupportData={getSupportData}
         />
       )}
-
-      
     </div>
   );
-  
 };
 
 export default SupportPartnerTab;

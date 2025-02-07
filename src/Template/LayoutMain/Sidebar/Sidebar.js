@@ -126,8 +126,13 @@ const Sidebar = ({ isOpen }) => {
         <ul style={{ marginTop: "8vh" }} className="sidebar-menu">
           {permissions.map((permission) => {
             const { permission_id, permission_name, path } = permission;
-            const itemPath =
-              path || `/${permission_name.toLowerCase().replace(/\s+/g, "-")}`;
+            const predefinedRoutes = {
+              "Weekly Payouts": "/commission-due", // Map Weekly Payouts to /commission-due
+            };
+            
+            const itemPath = predefinedRoutes[permission_name] || 
+              (path || `/${permission_name.toLowerCase().replace(/\s+/g, "-")}`);
+            
             return (
               <CustomTooltip
                 key={permission_id}

@@ -44,12 +44,10 @@ const AlertPartnerTable = () => {
       if (data.success) {
         // Filter notifications from the last 24 hours
         const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const filteredNotifications = (data.data || []).filter(
-          (notification) => {
-            const notificationDate = new Date(notification.created_at);
-            return notificationDate >= twentyFourHoursAgo;
-          }
-        );
+        const filteredNotifications = (data.data || []).filter((notification) => {
+          const notificationDate = new Date(notification.created_at);
+          return notificationDate >= twentyFourHoursAgo;
+        });
 
         setAlertData(filteredNotifications);
       } else {
@@ -68,36 +66,39 @@ const AlertPartnerTable = () => {
     fetchAlertData();
   }, []);
 
-  // Filtered Data Based on Search Input
-  const filteredData = alertData.filter(
-    (item) =>
-      item.title.toLowerCase().includes(searchInput.toLowerCase()) ||
-      item.message.toLowerCase().includes(searchInput.toLowerCase())
-  );
+  // Helper function to normalize strings for comparison
+  const normalizeString = (str) =>
+    str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
+
+  // Updated filtering logic: search by title, message, notification_type, role, or created_at
+  const filteredData = alertData.filter((item) => {
+    const searchTerm = normalizeString(searchInput);
+    return (
+      normalizeString(item.title).includes(searchTerm) ||
+      normalizeString(item.message).includes(searchTerm) ||
+      normalizeString(item.notification_type).includes(searchTerm) ||
+      normalizeString(item.role).includes(searchTerm) ||
+      normalizeString(item.created_at).includes(searchTerm)
+    );
+  });
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredData.slice(
-    indexOfFirstEntry,
-    indexOfLastEntry
-  );
+  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
 
   return (
     <div className="Alert-Table-Main p-3">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <button
-          className="Discount-btn mb-0"
-          onClick={() => setModalOpen(true)}
-        >
+        <button className="Discount-btn mb-0" onClick={() => setModalOpen(true)}>
           Add Notification
         </button>
 
         <input
           type="text"
           className="form-control w-25"
-          placeholder="Search by title or message..."
+          placeholder="Search by title, message, type, role or date..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
@@ -137,7 +138,7 @@ const AlertPartnerTable = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className="text-center">
+                    <td colSpan="5" className="text-center">
                       No data available
                     </td>
                   </tr>
@@ -149,9 +150,7 @@ const AlertPartnerTable = () => {
           {totalPages > 1 && (
             <nav className="d-flex justify-content-center">
               <ul className="pagination mb-0" style={{ gap: "5px" }}>
-                <li
-                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
-                >
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                   <button
                     className="page-link"
                     onClick={() => setCurrentPage(1)}
@@ -165,16 +164,13 @@ const AlertPartnerTable = () => {
                 {[...Array(totalPages)].map((_, number) => (
                   <li
                     key={number}
-                    className={`page-item ${
-                      currentPage === number + 1 ? "active" : ""
-                    }`}
+                    className={`page-item ${currentPage === number + 1 ? "active" : ""}`}
                   >
                     <button
                       className="page-link"
                       onClick={() => setCurrentPage(number + 1)}
                       style={{
-                        backgroundColor:
-                          currentPage === number + 1 ? "#007bff" : "white",
+                        backgroundColor: currentPage === number + 1 ? "#007bff" : "white",
                         color: currentPage === number + 1 ? "white" : "#007bff",
                       }}
                     >
@@ -182,17 +178,12 @@ const AlertPartnerTable = () => {
                     </button>
                   </li>
                 ))}
-                <li
-                  className={`page-item ${
-                    currentPage === totalPages ? "disabled" : ""
-                  }`}
-                >
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                   <button
                     className="page-link"
                     onClick={() => setCurrentPage(totalPages)}
                     style={{
-                      cursor:
-                        currentPage === totalPages ? "not-allowed" : "pointer",
+                      cursor: currentPage === totalPages ? "not-allowed" : "pointer",
                     }}
                   >
                     Last

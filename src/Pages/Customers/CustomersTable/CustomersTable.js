@@ -92,14 +92,23 @@ const [customerToDelete, setCustomerToDelete] = useState(null);
   }, [getRestaurantTableData]);
 
   useEffect(() => {
-    const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+    // Normalize function to trim spaces and convert to lowercase
+    const normalizeString = (str) =>
+      str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
   
-    const filteredData = restaurants.filter((restaurant) =>
-      normalizeString(restaurant.name).includes(normalizeString(searchInput))
-    );
+    const searchTerm = normalizeString(searchInput);
+  
+    const filteredData = restaurants.filter((restaurant) => {
+      return (
+        normalizeString(restaurant.name).includes(searchTerm) ||
+        normalizeString(restaurant.email ?? "").includes(searchTerm) ||
+        normalizeString(restaurant.mobile ?? "").includes(searchTerm)
+      );
+    });
   
     setFilteredRestaurants(filteredData);
   }, [searchInput, restaurants]);
+  
   
 
   const handleRestaurantClick = (restaurant) => {
@@ -261,6 +270,9 @@ const [customerToDelete, setCustomerToDelete] = useState(null);
                   <th scope="col" style={{ width: "10%" }}>
                     Gender
                   </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Address
+                  </th>
                   <th scope="col" style={{ width: "5%" }}>
                     Rating
                   </th>
@@ -286,6 +298,7 @@ const [customerToDelete, setCustomerToDelete] = useState(null);
                     <td>{restaurant.email || "NA"}</td>
                     <td>{restaurant.mobile}</td>
                     <td>{restaurant.gender ? restaurant.gender : "Not Provided"}</td>
+                    <td>{restaurant.address ? restaurant.address : "Not Provided"}</td>
                     <td>{restaurant.rating}</td>
                     <td className={`status ${restaurant.active_status}`}>
                       <div

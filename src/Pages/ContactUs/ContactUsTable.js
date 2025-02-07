@@ -2,15 +2,19 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Loader from "../Loader/Loader";
 import { toast } from "react-toastify";
+import EditIcon from "@mui/icons-material/Edit";
+import EditStatusContactUs from "./EditStatusContactUs/EditStatusContactUs";
 
 const ContactUsTable = () => {
   const [contactData, setContactData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
+  // States for modal handling
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const entriesPerPage = 10;
-
   const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
   // Fetch Contact Messages
@@ -20,7 +24,6 @@ const ContactUsTable = () => {
         console.error("No token found, authorization failed.");
         return;
       }
-
       setLoading(true);
       const response = await axios.get(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/contactus`,
@@ -31,7 +34,6 @@ const ContactUsTable = () => {
           },
         }
       );
-
       setLoading(false);
       if (response?.status === 200 && response?.data?.success) {
         setContactData(response?.data?.data || []);
@@ -51,31 +53,35 @@ const ContactUsTable = () => {
     getContactData();
   }, [getContactData]);
 
+  // Helper function to normalize strings for comparison
   const normalizeString = (str) =>
-    str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
+    str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
 
-  const filteredData = contactData.filter(
-    (item) =>
-      normalizeString(item.email).includes(normalizeString(searchInput)) ||
-      normalizeString(item.name).includes(normalizeString(searchInput))
-  );
+  // Filtering logic: search by various fields
+  const filteredData = contactData.filter((item) => {
+    const searchTerm = normalizeString(searchInput);
+    return (
+      normalizeString(item.name ?? "").includes(searchTerm) ||
+      normalizeString(item.email ?? "").includes(searchTerm) ||
+      normalizeString(item.mobile ?? "").includes(searchTerm) ||
+      normalizeString(item.location ?? "").includes(searchTerm) ||
+      normalizeString(item.message ?? "").includes(searchTerm) ||
+      normalizeString(item.created_at ?? "").includes(searchTerm) ||
+      normalizeString(item.updated_at ?? "").includes(searchTerm)
+    );
+  });
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredData.slice(
-    indexOfFirstEntry,
-    indexOfLastEntry
-  );
+  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
 
   const renderPaginationItems = () => {
     const pageRange = [];
     const rangeSize = 3;
-
     let startPage = Math.max(1, currentPage - 1);
     let endPage = Math.min(totalPages, currentPage + 1);
-
     if (endPage - startPage < rangeSize - 1) {
       if (startPage === 1) {
         endPage = Math.min(totalPages, startPage + rangeSize - 1);
@@ -83,24 +89,24 @@ const ContactUsTable = () => {
         startPage = Math.max(1, endPage - rangeSize + 1);
       }
     }
-
     for (let i = startPage; i <= endPage; i++) {
       pageRange.push(i);
     }
-
     const handlePageChange = (page) => {
       setCurrentPage(page);
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
-
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-          <button className="page-link" onClick={() => handlePageChange(1)}>
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(1)}
+            style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
+          >
             First
           </button>
         </li>
-
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
           <button
             className="page-link"
@@ -109,7 +115,6 @@ const ContactUsTable = () => {
             Previous
           </button>
         </li>
-
         {pageRange.map((number) => (
           <li
             key={number}
@@ -123,12 +128,7 @@ const ContactUsTable = () => {
             </button>
           </li>
         ))}
-
-        <li
-          className={`page-item ${
-            currentPage === totalPages ? "disabled" : ""
-          }`}
-        >
+        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
           <button
             className="page-link"
             onClick={() => handlePageChange(currentPage + 1)}
@@ -136,12 +136,7 @@ const ContactUsTable = () => {
             Next
           </button>
         </li>
-
-        <li
-          className={`page-item ${
-            currentPage === totalPages ? "disabled" : ""
-          }`}
-        >
+        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
           <button
             className="page-link"
             onClick={() => handlePageChange(totalPages)}
@@ -160,7 +155,7 @@ const ContactUsTable = () => {
         <input
           type="text"
           className="form-control w-25"
-          placeholder="Search by email or name..."
+          placeholder="Search by name, email, mobile, location, message, or date..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
@@ -181,6 +176,7 @@ const ContactUsTable = () => {
                   <th style={{ width: "20%" }}>Location</th>
                   <th style={{ width: "20%" }}>Created At</th>
                   <th style={{ width: "25%" }}>Message</th>
+                  <th style={{ width: "20%" }}>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -192,17 +188,33 @@ const ContactUsTable = () => {
                       <td>{item.email}</td>
                       <td>{item.mobile}</td>
                       <td>{item.location || "Not provided"}</td>
-                      {new Date(item.created_at).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })}
+                      <td>
+                        {new Date(item.created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })}
+                      </td>
                       <td>{item.message}</td>
+                      <td>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <span>
+                            {item.status ? item.status : "N/A"}
+                          </span>
+                          <EditIcon
+                            onClick={() => {
+                              setSelectedContact(item);
+                              setEditModalOpen(true);
+                            }}
+                            style={{ cursor: "pointer" }}
+                          />
+                        </div>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center">
+                    <td colSpan="8" className="text-center">
                       No contact messages found.
                     </td>
                   </tr>
@@ -214,6 +226,24 @@ const ContactUsTable = () => {
             {renderPaginationItems()}
           </nav>
         </>
+      )}
+
+      {/* Render the EditStatusContactUs modal */}
+      {editModalOpen && selectedContact && (
+        <EditStatusContactUs
+          contact={selectedContact}
+          open={editModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          onStatusChange={(newStatus) => {
+            // Update the local state with the new status so that the table reflects the change immediately
+            setContactData((prevData) =>
+              prevData.map((c) =>
+                c.id === selectedContact.id ? { ...c, status: newStatus } : c
+              )
+            );
+          }}
+          fetchContactData={getContactData}
+        />
       )}
     </div>
   );

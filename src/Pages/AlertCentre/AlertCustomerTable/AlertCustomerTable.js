@@ -68,21 +68,27 @@ const AlertCustomerTable = () => {
     fetchAlertData();
   }, []);
 
-  // Filtered Data Based on Search Input
-  const filteredData = alertData.filter(
-    (item) =>
-      item.title.toLowerCase().includes(searchInput.toLowerCase()) ||
-      item.message.toLowerCase().includes(searchInput.toLowerCase())
-  );
+  // Helper function to normalize strings for comparison
+  const normalizeString = (str) =>
+    str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
+
+  // Updated filtering logic: search by title, message, notification_type, role, or created_at
+  const filteredData = alertData.filter((item) => {
+    const searchTerm = normalizeString(searchInput);
+    return (
+      normalizeString(item.title).includes(searchTerm) ||
+      normalizeString(item.message).includes(searchTerm) ||
+      normalizeString(item.notification_type).includes(searchTerm) ||
+      normalizeString(item.role).includes(searchTerm) ||
+      normalizeString(item.created_at).includes(searchTerm)
+    );
+  });
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredData.slice(
-    indexOfFirstEntry,
-    indexOfLastEntry
-  );
+  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
 
   return (
     <div className="Alert-Table-Main p-3">
@@ -97,7 +103,7 @@ const AlertCustomerTable = () => {
         <input
           type="text"
           className="form-control w-25"
-          placeholder="Search by title or message..."
+          placeholder="Search by title, message, type, role or date..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
@@ -115,7 +121,8 @@ const AlertCustomerTable = () => {
                   <th>Title</th>
                   <th>Message</th>
                   <th>Notification Type</th>
-                  <th>Created At</th> {/* Added new column */}
+                  <th>Role</th>
+                  <th>Created At</th>
                 </tr>
               </thead>
               <tbody>
@@ -126,6 +133,7 @@ const AlertCustomerTable = () => {
                       <td>{item.title}</td>
                       <td>{item.message}</td>
                       <td>{item.notification_type}</td>
+                      <td>{item.role}</td>
                       <td>
                         {new Date(item.created_at).toLocaleDateString("en-US", {
                           year: "numeric",
@@ -137,7 +145,7 @@ const AlertCustomerTable = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center">
+                    <td colSpan="6" className="text-center">
                       No data available
                     </td>
                   </tr>
@@ -149,9 +157,7 @@ const AlertCustomerTable = () => {
           {totalPages > 1 && (
             <nav className="d-flex justify-content-center">
               <ul className="pagination mb-0" style={{ gap: "5px" }}>
-                <li
-                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
-                >
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                   <button
                     className="page-link"
                     onClick={() => setCurrentPage(1)}
@@ -165,9 +171,7 @@ const AlertCustomerTable = () => {
                 {[...Array(totalPages)].map((_, number) => (
                   <li
                     key={number}
-                    className={`page-item ${
-                      currentPage === number + 1 ? "active" : ""
-                    }`}
+                    className={`page-item ${currentPage === number + 1 ? "active" : ""}`}
                   >
                     <button
                       className="page-link"
@@ -182,17 +186,12 @@ const AlertCustomerTable = () => {
                     </button>
                   </li>
                 ))}
-                <li
-                  className={`page-item ${
-                    currentPage === totalPages ? "disabled" : ""
-                  }`}
-                >
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                   <button
                     className="page-link"
                     onClick={() => setCurrentPage(totalPages)}
                     style={{
-                      cursor:
-                        currentPage === totalPages ? "not-allowed" : "pointer",
+                      cursor: currentPage === totalPages ? "not-allowed" : "pointer",
                     }}
                   >
                     Last

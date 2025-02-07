@@ -59,14 +59,16 @@ const CommonCommissionTab = ({
     getCommissionData(category_id);
   }, [category_id]);
 
-  // Filter data based on search input
+  // Helper function to normalize strings for comparison
   const normalizeString = (str) =>
-    str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
+    str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
 
+  // Updated filtering logic: search by name, category_name, or total_partner_amount
   const filteredData = dummy_Data.filter(
     (item) =>
       normalizeString(item.name).includes(normalizeString(searchInput)) ||
-      normalizeString(item.category_name).includes(normalizeString(searchInput))
+      normalizeString(item.category_name).includes(normalizeString(searchInput)) ||
+      normalizeString(String(item.total_partner_amount)).includes(normalizeString(searchInput))
   );
 
   // Pagination logic
@@ -178,7 +180,7 @@ const CommonCommissionTab = ({
         <input
           type="text"
           className="form-control search-input w-25"
-          placeholder="Search by name or category..."
+          placeholder="Search by name, category or amount..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
