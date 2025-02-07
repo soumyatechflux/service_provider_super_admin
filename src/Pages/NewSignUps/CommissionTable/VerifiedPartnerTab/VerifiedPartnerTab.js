@@ -37,10 +37,8 @@ const VerifiedPartnerTab = ({
   const [currentPage, setCurrentPage] = useState(1);
   const entriesPerPage = 10;
   const [searchInput, setSearchInput] = useState("");
-   const [showAttachmentModal, setShowAttachmentModal] = useState(false);
+  const [showAttachmentModal, setShowAttachmentModal] = useState(false);
   const [attachmentsData, setAttachmentsData] = useState({});
-
-
 
   const getRestaurantTableData = async () => {
     try {
@@ -74,16 +72,12 @@ const VerifiedPartnerTab = ({
     }
   };
 
-
-
   const handleOpenAttachmentModal = (partner) => {
     console.log("Opening Modal with Partner Data:", partner); // Debugging
     setAttachmentsData(partner); // Pass full partner object
     setShowAttachmentModal(true);
   };
-  
-  
-  
+
   const handleCloseAttachmentModal = () => {
     setShowAttachmentModal(false);
   };
@@ -331,11 +325,10 @@ const VerifiedPartnerTab = ({
                   <th scope="col" style={{ width: "5%" }}>
                     Action
                   </th>
-                  
-                    <th scope="col" style={{ width: "10%" }}>
-                      Attachments
-                    </th>
-                  
+
+                  <th scope="col" style={{ width: "10%" }}>
+                    View Details
+                  </th>
                 </tr>
               </thead>
               <tbody style={{ cursor: "default" }}>
@@ -437,8 +430,7 @@ const VerifiedPartnerTab = ({
                           >
                             {restaurant.is_verify !== 0 ? (
                               <VerifiedUserIcon style={{ color: "green" }} />
-                            ) 
-                            : (
+                            ) : (
                               <>
                                 <div>
                                   <button
@@ -467,7 +459,6 @@ const VerifiedPartnerTab = ({
                         </div>
                       </td>
 
-                      
                       {restaurant.is_verify === 1 && (
                         <td className={`status ${restaurant.active_status}`}>
                           <div
@@ -505,38 +496,13 @@ const VerifiedPartnerTab = ({
                         <DeleteIcon style={{ color: "red" }} />
                       </td>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                       <td>
-  {restaurant.attachments?.length > 0 ? (
-    <i
-      className="fa fa-eye text-primary"
-      style={{ cursor: "pointer" }}
-      onClick={() => handleOpenAttachmentModal(restaurant)} // Ensure full object is passed
-    />
-  ) : (
-    "No Attachments"
-  )}
-</td>
-
-
-
+                        <i
+                          className="fa fa-eye text-primary"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleOpenAttachmentModal(restaurant)} // Ensure full object is passed
+                        />
+                      </td>
                     </tr>
                   ))
                 )}

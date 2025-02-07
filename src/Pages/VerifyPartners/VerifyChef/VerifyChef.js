@@ -196,28 +196,28 @@ const VerifyChef = () => {
 
   const [error, setError] = useState("");
   const handleInputChange = (e) => {
-    const { name, files } = e.target;
-    
-    if (files && files.length > 0) {
-      setCookDetails(prevDetails => ({
-        ...prevDetails,
-        [name]: files[0]
-      }));
+    const { name, value, files } = e.target;
   
-      // Modify the attachments array to update the file name
-      setAttachments(prevAttachments => 
-        prevAttachments.map(attachment => 
-          attachment.document_name === name.replace(/([A-Z])/g, '_$1').toLowerCase()
+    setCookDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: files && files.length > 0 ? files[0] : value, // Handle both text & file inputs
+    }));
+  
+    if (files && files.length > 0) {
+      setAttachments((prevAttachments) =>
+        prevAttachments.map((attachment) =>
+          attachment.document_name === name.replace(/([A-Z])/g, "_$1").toLowerCase()
             ? {
                 ...attachment,
                 file_name: files[0].name,
-                file_path: URL.createObjectURL(files[0])
+                file_path: URL.createObjectURL(files[0]),
               }
             : attachment
         )
       );
     }
   };
+  
   
 
   const handleInputChangeCar = (name, selectedOptions) => {
