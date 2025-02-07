@@ -11,6 +11,7 @@ import AddPartnerModal from "../AddPartner/AddPartnerModal"; // Import AddPartne
 import DeletePartnerModal from "../DeletePartnerModal/DeletePartnerModal";
 import EditRestroModal from "../EditRestroModal/EditRestroModal";
 import VerifyModal from "../VerifyModal/VerifyModal";
+import AttachmentModalPartner from "../AttachmentModalPartner/AttachmentModalPartner";
 
 const VerifiedPartnerTab = ({
   restaurants,
@@ -36,6 +37,10 @@ const VerifiedPartnerTab = ({
   const [currentPage, setCurrentPage] = useState(1);
   const entriesPerPage = 10;
   const [searchInput, setSearchInput] = useState("");
+   const [showAttachmentModal, setShowAttachmentModal] = useState(false);
+  const [attachmentsData, setAttachmentsData] = useState({});
+
+
 
   const getRestaurantTableData = async () => {
     try {
@@ -67,6 +72,20 @@ const VerifiedPartnerTab = ({
       toast.error("Failed to load partners data. Please try again.");
       setLoading(false);
     }
+  };
+
+
+
+  const handleOpenAttachmentModal = (partner) => {
+    console.log("Opening Modal with Partner Data:", partner); // Debugging
+    setAttachmentsData(partner); // Pass full partner object
+    setShowAttachmentModal(true);
+  };
+  
+  
+  
+  const handleCloseAttachmentModal = () => {
+    setShowAttachmentModal(false);
   };
 
   const handleDeletePartner = async (partner) => {
@@ -312,6 +331,11 @@ const VerifiedPartnerTab = ({
                   <th scope="col" style={{ width: "5%" }}>
                     Action
                   </th>
+                  
+                    <th scope="col" style={{ width: "10%" }}>
+                      Attachments
+                    </th>
+                  
                 </tr>
               </thead>
               <tbody style={{ cursor: "default" }}>
@@ -413,7 +437,8 @@ const VerifiedPartnerTab = ({
                           >
                             {restaurant.is_verify !== 0 ? (
                               <VerifiedUserIcon style={{ color: "green" }} />
-                            ) : (
+                            ) 
+                            : (
                               <>
                                 <div>
                                   <button
@@ -441,6 +466,8 @@ const VerifiedPartnerTab = ({
                           </div>
                         </div>
                       </td>
+
+                      
                       {restaurant.is_verify === 1 && (
                         <td className={`status ${restaurant.active_status}`}>
                           <div
@@ -477,6 +504,39 @@ const VerifiedPartnerTab = ({
                       >
                         <DeleteIcon style={{ color: "red" }} />
                       </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                      <td>
+  {restaurant.attachments?.length > 0 ? (
+    <i
+      className="fa fa-eye text-primary"
+      style={{ cursor: "pointer" }}
+      onClick={() => handleOpenAttachmentModal(restaurant)} // Ensure full object is passed
+    />
+  ) : (
+    "No Attachments"
+  )}
+</td>
+
+
+
                     </tr>
                   ))
                 )}
@@ -522,6 +582,11 @@ const VerifiedPartnerTab = ({
         show={showAddPartnerModal}
         handleClose={() => setShowAddPartnerModal(false)}
         getRestaurantTableData={getRestaurantTableData}
+      />
+      <AttachmentModalPartner
+        open={showAttachmentModal}
+        attachments={attachmentsData}
+        onClose={handleCloseAttachmentModal}
       />
     </div>
   );

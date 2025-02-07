@@ -15,7 +15,7 @@ const DeleteCustomerModal = ({ show, handleClose, handleDelete, customer }) => {
 
   return (
     <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
+      <Modal.Header >
         <Modal.Title>Confirm Deletion</Modal.Title>
       </Modal.Header>
       <Modal.Body>
