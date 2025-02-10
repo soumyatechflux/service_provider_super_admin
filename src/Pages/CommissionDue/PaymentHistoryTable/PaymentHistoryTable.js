@@ -187,7 +187,13 @@ const PaymentHistoryTable = ({
                   Category
                 </th>
                 <th scope="col" style={{ width: "15%" }}>
+                  Created At
+                </th>
+                <th scope="col" style={{ width: "15%" }}>
                   Payout Amount
+                </th>
+                <th scope="col" style={{ width: "15%" }}>
+                  Transaction ID
                 </th>
               </tr>
             </thead>
@@ -204,7 +210,10 @@ const PaymentHistoryTable = ({
                     <th scope="row">{index + 1 + (currentPage - 1) * entriesPerPage}.</th>
                     <td>{item.partner_name || "Unknown"}</td>
                     <td>{item.category_name || "N/A"}</td>
+                    <td>{new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(new Date(item.created_at)) || "N/A"}</td>
+
                     <td>{item.payout_amount || "N/A"}</td>
+                    <td>{item.payment_transaction_id || "N/A"}</td>
                   </tr>
                 ))
               )}

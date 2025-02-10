@@ -60,14 +60,46 @@ const CommonDiscountTab = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
-
-  const filteredData = discountData.filter(
-    (item) =>
-      normalizeString(item.voucher_code).includes(normalizeString(searchQuery)) ||
-      normalizeString(item.discount_type).includes(normalizeString(searchQuery)) ||
-      normalizeString(item.description).includes(normalizeString(searchQuery))
-  );
+  const normalizeString = (str) => {
+    if (typeof str !== "string") {
+      return ""; // Return an empty string for non-string values
+    }
+    return str.replace(/\s+/g, " ").trim().toLowerCase();
+  };
+  
+  const formatDate = (dateString) => {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const date = new Date(dateString);
+  
+    if (isNaN(date)) return ""; // Handle invalid dates
+  
+    const day = String(date.getDate()).padStart(2, "0"); // Ensure 2-digit day
+    const month = months[date.getMonth()]; // Get month abbreviation
+    const year = String(date.getFullYear()).slice(-2); // Get last 2 digits of year
+  
+    return `${day} ${month} ${year}`;
+  };
+  
+  const filteredData = discountData.filter((item) => {
+    const formattedStartDate = formatDate(item.start_date);
+    const formattedEndDate = formatDate(item.end_date);
+  
+    return (
+      normalizeString(String(item.voucher_code)).includes(normalizeString(searchQuery)) ||
+      normalizeString(String(item.discount_type)).includes(normalizeString(searchQuery)) ||
+      normalizeString(String(item.description)).includes(normalizeString(searchQuery)) ||
+      normalizeString(String(item.discount_value)).includes(normalizeString(searchQuery)) ||
+      normalizeString(String(item.minimum_order_amount)).includes(normalizeString(searchQuery)) ||
+      normalizeString(String(item.usage_limit)).includes(normalizeString(searchQuery)) || // Convert number to string
+      normalizeString(String(item.used_count)).includes(normalizeString(searchQuery)) || // Convert number to string
+      normalizeString(formattedStartDate).includes(normalizeString(searchQuery)) ||
+      normalizeString(formattedEndDate).includes(normalizeString(searchQuery)) ||
+      normalizeString(String(item.active_status)).includes(normalizeString(searchQuery))
+    );
+  });
+  
+  
+  
   
 
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);

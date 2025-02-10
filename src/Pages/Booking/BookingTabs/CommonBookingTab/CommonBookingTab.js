@@ -135,9 +135,30 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   const normalizeString = (str) =>
     str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
 
-  const filteredData = dummy_Data.filter((item) =>
-    normalizeString(item.guest_name).includes(normalizeString(searchInput))
-  );
+  const filteredData = dummy_Data.filter((item) => {
+    const searchTerm = normalizeString(searchInput);
+  
+    // Function to format date as "YYYY-MM-DD"
+    const formatDate = (dateString) => {
+      if (!dateString) return "";
+      return dateString.split("T")[0]; // Extracts "YYYY-MM-DD" from "YYYY-MM-DDTHH:MM:SS.000Z"
+    };
+  
+    return (
+      normalizeString(item?.guest_name ?? "").includes(searchTerm) || // Customer name
+      normalizeString(String(item?.booking_id ?? "")).includes(searchTerm) || // Booking ID
+      normalizeString(item?.partner?.name ?? "").includes(searchTerm) || // Partner name
+      normalizeString(item?.sub_category_name?.sub_category_name ?? "").includes(searchTerm) || // Sub-category
+      normalizeString(String(item?.total_amount ?? "")).includes(searchTerm) || // Amount
+      normalizeString(formatDate(item?.visit_date)).includes(searchTerm) || // Visited Date in "YYYY-MM-DD"
+      normalizeString(item?.visit_address ?? "").includes(searchTerm) || // Visited Address
+      normalizeString(item?.payment_mode ?? "").includes(searchTerm) || // Payment Mode
+      normalizeString(item?.booking_status ?? "").includes(searchTerm) || // Booking Status
+      normalizeString(item?.instructions ?? "").includes(searchTerm) || // Instructions
+      normalizeString(formatDate(item?.created_at)).includes(searchTerm) // Created Date in "YYYY-MM-DD"
+    );
+  });
+  
 
   const currentEntries = filteredData.slice(
     indexOfFirstEntry,

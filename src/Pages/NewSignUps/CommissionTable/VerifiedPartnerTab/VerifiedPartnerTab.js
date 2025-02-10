@@ -39,6 +39,21 @@ const VerifiedPartnerTab = ({
   const [searchInput, setSearchInput] = useState("");
   const [showAttachmentModal, setShowAttachmentModal] = useState(false);
   const [attachmentsData, setAttachmentsData] = useState({});
+  const categoryMap = {
+    1: "Cook",
+    2: "Driver",
+    3: "Gardener",
+  };
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "2-digit",
+    });
+  };
+  
 
   const getRestaurantTableData = async () => {
     try {
@@ -112,10 +127,23 @@ const VerifiedPartnerTab = ({
   const normalizeString = (str) =>
     str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
 
-  const filteredRestaurants = restaurants.filter((restaurant) =>
-    normalizeString(restaurant.name).includes(normalizeString(searchInput))
-  );
-
+  const filteredRestaurants = restaurants.filter((restaurant) => {
+    const categoryName = categoryMap[restaurant.category_id] || "";
+    const formattedDate = formatDate(restaurant.created_at); // Format the created_at date
+  
+    return (
+      normalizeString(restaurant.name).includes(normalizeString(searchInput)) ||
+      normalizeString(restaurant.email).includes(normalizeString(searchInput)) ||
+      normalizeString(restaurant.rating?.toString()).includes(normalizeString(searchInput)) ||
+      normalizeString(categoryName).includes(normalizeString(searchInput)) || // Searching by category name
+      normalizeString(restaurant.mobile).includes(normalizeString(searchInput)) ||
+      normalizeString(restaurant.gender).includes(normalizeString(searchInput)) ||
+      normalizeString(restaurant.current_address).includes(normalizeString(searchInput)) ||
+      normalizeString(restaurant.active_status).includes(normalizeString(searchInput)) ||
+      normalizeString(restaurant.years_of_experience?.toString()).includes(normalizeString(searchInput)) ||
+      normalizeString(formattedDate).includes(normalizeString(searchInput)) // Searching by formatted date
+    );
+  });
   // Pagination logic
   const totalPages = Math.ceil(restaurants.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -253,7 +281,7 @@ const VerifiedPartnerTab = ({
         <input
           type="text"
           className="form-control search-input w-25"
-          placeholder="Search customers..."
+          placeholder="Search partners..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />

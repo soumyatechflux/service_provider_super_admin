@@ -60,16 +60,29 @@ const ContactUsTable = () => {
   // Filtering logic: search by various fields
   const filteredData = contactData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
+  
+    // Function to format date as "MM/DD/YYYY"
+    const formatDate = (dateString) => {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Ensure two digits
+      const day = String(date.getDate()).padStart(2, "0"); // Ensure two digits
+      const year = date.getFullYear();
+      return `${month}/${day}/${year}`;
+    };
+  
     return (
       normalizeString(item.name ?? "").includes(searchTerm) ||
       normalizeString(item.email ?? "").includes(searchTerm) ||
       normalizeString(item.mobile ?? "").includes(searchTerm) ||
       normalizeString(item.location ?? "").includes(searchTerm) ||
       normalizeString(item.message ?? "").includes(searchTerm) ||
-      normalizeString(item.created_at ?? "").includes(searchTerm) ||
-      normalizeString(item.updated_at ?? "").includes(searchTerm)
+      normalizeString(formatDate(item.created_at)).includes(searchTerm) || // Formatted date search
+      normalizeString(formatDate(item.updated_at)).includes(searchTerm) || // Formatted date search
+      normalizeString(item.status ?? "").includes(searchTerm)
     );
   });
+  
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
