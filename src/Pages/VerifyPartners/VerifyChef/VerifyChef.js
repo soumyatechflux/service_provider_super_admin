@@ -15,7 +15,6 @@ const VerifyChef = () => {
   const navigate = useNavigate();
   const [attachments, setAttachments] = useState([]);
 
-
   const [cookDetails, setCookDetails] = useState({
     name: "",
     phone: "",
@@ -43,10 +42,9 @@ const VerifyChef = () => {
     bankDetails: null,
     drivingLicense: null,
     currentAddressProof: null,
-    verificationReport : null,
-    comment :"",
-    registeredBy:""
-    
+    verificationReport: null,
+    comment: "",
+    registeredBy: "",
   });
   const fetchPartnerDetails = async () => {
     try {
@@ -54,7 +52,7 @@ const VerifyChef = () => {
         "TokenForSuperAdminOfServiceProvider"
       );
       setLoading(true);
-  
+
       const response = await axios.get(
         "https://api-serviceprovider.techfluxsolutions.com/api/admin/partners",
         {
@@ -66,25 +64,25 @@ const VerifyChef = () => {
           },
         }
       );
-  
+
       setLoading(false);
-  
+
       if (response.status === 200 && response.data.success) {
         console.log("API Response:", response.data); // 🔍 Debugging
-  
+
         const partnerData = response.data.data.find(
           (partner) => partner.id === parseInt(id)
         );
-  
+
         if (partnerData) {
           console.log("Partner Data:", partnerData); // Debugging
-  
+
           // Dynamically map all attachments based on document_name
           const mappedAttachments = {};
           partnerData.attachments?.forEach((file) => {
             mappedAttachments[file.document_name] = file.file_path;
           });
-  
+
           setCookDetails({
             name: partnerData.name || "",
             email: partnerData.email || "",
@@ -110,13 +108,14 @@ const VerifyChef = () => {
             bank_name: partnerData.bank_name || "",
             whatsapp_no: partnerData.whatsapp_no || "",
             gender: partnerData.gender
-              ? partnerData.gender.charAt(0).toUpperCase() + partnerData.gender.slice(1)
+              ? partnerData.gender.charAt(0).toUpperCase() +
+                partnerData.gender.slice(1)
               : "",
             comment: partnerData.comment || "",
             registeredBy: partnerData.registered_by_id || "",
             ...mappedAttachments, // Merging dynamically mapped attachments
           });
-  
+
           setAttachments(partnerData.attachments || []);
         } else {
           toast.error("Partner not found");
@@ -130,11 +129,10 @@ const VerifyChef = () => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     console.log("Updated cookDetails:", cookDetails);
   }, [cookDetails]);
-    
 
   // Call the fetch function when component mounts
   useEffect(() => {
@@ -197,28 +195,47 @@ const VerifyChef = () => {
   const [error, setError] = useState("");
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-  
+
     setCookDetails((prevDetails) => ({
       ...prevDetails,
-      [name]: files && files.length > 0 ? files[0] : value, // Handle both text & file inputs
+      [name]: files && files.length > 0 ? files[0] : value,
     }));
-  
+
     if (files && files.length > 0) {
-      setAttachments((prevAttachments) =>
-        prevAttachments.map((attachment) =>
-          attachment.document_name === name.replace(/([A-Z])/g, "_$1").toLowerCase()
-            ? {
-                ...attachment,
-                file_name: files[0].name,
-                file_path: URL.createObjectURL(files[0]),
-              }
-            : attachment
-        )
-      );
+      // Format the name consistently with how it's stored in the documents array
+      const formattedName = name
+        .replace(/([A-Z])/g, "_$1")
+        .toLowerCase()
+        .replace(/^_/, ""); // Remove leading underscore if present
+
+      setAttachments((prevAttachments) => {
+        const existingAttachment = prevAttachments.find(
+          (attachment) => attachment.document_name === formattedName
+        );
+
+        if (existingAttachment) {
+          return prevAttachments.map((attachment) =>
+            attachment.document_name === formattedName
+              ? {
+                  ...attachment,
+                  file_name: files[0].name,
+                  file_path: URL.createObjectURL(files[0]),
+                }
+              : attachment
+          );
+        } else {
+          return [
+            ...prevAttachments,
+            {
+              document_name: formattedName,
+              file_name: files[0].name,
+              file_path: URL.createObjectURL(files[0]),
+            },
+          ];
+        }
+      });
     }
   };
-  
-  
 
   const handleInputChangeCar = (name, selectedOptions) => {
     setCookDetails((prevState) => ({
@@ -282,30 +299,6 @@ const VerifyChef = () => {
   ];
   const heading = verificationHeadings[restaurant] || "Default Verification";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   const handlePartnerDetails = async (action) => {
     // Only validate required fields for verify action
     if (action === "verify") {
@@ -353,70 +346,100 @@ const VerifyChef = () => {
 
       // Only append fields that have values
       if (cookDetails.name) formData.append("name", cookDetails.name);
-if (cookDetails.email) formData.append("email", cookDetails.email);
-if (cookDetails.phone) formData.append("mobile", cookDetails.phone);
+      if (cookDetails.email) formData.append("email", cookDetails.email);
+      if (cookDetails.phone) formData.append("mobile", cookDetails.phone);
 
-// Append gender if selected
-if (cookDetails.gender) {
-  formData.append("gender", cookDetails.gender);
-}
+      // Append gender if selected
+      if (cookDetails.gender) {
+        formData.append("gender", cookDetails.gender);
+      }
 
-// Append comment if available
-if (cookDetails.comment) {
-  formData.append("comment", cookDetails.comment);
-}
+      // Append comment if available
+      if (cookDetails.comment) {
+        formData.append("comment", cookDetails.comment);
+      }
 
-// Append verification report file
-if (cookDetails.verificationReport) {
-  console.log("Verification Report File:", cookDetails.verificationReport); // 🔍 Debugging
-  formData.append("verification_report", cookDetails.verificationReport);
-} else {
-  console.warn("No verification report found in cookDetails!"); // ⚠️ Debugging
-}
+      // Append verification report file
+      if (cookDetails.verificationReport) {
+        console.log(
+          "Verification Report File:",
+          cookDetails.verificationReport
+        ); // 🔍 Debugging
+        formData.append("verification_report", cookDetails.verificationReport);
+      } else {
+        console.warn("No verification report found in cookDetails!"); // ⚠️ Debugging
+      }
 
+      if (cookDetails.dob) {
+        const formattedDOB = new Date(cookDetails.dob)
+          .toISOString()
+          .split("T")[0];
+        formData.append("dob", formattedDOB);
+      }
 
-if (cookDetails.dob) {
-  const formattedDOB = new Date(cookDetails.dob).toISOString().split("T")[0];
-  formData.append("dob", formattedDOB);
-}
+      if (cookDetails.licenseExpiryDate) {
+        const formattedDate = new Date(cookDetails.licenseExpiryDate)
+          .toISOString()
+          .split("T")[0];
+        formData.append("driving_license_expiry_date", formattedDate);
+      }
 
-if (cookDetails.licenseExpiryDate) {
-  const formattedDate = new Date(cookDetails.licenseExpiryDate).toISOString().split("T")[0];
-  formData.append("driving_license_expiry_date", formattedDate);
-}
+      if (cookDetails.aadhaar) formData.append("aadhaar", cookDetails.aadhaar);
+      if (cookDetails.address)
+        formData.append("current_address", cookDetails.address);
+      if (cookDetails.permanentAddress)
+        formData.append("permanent_address", cookDetails.permanentAddress);
+      if (cookDetails.experience)
+        formData.append("years_of_experience", cookDetails.experience);
+      if (cookDetails.subCategory)
+        formData.append("specialisation", cookDetails.subCategory);
+      if (cookDetails.dateOfJoining) {
+        const formattedDateOfJoining = new Date(cookDetails.dateOfJoining)
+          .toISOString()
+          .split("T")[0];
+        formData.append("date_of_joining", formattedDateOfJoining);
+      }
+      if (cookDetails.languages)
+        formData.append("languages", cookDetails.languages);
+      if (cookDetails.drivingLicenseNumber)
+        formData.append(
+          "driving_license_number",
+          cookDetails.drivingLicenseNumber
+        );
+      if (cookDetails.carType) formData.append("car_type", cookDetails.carType);
+      if (cookDetails.transmissionType)
+        formData.append("transmission_type", cookDetails.transmissionType);
+      if (cookDetails.cuisines)
+        formData.append("cuisines", cookDetails.cuisines);
+      if (cookDetails.aadharFront)
+        formData.append("aadhar_front", cookDetails.aadharFront);
+      if (cookDetails.aadharBack)
+        formData.append("aadhar_back", cookDetails.aadharBack);
+      if (cookDetails.panCard) formData.append("pancard", cookDetails.panCard);
+      if (cookDetails.bankDetails)
+        formData.append("bank_passbook", cookDetails.bankDetails);
+      if (cookDetails.drivingLicense)
+        formData.append("driving_licence", cookDetails.drivingLicense);
+      if (cookDetails.currentAddressProof)
+        formData.append("address_proof", cookDetails.currentAddressProof);
+      if (cookDetails.vegNonVeg)
+        formData.append("veg_non_veg", cookDetails.vegNonVeg);
+      if (cookDetails.category_id)
+        formData.append("category_id", cookDetails.category_id);
+      if (cookDetails.account_holder_name)
+        formData.append("account_holder_name", cookDetails.account_holder_name);
+      if (cookDetails.account_number)
+        formData.append("account_number", cookDetails.account_number);
+      if (cookDetails.ifsc_code)
+        formData.append("ifsc_code", cookDetails.ifsc_code);
+      if (cookDetails.bank_name)
+        formData.append("bank_name", cookDetails.bank_name);
+      if (cookDetails.whatsapp_no)
+        formData.append("whatsapp_no", cookDetails.whatsapp_no);
 
-if (cookDetails.aadhaar) formData.append("aadhaar", cookDetails.aadhaar);
-if (cookDetails.address) formData.append("current_address", cookDetails.address);
-if (cookDetails.permanentAddress) formData.append("permanent_address", cookDetails.permanentAddress);
-if (cookDetails.experience) formData.append("years_of_experience", cookDetails.experience);
-if (cookDetails.subCategory) formData.append("specialisation", cookDetails.subCategory);
-if (cookDetails.dateOfJoining) {
-  const formattedDateOfJoining = new Date(cookDetails.dateOfJoining).toISOString().split("T")[0];
-  formData.append("date_of_joining", formattedDateOfJoining);
-}
-if (cookDetails.languages) formData.append("languages", cookDetails.languages);
-if (cookDetails.drivingLicenseNumber) formData.append("driving_license_number", cookDetails.drivingLicenseNumber);
-if (cookDetails.carType) formData.append("car_type", cookDetails.carType);
-if (cookDetails.transmissionType) formData.append("transmission_type", cookDetails.transmissionType);
-if (cookDetails.cuisines) formData.append("cuisines", cookDetails.cuisines);
-if (cookDetails.aadharFront) formData.append("aadhar_front", cookDetails.aadharFront);
-if (cookDetails.aadharBack) formData.append("aadhar_back", cookDetails.aadharBack);
-if (cookDetails.panCard) formData.append("pancard", cookDetails.panCard);
-if (cookDetails.bankDetails) formData.append("bank_passbook", cookDetails.bankDetails);
-if (cookDetails.drivingLicense) formData.append("driving_licence", cookDetails.drivingLicense);
-if (cookDetails.currentAddressProof) formData.append("address_proof", cookDetails.currentAddressProof);
-if (cookDetails.vegNonVeg) formData.append("veg_non_veg", cookDetails.vegNonVeg);
-if (cookDetails.category_id) formData.append("category_id", cookDetails.category_id);
-if (cookDetails.account_holder_name) formData.append("account_holder_name", cookDetails.account_holder_name);
-if (cookDetails.account_number) formData.append("account_number", cookDetails.account_number);
-if (cookDetails.ifsc_code) formData.append("ifsc_code", cookDetails.ifsc_code);
-if (cookDetails.bank_name) formData.append("bank_name", cookDetails.bank_name);
-if (cookDetails.whatsapp_no) formData.append("whatsapp_no", cookDetails.whatsapp_no);
-
-// Always append these fields
-formData.append("partner_id", id);
-formData.append("save_or_verify", action);
-
+      // Always append these fields
+      formData.append("partner_id", id);
+      formData.append("save_or_verify", action);
 
       // Only append is_verify if action is 'verify'
       if (action === "verify") {
@@ -460,17 +483,6 @@ formData.append("save_or_verify", action);
       setLoadingAction(null); // Clear loading state regardless of success/failure
     }
   };
-
-
-
-
-
-
-
-
-
-
-
 
   return (
     <div className="verification-container">
@@ -662,15 +674,21 @@ formData.append("save_or_verify", action);
       />
 
       <div className="additional-details mt-2">
-      <label>Gender <span style={{ color: "red" }}>*</span></label>
+        <label>
+          Gender <span style={{ color: "red" }}>*</span>
+        </label>
 
-<select name="gender" value={cookDetails?.gender} onChange={handleInputChange} required>
-  <option value="">Select Gender</option>
-  <option value="Male">Male</option>
-  <option value="Female">Female</option>
-  <option value="Other">Other</option>
-</select>
-
+        <select
+          name="gender"
+          value={cookDetails?.gender}
+          onChange={handleInputChange}
+          required
+        >
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
 
         <label>
           Aadhar Card Number <span style={{ color: "red" }}>*</span>
@@ -794,17 +812,14 @@ formData.append("save_or_verify", action);
           required
         />
 
-
-        <label>
-          comment 
-        </label>
+        <label>Comment(if any)</label>
 
         <input
           type="text"
           name="comment"
           value={cookDetails?.comment}
           onChange={handleInputChange}
-          placeholder="Enter languages (comma-separated)"
+          placeholder="Enter Comment "
           required
         />
       </div>
@@ -861,61 +876,94 @@ formData.append("save_or_verify", action);
       {error && <p className="error-message">{error}</p>}
 
       <div className="document-section">
-  <h2 className="mt-2">Documents</h2>
+        <h2 className="mt-2">Documents</h2>
 
-  {[
-    { label: "Bank Details Photocopy", key: "bank_passbook", stateKey: "bankDetails" },
-    { label: "Aadhaar Card Photocopy Front", key: "aadhar_front", stateKey: "aadharFront" },
-    { label: "Aadhaar Card Photocopy Back", key: "aadhar_back", stateKey: "aadharBack" },
-    { label: "PAN Card Photocopy", key: "pancard", stateKey: "panCard" },
-    { label: "Driving License Photocopy", key: "driving_licence", stateKey: "drivingLicense" },
-    { label: "Photocopy of Proof of Current Address", key: "address_proof", stateKey: "currentAddressProof" },
-    { label: "Verification Report", key: "verification_report", stateKey: "verificationReport" },
-  ].map(({ label, key, stateKey }) => (
-    <div className="file-input-group" key={key}>
-      <label htmlFor={stateKey}>{label}</label>
-
-      <div className="file-input-wrapper">
-        {/* Show previously uploaded file as a preview link */}
-        {attachments?.find(attachment => attachment.document_name === key) && (
-          <div>
-            <a 
-              href={attachments.find(attachment => attachment.document_name === key).file_path} 
-              target="_blank" 
-              rel="noopener noreferrer"
-            >
-              View Uploaded File
-            </a>
+        {[
+          {
+            label: "Bank Details Photocopy",
+            key: "bank_passbook",
+            stateKey: "bankDetails",
+          },
+          {
+            label: "Aadhaar Card Photocopy Front",
+            key: "aadhar_front",
+            stateKey: "aadharFront",
+          },
+          {
+            label: "Aadhaar Card Photocopy Back",
+            key: "aadhar_back",
+            stateKey: "aadharBack",
+          },
+          { label: "PAN Card Photocopy", key: "pancard", stateKey: "panCard" },
+          {
+            label: "Driving License Photocopy",
+            key: "driving_licence",
+            stateKey: "drivingLicense",
+          },
+          {
+            label: "Photocopy of Proof of Current Address",
+            key: "address_proof",
+            stateKey: "currentAddressProof",
+          },
+          {
+            label: "Verification Report",
+            key: "verification_report",
+            stateKey: "verificationReport",
+          },
+        ].map(({ label, key, stateKey }) => (
+          <div className="file-input-group" key={key}>
+            <label htmlFor={stateKey}>{label}</label>
+            <div className="file-input-wrapper">
+              {attachments?.find(
+                (attachment) => attachment.document_name === key
+              ) && (
+                <div>
+                  <a
+                    href={
+                      attachments.find(
+                        (attachment) => attachment.document_name === key
+                      ).file_path
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View Uploaded File
+                  </a>
+                </div>
+              )}
+              <div className="file-input-container">
+                <button
+                  type="button"
+                  className="choose-file-btn mb-0"
+                  onClick={() => document.getElementById(stateKey).click()}
+                >
+                  Choose File
+                </button>
+                <span className="file-name">
+                  {attachments?.find(
+                    (attachment) =>
+                      attachment.document_name === key || // Check for exact match
+                      attachment.document_name ===
+                        stateKey
+                          .replace(/([A-Z])/g, "_$1")
+                          .toLowerCase()
+                          .replace(/^_/, "") // Check for formatted match
+                  )?.file_name || "No file chosen"}
+                </span>
+                <input
+                  type="file"
+                  id={stateKey}
+                  name={stateKey}
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={handleInputChange}
+                  required={key === "driving_licence" ? restaurant === 2 : true}
+                  style={{ display: "none" }}
+                />
+              </div>
+            </div>
           </div>
-        )}
-
-        <div className="file-input-container">
-          <button 
-            type="button" 
-            className="choose-file-btn mb-0"
-            onClick={() => document.getElementById(stateKey).click()}
-          >
-            Choose File
-          </button>
-          <span className="file-name">
-            {attachments?.find(attachment => attachment.document_name === key) 
-              ? attachments.find(attachment => attachment.document_name === key).file_name
-              : "No file chosen"}
-          </span>
-          <input
-            type="file"
-            id={stateKey}
-            name={stateKey}
-            accept=".pdf,.jpg,.jpeg,.png"
-            onChange={handleInputChange}
-            required={key === "driving_licence" ? restaurant === 2 : true}
-            style={{ display: 'none' }}  // Hide the default input
-          />
-        </div>
+        ))}
       </div>
-    </div>
-  ))}
-</div>
 
       {/* Verify Button */}
       <div className="button-aliangment">
