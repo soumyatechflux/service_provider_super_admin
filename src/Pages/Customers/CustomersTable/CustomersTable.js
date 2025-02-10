@@ -7,6 +7,8 @@ import EditCustomerModal from "../EditCustomersModal/EditCustomersModal";
 import "../../Customers/CustomersTable/CustomersTable.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteCustomerModal from "../DeleteCustomerModal/DeleteCustomerModal";
+import VisibilityIcon from "@mui/icons-material/Visibility"; // Import eye icon
+import CustomerInfoModal from "./CustomerInfoModal/CustomerInfoModal";
 
 const CustomersTable = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -19,11 +21,19 @@ const CustomersTable = () => {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 const [customerToDelete, setCustomerToDelete] = useState(null);
+const [selectedCustomer, setSelectedCustomer] = useState(null);
+const [isModalOpen, setIsModalOpen] = useState(false);
+
+const handleViewCustomer = (customer) => {
+  setSelectedCustomer(customer);
+  setIsModalOpen(true);
+};
 
   const entriesPerPage = 10;
 
   // Fetch restaurant data with error handling
   const getRestaurantTableData = useCallback(async () => {
+
     try {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
@@ -257,77 +267,46 @@ const [customerToDelete, setCustomerToDelete] = useState(null);
               />
             </div>
             <table className="table table-bordered table-user">
-              <thead>
-                <tr>
-                  <th scope="col" style={{ width: "5%" }}>
-                    Sr.
-                  </th>
-                  <th scope="col" style={{ width: "10%" }}>
-                    Name
-                  </th>
-                  <th scope="col" style={{ width: "15%" }}>
-                    Email
-                  </th>
-                  <th scope="col" style={{ width: "10%" }}>
-                    Phone
-                  </th>
-                  <th scope="col" style={{ width: "10%" }}>
-                    Gender
-                  </th>
-                  <th scope="col" style={{ width: "10%" }}>
-                    Address
-                  </th>
-                  <th scope="col" style={{ width: "5%" }}>
-                    Rating
-                  </th>
-                  <th scope="col" style={{ width: "10%" }}>
-                    Status
-                  </th>
-                  <th scope="col" style={{ width: "5%" }}>
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentEntries.map((restaurant, index) => (
-                  <tr key={restaurant.id}>
-                    <th scope="row">{indexOfFirstEntry + index + 1}.</th>
-                    <td>
-                      {restaurant.name
-                        ? restaurant.name.charAt(0).toUpperCase() +
-                          restaurant.name.slice(1)
-                        : "N/A"}
-                    </td>
-
-                    <td>{restaurant.email || "NA"}</td>
-                    <td>{restaurant.mobile}</td>
-                    <td>{restaurant.gender ? restaurant.gender : "Not Provided"}</td>
-                    <td>{restaurant.address ? restaurant.address : "Not Provided"}</td>
-                    <td>{restaurant.rating}</td>
-                    <td className={`status ${restaurant.active_status}`}>
-                      <div
-                        className="status-div"
-                        onClick={() => handleRestaurantClick(restaurant)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <span>
-                          {restaurant.active_status.charAt(0).toUpperCase() +
-                            restaurant.active_status.slice(1)}
-                        </span>
-                        <EditIcon />
-                      </div>
-                    </td>
-                    <td
-                        className="edit_users action-btn-trash"
-                        style={{ cursor: "pointer", opacity: 1 }}
-                        onClick={() => handleDeleteClick(restaurant)}
-                      >
-                        <DeleteIcon style={{ color: "red" }} />
-                      </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ width: "5%" }}>Sr.</th>
+      <th scope="col" style={{ width: "10%" }}>Name</th>
+      <th scope="col" style={{ width: "15%" }}>Email</th>
+      <th scope="col" style={{ width: "10%" }}>Phone</th>
+      <th scope="col" style={{ width: "10%" }}>Gender</th>
+      <th scope="col" style={{ width: "10%" }}>Address</th>
+      <th scope="col" style={{ width: "5%" }}>Rating</th>
+      <th scope="col" style={{ width: "10%" }}>Status</th>
+      <th scope="col" style={{ width: "5%" }}>Action</th>
+      {/* <th scope="col" style={{ width: "5%" }}>View</th>  */}
+    </tr>
+  </thead>
+  <tbody>
+    {currentEntries.map((restaurant, index) => (
+      <tr key={restaurant.id}>
+        <th scope="row">{indexOfFirstEntry + index + 1}.</th>
+        <td>{restaurant.name ? restaurant.name.charAt(0).toUpperCase() + restaurant.name.slice(1) : "N/A"}</td>
+        <td>{restaurant.email || "NA"}</td>
+        <td>{restaurant.mobile}</td>
+        <td>{restaurant.gender ? restaurant.gender : "Not Provided"}</td>
+        <td>{restaurant.address ? restaurant.address : "Not Provided"}</td>
+        <td>{restaurant.rating}</td>
+        <td className={`status ${restaurant.active_status}`}>
+          <div className="status-div" onClick={() => handleRestaurantClick(restaurant)} style={{ cursor: "pointer" }}>
+            <span>{restaurant.active_status.charAt(0).toUpperCase() + restaurant.active_status.slice(1)}</span>
+            <EditIcon />
+          </div>
+        </td>
+        <td className="edit_users action-btn-trash" style={{ cursor: "pointer", opacity: 1 }} onClick={() => handleDeleteClick(restaurant)}>
+          <DeleteIcon style={{ color: "red" }} />
+        </td>
+        {/* <td style={{ cursor: "pointer" }} onClick={() => handleViewCustomer(restaurant)}>
+          <VisibilityIcon style={{ color: "#007bff" }} />
+        </td> */}
+      </tr>
+    ))}
+  </tbody>
+</table>
           </div>
 
           {/* Pagination Controls */}
@@ -339,6 +318,10 @@ const [customerToDelete, setCustomerToDelete] = useState(null);
           </nav>
         </>
       )}
+
+{isModalOpen && (
+  <CustomerInfoModal customer={selectedCustomer} onClose={() => setIsModalOpen(false)} />
+)}
 
       {showDetailsModal && (
         <EditCustomerModal
