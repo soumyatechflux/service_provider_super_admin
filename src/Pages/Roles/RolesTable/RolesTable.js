@@ -18,6 +18,8 @@ const RolesTable = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); 
+
 
   // State for managing view more/less functionality
   const [expandedDescription, setExpandedDescription] = useState(
@@ -130,13 +132,39 @@ const RolesTable = () => {
     getRolesData(); // Fetch roles data on component mount
   }, []);
 
+
+ 
+  const normalizeString = (str) => (str ? str.toLowerCase().trim() : "");
+  const filteredRoles = dummy_Data.filter((role) => 
+    normalizeString(role.role_name).includes(normalizeString(searchQuery)) ||
+    normalizeString(role.description || "").includes(normalizeString(searchQuery)) ||
+    normalizeString(role.active_status).includes(normalizeString(searchQuery))
+  );
+  
   return (
     <div className="SubCategory-Table-Main p-3">
         <h2>Roles</h2>
-      <div style={{ float: "right" }}>
+        <div
+            className="mb-3"
+            style={{
+              display: "flex",
+              flexDirection: "row-reverse",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
         <button className="Discount-btn" onClick={() => setShowAddModal(true)}>
           + Add Role
         </button>
+        <div className="search-bar" style={{ width: "350px" }}>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search by role name, description, or status"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
       {loading ? (
         <Loader />
@@ -163,7 +191,7 @@ const RolesTable = () => {
               </tr>
             </thead>
             <tbody>
-              {dummy_Data.map((item, index) => {
+              {filteredRoles.map((item, index) => {
                 const descriptionWords = item.description?.split(" ") || [];
                 const showFullDescription =
                   expandedDescription[index] || descriptionWords.length <= 5;

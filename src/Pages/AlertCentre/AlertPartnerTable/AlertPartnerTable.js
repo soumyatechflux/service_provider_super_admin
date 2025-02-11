@@ -66,6 +66,15 @@ const AlertPartnerTable = () => {
     fetchAlertData();
   }, []);
 
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Ensure two digits
+    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`; // MM/DD/YYYY format
+  };
+  
   // Helper function to normalize strings for comparison
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
@@ -78,7 +87,7 @@ const AlertPartnerTable = () => {
       normalizeString(item.message).includes(searchTerm) ||
       normalizeString(item.notification_type).includes(searchTerm) ||
       normalizeString(item.role).includes(searchTerm) ||
-      normalizeString(item.created_at).includes(searchTerm)
+      normalizeString(formatDate(item.created_at)).includes(searchTerm) 
     );
   });
 

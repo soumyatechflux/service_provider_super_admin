@@ -203,7 +203,10 @@ const CommonCommissionTab = ({
                   Category
                 </th>
                 <th scope="col" style={{ width: "15%" }}>
-                  Amount Due
+                  Amount Due Before TDS
+                </th>
+                <th scope="col" style={{ width: "15%" }}>
+                  Amount Due After TDS
                 </th>
                 <th scope="col" style={{ width: "15%" }}>
                   Action
@@ -214,7 +217,7 @@ const CommonCommissionTab = ({
               {currentEntries.filter((item) => item.total_partner_amount > 0)
                 .length === 0 ? (
                 <tr>
-                  <td colSpan="5" style={{ textAlign: "center" }}>
+                  <td colSpan="7" style={{ textAlign: "center" }}>
                     No data available
                   </td>
                 </tr>
@@ -229,6 +232,7 @@ const CommonCommissionTab = ({
                       <td>{item.name || "Unknown"}</td>
                       <td>{item.category_name || "N/A"}</td>
                       <td>{item.total_partner_amount || "N/A"}</td>
+                      <td>{item.partner_amount_after_tds || "N/A"}</td>
                       <td className="action-btn-pay">
                         <button
                           className="payNow-btn"

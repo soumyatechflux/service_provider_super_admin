@@ -103,7 +103,7 @@ import {
             >
               <MenuItem value="New">New</MenuItem>
               <MenuItem value="In-review">In-review</MenuItem>
-              <MenuItem value="Resolve">Resolve</MenuItem>
+              <MenuItem value="Resolved">Resolved</MenuItem>
               <MenuItem value="Rejected">Rejected</MenuItem>
             </Select>
           </FormControl>

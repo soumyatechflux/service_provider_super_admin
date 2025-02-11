@@ -59,15 +59,25 @@ const SupportCustomerTab = () => {
   // Filter supportData using multiple fields: name, email, mobile, description, created_at, and updated_at
   const filteredData = supportData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
+  
+    // Function to format date as MM/DD/YYYY
+    const formatDate = (dateString) => {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+    };
+  
     return (
       normalizeString(item.email ?? "").includes(searchTerm) ||
       normalizeString(item.name ?? "").includes(searchTerm) ||
       normalizeString(item.mobile ?? "").includes(searchTerm) ||
       normalizeString(item.description ?? "").includes(searchTerm) ||
-      normalizeString(item.created_at ?? "").includes(searchTerm) ||
-      normalizeString(item.updated_at ?? "").includes(searchTerm)
+      normalizeString(formatDate(item.created_at)).includes(searchTerm) || // Formatted date search
+      normalizeString(formatDate(item.updated_at)).includes(searchTerm) || // Formatted date search
+      normalizeString(item.status ?? "").includes(searchTerm)
     );
   });
+  
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);

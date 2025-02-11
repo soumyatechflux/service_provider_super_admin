@@ -75,16 +75,25 @@ const SupportPartnerTab = () => {
   // Updated filtering logic: search by name, email, mobile, description, created_at, or updated_at
   const filteredData = supportData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
+  
+    // Function to format date as "DD MMM YYYY"
+    const formatDate = (dateString) => {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      return `${date.getDate()} ${date.toLocaleString("en-US", { month: "short" })} ${date.getFullYear()}`;
+    };
+  
     return (
       normalizeString(item?.name ?? "").includes(searchTerm) ||
       normalizeString(item?.email ?? "").includes(searchTerm) ||
       normalizeString(item?.mobile ?? "").includes(searchTerm) ||
       normalizeString(item?.description ?? "").includes(searchTerm) ||
-      normalizeString(item?.created_at ?? "").includes(searchTerm) ||
-      normalizeString(item?.updated_at ?? "").includes(searchTerm)
+      normalizeString(formatDate(item?.created_at)).includes(searchTerm) || // Formatted date search
+      normalizeString(formatDate(item?.updated_at)).includes(searchTerm) || // Formatted date search
+      normalizeString(item?.status ?? "").includes(searchTerm)
     );
   });
-
+  
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;

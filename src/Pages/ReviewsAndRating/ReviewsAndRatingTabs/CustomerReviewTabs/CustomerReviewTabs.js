@@ -9,6 +9,7 @@ const PartnerReviewTabs = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [searchInput, setSearchInput] = useState(""); // Search input state
 
   const getSupportData = async () => {
     try {
@@ -80,13 +81,46 @@ const PartnerReviewTabs = () => {
     getSupportData();
   }, []);
 
+  const normalizeString = (str) =>
+    str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
+
+  // Corrected Search Functionality
+  const filteredData = reviewData.filter((item) => {
+    // Format created_at to "11 Feb 2025"
+    const createdAtFormatted = new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(item.created_at));
+
+    return (
+      normalizeString(item.customer?.name).includes(
+        normalizeString(searchInput)
+      ) ||
+      normalizeString(item.partner?.name).includes(
+        normalizeString(searchInput)
+      ) ||
+      normalizeString(item.rating).includes(normalizeString(searchInput)) ||
+      normalizeString(item.review).includes(normalizeString(searchInput)) ||
+      normalizeString(createdAtFormatted).includes(normalizeString(searchInput))
+    );
+  });
+
   return (
     <div className="Support-Table-Main p-3">
-       {/* <h2>Customer Review and Rating</h2> */}
       {loading ? (
         <Loader />
       ) : (
         <div className="table-responsive mb-5">
+          <div className="d-flex justify-content-end align-items-center mb-3">
+            <input
+              type="text"
+              className="form-control search-input w-25"
+              placeholder="Search by customer rating, review, or date..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </div>
           <table className="table table-bordered table-user">
             <thead className="heading_user">
               <tr>
@@ -105,26 +139,43 @@ const PartnerReviewTabs = () => {
                 <th scope="col" style={{ width: "30%" }}>
                   Review
                 </th>
+                <th scope="col" style={{ width: "30%" }}>
+                  Image
+                </th>
                 <th scope="col" style={{ width: "10%" }}>
                   Created At
                 </th>
-                {/* <th scope="col" style={{ width: "10%" }}>
-                  Updated At
-                </th> */}
                 <th scope="col" style={{ width: "10%" }}>
                   Action
-                </th>{" "}
+                </th>
               </tr>
             </thead>
             <tbody>
-              {reviewData.length > 0 ? (
-                reviewData.map((item, index) => (
+              {filteredData.length > 0 ? (
+                filteredData.map((item, index) => (
                   <tr key={item.id}>
                     <th scope="row">{index + 1}.</th>
                     <td>{item.customer?.name || "N/A"}</td>
                     <td>{item.partner?.name || "N/A"}</td>
-                    <td style={{ fontWeight: "bold" }}>{item.rating || "N/A"}</td>
+                    <td style={{ fontWeight: "bold" }}>
+                      {item.rating || "N/A"}
+                    </td>
                     <td>{item.review || "No review provided."}</td>
+                    <td>
+                      {item.customer?.image ? (
+                        <img
+                          src={item.customer.image}
+                          alt="Customer"
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                          }}
+                        />
+                      ) : (
+                        "N/A"
+                      )}
+                    </td>
+
                     <td>
                       {new Intl.DateTimeFormat("en-GB", {
                         day: "2-digit",
@@ -132,13 +183,7 @@ const PartnerReviewTabs = () => {
                         year: "numeric",
                       }).format(new Date(item.created_at))}
                     </td>
-                    {/* <td>
-                      {new Intl.DateTimeFormat("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      }).format(new Date(item.updated_at))}
-                    </td> */}
+
                     <td className="action-btn-trash">
                       <i
                         className="fa fa-trash text-danger"
@@ -175,4 +220,3 @@ const PartnerReviewTabs = () => {
 };
 
 export default PartnerReviewTabs;
-

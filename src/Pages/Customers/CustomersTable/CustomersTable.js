@@ -112,10 +112,14 @@ const handleViewCustomer = (customer) => {
       return (
         normalizeString(restaurant.name).includes(searchTerm) ||
         normalizeString(restaurant.email ?? "").includes(searchTerm) ||
-        normalizeString(restaurant.mobile ?? "").includes(searchTerm)
+        normalizeString(restaurant.mobile ?? "").includes(searchTerm) ||
+        normalizeString(restaurant.gender ?? "").includes(searchTerm) ||
+        normalizeString(restaurant.address ?? "").includes(searchTerm) ||
+        normalizeString(restaurant.rating?.toString() ?? "").includes(searchTerm) ||
+        normalizeString(restaurant.active_status ?? "").includes(searchTerm) 
       );
     });
-  
+    
     setFilteredRestaurants(filteredData);
   }, [searchInput, restaurants]);
   
