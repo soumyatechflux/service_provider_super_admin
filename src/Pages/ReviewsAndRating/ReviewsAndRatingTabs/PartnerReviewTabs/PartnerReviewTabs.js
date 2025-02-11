@@ -9,6 +9,7 @@ const PartnerReviewTabs = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [searchInput, setSearchInput] = useState(""); // Search input state
 
   const getSupportData = async () => {
     try {
@@ -33,7 +34,6 @@ const PartnerReviewTabs = () => {
         setReviewData(data);
       } else {
         toast.error(response.data.message || "Failed to fetch reviews.");
-        setLoading(false);
       }
     } catch (error) {
       toast.error("Failed to load reviews. Please try again.");
@@ -62,7 +62,6 @@ const PartnerReviewTabs = () => {
 
       if (response?.status === 200 && response?.data?.success) {
         toast.success("Review deleted successfully.");
-        // Remove the deleted review from the local state
         setReviewData((prevData) =>
           prevData.filter((item) => item.id !== review.id)
         );
@@ -80,9 +79,38 @@ const PartnerReviewTabs = () => {
     getSupportData();
   }, []);
 
+  const normalizeString = (str) =>
+    str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
+
+  const filteredData = reviewData.filter((item) => {
+    // Format created_at to "11 Feb 2025"
+    const createdAtFormatted = new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(item.created_at));
+
+    return (
+      normalizeString(item.customer?.name).includes(normalizeString(searchInput)) ||
+      normalizeString(item.partner?.name).includes(normalizeString(searchInput)) ||
+      normalizeString(item.rating).includes(normalizeString(searchInput)) ||
+      normalizeString(item.review).includes(normalizeString(searchInput)) ||
+      normalizeString(createdAtFormatted).includes(normalizeString(searchInput)) // Search by formatted date
+    );
+  });
+
   return (
     <div className="Support-Table-Main p-3">
-        {/* <h2>Partner Review and Rating</h2> */}
+      <div className="d-flex justify-content-end align-items-center mb-3">
+      <input
+        type="text"
+        className="form-control search-input w-25 mb-3"
+        placeholder="Search by partner rating, review, or date..."
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+      />
+      </div>
+
       {loading ? (
         <Loader />
       ) : (
@@ -90,35 +118,18 @@ const PartnerReviewTabs = () => {
           <table className="table table-bordered table-user">
             <thead className="heading_user">
               <tr>
-                <th scope="col" style={{ width: "5%" }}>
-                  Sr.
-                </th>
-                <th scope="col" style={{ width: "15%" }}>
-                  Partner
-                </th>
-                <th scope="col" style={{ width: "15%" }}>
-                  Customer
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Rating
-                </th>
-                <th scope="col" style={{ width: "30%" }}>
-                  Review
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Created At
-                </th>
-                {/* <th scope="col" style={{ width: "10%" }}>
-                  Updated At
-                </th> */}
-                <th scope="col" style={{ width: "10%" }}>
-                  Action
-                </th>
+                <th scope="col" style={{ width: "5%" }}>Sr.</th>
+                <th scope="col" style={{ width: "15%" }}>Partner</th>
+                <th scope="col" style={{ width: "15%" }}>Customer</th>
+                <th scope="col" style={{ width: "10%" }}>Rating</th>
+                <th scope="col" style={{ width: "30%" }}>Review</th>
+                <th scope="col" style={{ width: "10%" }}>Created At</th>
+                <th scope="col" style={{ width: "10%" }}>Action</th>
               </tr>
             </thead>
             <tbody>
-              {reviewData.length > 0 ? (
-                reviewData.map((item, index) => (
+              {filteredData.length > 0 ? (
+                filteredData.map((item, index) => (
                   <tr key={item.id}>
                     <th scope="row">{index + 1}.</th>
                     <td>{item.partner?.name || "N/A"}</td>
@@ -132,13 +143,6 @@ const PartnerReviewTabs = () => {
                         year: "numeric",
                       }).format(new Date(item.created_at))}
                     </td>
-                    {/* <td>
-                      {new Intl.DateTimeFormat("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      }).format(new Date(item.updated_at))}
-                    </td> */}
                     <td className="action-btn-trash">
                       <i
                         className="fa fa-trash text-danger"
@@ -153,9 +157,7 @@ const PartnerReviewTabs = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="text-center">
-                    No reviews available.
-                  </td>
+                  <td colSpan="7" className="text-center">No reviews available.</td>
                 </tr>
               )}
             </tbody>
@@ -175,4 +177,3 @@ const PartnerReviewTabs = () => {
 };
 
 export default PartnerReviewTabs;
-

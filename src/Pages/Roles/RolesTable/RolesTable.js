@@ -133,12 +133,14 @@ const RolesTable = () => {
   }, []);
 
 
+ 
   const normalizeString = (str) => (str ? str.toLowerCase().trim() : "");
-  const filteredRoles = roles.filter((role) => 
+  const filteredRoles = dummy_Data.filter((role) => 
     normalizeString(role.role_name).includes(normalizeString(searchQuery)) ||
-    normalizeString(role.description).includes(normalizeString(searchQuery)) ||
+    normalizeString(role.description || "").includes(normalizeString(searchQuery)) ||
     normalizeString(role.active_status).includes(normalizeString(searchQuery))
   );
+  
   return (
     <div className="SubCategory-Table-Main p-3">
         <h2>Roles</h2>
@@ -189,7 +191,7 @@ const RolesTable = () => {
               </tr>
             </thead>
             <tbody>
-              {dummy_Data.map((item, index) => {
+              {filteredRoles.map((item, index) => {
                 const descriptionWords = item.description?.split(" ") || [];
                 const showFullDescription =
                   expandedDescription[index] || descriptionWords.length <= 5;

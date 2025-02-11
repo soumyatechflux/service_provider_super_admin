@@ -4,10 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "../CommissionDueTabs/CommonCommissionTab/CommonCommissionTab.css";
 
-const PaymentHistoryTable = ({
-  loading,
-  setLoading,
-}) => {
+const PaymentHistoryTable = ({ loading, setLoading }) => {
   const [dummy_Data, setDummy_Data] = useState([]);
   const [searchInput, setSearchInput] = useState(""); // Search input state
   const [currentPage, setCurrentPage] = useState(1); // Pagination state
@@ -15,7 +12,9 @@ const PaymentHistoryTable = ({
 
   const getCommissionData = async () => {
     try {
-      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
 
       setLoading(true);
 
@@ -34,7 +33,9 @@ const PaymentHistoryTable = ({
         const data = response?.data?.data || [];
         setDummy_Data(data);
       } else {
-        toast.error(response.data.message || "Failed to fetch payment history.");
+        toast.error(
+          response.data.message || "Failed to fetch payment history."
+        );
         setLoading(false);
       }
     } catch (error) {
@@ -49,20 +50,39 @@ const PaymentHistoryTable = ({
   }, []);
 
   // Filter data based on search input
-  const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
-
-  const filteredData = dummy_Data.filter(
-    (item) =>
-      normalizeString(item.partner_name).includes(normalizeString(searchInput)) ||
-      normalizeString(item.category_name).includes(normalizeString(searchInput))
-  );
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0"); // Two-digit day
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Two-digit month
+    const year = String(date.getFullYear()).slice(-2); // Last two digits of the year
+    return `${day}/${month}/${year}`; // DD/MM/YY format
+  };
   
-
+  const normalizeString = (str) =>
+    str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
+  
+  const filteredData = dummy_Data.filter((item) => {
+    const searchTerm = normalizeString(searchInput);
+    const formattedDate = normalizeString(formatDate(item.created_at)); // Convert date to DD/MM/YY and normalize
+  
+    return (
+      normalizeString(item.partner_name).includes(searchTerm) ||
+      normalizeString(item.category_name).includes(searchTerm) ||
+      normalizeString(item.payout_amount).includes(searchTerm) ||
+      normalizeString(item.payment_transaction_id).includes(searchTerm) ||
+      formattedDate.includes(searchTerm) // Ensure search works with formatted date
+    );
+  });
+  
+  
   // Pagination logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = filteredData.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   const getPageRange = () => {
     let start = currentPage - 1;
@@ -200,17 +220,25 @@ const PaymentHistoryTable = ({
             <tbody>
               {currentEntries.length === 0 ? (
                 <tr>
-                  <td colSpan="4" style={{ textAlign: "center" }}>
+                  <td colSpan="6" style={{ textAlign: "center" }}>
                     No data available
                   </td>
                 </tr>
               ) : (
                 currentEntries.map((item, index) => (
                   <tr key={item.id}>
-                    <th scope="row">{index + 1 + (currentPage - 1) * entriesPerPage}.</th>
+                    <th scope="row">
+                      {index + 1 + (currentPage - 1) * entriesPerPage}.
+                    </th>
                     <td>{item.partner_name || "Unknown"}</td>
                     <td>{item.category_name || "N/A"}</td>
-                    <td>{new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(new Date(item.created_at)) || "N/A"}</td>
+                    <td>
+                      {new Intl.DateTimeFormat("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                      }).format(new Date(item.created_at)) || "N/A"}
+                    </td>
 
                     <td>{item.payout_amount || "N/A"}</td>
                     <td>{item.payment_transaction_id || "N/A"}</td>
