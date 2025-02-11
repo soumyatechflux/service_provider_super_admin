@@ -13,11 +13,15 @@ const ReportTable = ({ filters, loading, setLoading }) => {
 
   const fetchReportData = async () => {
     try {
-      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
       setLoading(true);
 
       const validFilters = Object.fromEntries(
-        Object.entries(filters).filter(([_, value]) => value !== "" && value !== null)
+        Object.entries(filters).filter(
+          ([_, value]) => value !== "" && value !== null
+        )
       );
 
       const response = await axios.get(
@@ -110,7 +114,10 @@ const ReportTable = ({ filters, loading, setLoading }) => {
           </button>
         </li>
         {pageRange.map((number) => (
-          <li key={number} className={`page-item ${currentPage === number ? "active" : ""}`}>
+          <li
+            key={number}
+            className={`page-item ${currentPage === number ? "active" : ""}`}
+          >
             <button
               className="page-link"
               onClick={() => handlePageChange(number)}
@@ -123,20 +130,34 @@ const ReportTable = ({ filters, loading, setLoading }) => {
             </button>
           </li>
         ))}
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
           <button
             className="page-link"
-            onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+            onClick={() =>
+              handlePageChange(Math.min(currentPage + 1, totalPages))
+            }
+            style={{
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            }}
           >
             Next
           </button>
         </li>
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
           <button
             className="page-link"
             onClick={() => handlePageChange(totalPages)}
-            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+            style={{
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            }}
           >
             Last
           </button>
@@ -161,22 +182,46 @@ const ReportTable = ({ filters, loading, setLoading }) => {
             <table className="table table-bordered table-user">
               <thead className="heading_user">
                 <tr>
-                  <th scope="col" style={{ width: "5%" }}>Sr.</th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Sr.
+                  </th>
                   {filters.user_type === "customer" && (
-                    <th scope="col" style={{ width: "10%" }}>Customer Name</th>
+                    <th scope="col" style={{ width: "10%" }}>
+                      Customer Name
+                    </th>
                   )}
                   {filters.user_type === "partner" && (
-                    <th scope="col" style={{ width: "10%" }}>Partner Name</th>
+                    <th scope="col" style={{ width: "10%" }}>
+                      Partner Name
+                    </th>
                   )}
-                  <th scope="col" style={{ width: "10%" }}>Category</th>
-                  <th scope="col" style={{ width: "10%" }}>Sub Category</th>
-                  <th scope="col" style={{ width: "10%" }}>Visit Slot Count</th>
-                  <th scope="col" style={{ width: "5%" }}>Amount</th>
-                  <th scope="col" style={{ width: "10%" }}>Commission</th>
-                  <th scope="col" style={{ width: "15%" }}>Address</th>
-                  <th scope="col" style={{ width: "5%" }}>Status</th>
-                  <th scope="col" style={{ width: "10%" }}>Booking Date</th>
-                  <th scope="col" style={{ width: "5%" }}>Action</th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Category
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Sub Category
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Visit Slot Count
+                  </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Amount
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Commission
+                  </th>
+                  <th scope="col" style={{ width: "15%" }}>
+                    Address
+                  </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Status
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Booking Date
+                  </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -190,20 +235,58 @@ const ReportTable = ({ filters, loading, setLoading }) => {
                       <td>{item.partner?.name || "Unknown"}</td>
                     )}
                     <td>{item.category?.category_name || "N/A"}</td>
-                    <td>{item.sub_category_name?.sub_category_name || "N/A"}</td>
+                    <td>
+                      {item.sub_category_name?.sub_category_name || "N/A"}
+                    </td>
                     <td>{item.gardener_visiting_slot_count || "NA"}</td>
                     <td>{item.price || "No status"}</td>
                     <td>{item.commission_amount || "0.00"}</td>
                     <td>{item.address_from || "No address available."}</td>
-                    <td>{item.booking_status?.charAt(0).toUpperCase() + item.booking_status.slice(1) || "N/A"}</td>
-                    <td>{new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(item.created_at))}</td>
+                    <td>
+                      {item.booking_status?.charAt(0).toUpperCase() +
+                        item.booking_status.slice(1) || "N/A"}
+                    </td>
+                    <td>
+                      {new Intl.DateTimeFormat("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }).format(new Date(item.created_at))}
+                    </td>
+                    <td>
+                    <div style={{ textAlign: "center" }}>
+                          <button
+                            className="btn Discount-btn"
+                            style={{
+                              display: "block",
+                              backgroundColor: "#2F4CDD",
+                              color: "white",
+                              padding: "5px 10px",
+                              borderRadius: "5px",
+                              border: "none",
+                            }}
+                            onClick={() => handleViewDetails(item)}
+                          >
+                            View
+                          </button>
+                        </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <nav className="d-flex justify-content-center">{renderPaginationItems()}</nav>
+          <nav className="d-flex justify-content-center">
+            {renderPaginationItems()}
+          </nav>
         </>
+      )}
+
+      {isModalOpen && (
+        <BookingDetailsModal
+          booking={selectedBooking}
+          onClose={() => setIsModalOpen(false)}
+        />
       )}
     </div>
   );
