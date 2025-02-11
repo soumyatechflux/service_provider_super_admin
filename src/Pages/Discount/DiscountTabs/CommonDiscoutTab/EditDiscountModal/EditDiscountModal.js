@@ -2,14 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
-const EditDiscountModal = ({
-  show,
-  onClose,
-  onSave,
-  initialData,
-  fetchDiscountData,
-}) => {
+const EditDiscountModal = ({ show, onClose, onSave, initialData, fetchDiscountData }) => {
   const [formData, setFormData] = useState({
     sub_category_name: "",
     price: "",
@@ -19,7 +14,10 @@ const EditDiscountModal = ({
     start_date: "",
     end_date: "",
     description: "",
+    is_first_time_use: false, // ✅ Added field
+    is_one_time_use: false, // ✅ Added field
   });
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -30,21 +28,26 @@ const EditDiscountModal = ({
         limit: initialData.usage_limit || "",
         minimum_price: initialData.minimum_order_amount || "",
         discount_code: initialData.voucher_code || "",
-        start_date: initialData.start_date ? initialData.start_date.split('T')[0] : "", // Format to YYYY-MM-DD
-        end_date: initialData.end_date ? initialData.end_date.split('T')[0] : "", // Format to YYYY-MM-DD
+        start_date: initialData.start_date ? initialData.start_date.split("T")[0] : "",
+        end_date: initialData.end_date ? initialData.end_date.split("T")[0] : "",
         description: initialData.description || "",
+        is_first_time_use: initialData.is_first_time_use || false, // ✅ Pre-populate checkbox value
+        is_one_time_use: initialData.is_one_time_use || false, // ✅ Pre-populate checkbox value
       });
     }
   }, [initialData]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleSave = async () => {
     const today = new Date().toISOString().split("T")[0];
-  
+
     // Validate form data
     if (!formData.sub_category_name) {
       toast.error("Please select a discount type.");
@@ -74,14 +77,12 @@ const EditDiscountModal = ({
       toast.error("Start date cannot be later than the end date.");
       return;
     }
-  
+
     setLoading(true);
-  
+
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
-  
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+
       const payload = {
         discount: {
           voucher_id: initialData.voucher_id,
@@ -93,9 +94,11 @@ const EditDiscountModal = ({
           end_date: formData.end_date || null,
           usage_limit: formData.limit || null,
           description: formData.description || null,
+          is_first_time_use: formData.is_first_time_use, // ✅ Added to payload
+          is_one_time_use: formData.is_one_time_use, // ✅ Added to payload
         },
       };
-  
+
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount`,
         payload,
@@ -105,9 +108,9 @@ const EditDiscountModal = ({
           },
         }
       );
-  
-      if (response?.status === 200) {
-        toast.success("Discount updated successfully!");
+
+      if (response?.status === 200 && response.data?.success !== false) {
+        toast.success(response.data?.message || "Discount updated successfully!");
         await fetchDiscountData();
         onClose();
       } else {
@@ -115,23 +118,22 @@ const EditDiscountModal = ({
       }
     } catch (error) {
       console.error("Update error:", error);
-      toast.error(error.message || "An error occurred while updating the discount.");
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred while updating the discount.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
-  
 
   if (!show) return null;
 
   return (
     <>
       <div className="modal-overlay">
-        <div
-          className="modal-content"
-          style={{ height: "80%", overflowY: "auto" }}
-        >
+        <div className="modal-content" style={{ height: "80%", overflowY: "auto" }}>
           <h2>Edit Discount</h2>
+
           <div className="form-group">
             <label htmlFor="sub-category-name">Discount Type:</label>
             <select
@@ -146,6 +148,7 @@ const EditDiscountModal = ({
               <option value="fixed">Fixed</option>
             </select>
           </div>
+
           <div className="form-group">
             <label htmlFor="discount-price">Discount Value:</label>
             <input
@@ -157,6 +160,7 @@ const EditDiscountModal = ({
               placeholder="Enter discount value"
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="limit">Usage Limit:</label>
             <input
@@ -168,6 +172,7 @@ const EditDiscountModal = ({
               placeholder="Enter usage limit"
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="minimum-price">Minimum Price:</label>
             <input
@@ -179,6 +184,7 @@ const EditDiscountModal = ({
               placeholder="Enter minimum price"
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="discount-code">Voucher Code:</label>
             <input
@@ -189,6 +195,7 @@ const EditDiscountModal = ({
               placeholder="Enter voucher code"
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="description">Description:</label>
             <textarea
@@ -199,36 +206,32 @@ const EditDiscountModal = ({
               placeholder="Enter a description"
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="start-date">Start Date:</label>
-            <input
-              id="start-date"
-              name="start_date"
-              type="date"
-              value={formData.start_date}
-              onChange={handleChange}
-            />
+            <input id="start-date" name="start_date" type="date" value={formData.start_date} onChange={handleChange} />
           </div>
+
           <div className="form-group">
             <label htmlFor="end-date">End Date:</label>
-            <input
-              id="end-date"
-              name="end_date"
-              type="date"
-              value={formData.end_date}
-              onChange={handleChange}
-            />
+            <input id="end-date" name="end_date" type="date" value={formData.end_date} onChange={handleChange} />
           </div>
+
+          {/* ✅ Added checkboxes */}
+          <FormControlLabel
+            control={<Checkbox checked={formData.is_first_time_use} onChange={handleChange} name="is_first_time_use" />}
+            label="Only First Time Booking"
+          />
+          <FormControlLabel
+            control={<Checkbox checked={formData.is_one_time_use} onChange={handleChange} name="is_one_time_use" />}
+            label="One Time Use"
+          />
+
           <div className="modal-actions">
-            <button
-              onClick={handleSave}
-              className="btn btn-primary"
-              disabled={loading}
-              style={{width:"100%"}}
-            >
+            <button onClick={handleSave} className="btn btn-primary" disabled={loading} style={{ width: "100%" }}>
               Save
             </button>
-            <button onClick={onClose} className="btn btn-secondary" style={{width:"100%"}}>
+            <button onClick={onClose} className="btn btn-secondary" style={{ width: "100%" }}>
               Cancel
             </button>
           </div>

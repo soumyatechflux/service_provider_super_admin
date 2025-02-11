@@ -1,6 +1,4 @@
-import {
-  TextField
-} from "@mui/material";
+import { TextField, Checkbox, FormControlLabel } from "@mui/material";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,16 +13,21 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
     description: "",
     start_date: "",
     end_date: "",
+    is_first_time_use: false, // ✅ New checkbox field
+    is_one_time_use: false, // ✅ New checkbox field
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleSave = async () => {
-    const currentDate = new Date().toISOString().split("T")[0]; // Get today's date in 'YYYY-MM-DD' format
-  
+    const currentDate = new Date().toISOString().split("T")[0];
+
     if (
       !formData.sub_category_name ||
       !formData.price ||
@@ -38,29 +41,29 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
       toast.error("Please fill in all fields.");
       return;
     }
-  
+
     if (formData.price <= 0) {
       toast.error("Discount value must be greater than 0.");
       return;
     }
-  
+
     if (formData.limit <= 0) {
       toast.error("Usage limit must be greater than 0.");
       return;
     }
-  
+
     if (formData.start_date < currentDate) {
       toast.error("Start date cannot be in the past.");
       return;
     }
-  
+
     if (formData.end_date <= formData.start_date) {
       toast.error("End date must be later than start date.");
       return;
     }
-  
+
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-  
+
     const payload = {
       discount: {
         voucher_code: formData.discount_code,
@@ -71,9 +74,11 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
         end_date: new Date(formData.end_date).toISOString(),
         usage_limit: parseInt(formData.limit, 10),
         description: formData.description,
+        is_first_time_use: formData.is_first_time_use, // ✅ Added to payload
+        is_one_time_use: formData.is_one_time_use, // ✅ Added to payload
       },
     };
-  
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount/add`,
@@ -86,19 +91,17 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
           body: JSON.stringify(payload),
         }
       );
-  
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to save the discount.");
-      }
-  
+
       const data = await response.json();
-      console.log("Discount added successfully:", data);
-  
-      toast.success("Discount added successfully!");
+
+      if (!response.ok || data.success === false) {
+        throw new Error(data.message || "Failed to save the discount.");
+      }
+
+      toast.success(data.message || "Discount added successfully!");
       onSave(data);
       fetchDiscountData();
-  
+
       setFormData({
         sub_category_name: "",
         price: "",
@@ -108,15 +111,16 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
         description: "",
         start_date: "",
         end_date: "",
+        is_first_time_use: false,
+        is_one_time_use: false,
       });
-  
+
       onClose();
     } catch (error) {
       console.error("Error:", error.message);
-      toast.error("Failed to save the discount. Please try again.");
+      toast.error(error.message || "Failed to save the discount. Please try again.");
     }
   };
-  
 
   const handleCancel = () => {
     setFormData({
@@ -128,6 +132,8 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
       description: "",
       start_date: "",
       end_date: "",
+      is_first_time_use: false,
+      is_one_time_use: false,
     });
     onClose();
   };
@@ -138,10 +144,7 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
     <>
       <ToastContainer />
       <div className="modal-overlay">
-        <div
-          className="modal-content"
-          style={{ height: "80%", overflowY: "auto" }}
-        >
+        <div className="modal-content" style={{ height: "80%", overflowY: "auto" }}>
           <h2>Add Discount</h2>
 
           <div className="form-group">
@@ -221,7 +224,6 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
               id="description"
               name="description"
               value={formData.description}
-                 rows="5"
               onChange={handleChange}
               placeholder="Enter description"
               fullWidth
@@ -252,11 +254,34 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
             />
           </div>
 
+          {/* ✅ Added checkboxes */}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={formData.is_first_time_use}
+                onChange={handleChange}
+                name="is_first_time_use"
+              />
+            }
+            label="Only First Time Booking"
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={formData.is_one_time_use}
+                onChange={handleChange}
+                name="is_one_time_use"
+              />
+            }
+            label="One Time Use"
+          />
+
           <div className="modal-actions">
-            <button onClick={handleSave} className="btn btn-primary" style={{width:"100%"}}>
+            <button onClick={handleSave} className="btn btn-primary" style={{ width: "100%" }}>
               Save
             </button>
-            <button onClick={handleCancel} className="btn btn-secondary" style={{width:"100%"}}>
+            <button onClick={handleCancel} className="btn btn-secondary" style={{ width: "100%" }}>
               Cancel
             </button>
           </div>

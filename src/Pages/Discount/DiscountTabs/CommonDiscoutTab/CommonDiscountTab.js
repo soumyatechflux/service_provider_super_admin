@@ -217,141 +217,108 @@ const CommonDiscountTab = () => {
           </div>
 
           <table className="table table-bordered table-user">
-            <thead className="heading_user">
-              <tr>
-                <th scope="col" style={{ width: "2%" }}>
-                  Sr.
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Discount Type
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Discount Value
-                </th>
-                <th scope="col" style={{ width: "8%" }}>
-                  Usage Limit
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Minimum Price
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Voucher Code
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Start Date
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  End Date
-                </th>
-                <th scope="col" style={{ width: "15%" }}>
-                  Description
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Status
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Used Count
-                </th>
-                <th scope="col" style={{ width: "5%" }}>
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentItems.length > 0 ? (
-                currentItems.map((item, index) => (
-                  <tr key={item.voucher_id}>
-                    <th scope="row">{index + 1}.</th>
-                    <td>
-                      {item.discount_type
-                        ? item.discount_type.charAt(0).toUpperCase() +
-                          item.discount_type.slice(1)
-                        : "N/A"}
-                    </td>
+  <thead className="heading_user">
+    <tr>
+      <th scope="col" style={{ width: "2%" }}>Sr.</th>
+      <th scope="col" style={{ width: "10%" }}>Discount Type</th>
+      <th scope="col" style={{ width: "10%" }}>Discount Value</th>
+      <th scope="col" style={{ width: "8%" }}>Usage Limit</th>
+      <th scope="col" style={{ width: "10%" }}>Minimum Price</th>
+      <th scope="col" style={{ width: "10%" }}>Voucher Code</th>
+      <th scope="col" style={{ width: "10%" }}>Start Date</th>
+      <th scope="col" style={{ width: "10%" }}>End Date</th>
+      <th scope="col" style={{ width: "15%" }}>Description</th>
+      <th scope="col" style={{ width: "10%" }}>First Time Use</th>
+      <th scope="col" style={{ width: "10%" }}>One Time Use</th>
+      <th scope="col" style={{ width: "10%" }}>Status</th>
+      <th scope="col" style={{ width: "10%" }}>Used Count</th>
+      <th scope="col" style={{ width: "5%" }}>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {currentItems.length > 0 ? (
+      currentItems.map((item, index) => (
+        <tr key={item.voucher_id}>
+          <th scope="row">{index + 1}.</th>
+          <td>
+            {item.discount_type
+              ? item.discount_type.charAt(0).toUpperCase() + item.discount_type.slice(1)
+              : "N/A"}
+          </td>
+          <td>{item.discount_value || "N/A"}</td>
+          <td>{item.usage_limit || "N/A"}</td>
+          <td>{item.minimum_order_amount || "N/A"}</td>
+          <td>{item.voucher_code || "N/A"}</td>
+          <td>
+            {item.start_date
+              ? new Intl.DateTimeFormat("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "2-digit",
+                }).format(new Date(item.start_date))
+              : "N/A"}
+          </td>
+          <td>
+            {item.end_date
+              ? new Intl.DateTimeFormat("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "2-digit",
+                }).format(new Date(item.end_date))
+              : "N/A"}
+          </td>
+          <td>
+            {expandedDescriptions[item.voucher_id]
+              ? item.description
+              : item.description.split(" ").slice(0, 10).join(" ") +
+                (item.description.split(" ").length > 10 ? "..." : "")}
+            {item.description.split(" ").length > 10 && (
+              <button
+                onClick={() => handleToggleDescription(item.voucher_id)}
+                className="btn btn-link p-0 ms-2"
+                style={{ boxShadow: "none" }}
+              >
+                {expandedDescriptions[item.voucher_id] ? "View Less" : "View More"}
+              </button>
+            )}
+          </td>
+          <td>{item.is_first_time_use ? "Yes" : "No"}</td>
+          <td>{item.is_one_time_use ? "Yes" : "No"}</td>
+          <td>
+            <div className="status-div">
+              <span>{item.active_status === "active" ? "Active" : "InActive"}</span>
+              <EditIcon
+                onClick={() => handleOpenStatusModal(item)}
+                style={{ cursor: "pointer", marginLeft: "10px" }}
+              />
+            </div>
+          </td>
+          <td>{item.used_count === 0 ? "0" : item.used_count || "N/A"}</td>
+          <td>
+            <div className="status-div">
+              <EditIcon
+                style={{ cursor: "pointer", marginLeft: "10px" }}
+                onClick={() => handleEdit(item)}
+              />
+              <i
+                className="fa fa-trash text-danger"
+                style={{ cursor: "pointer" }}
+                onClick={() => handleDelete(item)}
+              />
+            </div>
+          </td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td colSpan="14" className="text-center">
+          No data available
+        </td>
+      </tr>
+    )}
+  </tbody>
+</table>
 
-                    <td>{item.discount_value || "N/A"}</td>
-                    <td>{item.usage_limit || "N/A"}</td>
-                    <td>{item.minimum_order_amount || "N/A"}</td>
-                    <td>{item.voucher_code || "N/A"}</td>
-                    <td>
-                      {item.start_date
-                        ? new Intl.DateTimeFormat("en-GB", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "2-digit",
-                          }).format(new Date(item.start_date))
-                        : "N/A"}
-                    </td>
-                    <td>
-                      {item.end_date
-                        ? new Intl.DateTimeFormat("en-GB", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "2-digit",
-                          }).format(new Date(item.end_date))
-                        : "N/A"}
-                    </td>
-                    <td>
-                      {expandedDescriptions[item.voucher_id]
-                        ? item.description
-                        : item.description.split(" ").slice(0, 10).join(" ") +
-                          (item.description.split(" ").length > 10
-                            ? "..."
-                            : "")}
-                      {item.description.split(" ").length > 10 && (
-                        <button
-                          onClick={() =>
-                            handleToggleDescription(item.voucher_id)
-                          }
-                          className="btn btn-link p-0 ms-2"
-                          style={{ boxShadow: "none" }}
-                        >
-                          {expandedDescriptions[item.voucher_id]
-                            ? "View Less"
-                            : "View More"}
-                        </button>
-                      )}
-                    </td>
-                    <td>
-                      <div className="status-div">
-                        <span>
-                          {item.active_status === "active"
-                            ? "Active"
-                            : "InActive"}
-                        </span>
-                        <EditIcon
-                          onClick={() => handleOpenStatusModal(item)}
-                          style={{ cursor: "pointer", marginLeft: "10px" }}
-                        />
-                      </div>
-                    </td>
-                    <td>
-                      {item.used_count === 0 ? "0" : item.used_count || "N/A"}
-                    </td>
-                    <td>
-                      <div className="status-div">
-                        <EditIcon
-                          style={{ cursor: "pointer", marginLeft: "10px" }}
-                          onClick={() => handleEdit(item)}
-                        />
-                        <i
-                          className="fa fa-trash text-danger"
-                          style={{ cursor: "pointer" }}
-                          onClick={() => handleDelete(item)}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="12" className="text-center">
-                    No data available
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
 
           {/* Pagination Controls */}
           <nav>
