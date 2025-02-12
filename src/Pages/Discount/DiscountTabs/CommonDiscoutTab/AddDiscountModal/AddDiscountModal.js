@@ -17,17 +17,48 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
     is_one_time_use: false, // ✅ New checkbox field
   });
 
+  // const handleChange = (e) => {
+  //   const { name, value, type, checked } = e.target;
+  //   setFormData({
+  //     ...formData,
+  //     [name]: type === "checkbox" ? checked : value,
+  //   });
+  // };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+  
+    if (type === "checkbox") {
+      setFormData({
+        ...formData,
+        [name]: checked,
+      });
+    } else {
+      let newValue = value;
+  
+      // Prevent leading zero when user enters numbers
+      if (name === "price") {
+        newValue = newValue.replace(/^0+(?=\d)/, ""); // Remove leading zeros except for "0" alone
+  
+        // Ensure "price" does not exceed 100 if Discount Type is "percentage"
+        if (formData.sub_category_name === "percentage" && newValue !== "") {
+          newValue = Math.min(100, parseFloat(newValue) || "");
+        }
+      }
+  
+      setFormData({
+        ...formData,
+        [name]: newValue,
+      });
+    }
   };
+  
+  
 
   const handleSave = async () => {
     const currentDate = new Date().toISOString().split("T")[0];
-
+  
+    // Validation for empty fields
     if (
       !formData.sub_category_name ||
       !formData.price ||
@@ -41,29 +72,39 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
       toast.error("Please fill in all fields.");
       return;
     }
-
+  
+    // Ensure price is greater than 0
     if (formData.price <= 0) {
       toast.error("Discount value must be greater than 0.");
       return;
     }
-
+  
+    // If discount type is "percentage", ensure value is not more than 100
+    if (formData.sub_category_name === "percentage" && formData.price > 100) {
+      toast.error("Discount value cannot be more than 100.");
+      return;
+    }
+  
+    // Ensure limit is greater than 0
     if (formData.limit <= 0) {
       toast.error("Usage limit must be greater than 0.");
       return;
     }
-
+  
+    // Ensure start date is not in the past
     if (formData.start_date < currentDate) {
       toast.error("Start date cannot be in the past.");
       return;
     }
-
+  
+    // Ensure end date is after start date
     if (formData.end_date <= formData.start_date) {
       toast.error("End date must be later than start date.");
       return;
     }
-
+  
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-
+  
     const payload = {
       discount: {
         voucher_code: formData.discount_code,
@@ -74,11 +115,11 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
         end_date: new Date(formData.end_date).toISOString(),
         usage_limit: parseInt(formData.limit, 10),
         description: formData.description,
-        is_first_time_use: formData.is_first_time_use, // ✅ Added to payload
-        is_one_time_use: formData.is_one_time_use, // ✅ Added to payload
+        is_first_time_use: formData.is_first_time_use, // ✅ Added
+        is_one_time_use: formData.is_one_time_use, // ✅ Added
       },
     };
-
+  
     try {
       const response = await fetch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/discount/add`,
@@ -91,17 +132,17 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
           body: JSON.stringify(payload),
         }
       );
-
+  
       const data = await response.json();
-
+  
       if (!response.ok || data.success === false) {
         throw new Error(data.message || "Failed to save the discount.");
       }
-
+  
       toast.success(data.message || "Discount added successfully!");
       onSave(data);
       fetchDiscountData();
-
+  
       setFormData({
         sub_category_name: "",
         price: "",
@@ -114,16 +155,14 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
         is_first_time_use: false,
         is_one_time_use: false,
       });
-
+  
       onClose();
     } catch (error) {
       console.error("Error:", error.message);
-      toast.error(
-        error.message || "Failed to save the discount. Please try again."
-      );
+      toast.error(error.message || "Failed to save the discount. Please try again.");
     }
   };
-
+  
   const handleCancel = () => {
     setFormData({
       sub_category_name: "",

@@ -49,11 +49,31 @@ const EditDiscountModal = ({
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+  
+    if (type === "checkbox") {
+      setFormData({
+        ...formData,
+        [name]: checked,
+      });
+    } else {
+      let newValue = value;
+  
+      // Ensure price follows rules when discount type is "percentage"
+      if (name === "price") {
+        newValue = newValue.replace(/^0+(?=\d)/, ""); // Remove leading zeros, but allow "0"
+  
+        if (formData.sub_category_name === "percentage" && newValue !== "") {
+          newValue = Math.min(100, parseFloat(newValue) || ""); // Auto-cap at 100
+        }
+      }
+  
+      setFormData({
+        ...formData,
+        [name]: newValue,
+      });
+    }
   };
+  
 
   const handleSave = async () => {
     const today = new Date().toISOString().split("T")[0];

@@ -97,10 +97,6 @@ const CommonDiscountTab = () => {
       normalizeString(String(item.active_status)).includes(normalizeString(searchQuery))
     );
   });
-  
-  
-  
-  
 
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
