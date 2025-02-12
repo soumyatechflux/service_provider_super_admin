@@ -118,7 +118,9 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
       onClose();
     } catch (error) {
       console.error("Error:", error.message);
-      toast.error(error.message || "Failed to save the discount. Please try again.");
+      toast.error(
+        error.message || "Failed to save the discount. Please try again."
+      );
     }
   };
 
@@ -144,7 +146,10 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
     <>
       <ToastContainer />
       <div className="modal-overlay">
-        <div className="modal-content" style={{ height: "80%", overflowY: "auto" }}>
+        <div
+          className="modal-content"
+          style={{ height: "80%", overflowY: "auto" }}
+        >
           <h2>Add Discount</h2>
 
           <div className="form-group">
@@ -255,33 +260,37 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
           </div>
 
           {/* ✅ Added checkboxes */}
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.is_first_time_use}
-                onChange={handleChange}
-                name="is_first_time_use"
-              />
-            }
-            label="Only First Time Booking"
-          />
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Checkbox
+              checked={formData.is_first_time_use}
+              onChange={handleChange}
+              name="is_first_time_use"
+            />
+            <span>Only First Time Booking</span>
+          </div>
 
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.is_one_time_use}
-                onChange={handleChange}
-                name="is_one_time_use"
-              />
-            }
-            label="One Time Use"
-          />
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Checkbox
+              checked={formData.is_one_time_use}
+              onChange={handleChange}
+              name="is_one_time_use"
+            />
+            <span>One Time Use</span>
+          </div>
 
           <div className="modal-actions">
-            <button onClick={handleSave} className="btn btn-primary" style={{ width: "100%" }}>
+            <button
+              onClick={handleSave}
+              className="btn btn-primary"
+              style={{ width: "100%" }}
+            >
               Save
             </button>
-            <button onClick={handleCancel} className="btn btn-secondary" style={{ width: "100%" }}>
+            <button
+              onClick={handleCancel}
+              className="btn btn-secondary"
+              style={{ width: "100%" }}
+            >
               Cancel
             </button>
           </div>

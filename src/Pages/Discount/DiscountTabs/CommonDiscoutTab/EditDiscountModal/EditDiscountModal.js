@@ -4,7 +4,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Checkbox, FormControlLabel } from "@mui/material";
 
-const EditDiscountModal = ({ show, onClose, onSave, initialData, fetchDiscountData }) => {
+const EditDiscountModal = ({
+  show,
+  onClose,
+  onSave,
+  initialData,
+  fetchDiscountData,
+}) => {
   const [formData, setFormData] = useState({
     sub_category_name: "",
     price: "",
@@ -28,8 +34,12 @@ const EditDiscountModal = ({ show, onClose, onSave, initialData, fetchDiscountDa
         limit: initialData.usage_limit || "",
         minimum_price: initialData.minimum_order_amount || "",
         discount_code: initialData.voucher_code || "",
-        start_date: initialData.start_date ? initialData.start_date.split("T")[0] : "",
-        end_date: initialData.end_date ? initialData.end_date.split("T")[0] : "",
+        start_date: initialData.start_date
+          ? initialData.start_date.split("T")[0]
+          : "",
+        end_date: initialData.end_date
+          ? initialData.end_date.split("T")[0]
+          : "",
         description: initialData.description || "",
         is_first_time_use: initialData.is_first_time_use || false, // ✅ Pre-populate checkbox value
         is_one_time_use: initialData.is_one_time_use || false, // ✅ Pre-populate checkbox value
@@ -73,7 +83,11 @@ const EditDiscountModal = ({ show, onClose, onSave, initialData, fetchDiscountDa
       toast.error("End date cannot be in the past.");
       return;
     }
-    if (formData.start_date && formData.end_date && formData.start_date > formData.end_date) {
+    if (
+      formData.start_date &&
+      formData.end_date &&
+      formData.start_date > formData.end_date
+    ) {
       toast.error("Start date cannot be later than the end date.");
       return;
     }
@@ -81,7 +95,9 @@ const EditDiscountModal = ({ show, onClose, onSave, initialData, fetchDiscountDa
     setLoading(true);
 
     try {
-      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
 
       const payload = {
         discount: {
@@ -110,16 +126,22 @@ const EditDiscountModal = ({ show, onClose, onSave, initialData, fetchDiscountDa
       );
 
       if (response?.status === 200 && response.data?.success !== false) {
-        toast.success(response.data?.message || "Discount updated successfully!");
+        toast.success(
+          response.data?.message || "Discount updated successfully!"
+        );
         await fetchDiscountData();
         onClose();
       } else {
-        throw new Error(response.data?.message || "Failed to update the discount.");
+        throw new Error(
+          response.data?.message || "Failed to update the discount."
+        );
       }
     } catch (error) {
       console.error("Update error:", error);
       const errorMessage =
-        error.response?.data?.message || error.message || "An error occurred while updating the discount.";
+        error.response?.data?.message ||
+        error.message ||
+        "An error occurred while updating the discount.";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -131,7 +153,10 @@ const EditDiscountModal = ({ show, onClose, onSave, initialData, fetchDiscountDa
   return (
     <>
       <div className="modal-overlay">
-        <div className="modal-content" style={{ height: "80%", overflowY: "auto" }}>
+        <div
+          className="modal-content"
+          style={{ height: "80%", overflowY: "auto" }}
+        >
           <h2>Edit Discount</h2>
 
           <div className="form-group">
@@ -209,29 +234,59 @@ const EditDiscountModal = ({ show, onClose, onSave, initialData, fetchDiscountDa
 
           <div className="form-group">
             <label htmlFor="start-date">Start Date:</label>
-            <input id="start-date" name="start_date" type="date" value={formData.start_date} onChange={handleChange} />
+            <input
+              id="start-date"
+              name="start_date"
+              type="date"
+              value={formData.start_date}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label htmlFor="end-date">End Date:</label>
-            <input id="end-date" name="end_date" type="date" value={formData.end_date} onChange={handleChange} />
+            <input
+              id="end-date"
+              name="end_date"
+              type="date"
+              value={formData.end_date}
+              onChange={handleChange}
+            />
           </div>
 
           {/* ✅ Added checkboxes */}
-          <FormControlLabel
-            control={<Checkbox checked={formData.is_first_time_use} onChange={handleChange} name="is_first_time_use" />}
-            label="Only First Time Booking"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={formData.is_one_time_use} onChange={handleChange} name="is_one_time_use" />}
-            label="One Time Use"
-          />
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Checkbox
+              checked={formData.is_first_time_use}
+              onChange={handleChange}
+              name="is_first_time_use"
+            />
+            <span>Only First Time Booking</span>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Checkbox
+              checked={formData.is_one_time_use}
+              onChange={handleChange}
+              name="is_one_time_use"
+            />
+            <span>One Time Use</span>
+          </div>
 
           <div className="modal-actions">
-            <button onClick={handleSave} className="btn btn-primary" disabled={loading} style={{ width: "100%" }}>
+            <button
+              onClick={handleSave}
+              className="btn btn-primary"
+              disabled={loading}
+              style={{ width: "100%" }}
+            >
               Save
             </button>
-            <button onClick={onClose} className="btn btn-secondary" style={{ width: "100%" }}>
+            <button
+              onClick={onClose}
+              className="btn btn-secondary"
+              style={{ width: "100%" }}
+            >
               Cancel
             </button>
           </div>

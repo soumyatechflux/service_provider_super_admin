@@ -185,6 +185,9 @@ const ReportTable = ({ filters, loading, setLoading }) => {
                   <th scope="col" style={{ width: "5%" }}>
                     Sr.
                   </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Booking Id
+                  </th>
                   {filters.user_type === "customer" && (
                     <th scope="col" style={{ width: "10%" }}>
                       Customer Name
@@ -228,6 +231,9 @@ const ReportTable = ({ filters, loading, setLoading }) => {
                 {currentEntries.map((item, index) => (
                   <tr key={item.booking_id}>
                     <th scope="row">{indexOfFirstEntry + index + 1}.</th>
+                    <td>
+                    {item.customer?.booking_id || item.booking_id || "N/A"}
+                    </td>
                     {filters.user_type === "customer" && (
                       <td>{item.customer?.name || item.guest_name || "N/A"}</td>
                     )}
