@@ -125,25 +125,38 @@ const VerifiedPartnerTab = ({
   };
 
   const normalizeString = (str) =>
-    str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
-
+    str ? str.toString().trim().toLowerCase() : "";
+  
+  const isNumber = !isNaN(searchInput) && searchInput.trim() !== "";
+  const searchTerm = normalizeString(searchInput);
+  
   const filteredRestaurants = restaurants.filter((restaurant) => {
     const categoryName = categoryMap[restaurant.category_id] || "";
-    const formattedDate = formatDate(restaurant.created_at); // Format the created_at date
+    const formattedDate = formatDate(restaurant.created_at);
+    const termsConditionText = restaurant.terms_and_condition === 1 ? "accepted" : "not accepted";
+    const genderText = normalizeString(restaurant.gender || ""); // ✅ Normalize gender
   
-    return (
-      normalizeString(restaurant.name).includes(normalizeString(searchInput)) ||
-      normalizeString(restaurant.email).includes(normalizeString(searchInput)) ||
-      normalizeString(restaurant.rating?.toString()).includes(normalizeString(searchInput)) ||
-      normalizeString(categoryName).includes(normalizeString(searchInput)) || // Searching by category name
-      normalizeString(restaurant.mobile).includes(normalizeString(searchInput)) ||
-      normalizeString(restaurant.gender).includes(normalizeString(searchInput)) ||
-      normalizeString(restaurant.current_address).includes(normalizeString(searchInput)) ||
-      normalizeString(restaurant.active_status).includes(normalizeString(searchInput)) ||
-      normalizeString(restaurant.years_of_experience?.toString()).includes(normalizeString(searchInput)) ||
-      normalizeString(formattedDate).includes(normalizeString(searchInput)) // Searching by formatted date
-    );
+    if (isNumber) {
+      return restaurant.years_of_experience?.toString() === searchInput.trim();
+    } else if (searchTerm === "accepted" || searchTerm === "not accepted") {
+      return termsConditionText === searchTerm; // ✅ Strict filtering for Accepted / Not Accepted
+    } else if (searchTerm === "male" || searchTerm === "female") {
+      return genderText === searchTerm; // ✅ Strict filtering for gender
+    } else {
+      return (
+        normalizeString(restaurant.name).includes(searchTerm) ||
+        normalizeString(restaurant.email).includes(searchTerm) ||
+        normalizeString(restaurant.rating?.toString()).includes(searchTerm) ||
+        normalizeString(categoryName).includes(searchTerm) ||
+        normalizeString(restaurant.mobile).includes(searchTerm) ||
+        normalizeString(restaurant.current_address).includes(searchTerm) ||
+        normalizeString(restaurant.active_status).includes(searchTerm) ||
+        normalizeString(formattedDate).includes(searchTerm)
+      );
+    }
   });
+  
+  
   // Pagination logic
   const totalPages = Math.ceil(restaurants.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -340,6 +353,9 @@ const VerifiedPartnerTab = ({
                   <th scope="col" style={{ width: "10%" }}>
                     Ratings
                   </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    T & C 
+                  </th>
                   <th scope="col" style={{ width: "5%" }}>
                     Verify
                   </th>
@@ -360,181 +376,128 @@ const VerifiedPartnerTab = ({
                 </tr>
               </thead>
               <tbody style={{ cursor: "default" }}>
-                {restaurants.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan="13"
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
-                      No data available
-                    </td>
-                  </tr>
-                ) : (
-                  currentEntries.map((restaurant, index) => (
-                    <tr style={{ cursor: "default" }} key={restaurant.id}>
-                      <th scope="row" className="id-user">
-                        {indexOfFirstEntry + index + 1}.
-                      </th>
-                      <td className="text-user">
-                        {restaurant.name
-                          ? restaurant.name.charAt(0).toUpperCase() +
-                            restaurant.name.slice(1)
-                          : "N/A"}
-                      </td>
-                      <td className="text-user">
-                        {restaurant.gender
-                          ? restaurant.gender.charAt(0).toUpperCase() +
-                            restaurant.gender.slice(1)
-                          : "N/A"}
-                      </td>
+  {currentEntries.length === 0 ? (
+    <tr>
+      <td colSpan="13" style={{ textAlign: "center", fontWeight: "bold" }}>
+        No data available
+      </td>
+    </tr>
+  ) : (
+    currentEntries.map((restaurant, index) => (
+      <tr style={{ cursor: "default" }} key={restaurant.id}>
+        <th scope="row" className="id-user">
+          {indexOfFirstEntry + index + 1}.
+        </th>
+        <td className="text-user">
+          {restaurant.name
+            ? restaurant.name.charAt(0).toUpperCase() + restaurant.name.slice(1)
+            : "N/A"}
+        </td>
+        <td className="text-user">
+          {restaurant.gender
+            ? restaurant.gender.charAt(0).toUpperCase() + restaurant.gender.slice(1)
+            : "N/A"}
+        </td>
+        <td className="text-user">
+          {restaurant.category_id === 1
+            ? "Cook"
+            : restaurant.category_id === 2
+            ? "Driver"
+            : restaurant.category_id === 3
+            ? "Gardener"
+            : "Unknown"}
+        </td>
+        <td className="text-user">{restaurant.mobile}</td>
+        <td className="text-user">{restaurant.years_of_experience || "N/A"}</td>
+        <td className="text-user">
+          {restaurant.current_address
+            ? restaurant.current_address.charAt(0).toUpperCase() + restaurant.current_address.slice(1)
+            : "N/A"}
+        </td>
+        <td className="text-user">
+          {new Intl.DateTimeFormat("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "2-digit",
+          })
+            .format(new Date(restaurant.created_at))
+            .replace(",", "")}
+        </td>
+        <td className="text-user">
+          <strong>{restaurant.rating}</strong>
+        </td>
+        <td className="text-user">
+          {restaurant.terms_and_condition === 1 ? "Accepted" : "Not Accepted"}
+        </td>
+        <td>
+          <div style={{ display: "flex", gap: "2px", justifyContent: "center" }}>
+            <div
+              className={`edit_users ${restaurant.is_verify !== 0 ? "disabled" : ""}`}
+              onClick={restaurant.is_verify === 0 ? () => handleVerifyClick(restaurant) : null}
+              style={{
+                cursor: restaurant.is_verify === 0 ? "pointer" : "not-allowed",
+                opacity: restaurant.is_verify === 0 ? 1 : 0.6,
+              }}
+            >
+              {restaurant.is_verify !== 0 ? (
+                <VerifiedUserIcon style={{ color: "green" }} />
+              ) : (
+                <button
+                  style={{
+                    backgroundColor: "white",
+                    margin: 0,
+                    padding: 0,
+                  }}
+                  key={restaurant?.category_id}
+                  onClick={() =>
+                    handleNavigateToVerifyCook(restaurant?.category_id, restaurant?.id, restaurant?.is_verify)
+                  }
+                >
+                  <HighlightOffIcon style={{ color: "red" }} />
+                </button>
+              )}
+            </div>
+          </div>
+        </td>
+        {restaurant.is_verify === 1 && (
+          <td className={`status ${restaurant.active_status}`}>
+            <div
+              className={`status-background-${restaurant.active_status}`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <span>
+                {{
+                  active: "Active",
+                  inactive: "Inactive",
+                  suspended: "Suspended",
+                  blocked: "Blocked",
+                }[restaurant.active_status] || "Unknown Status"}
+              </span>
+              <div onClick={() => handleRestaurantClick(restaurant)} style={{ cursor: "pointer", opacity: 1 }}>
+                <EditIcon />
+              </div>
+            </div>
+          </td>
+        )}
+        <td className="edit_users action-btn-trash" style={{ cursor: "pointer", opacity: 1 }} onClick={() => handleDeleteClick(restaurant)}>
+          <DeleteIcon style={{ color: "red" }} />
+        </td>
+        <td className="text-user">
+          <i
+            className="fa fa-eye text-primary"
+            style={{ cursor: "pointer" }}
+            onClick={() => handleOpenAttachmentModal(restaurant)}
+          />
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
 
-                      <td className="text-user">
-                        {restaurant.category_id === 1
-                          ? "Cook"
-                          : restaurant.category_id === 2
-                          ? "Driver"
-                          : restaurant.category_id === 3
-                          ? "Gardener"
-                          : "Unknown"}
-                      </td>
-                      {/* <td className="text-user">
-                        {restaurant.email ? (
-                          restaurant.email
-                        ) : (
-                          <span style={{ color: "red", fontWeight: "bold" }}>
-                            -
-                          </span>
-                        )}
-                      </td> */}
-                      <td className="text-user">{restaurant.mobile}</td>
-                      <td className="text-user">
-                        {restaurant.years_of_experience}
-                      </td>
-                      <td className="text-user">
-                        {restaurant.current_address
-                          ? restaurant.current_address.charAt(0).toUpperCase() +
-                            restaurant.current_address.slice(1)
-                          : "N/A"}
-                      </td>
-                      <td className="text-user">
-                        {new Intl.DateTimeFormat("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "2-digit",
-                        })
-                          .format(new Date(restaurant.created_at))
-                          .replace(",", "")}
-                      </td>
-                      <td className="text-user">
-                        <strong>{restaurant.rating}</strong>
-                      </td>
-
-                      <td>
-                        <div
-                          style={{
-                            display: "flex",
-                            gap: "2px",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <div
-                            className={`edit_users ${
-                              restaurant.is_verify !== 0 ? "disabled" : ""
-                            }`}
-                            onClick={
-                              restaurant.is_verify === 0
-                                ? () => handleVerifyClick(restaurant)
-                                : null
-                            }
-                            style={{
-                              cursor:
-                                restaurant.is_verify === 0
-                                  ? "pointer"
-                                  : "not-allowed",
-                              opacity: restaurant.is_verify === 0 ? 1 : 0.6,
-                            }}
-                          >
-                            {restaurant.is_verify !== 0 ? (
-                              <VerifiedUserIcon style={{ color: "green" }} />
-                            ) : (
-                              <>
-                                <div>
-                                  <button
-                                    style={{
-                                      backgroundColor: "white",
-                                      margin: 0,
-                                      padding: 0,
-                                    }}
-                                    key={restaurant?.category_id}
-                                    onClick={() =>
-                                      handleNavigateToVerifyCook(
-                                        restaurant?.category_id,
-                                        restaurant?.id,
-                                        restaurant?.is_verify
-                                      )
-                                    }
-                                  >
-                                    <HighlightOffIcon
-                                      style={{ color: "red" }}
-                                    />
-                                  </button>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-
-                      {restaurant.is_verify === 1 && (
-                        <td className={`status ${restaurant.active_status}`}>
-                          <div
-                            className={`status-background-${restaurant.active_status}`}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <span>
-                              {{
-                                active: "Active",
-                                inactive: "Inactive",
-                                suspended: "Suspended",
-                                blocked: "Blocked",
-                              }[restaurant.active_status] || "Unknown Status"}
-                            </span>
-
-                            <div
-                              onClick={() => handleRestaurantClick(restaurant)}
-                              style={{ cursor: "pointer", opacity: 1 }}
-                            >
-                              <EditIcon />
-                            </div>
-                          </div>
-                        </td>
-                      )}
-
-                      <td
-                        className="edit_users action-btn-trash"
-                        style={{ cursor: "pointer", opacity: 1 }}
-                        onClick={() => handleDeleteClick(restaurant)}
-                      >
-                        <DeleteIcon style={{ color: "red" }} />
-                      </td>
-                      <td className="text-user">
-                        <i
-                          className="fa fa-eye text-primary"
-                          style={{ cursor: "pointer" }}
-                          onClick={() => handleOpenAttachmentModal(restaurant)} // Ensure full object is passed
-                        />
-                      </td>
-
-                    </tr>
-                  ))
-                )}
-              </tbody>
             </table>
           </div>
           {totalPages > 1 && (

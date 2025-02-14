@@ -141,17 +141,22 @@ const StaffTable = ({}) => {
   };
 
   // Search Logic
-// Search Logic
-const normalizeString = (str) => str?.replace(/\s+/g, ' ').trim().toLowerCase() || '';
+  const normalizeString = (str) =>
+    str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
 
-const filteredData = dummy_Data.filter(
-  (item) =>
-    (item.name && normalizeString(item.name).includes(normalizeString(searchQuery))) ||
-    (item.email && item.email.includes(searchQuery)) ||  // Exact match for email (case-sensitive)
-    (item.role_name && normalizeString(item.role_name).includes(normalizeString(searchQuery)))
-);
+  const filteredData = dummy_Data.filter((item) => {
+    const searchTerm = normalizeString(String(searchQuery)); // Convert searchQuery to string
 
-
+    return (
+      (item.name && normalizeString(item.name).includes(searchTerm)) ||
+      (item.email && normalizeString(item.email).includes(searchTerm)) || // Now case-insensitive
+      (item.role_name &&
+        normalizeString(item.role_name).includes(searchTerm)) ||
+      (item.mobile && String(item.mobile).includes(searchTerm)) || // Search in mobile number
+      (item.active_status &&
+        normalizeString(item.active_status).includes(searchTerm)) // Search in active_status
+    );
+  });
 
   // Pagination Logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -229,41 +234,49 @@ const filteredData = dummy_Data.filter(
               </tr>
             </thead>
             <tbody>
-              {currentItems.map((item, index) => (
-                <tr key={item.id || index}>
-                  <th scope="row">{index + 1}.</th>
-                  <td>{item.name || "No staff available"}</td>
-                  <td>{item.email || "No staff available"}</td>
-                  <td>{item.mobile || "No staff available"}</td>
-                  <td>{item.role_name || "No role available"}</td>
-                  <td>
-                    <div className="status-div">
-                      <span>
-                        {item.active_status === "active"
-                          ? "Active"
-                          : "InActive"}
-                      </span>
-                      <EditIcon
-                        onClick={() => handleStatusClick(item)}
-                        style={{ cursor: "pointer", marginLeft: "10px" }}
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div className="status-div">
-                      <EditIcon
-                        style={{ cursor: "pointer", marginLeft: "10px" }}
-                        onClick={() => handleEdit(item)}
-                      />
-                      <i
-                        className="fa fa-trash text-danger"
-                        style={{ cursor: "pointer", marginLeft: "10px" }}
-                        onClick={() => handleDeleteClick(item.id)}
-                      />
-                    </div>
+              {currentItems.length > 0 ? (
+                currentItems.map((item, index) => (
+                  <tr key={item.id || index}>
+                    <th scope="row">{index + 1}.</th>
+                    <td>{item.name || "No staff available"}</td>
+                    <td>{item.email || "No staff available"}</td>
+                    <td>{item.mobile || "No staff available"}</td>
+                    <td>{item.role_name || "No role available"}</td>
+                    <td>
+                      <div className="status-div">
+                        <span>
+                          {item.active_status === "active"
+                            ? "Active"
+                            : "InActive"}
+                        </span>
+                        <EditIcon
+                          onClick={() => handleStatusClick(item)}
+                          style={{ cursor: "pointer", marginLeft: "10px" }}
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="status-div">
+                        <EditIcon
+                          style={{ cursor: "pointer", marginLeft: "10px" }}
+                          onClick={() => handleEdit(item)}
+                        />
+                        <i
+                          className="fa fa-trash text-danger"
+                          style={{ cursor: "pointer", marginLeft: "10px" }}
+                          onClick={() => handleDeleteClick(item.id)}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="text-center">
+                    No data available
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

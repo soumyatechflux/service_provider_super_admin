@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import Loader from "../../Loader/Loader";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditSettingModal from "../EditSettingModal/EditSettingModal";
 
 const SettingsTable = () => {
@@ -11,25 +10,19 @@ const SettingsTable = () => {
   const [loading, setLoading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSetting, setSelectedSetting] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); 
 
   const getSettingsTableData = async () => {
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
       setLoading(true);
 
       const response = await axios.get(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/settings`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setLoading(false);
-
       if (response?.data?.success) {
         setSettings(response.data.data || []);
       } else {
@@ -53,10 +46,8 @@ const SettingsTable = () => {
 
   const handleSave = async (updatedSetting) => {
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
-  
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+
       const payload = {
         setting: {
           config_id: updatedSetting.config_id,
@@ -64,17 +55,13 @@ const SettingsTable = () => {
           description: updatedSetting.description,
         },
       };
-  
+
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/settings`,
         payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-  
+
       if (response?.data?.success) {
         toast.success("Setting updated successfully!");
         await getSettingsTableData();
@@ -87,45 +74,33 @@ const SettingsTable = () => {
       toast.error(error.response?.data?.error || "Failed to update setting. Please try again.");
     }
   };
-  
-  
-  
-  const formatConfigKey = (key) => {
-    if (!key) return "N/A"; // Handle null/undefined
-    const formattedKey = key
-      .split('_') // Split by underscores
-      .map((word, index) => {
-        if (index === 0) {
-          // Capitalize the first word only
-          return word.charAt(0).toUpperCase() + word.slice(1);
-        }
-        return word.toLowerCase(); // Keep other words in lowercase
-      })
-      .join(' '); // Join the words with spaces
-    return formattedKey;
-  };
-  
 
-  const formatText = (text) => {
-    if (!text) return "N/A"; // Handle null/undefined
-    const formattedText = text
-      .split('_') // Split by underscores
-      .map((word, index) => {
-        if (index === 0) {
-          // Capitalize the first word only
-          return word.charAt(0).toUpperCase() + word.slice(1);
-        }
-        return word.toLowerCase(); // Keep other words in lowercase
-      })
-      .join(' '); // Join the words with spaces
-    return formattedText;
-  };
-  
-  
-  
+  const normalizeString = (str) => str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
+
+  // **Corrected Search Logic**
+  const filteredData = settings.filter((item) => {
+    const searchTerm = normalizeString(searchQuery);
+
+    return (
+      normalizeString(item.title).includes(searchTerm) ||
+      normalizeString(item.config_key).includes(searchTerm) ||
+      normalizeString(item.config_value).includes(searchTerm) ||
+      normalizeString(item.description).includes(searchTerm)
+    );
+  });
+
   return (
     <div className="Restro-Table-Main p-3">
-         <h2>Settings</h2>
+      <h2>Settings</h2>
+      <div className="search-bar mb-3" style={{ width: "350px" }}>
+        <input
+          type="text"
+          placeholder="Search by Title, Key, Value, or Description"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+      </div>
       {loading ? (
         <Loader />
       ) : (
@@ -133,52 +108,36 @@ const SettingsTable = () => {
           <table className="table table-bordered table-user">
             <thead>
               <tr>
-                <th scope="col" style={{ width: "10%" }}>
-                  Sr No.
-                </th>
-                <th scope="col" style={{ width: "20%" }}>
-                  Title
-                </th>
-                <th scope="col" style={{ width: "20%" }}>
-                  Key
-                </th>
-                <th scope="col" style={{ width: "20%" }}>
-                  Value
-                </th>
-                <th scope="col" style={{ width: "25%" }}>
-                  Description
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Action
-                </th>
+                <th scope="col" style={{ width: "10%" }}>Sr No.</th>
+                <th scope="col" style={{ width: "20%" }}>Title</th>
+                <th scope="col" style={{ width: "20%" }}>Key</th>
+                <th scope="col" style={{ width: "20%" }}>Value</th>
+                <th scope="col" style={{ width: "25%" }}>Description</th>
+                <th scope="col" style={{ width: "10%" }}>Action</th>
               </tr>
             </thead>
             <tbody>
-              {settings.map((setting, index) => (
-                <tr key={setting.config_id}>
-                  <td>{index + 1}</td>
-                  <td>{setting?.title || "N/A"}</td>
-                  <td>{setting.config_key}</td>
-                  {/* <td>{formatConfigKey(setting.config_key)}</td> */}
-
-                  <td>{setting.config_value}</td>
-                  <td>{formatText(setting.description)}</td>
-
-                  <td>
-                    <EditIcon
-                      onClick={() => handleEditClick(setting)}
-                      style={{ cursor: "pointer",}}
-                    />
-                    {/* <DeleteIcon
-                      style={{
-                        cursor: "not-allowed",
-                        opacity: 0.6,
-                        color: "gray",
-                      }}
-                    /> */}
-                  </td>
+              {filteredData.length > 0 ? (
+                filteredData.map((setting, index) => (
+                  <tr key={setting.config_id}>
+                    <td>{index + 1}</td>
+                    <td>{setting?.title || "N/A"}</td>
+                    <td>{setting.config_key}</td>
+                    <td>{setting.config_value}</td>
+                    <td>{setting.description || "N/A"}</td>
+                    <td>
+                      <EditIcon
+                        onClick={() => handleEditClick(setting)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="text-center">No data available</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

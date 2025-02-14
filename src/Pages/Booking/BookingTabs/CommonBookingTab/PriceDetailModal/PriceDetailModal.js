@@ -24,7 +24,7 @@ const PriceDetailModal = ({ show, onHide, bookingData }) => {
         <div>
           {renderAmount("Total Amount", bookingData.total_amount)}
           {renderAmount("Discount Amount", bookingData.discount_amount)}
-          {renderAmount("Platform Fee", bookingData.platform_fee)}
+          {/* {renderAmount("Platform Fee", bookingData.platform_fee)} */}
           {renderAmount("All Taxes", bookingData.all_taxes)}
           {renderAmount("Secure Fee", bookingData.secure_fee)}
           {renderAmount("Grand Total", bookingData.billing_amount)}

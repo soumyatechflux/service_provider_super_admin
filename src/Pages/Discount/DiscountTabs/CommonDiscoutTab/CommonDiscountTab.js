@@ -67,36 +67,41 @@ const CommonDiscountTab = () => {
     return str.replace(/\s+/g, " ").trim().toLowerCase();
   };
   
+  // Function to format date as "DD MMM YY"
   const formatDate = (dateString) => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const date = new Date(dateString);
+    if (!dateString) return ""; // Handle empty values
   
+    const date = new Date(dateString);
     if (isNaN(date)) return ""; // Handle invalid dates
   
-    const day = String(date.getDate()).padStart(2, "0"); // Ensure 2-digit day
-    const month = months[date.getMonth()]; // Get month abbreviation
-    const year = String(date.getFullYear()).slice(-2); // Get last 2 digits of year
-  
-    return `${day} ${month} ${year}`;
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "2-digit",
+    }).replace(",", ""); // Remove any extra commas
   };
   
   const filteredData = discountData.filter((item) => {
+    const searchTerm = normalizeString(searchQuery);
+  
+    // Format start and end dates for comparison
     const formattedStartDate = formatDate(item.start_date);
     const formattedEndDate = formatDate(item.end_date);
   
     return (
-      normalizeString(String(item.voucher_code)).includes(normalizeString(searchQuery)) ||
-      normalizeString(String(item.discount_type)).includes(normalizeString(searchQuery)) ||
-      normalizeString(String(item.description)).includes(normalizeString(searchQuery)) ||
-      normalizeString(String(item.discount_value)).includes(normalizeString(searchQuery)) ||
-      normalizeString(String(item.minimum_order_amount)).includes(normalizeString(searchQuery)) ||
-      normalizeString(String(item.usage_limit)).includes(normalizeString(searchQuery)) || // Convert number to string
-      normalizeString(String(item.used_count)).includes(normalizeString(searchQuery)) || // Convert number to string
-      normalizeString(formattedStartDate).includes(normalizeString(searchQuery)) ||
-      normalizeString(formattedEndDate).includes(normalizeString(searchQuery)) ||
-      normalizeString(String(item.active_status)).includes(normalizeString(searchQuery))
+      normalizeString(String(item.voucher_code)).includes(searchTerm) ||
+      normalizeString(String(item.discount_type)).includes(searchTerm) ||
+      normalizeString(String(item.description)).includes(searchTerm) ||
+      normalizeString(String(item.discount_value)).includes(searchTerm) ||
+      normalizeString(String(item.minimum_order_amount)).includes(searchTerm) ||
+      normalizeString(String(item.usage_limit)).includes(searchTerm) ||
+      normalizeString(String(item.used_count)).includes(searchTerm) ||
+      normalizeString(formattedStartDate).includes(searchTerm) || // Search in formatted start_date
+      normalizeString(formattedEndDate).includes(searchTerm) || // Search in formatted end_date
+      normalizeString(String(item.active_status)).includes(searchTerm)
     );
   });
+  
 
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);

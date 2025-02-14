@@ -215,7 +215,7 @@ const SupportPartnerTab = () => {
                   <th style={{ width: "5%" }}>Sr. No.</th>
                   <th style={{ width: "10%" }}>Name</th>
                   <th style={{ width: "10%" }}>Mobile</th>
-                  <th style={{ width: "10%" }}>Email</th>
+                  {/* <th style={{ width: "10%" }}>Email</th> */}
                   <th style={{ width: "25%" }}>Description</th>
                   <th style={{ width: "10%" }}>Status</th>
                   <th style={{ width: "10%" }}>Created At</th>
@@ -227,7 +227,7 @@ const SupportPartnerTab = () => {
                     <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
                     <td>{item?.name || "N/A"}</td>
                     <td>{item?.mobile || "N/A"}</td>
-                    <td>{item?.email || "N/A"}</td>
+                    {/* <td>{item?.email || "N/A"}</td> */}
                     <td>{item?.description || "N/A"}</td>
                     <td>
                       <div className="status-div">

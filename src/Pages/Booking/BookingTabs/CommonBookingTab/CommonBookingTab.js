@@ -134,15 +134,26 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
 
   const normalizeString = (str) =>
     str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
-
+  
+  const normalizeNumber = (num) => (isNaN(num) ? "" : Number(num)); // Convert to number or empty string
+  
+  // Function to format date in "DD MMM YY, h:mm A" format
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "2-digit",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    }).format(date);
+  };
+  
   const filteredData = dummy_Data.filter((item) => {
     const searchTerm = normalizeString(searchInput);
-  
-    // Function to format date as "YYYY-MM-DD"
-    const formatDate = (dateString) => {
-      if (!dateString) return "";
-      return dateString.split("T")[0]; // Extracts "YYYY-MM-DD" from "YYYY-MM-DDTHH:MM:SS.000Z"
-    };
+    const searchTermNumber = normalizeNumber(searchInput); // Convert input to a number if possible
   
     return (
       normalizeString(item?.guest_name ?? "").includes(searchTerm) || // Customer name
@@ -150,16 +161,16 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
       normalizeString(item?.partner?.name ?? "").includes(searchTerm) || // Partner name
       normalizeString(item?.sub_category_name?.sub_category_name ?? "").includes(searchTerm) || // Sub-category
       normalizeString(String(item?.total_amount ?? "")).includes(searchTerm) || // Amount
-      normalizeString(formatDate(item?.visit_date)).includes(searchTerm) || // Visited Date in "YYYY-MM-DD"
       normalizeString(item?.visit_address ?? "").includes(searchTerm) || // Visited Address
       normalizeString(item?.payment_mode ?? "").includes(searchTerm) || // Payment Mode
       normalizeString(item?.booking_status ?? "").includes(searchTerm) || // Booking Status
       normalizeString(item?.instructions ?? "").includes(searchTerm) || // Instructions
-      normalizeString(formatDate(item?.created_at)).includes(searchTerm) // Created Date in "YYYY-MM-DD"
+      normalizeNumber(item?.billing_amount) === searchTermNumber || // Billing Amount as a number
+      normalizeString(formatDateTime(item?.visit_date)).includes(searchTerm) || // Visit Date formatted
+      normalizeString(formatDateTime(item?.created_at)).includes(searchTerm) // Created Date formatted
     );
   });
   
-
   const currentEntries = filteredData.slice(
     indexOfFirstEntry,
     indexOfLastEntry
@@ -332,133 +343,107 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                 </tr>
               </thead>
               <tbody>
-                {currentEntries.map((item, index) => (
-                  <tr key={item.booking_id}>
-                    <th scope="row">{indexOfFirstEntry + index + 1}.</th>
-                    <td>{item.booking_id || "N/A"}</td>
-                    <td>{item.guest_name || "N/A"}</td>
-                    <td>{item.partner?.name || "Not assigned yet"}</td>
-                    <td>
-                      {item.sub_category_name?.sub_category_name || "Unknown"}
-                    </td>
-                    <td>{item.billing_amount || "N/A"}
-                    <i
-                    className="fa fa-eye text-primary ml-2"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => handleOpenPriceDetailModal(item)} // Open modal on click
-                  />
-                    </td>
+  {currentEntries.length > 0 ? (
+    currentEntries.map((item, index) => (
+      <tr key={item.booking_id}>
+        <th scope="row">{indexOfFirstEntry + index + 1}.</th>
+        <td>{item.booking_id || "N/A"}</td>
+        <td>{item.guest_name || "N/A"}</td>
+        <td>{item.partner?.name || "Not assigned yet"}</td>
+        <td>{item.sub_category_name?.sub_category_name || "Unknown"}</td>
+        <td>
+          {item.billing_amount || "N/A"}
+          <i
+            className="fa fa-eye text-primary ml-2"
+            style={{ cursor: "pointer" }}
+            onClick={() => handleOpenPriceDetailModal(item)} // Open modal on click
+          />
+        </td>
 
-                    {(category_id === "1" || category_id === "3") && (
-                      <td>
-                        {item.visit_address || "No current_address available."}
-                      </td>
-                    )}
-                    {category_id === "2" && (
-                      <td>
-                        {item.address_from || "No current_address available."}
-                      </td>
-                    )}
-                    {category_id === "2" && (
-                      <td>
-                        {item.address_to || "No current_address available."}
-                      </td>
-                    )}
-                    <td>
-                      {new Intl.DateTimeFormat("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "2-digit",
-                      })
-                        .format(new Date(item.visit_date))
-                        .replace(",", "")},{" "}
-                      {(() => {
-                        const [hour, minute] = item.visit_time.split(":"); // Extract hour and minute
-                        const date = new Date();
-                        date.setHours(hour, minute); // Set extracted time
+        {(category_id === "1" || category_id === "3") && (
+          <td>{item.visit_address || "No current_address available."}</td>
+        )}
+        {category_id === "2" && <td>{item.address_from || "No current_address available."}</td>}
+        {category_id === "2" && <td>{item.address_to || "No current_address available."}</td>}
 
-                        return date.toLocaleTimeString("en-US", {
-                          hour: "numeric",
-                          minute: "2-digit",
-                          hour12: true, // Convert to 12-hour format
-                        });
-                      })()}
-                    </td>
+        <td>
+          {new Intl.DateTimeFormat("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "2-digit",
+          })
+            .format(new Date(item.visit_date))
+            .replace(",", "")},{" "}
+          {(() => {
+            const [hour, minute] = item.visit_time.split(":"); // Extract hour and minute
+            const date = new Date();
+            date.setHours(hour, minute); // Set extracted time
 
-                    <td>
-                      {item.created_at
-                        ? formatDateWithTime(item.created_at)
-                        : "N/A"}
-                    </td>
+            return date.toLocaleTimeString("en-US", {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true, // Convert to 12-hour format
+            });
+          })()}
+        </td>
 
-                    <td>{formatPaymentMode(item.payment_mode)}</td>
+        <td>{item.created_at ? formatDateWithTime(item.created_at) : "N/A"}</td>
 
-                    {category_id == "3" && (
-                      <td>{item.gardener_visiting_slot_count || "NA"}</td>
-                    )}
-                    {category_id !== "1" && ( // Hide if category_id is "1"
-                      <td>{item.no_of_hours_booked || "NA"}</td>
-                    )}
+        <td>{formatPaymentMode(item.payment_mode)}</td>
 
-                    <td>
-                      {item.instructions || "N/A"}
-                    </td>
-                    <td>
-                      {item.booking_status
-                        ? item.booking_status.charAt(0).toUpperCase() +
-                          item.booking_status.slice(1)
-                        : "No current_address available."}
-                    </td>
+        {category_id == "3" && <td>{item.gardener_visiting_slot_count || "NA"}</td>}
+        {category_id !== "1" && <td>{item.no_of_hours_booked || "NA"}</td>}
 
-                    <td>
-                      {item.start_job_attachments.length > 0 ||
-                      item.end_job_attachments.length > 0 ? (
-                        <i
-                          className="fa fa-eye text-primary"
-                          style={{ cursor: "pointer" }}
-                          onClick={() =>
-                            handleOpenAttachmentModal({
-                              start: item.start_job_attachments,
-                              end: item.end_job_attachments,
-                            })
-                          }
-                        />
-                      ) : (
-                        "No Attachments"
-                      )}
-                    </td>
-                    <td>
-                      <i
-                        className={`fa fa-pencil-alt ${
-                          ["upcoming", "inprogress"].includes(
-                            item.booking_status
-                          )
-                            ? "text-primary"
-                            : "text-muted"
-                        }`}
-                        style={{
-                          cursor:
-                            item.booking_status === "inprogress"
-                              ? "not-allowed"
-                              : "pointer",
-                          opacity:
-                            item.booking_status === "inprogress" ? 0.5 : 1,
-                        }}
-                        onClick={() =>
-                          item.booking_status === "upcoming"
-                            ? handleOpenEditModal(
-                                item.booking_id,
-                                item.booking_status,
-                                item.partner_id,
-                                item.category_id
-                              )
-                            : null
-                        }
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+        <td>{item.instructions || "N/A"}</td>
+        <td>
+          {item.booking_status
+            ? item.booking_status.charAt(0).toUpperCase() + item.booking_status.slice(1)
+            : "No current_address available."}
+        </td>
+
+        <td>
+          {item.start_job_attachments.length > 0 || item.end_job_attachments.length > 0 ? (
+            <i
+              className="fa fa-eye text-primary"
+              style={{ cursor: "pointer" }}
+              onClick={() =>
+                handleOpenAttachmentModal({
+                  start: item.start_job_attachments,
+                  end: item.end_job_attachments,
+                })
+              }
+            />
+          ) : (
+            "No Attachments"
+          )}
+        </td>
+        <td>
+          <i
+            className={`fa fa-pencil-alt ${
+              ["upcoming", "inprogress"].includes(item.booking_status) ? "text-primary" : "text-muted"
+            }`}
+            style={{
+              cursor: item.booking_status === "inprogress" ? "not-allowed" : "pointer",
+              opacity: item.booking_status === "inprogress" ? 0.5 : 1,
+            }}
+            onClick={() =>
+              item.booking_status === "upcoming"
+                ? handleOpenEditModal(item.booking_id, item.booking_status, item.partner_id, item.category_id)
+                : null
+            }
+          />
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="100%" className="text-center">
+        No data available
+      </td>
+    </tr>
+  )}
+</tbody>
+
             </table>
           </div>
           {renderPagination()}

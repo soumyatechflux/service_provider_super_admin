@@ -130,7 +130,7 @@ const AlertCustomerTable = () => {
                   <th>Title</th>
                   <th>Message</th>
                   <th>Notification Type</th>
-                  <th>Role</th>
+                  {/* <th>Role</th> */}
                   <th>Created At</th>
                 </tr>
               </thead>
@@ -142,7 +142,7 @@ const AlertCustomerTable = () => {
                       <td>{item.title}</td>
                       <td>{item.message}</td>
                       <td>{item.notification_type}</td>
-                      <td>{item.role}</td>
+                      {/* <td>{item.role}</td> */}
                       <td>
                         {new Date(item.created_at).toLocaleDateString("en-US", {
                           year: "numeric",
