@@ -6,6 +6,52 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 
+import CreatableSelect from "react-select/creatable";
+
+// Move cuisineOptions outside components so it can be shared
+const defaultCuisineOptions = [
+  { value: "north_indian", label: "North Indian" },
+  { value: "south_indian", label: "South Indian" },
+  { value: "chinese", label: "Chinese" },
+  { value: "italian", label: "Italian" },
+  { value: "mexican", label: "Mexican" },
+  { value: "thai", label: "Thai" },
+  { value: "japanese", label: "Japanese" },
+  { value: "continental", label: "Continental" },
+];
+
+const CuisineSelect = ({ value, onChange }) => {
+  const [customCuisines, setCustomCuisines] = useState([]);
+  
+  const cuisineOptions = [...defaultCuisineOptions, ...customCuisines];
+
+  const handleChange = (selectedOptions) => {
+    onChange(selectedOptions || []);
+  };
+
+  const handleCreateOption = (inputValue) => {
+    const newOption = { value: inputValue.toLowerCase(), label: inputValue };
+    setCustomCuisines(prev => [...prev, newOption]);
+    
+    const newValue = value ? [...value, newOption] : [newOption];
+    onChange(newValue);
+  };
+
+  return (
+    <CreatableSelect
+      isMulti
+      name="cuisines"
+      options={cuisineOptions}
+      value={value}
+      onChange={handleChange}
+      onCreateOption={handleCreateOption}
+      placeholder="Select or type custom cuisine"
+      formatCreateLabel={(inputValue) => `Add "${inputValue}" as custom cuisine`}
+      required
+    />
+  );
+};
+
 const VerifyChef = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
@@ -15,6 +61,8 @@ const VerifyChef = () => {
   const navigate = useNavigate();
   const [attachments, setAttachments] = useState([]);
 
+
+  // Convert cuisine array to array of objects for the select component
   const [cookDetails, setCookDetails] = useState({
     name: "",
     phone: "",
@@ -34,7 +82,6 @@ const VerifyChef = () => {
     licenseExpiryDate: "",
     carType: "",
     transmissionType: "",
-    cuisines: "",
     vegNonVeg: "",
     aadharFront: null,
     aadharBack: null,
@@ -45,7 +92,32 @@ const VerifyChef = () => {
     verificationReport: null,
     comment: "",
     registeredBy: "",
+    cuisines: [] // Initialize as empty array
   });
+
+  // Safely convert cuisine array to array of objects with error handling
+  const selectedCuisineOptions = Array.isArray(cookDetails.cuisines) 
+    ? cookDetails.cuisines.map(cuisine => {
+        const existingOption = defaultCuisineOptions.find(opt => opt.value === cuisine);
+        return existingOption || { value: cuisine, label: cuisine };
+      })
+    : [];
+
+  const handleInputChangeCar = (field, value) => {
+    setCookDetails(prev => ({
+      ...prev,
+      [field]: Array.isArray(value) ? value.map(option => option.value) : []
+    }));
+  };
+
+  const handleInputChangeCategory = (name, value) => {
+    setCookDetails((prevState) => ({
+      ...prevState,
+      [name]: value,
+      ...(name === "category_id" && { subCategory: "" }),
+    }));
+  };
+
   const fetchPartnerDetails = async () => {
     try {
       const token = sessionStorage.getItem(
@@ -237,21 +309,6 @@ const VerifyChef = () => {
     }
   };
 
-  const handleInputChangeCar = (name, selectedOptions) => {
-    setCookDetails((prevState) => ({
-      ...prevState,
-      [name]: selectedOptions.map((option) => option.value),
-    }));
-  };
-
-  const handleInputChangeCategory = (name, value) => {
-    setCookDetails((prevState) => ({
-      ...prevState,
-      [name]: value,
-      ...(name === "category_id" && { subCategory: "" }), // Reset subCategory when category changes
-    }));
-  };
-
   const verificationHeadings = {
     1: "Cook Verification",
     2: "Driver Verification",
@@ -282,16 +339,16 @@ const VerifyChef = () => {
     ],
   };
 
-  const cuisineOptions = [
-    { value: "north_indian", label: "North Indian" },
-    { value: "south_indian", label: "South Indian" },
-    { value: "chinese", label: "Chinese" },
-    { value: "italian", label: "Italian" },
-    { value: "mexican", label: "Mexican" },
-    { value: "thai", label: "Thai" },
-    { value: "japanese", label: "Japanese" },
-    { value: "continental", label: "Continental" },
-  ];
+  // const cuisineOptions = [
+  //   { value: "north_indian", label: "North Indian" },
+  //   { value: "south_indian", label: "South Indian" },
+  //   { value: "chinese", label: "Chinese" },
+  //   { value: "italian", label: "Italian" },
+  //   { value: "mexican", label: "Mexican" },
+  //   { value: "thai", label: "Thai" },
+  //   { value: "japanese", label: "Japanese" },
+  //   { value: "continental", label: "Continental" },
+  // ];
 
   const vegNonVegOptions = [
     { value: "Veg", label: "Veg" },
@@ -553,21 +610,14 @@ const VerifyChef = () => {
       {restaurant === 1 && (
         <>
           <label>
-            Cuisines <span style={{ color: "red" }}>*</span>
-          </label>
-          <Select
-            isMulti
-            name="cuisines"
-            options={cuisineOptions}
-            value={cuisineOptions.filter((option) =>
-              cookDetails.cuisines.includes(option.value)
-            )}
-            onChange={(selectedOptions) =>
-              handleInputChangeCar("cuisines", selectedOptions)
-            }
-            required
-            placeholder="Select Cuisines"
-          />
+        Cuisines <span style={{ color: "red" }}>*</span>
+      </label>
+      <CuisineSelect
+        value={selectedCuisineOptions}
+        onChange={(selectedOptions) => 
+          handleInputChangeCar("cuisines", selectedOptions)
+        }
+      />
 
           <label>
             Veg / Non-Veg <span style={{ color: "red" }}>*</span>
