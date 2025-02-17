@@ -9,7 +9,7 @@ const CustomerInfoModal = ({ customer, onClose }) => {
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Customer Details</h5>
-            <button type="button" className="btn-close" onClick={onClose}></button>
+            {/* <button type="button" className="btn-close" onClick={onClose}></button> */}
           </div>
           <div className="modal-body">
             <p><strong>Name:</strong> {customer.name || "N/A"}</p>

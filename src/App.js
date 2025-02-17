@@ -36,7 +36,6 @@ import Banner from "./Pages/Banner/Banner";
 import Services from "./Pages/Services/Services";
 import FAQs from "./Pages/FAQs/FAQs";
 import AboutUs from "./Pages/AboutUs/AboutUs";
-import TermsConditions from "./Pages/Terms&Conditions/TermsConditions";
 import PrivacyPolicy from "./Pages/PrivacyPolicy/PrivacyPolicy";
 import CancellationPlicy from "./Pages/CancellationPlicy/CancellationPlicy";
 import RefundPolicy from "./Pages/RefundPolicy/RefundPolicy";
@@ -55,6 +54,7 @@ import HelpCentre from "./Pages/HelpCentre/HelpCentre";
 import ContactUs from "./Pages/ContactUs/ContactUs";
 import RewardPoints from "./Pages/RewardPoints/RewardPoints";
 import AlertCentre from "./Pages/AlertCentre/AlertCentre";
+import TermsAndConditionTab from "./Pages/Terms&Conditions/TermsAndConditionTab/TermsAndConditionTab";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -160,7 +160,7 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/services" element={<Services/>}/>
           <Route path="/faq" element={<FAQs/>}/>
           <Route path="/about-us" element={<AboutUs/>}/>
-          <Route path="/terms-and-conditions" element={<TermsConditions/>}/>
+          <Route path="/terms-and-conditions" element={<TermsAndConditionTab/>}/>
           <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
           <Route path="/cancellation-policy" element={<CancellationPlicy/>}/>
           <Route path="/refund-policy" element={<RefundPolicy/>}/>

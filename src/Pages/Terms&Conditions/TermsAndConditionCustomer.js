@@ -5,7 +5,7 @@ import { Button } from '@mui/material';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-const TermsAndConditionText = () => {
+const TermsAndConditionCustomer = () => {
   const [editorContent, setEditorContent] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -81,7 +81,6 @@ const TermsAndConditionText = () => {
   
   return (
     <div>
-      <h2>Terms and Conditions</h2>
       <ReactQuill
         value={editorContent}
         onChange={handleChange}
@@ -127,4 +126,4 @@ const TermsAndConditionText = () => {
   );
 };
 
-export default TermsAndConditionText;
+export default TermsAndConditionCustomer;

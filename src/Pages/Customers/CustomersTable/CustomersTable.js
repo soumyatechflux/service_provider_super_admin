@@ -278,7 +278,7 @@ const handleViewCustomer = (customer) => {
       <th scope="col" style={{ width: "5%" }}>Rating</th>
       <th scope="col" style={{ width: "10%" }}>Status</th>
       <th scope="col" style={{ width: "5%" }}>Action</th>
-      {/* <th scope="col" style={{ width: "5%" }}>View</th>  */}
+      <th scope="col" style={{ width: "5%" }}>View</th> 
     </tr>
   </thead>
   <tbody>
@@ -300,9 +300,9 @@ const handleViewCustomer = (customer) => {
         <td className="edit_users action-btn-trash" style={{ cursor: "pointer", opacity: 1 }} onClick={() => handleDeleteClick(restaurant)}>
           <DeleteIcon style={{ color: "red" }} />
         </td>
-        {/* <td style={{ cursor: "pointer" }} onClick={() => handleViewCustomer(restaurant)}>
+        <td style={{ cursor: "pointer" }} onClick={() => handleViewCustomer(restaurant)}>
           <VisibilityIcon style={{ color: "#007bff" }} />
-        </td> */}
+        </td>
       </tr>
     ))}
   </tbody>

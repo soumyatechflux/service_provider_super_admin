@@ -305,7 +305,7 @@ const VerifyChef = () => {
       const requiredFields = [
         "dob",
         "email",
-        "aadhaar",
+        // "aadhaar",
         "address",
         "permanentAddress",
         "experience",
