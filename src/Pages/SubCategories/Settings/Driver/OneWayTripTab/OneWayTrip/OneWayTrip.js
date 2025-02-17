@@ -560,20 +560,20 @@ const OneWayTrip = () => {
           </div>
           
           <div className="col-md-3">
-            <label htmlFor="gst" className="form-label">
-              Tax on commission & Partner's pay
-            </label>
-            <input
-              type="number"
-              className="form-control"
-              id="gst"
-              value={gst === null ? "" : gst} // Set value to empty string when null
-              onChange={(e) =>
-                setGst(e.target.value === "" ? null : Number(e.target.value))
-              }
-              min="1"
-              required
-            />
+          <label htmlFor="gst" className="form-label">Tax on commission & Platform Fee</label>
+    <input
+      type="number"
+      className="form-control"
+      id="gst"
+      value={gst === null ? "" : gst}
+      onChange={(e) => {
+        let value = e.target.value === "" ? null : Number(e.target.value);
+        if (value === 0) value = 1; // Convert 0 to 1
+        setGst(value);
+      }}
+      min="1"
+      required
+    />
           </div>
         
 
@@ -582,18 +582,18 @@ const OneWayTrip = () => {
               Tax on Partner's Pay
             </label>
             <input
-              type="number"
-              className="form-control"
-              id="partnerTax"
-              value={partnerTax === null ? "" : partnerTax}
-              onChange={(e) =>
-                setPartnerTax(
-                  e.target.value === "" ? null : Number(e.target.value)
-                )
-              }
-              min="1"
-              required
-            />
+    type="number"
+    className="form-control"
+    id="partnerTax"
+    value={partnerTax === null ? "" : partnerTax}
+    onChange={(e) => {
+      let value = e.target.value === "" ? null : Number(e.target.value);
+      if (value === 0) value = 1; // Convert 0 to 1
+      setPartnerTax(value);
+    }}
+    min="1"
+    required
+  />
           </div>
 
           <div className="col-md-3">
