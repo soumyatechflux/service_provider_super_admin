@@ -1,0 +1,64 @@
+/* Container for attachments */
+.attachments-container {
+    display: grid;
+    gap: 20px; /* Spacing between items */
+    justify-content: center;
+    padding: 10px;
+  }
+  
+  /* Individual attachment box */
+  .attachment-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .attachment-box:hover {
+    transform: scale(1.05);
+    background: #fff;
+  }
+  
+  /* Image and PDF Preview */
+  .attachment-box img,
+  .attachment-box iframe {
+    max-width: 100%;
+    max-height: 180px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .attachment-box img:hover,
+  .attachment-box iframe:hover {
+    opacity: 0.8;
+  }
+  
+  /* PDF Icon */
+  .pdf-icon {
+    font-size: 30px;
+    color: red;
+    margin-bottom: 10px;
+  }
+  
+  /* File Name */
+  .attachment-box p {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  /* Mobile Responsive: Show 1 attachment per row on small screens */
+  @media (max-width: 600px) {
+    .attachments-container {
+      grid-template-columns: repeat(1, 1fr); /* 1 column for small screens */
+    }
+  }
+  

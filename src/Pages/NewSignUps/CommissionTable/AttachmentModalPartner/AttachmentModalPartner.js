@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
 import moment from "moment"; // Ensure moment.js is installed
+import { FaFilePdf } from "react-icons/fa"; // PDF icon
+import './AttachmentModalPartner.css'
 
 const AttachmentModalPartner = ({ open, attachments, onClose }) => {
-  if (!attachments) return null; // Ensure data exists
+  const [selectedPdf, setSelectedPdf] = useState(null); // For full-screen PDF preview
 
-  // Remove empty and null fields & exclude unwanted keys
+  if (!attachments) return null;
+
+  // Remove empty fields & exclude unwanted keys
   const filteredData = Object.entries(attachments).filter(
     ([key, value]) =>
       value !== null &&
@@ -13,29 +17,24 @@ const AttachmentModalPartner = ({ open, attachments, onClose }) => {
       value !== undefined &&
       key !== "is_verify" &&
       key !== "registered_by_id" &&
-      key !== "firebase_token"  &&
-      key !== "category_id"  
+      key !== "firebase_token" &&
+      key !== "category_id"
   );
 
-  // Function to format keys (remove underscores and capitalize words)
-  const formatKey = (key) => {
-    return key
-      .replace(/_/g, " ") // Replace underscores with spaces
-      .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize each word
-  };
+  const formatKey = (key) =>
+    key.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
-  // Function to format values (remove underscores and format dates)
   const formatValue = (key, value) => {
     if (typeof value === "string") {
-      if (key === "dob") {
-        return moment(value).format("MMMM D, YYYY"); // Show only date
-      } else if (key.includes("date") || key === "created_at" || key === "updated_at") {
-        return moment(value).format("MMMM D, YYYY, hh:mm A"); // Show full timestamp
-      }
-      return value.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize words
+      if (key === "dob") return moment(value).format("MMMM D, YYYY");
+      if (key.includes("date") || key === "created_at" || key === "updated_at")
+        return moment(value).format("MMMM D, YYYY, hh:mm A");
+      return value.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
     }
     return value;
   };
+
+  const isPDF = (filePath) => filePath?.toLowerCase().endsWith(".pdf");
 
   return (
     <Modal isOpen={open} toggle={onClose} size="lg" centered>
@@ -45,9 +44,9 @@ const AttachmentModalPartner = ({ open, attachments, onClose }) => {
         <div className="mb-3 text-left">
           <h2 className="text-center">Personal Information</h2>
           {filteredData.map(([key, value]) =>
-            key !== "attachments" ? ( // Exclude attachments from this section
+            key !== "attachments" ? (
               <p key={key}>
-                <strong>{formatKey(key)}:</strong> {formatValue(key, value)}
+                <strong>{formatKey(key)} :</strong> {formatValue(key, value)}
               </p>
             ) : null
           )}
@@ -57,30 +56,79 @@ const AttachmentModalPartner = ({ open, attachments, onClose }) => {
         {attachments.attachments?.length > 0 && (
           <>
             <h2 className="mt-3">Attachments</h2>
-            <div className="d-flex flex-wrap justify-content-center">
-              {attachments.attachments.map((attachment, index) => (
-                <div key={index} className="m-2 text-center">
-                  <h5>{formatValue("document_name", attachment.document_name)}</h5>
-                  <a
-                    href={attachment.file_path}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ textDecoration: "none" }}
-                  >
-                    <img
-                      src={attachment.file_path}
-                      alt={attachment.file_name}
-                      className="img-fluid"
-                      style={{ maxWidth: "150px", maxHeight: "150px", cursor: "pointer" }}
-                    />
-                  </a>
-                  <p className="mt-2">{attachment.file_name}</p>
-                </div>
-              ))}
-            </div>
+            <div className="attachments-container">
+  {attachments.attachments.map((attachment, index) => (
+    <div key={index} className="attachment-box">
+      <h5>{formatValue("document_name", attachment.document_name)}</h5>
+
+      {isPDF(attachment.file_path) ? (
+        <div onClick={() => setSelectedPdf(attachment.file_path)}>
+          <FaFilePdf className="pdf-icon" />
+          <iframe src={attachment.file_path} width="100%" height="180px" title="PDF Preview"></iframe>
+        </div>
+      ) : (
+        <a href={attachment.file_path} target="_blank" rel="noopener noreferrer">
+          <img src={attachment.file_path} alt={attachment.file_name} />
+        </a>
+      )}
+
+      <p>{attachment.file_name}</p>
+    </div>
+  ))}
+</div>
+
           </>
         )}
+
+        {/* Full-Screen PDF Preview */}
+        {selectedPdf && (
+          <div
+            className="fullscreen-pdf"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0,0,0,0.8)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 9999,
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "#fff",
+                padding: "10px",
+                borderRadius: "5px",
+                position: "relative",
+                width: "80%",
+                height: "90%",
+              }}
+            >
+              <button
+                onClick={() => setSelectedPdf(null)}
+                style={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                  background: "red",
+                  color: "white",
+                  border: "none",
+                  padding: "5px 10px",
+                  cursor: "pointer",
+                  borderRadius: "3px",
+                }}
+              >
+                ✖ Close
+              </button>
+              <iframe src={selectedPdf} width="100%" height="100%" title="PDF Full Preview" />
+            </div>
+          </div>
+        )}
       </ModalBody>
+
       <ModalFooter>
         <Button color="secondary" onClick={onClose}>
           Close

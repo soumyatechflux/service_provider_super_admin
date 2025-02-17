@@ -93,6 +93,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
                 New
               </MenuItem>
             )}
+            <MenuItem value="New">New</MenuItem>
             <MenuItem value="In-review">In Review</MenuItem>
             <MenuItem value="Resolved">Resolved</MenuItem>
             <MenuItem value="Rejected">Rejected</MenuItem>
