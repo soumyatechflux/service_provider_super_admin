@@ -122,7 +122,8 @@ const PartnerReviewTabs = () => {
                 <th scope="col" style={{ width: "15%" }}>Partner</th>
                 <th scope="col" style={{ width: "15%" }}>Customer</th>
                 <th scope="col" style={{ width: "10%" }}>Rating</th>
-                <th scope="col" style={{ width: "30%" }}>Review</th>
+                <th scope="col" style={{ width: "30%" }}>Comments</th>
+                {/* <th scope="col" style={{ width: "30%" }}>Images</th> */}
                 <th scope="col" style={{ width: "10%" }}>Created At</th>
                 <th scope="col" style={{ width: "10%" }}>Action</th>
               </tr>
@@ -135,6 +136,21 @@ const PartnerReviewTabs = () => {
                     <td>{item.partner?.name || "N/A"}</td>
                     <td>{item.customer?.name || "N/A"}</td>
                     <td style={{ fontWeight: "bold" }}>{item.rating || "N/A"}</td>
+                    {/* <td>
+                      {item.customer?.image ? (
+                        <img
+                          src={item.customer.image}
+                          alt="Customer"
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                          }}
+                        />
+                      ) : (
+                        "N/A"
+                      )}
+                    </td> */}
+
                     <td>{item.review || "No review provided."}</td>
                     <td>
                       {new Intl.DateTimeFormat("en-GB", {

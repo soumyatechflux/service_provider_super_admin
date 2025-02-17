@@ -15,9 +15,7 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
-
       setLoading(true);
-
       const response = await axios.get(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/payment_history`,
         {
@@ -49,6 +47,54 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
     getCommissionData();
   }, []);
 
+
+  const exportToCSV = () => {
+    if (dummy_Data.length === 0) {
+      toast.error("No data available to export.");
+      return;
+    }
+  
+    const headers = [
+      "Sr No.",
+      "Partner Name",
+      "Category",
+      "Created At",
+      "Payout Amount",
+      "Transaction ID",
+    ];
+  
+    const csvRows = [];
+    csvRows.push(headers.join(",")); // Add headers to CSV
+  
+    dummy_Data.forEach((item, index) => {
+      // Convert "created_at" (ISO 8601 format) to "DD/MM/YY"
+      const dateObj = new Date(item.created_at);
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const year = String(dateObj.getFullYear()).slice(-2); // Get last 2 digits of the year
+      const formattedDate = `${day}/${month}/${year}`;
+  
+      const row = [
+        index + 1,
+        item.partner_name || "Unknown",
+        item.category_name || "N/A",
+        `"${formattedDate}"`, // Ensure date is treated as a string
+        item.payout_amount || "N/A",
+        item.payment_transaction_id || "N/A",
+      ];
+      csvRows.push(row.join(",")); // Convert row array to CSV string
+    });
+  
+    const csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "PaymentHistory.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
   // Filter data based on search input
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -63,18 +109,24 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
   
   const filteredData = dummy_Data.filter((item) => {
     const searchTerm = normalizeString(searchInput);
+  
+    // Convert the relevant numeric fields to string for comparison
     const formattedDate = normalizeString(formatDate(item.created_at)); // Convert date to DD/MM/YY and normalize
+    const tdsAmount = normalizeString(item.tds_amount?.toString()); // Ensure it's a string
+    const payoutAmountAfterTds = normalizeString(item.payout_amount_after_tds?.toString()); // Ensure it's a string
   
     return (
       normalizeString(item.partner_name).includes(searchTerm) ||
       normalizeString(item.category_name).includes(searchTerm) ||
       normalizeString(item.payout_amount).includes(searchTerm) ||
       normalizeString(item.payment_transaction_id).includes(searchTerm) ||
-      formattedDate.includes(searchTerm) // Ensure search works with formatted date
+      formattedDate.includes(searchTerm) || // Ensure search works with formatted date
+      tdsAmount.includes(searchTerm) || // Allow search on tds_amount
+      payoutAmountAfterTds.includes(searchTerm) // Allow search on payout_amount_after_tds
     );
   });
   
-  
+   
   // Pagination logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -97,13 +149,15 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
       end = totalPages;
       start = Math.max(1, totalPages - 2);
     }
-
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
   const renderPaginationItems = () => {
     const pageRange = getPageRange();
 
+
+    
+  
     return (
       <ul className="pagination mb-0" style={{ gap: "5px" }}>
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
@@ -180,7 +234,11 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
   return (
     <div className="SubCategory-Table-Main p-3">
       {/* Search Input */}
-      <div className="d-flex justify-content-end align-items-center mb-3">
+      <div className="mb-3"style={{display: "flex",flexDirection: "row-reverse",justifyContent: "space-between",alignItems: "center",}}>
+      <button className="Discount-btn mb-0" onClick={exportToCSV}>
+          Export To CSV
+        </button>
+      <div className="search-bar " style={{ width: "800px" }}>
         <input
           type="text"
           className="form-control search-input w-25"
@@ -189,6 +247,8 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
           onChange={(e) => setSearchInput(e.target.value)}
         />
       </div>
+      </div>
+
 
       {loading ? (
         <Loader />
@@ -213,6 +273,12 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
                   Payout Amount
                 </th>
                 <th scope="col" style={{ width: "15%" }}>
+                 Amount Due Before TDS
+                </th>
+                <th scope="col" style={{ width: "15%" }}>
+                Amount Due After TDS
+                </th>
+                <th scope="col" style={{ width: "15%" }}>
                   Transaction ID
                 </th>
               </tr>
@@ -220,7 +286,7 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
             <tbody>
               {currentEntries.length === 0 ? (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
+                  <td colSpan="8" style={{ textAlign: "center" }}>
                     No data available
                   </td>
                 </tr>
@@ -240,6 +306,8 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
                       }).format(new Date(item.created_at)) || "N/A"}
                     </td>
 
+                    <td>{item.tds_amount || "N/A"}</td>
+                    <td>{item.payout_amount_after_tds || "N/A"}</td>
                     <td>{item.payout_amount || "N/A"}</td>
                     <td>{item.payment_transaction_id || "N/A"}</td>
                   </tr>
