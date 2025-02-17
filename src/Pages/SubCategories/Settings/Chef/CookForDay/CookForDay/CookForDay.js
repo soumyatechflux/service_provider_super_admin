@@ -135,18 +135,35 @@ const CookForDay = () => {
   //   ]);
   // };
 
+  // const handleAddRow = () => {
+  //   // Get the count of the last row, default to 1 if it's the first row
+  //   const lastCount =
+  //     guestRows.length > 0 ? guestRows[guestRows.length - 1].count : 0;
+
+  //   // Check if the new count exceeds the max limit
+  //   if (lastCount >= 15) {
+  //     toast.error("Guest count cannot exceed 15.");
+  //     return;
+  //   }
+
+  //   // Add the new row with incremented count and default duration of "720"
+  //   setGuestRows([
+  //     ...guestRows,
+  //     {
+  //       id: guestRows.length,
+  //       count: lastCount + 1,
+  //       duration: "720",
+  //       price: "",
+  //     }, // Default duration set to "720"
+  //   ]);
+  // };
+
+
   const handleAddRow = () => {
     // Get the count of the last row, default to 1 if it's the first row
-    const lastCount =
-      guestRows.length > 0 ? guestRows[guestRows.length - 1].count : 0;
-
-    // Check if the new count exceeds the max limit
-    if (lastCount >= 15) {
-      toast.error("Guest count cannot exceed 15.");
-      return;
-    }
-
-    // Add the new row with incremented count and default duration of "720"
+    const lastCount = guestRows.length > 0 ? guestRows[guestRows.length - 1].count : 0;
+  
+    // Remove guest count limit of 15
     setGuestRows([
       ...guestRows,
       {
@@ -154,10 +171,10 @@ const CookForDay = () => {
         count: lastCount + 1,
         duration: "720",
         price: "",
-      }, // Default duration set to "720"
+      },
     ]);
   };
-
+  
   const handleRemoveRow = (id) => {
     if (guestRows.length > 1) {
       setGuestRows(guestRows.filter((row) => row.id !== id));
@@ -245,10 +262,10 @@ const CookForDay = () => {
     }
 
     // Validate that the number of rows does not exceed 15
-    if (guestRows.length > 15) {
-      toast.error("Guest count cannot exceed 15.");
-      return;
-    }
+    // if (guestRows.length > 15) {
+    //   toast.error("Guest count cannot exceed 15.");
+    //   return;
+    // }
 
     // Add required fields
     formData.append("category_id", 1); // Add category_id explicitly
@@ -541,16 +558,18 @@ const CookForDay = () => {
               Tax on commission & Platform Fee
             </label>
             <input
-              type="number"
-              className="form-control"
-              id="gst"
-              value={gst === null ? "" : gst} // Set value to empty string when null
-              onChange={(e) =>
-                setGst(e.target.value === "" ? null : Number(e.target.value))
-              }
-              min="1"
-              required
-            />
+      type="number"
+      className="form-control"
+      id="gst"
+      value={gst === null ? "" : gst}
+      onChange={(e) => {
+        let value = e.target.value === "" ? null : Number(e.target.value);
+        if (value === 0) value = 1; // Convert 0 to 1
+        setGst(value);
+      }}
+      min="1"
+      required
+    />
           </div>
           {/* <div className="col-md-3">
     <label htmlFor="secureFees" className="form-label">Secure Fees</label>
@@ -570,18 +589,18 @@ const CookForDay = () => {
               Tax on Partner's Pay
             </label>
             <input
-              type="number"
-              className="form-control"
-              id="partnerTax"
-              value={partnerTax === null ? "" : partnerTax}
-              onChange={(e) =>
-                setPartnerTax(
-                  e.target.value === "" ? null : Number(e.target.value)
-                )
-              }
-              min="1"
-              required
-            />
+    type="number"
+    className="form-control"
+    id="partnerTax"
+    value={partnerTax === null ? "" : partnerTax}
+    onChange={(e) => {
+      let value = e.target.value === "" ? null : Number(e.target.value);
+      if (value === 0) value = 1; // Convert 0 to 1
+      setPartnerTax(value);
+    }}
+    min="1"
+    required
+  />
           </div>
 
           <div className="col-md-3">
@@ -724,7 +743,8 @@ const CookForDay = () => {
 
                 <div className="col-12 col-md-3 p-4">
                   <div className="Subheading2_AddTable">
-                    DURATION In Minutes (Fixed:12hr)
+                    DURATION In Minutes
+                     {/* (Fixed:12hr) */}
                   </div>
                   <div className="seating_AddTable">
                     <div className="component-guest1">

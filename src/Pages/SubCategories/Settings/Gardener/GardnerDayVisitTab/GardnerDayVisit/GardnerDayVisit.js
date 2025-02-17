@@ -473,8 +473,12 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
       type="number"
       className="form-control"
       id="gst"
-      value={gst === null ? "" : gst} // Set value to empty string when null
-      onChange={(e) => setGst(e.target.value === "" ? null : Number(e.target.value))}
+      value={gst === null ? "" : gst}
+      onChange={(e) => {
+        let value = e.target.value === "" ? null : Number(e.target.value);
+        if (value === 0) value = 1; // Convert 0 to 1
+        setGst(value);
+      }}
       min="1"
       required
     />
@@ -502,7 +506,11 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     className="form-control"
     id="partnerTax"
     value={partnerTax === null ? "" : partnerTax}
-    onChange={(e) => setPartnerTax(e.target.value === "" ? null : Number(e.target.value))}
+    onChange={(e) => {
+      let value = e.target.value === "" ? null : Number(e.target.value);
+      if (value === 0) value = 1; // Convert 0 to 1
+      setPartnerTax(value);
+    }}
     min="1"
     required
   />
