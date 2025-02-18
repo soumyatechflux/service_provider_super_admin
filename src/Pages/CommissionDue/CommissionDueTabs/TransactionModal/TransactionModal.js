@@ -69,7 +69,10 @@ const TransactionModal = ({ item, onClose, setLoading }) => {
           <strong>Partner Name:</strong> {item.name}
         </p>
         <p>
-          <strong>Amount Due:</strong> ₹ {item.total_partner_amount}
+          <strong>Amount Due Before TDS:</strong> ₹ {item.total_partner_amount}
+        </p>
+        <p>
+          <strong>Amount Due After TDS:</strong> ₹ {item.total_partner_amount_after_tds}
         </p>
 
         {/* Date Picker Field */}

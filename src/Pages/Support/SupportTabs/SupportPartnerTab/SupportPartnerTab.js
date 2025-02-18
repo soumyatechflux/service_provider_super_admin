@@ -217,6 +217,7 @@ const SupportPartnerTab = () => {
                   <th style={{ width: "10%" }}>Mobile</th>
                   {/* <th style={{ width: "10%" }}>Email</th> */}
                   <th style={{ width: "25%" }}>Description</th>
+                  <th style={{ width: "25%" }}>Image</th>
                   <th style={{ width: "10%" }}>Status</th>
                   <th style={{ width: "10%" }}>Created At</th>
                 </tr>
@@ -229,6 +230,23 @@ const SupportPartnerTab = () => {
                     <td>{item?.mobile || "N/A"}</td>
                     {/* <td>{item?.email || "N/A"}</td> */}
                     <td>{item?.description || "N/A"}</td>
+                    <td>
+  {item.attachment ? (
+    <a href={item.attachment} target="_blank" rel="noopener noreferrer">
+      <img
+        src={item.attachment}
+        alt="Partner"
+        style={{
+          width: "50px",
+          height: "50px",
+          cursor: "pointer",
+        }}
+      />
+    </a>
+  ) : (
+    "N/A"
+  )}
+</td>
                     <td>
                       <div className="status-div">
                         <span>

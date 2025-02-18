@@ -126,6 +126,7 @@ const SupportCustomerTab = () => {
                   <th>Name</th>
                   <th>Mobile</th>
                   <th>Description</th>
+                  <th>Image</th>
                   <th>Status</th>
                   <th>Created At</th>
                   <th>Updated At</th>
@@ -141,6 +142,24 @@ const SupportCustomerTab = () => {
                     <td>{item.name || "No name available"}</td>
                     <td>{item.mobile}</td>
                     <td>{item.description}</td>
+                    <td>
+  {item.attachment ? (
+    <a href={item.attachment} target="_blank" rel="noopener noreferrer">
+      <img
+        src={item.attachment}
+        alt="Customer"
+        style={{
+          width: "50px",
+          height: "50px",
+          cursor: "pointer",
+        }}
+      />
+    </a>
+  ) : (
+    "N/A"
+  )}
+</td>
+
                     <td>
                       <div className="status-div">
                         <span>

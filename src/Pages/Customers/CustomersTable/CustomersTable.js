@@ -24,10 +24,36 @@ const [customerToDelete, setCustomerToDelete] = useState(null);
 const [selectedCustomer, setSelectedCustomer] = useState(null);
 const [isModalOpen, setIsModalOpen] = useState(false);
 
-const handleViewCustomer = (customer) => {
-  setSelectedCustomer(customer);
-  setIsModalOpen(true);
+const handleViewCustomer = async (customerId) => {
+  try {
+    setLoading(true);
+    const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+
+    const response = await axios.get(
+      `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/customers/${customerId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setLoading(false);
+
+    if (response?.data?.message === "Customer fetched successfully") {
+      setSelectedCustomer(response?.data?.data); // Set fetched data
+      setIsModalOpen(true); // Open modal
+    } else {
+      toast.error(response?.data?.message || "Failed to load customer details.");
+    }
+  } catch (error) {
+    setLoading(false);
+    console.error("Error fetching customer details:", error);
+    toast.error("Failed to load customer details. Please try again.");
+  }
 };
+
+
 
   const entriesPerPage = 10;
 
@@ -300,9 +326,11 @@ const handleViewCustomer = (customer) => {
         <td className="edit_users action-btn-trash" style={{ cursor: "pointer", opacity: 1 }} onClick={() => handleDeleteClick(restaurant)}>
           <DeleteIcon style={{ color: "red" }} />
         </td>
-        <td style={{ cursor: "pointer" }} onClick={() => handleViewCustomer(restaurant)}>
-          <VisibilityIcon style={{ color: "#007bff" }} />
-        </td>
+        <td style={{ cursor: "pointer" }} onClick={() => handleViewCustomer(restaurant.id)}>
+  <VisibilityIcon style={{ color: "#007bff" }} />
+</td>
+
+
       </tr>
     ))}
   </tbody>
@@ -319,11 +347,16 @@ const handleViewCustomer = (customer) => {
         </>
       )}
 
-{isModalOpen && (
-  <CustomerInfoModal customer={selectedCustomer} onClose={() => setIsModalOpen(false)} />
+{isModalOpen && selectedCustomer && (
+  <CustomerInfoModal 
+    customer={selectedCustomer} 
+    onClose={() => setIsModalOpen(false)} 
+  />
 )}
 
-      {showDetailsModal && (
+
+
+ {showDetailsModal && (
         <EditCustomerModal
           show={showDetailsModal}
           handleClose={handleCloseDetailsModal}
@@ -337,7 +370,6 @@ const handleViewCustomer = (customer) => {
   handleDelete={handleDeleteCustomer}
   customer={customerToDelete}
 />
-
     </div>
   );
 };
