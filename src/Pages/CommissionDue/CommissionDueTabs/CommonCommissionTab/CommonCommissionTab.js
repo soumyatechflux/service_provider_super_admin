@@ -232,7 +232,7 @@ const CommonCommissionTab = ({
                       <td>{item.name || "Unknown"}</td>
                       <td>{item.category_name || "N/A"}</td>
                       <td>{item.total_partner_amount || "N/A"}</td>
-                      <td>{item.partner_amount_after_tds || "N/A"}</td>
+                      <td>{item.total_partner_amount_after_tds || "N/A"}</td>
                       <td className="action-btn-pay">
                         <button
                           className="payNow-btn"

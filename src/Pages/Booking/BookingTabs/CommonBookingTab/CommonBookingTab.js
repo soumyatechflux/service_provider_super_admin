@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import EditStatusModal from "./EditStatusModal/EditStatusModal";
 import AttachmentModal from "./AttachmentModal/AttachmentModal";
 import PriceDetailModal from "./PriceDetailModal/PriceDetailModal";
+import DatePicker from "react-datepicker";
 
 const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   function formatDateWithTime(dateString) {
@@ -53,27 +54,47 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   const [categoryId, setCategoryId] = useState(null);
   const [showAttachmentModal, setShowAttachmentModal] = useState(false);
   const [attachmentsData, setAttachmentsData] = useState({});
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
 
   const entriesPerPage = 10;
 
+  const handleSearch = () => {
+    getCommissionData();
+  };
+  
+  const handleRemoveFilter = () => {
+    setFromDate("");
+    setToDate("");
+    getCommissionData();
+  };
+  
   const getCommissionData = async () => {
     try {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
       setLoading(true);
-
+  
+      const params = {
+        category_id: category_id,
+      };
+  
+      if (fromDate) params.from_date = fromDate;
+      if (toDate) params.to_date = toDate;
+  
       const response = await axios.get(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/bookings`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          params,
         }
       );
-
+  
       setLoading(false);
-
+  
       if (response?.status === 200 && response?.data?.success) {
         const data = response?.data?.data || [];
         const filteredData = data.filter(
@@ -94,6 +115,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   useEffect(() => {
     getCommissionData();
   }, [category_id]);
+  
 
   useEffect(() => {
     window.scrollTo({
@@ -258,13 +280,38 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
       <div className="d-flex justify-content-between align-items-center">
         <h2>Bookings</h2>
         <input
-          type="text"
-          className="form-control search-input w-25"
-          placeholder="Search by guest name..."
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-        />
+        type="text"
+        className="form-control search-input w-25"
+        placeholder="Search by guest name..."
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+      />
       </div>
+      <div className="d-flex justify-content-between align-items-center">
+        
+  <p>From Date:</p>
+  <input
+    type="date"
+    className="form-control w-25"
+    value={fromDate}
+    onChange={(e) => setFromDate(e.target.value)}
+    max={toDate} // Ensures "From Date" is not after "To Date"
+  />
+  
+  <p>To Date:</p>
+  <input
+    type="date"
+    className="form-control w-25"
+    value={toDate}
+    onChange={(e) => setToDate(e.target.value)}
+    min={fromDate} // Ensures "To Date" is not before "From Date"
+  />
+
+  <button className="btn btn-primary" style={{boxShadow:"none"}} onClick={handleSearch}>Search</button>
+  <button className="btn btn-secondary" style={{boxShadow:"none"}} onClick={handleRemoveFilter}>Remove Filter</button>
+</div>
+
+
       {loading ? (
         <Loader />
       ) : (
@@ -443,8 +490,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     </tr>
   )}
 </tbody>
-
-            </table>
+    </table>
           </div>
           {renderPagination()}
         </>
