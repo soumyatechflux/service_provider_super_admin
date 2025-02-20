@@ -196,6 +196,9 @@ const CommonCommissionTab = ({
                 <th scope="col" style={{ width: "5%" }}>
                   Sr.
                 </th>
+                <th scope="col" style={{ width: "5%" }}>
+                  Partner Id
+                </th>
                 <th scope="col" style={{ width: "20%" }}>
                   Partner Name
                 </th>
@@ -229,6 +232,7 @@ const CommonCommissionTab = ({
                       <th scope="row">
                         {index + 1 + (currentPage - 1) * entriesPerPage}.
                       </th>
+                      <td>{item.partner_id || "Unknown"}</td>
                       <td>{item.name || "Unknown"}</td>
                       <td>{item.category_name || "N/A"}</td>
                       <td>{item.total_partner_amount || "N/A"}</td>

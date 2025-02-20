@@ -92,7 +92,7 @@ const VerifyChef = () => {
     verificationReport: null,
     comment: "",
     registeredBy: "",
-    cuisines: [] // Initialize as empty array
+    cuisines: "" // Initialize as empty array
   });
 
   // Safely convert cuisine array to array of objects with error handling
@@ -103,12 +103,12 @@ const VerifyChef = () => {
       })
     : [];
 
-  const handleInputChangeCar = (field, value) => {
-    setCookDetails(prev => ({
-      ...prev,
-      [field]: Array.isArray(value) ? value.map(option => option.value) : []
-    }));
-  };
+  // const handleInputChangeCar = (field, value) => {
+  //   setCookDetails(prev => ({
+  //     ...prev,
+  //     [field]: Array.isArray(value) ? value.map(option => option.value) : []
+  //   }));
+  // };
 
   const handleInputChangeCategory = (name, value) => {
     setCookDetails((prevState) => ({
@@ -120,9 +120,7 @@ const VerifyChef = () => {
 
   const fetchPartnerDetails = async () => {
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
       setLoading(true);
 
       const response = await axios.get(
@@ -140,19 +138,45 @@ const VerifyChef = () => {
       setLoading(false);
 
       if (response.status === 200 && response.data.success) {
-        console.log("API Response:", response.data); // 🔍 Debugging
+        console.log("API Response:", response.data);
 
         const partnerData = response.data.data.find(
           (partner) => partner.id === parseInt(id)
         );
 
         if (partnerData) {
-          console.log("Partner Data:", partnerData); // Debugging
+          console.log("Partner Data:", partnerData);
 
           // Dynamically map all attachments based on document_name
           const mappedAttachments = {};
           partnerData.attachments?.forEach((file) => {
             mappedAttachments[file.document_name] = file.file_path;
+          });
+
+          // Convert cuisines string to array if it exists
+          let cuisinesArray = [];
+          if (partnerData.cuisines) {
+            // Handle both string and array formats
+            if (typeof partnerData.cuisines === 'string') {
+              cuisinesArray = partnerData.cuisines.split(',').map(cuisine => cuisine.trim());
+            } else if (Array.isArray(partnerData.cuisines)) {
+              cuisinesArray = partnerData.cuisines;
+            }
+          }
+
+          // Convert cuisines array to format expected by Select component
+          const formattedCuisines = cuisinesArray.map(cuisine => {
+            // Try to find matching option from default options
+            const existingOption = defaultCuisineOptions.find(opt => 
+              opt.value.toLowerCase() === cuisine.toLowerCase() ||
+              opt.label.toLowerCase() === cuisine.toLowerCase()
+            );
+            
+            // If found, use existing option, otherwise create new one
+            return existingOption || {
+              value: cuisine.toLowerCase().replace(/\s+/g, '_'),
+              label: cuisine.charAt(0).toUpperCase() + cuisine.slice(1)
+            };
           });
 
           setCookDetails({
@@ -171,7 +195,7 @@ const VerifyChef = () => {
             licenseExpiryDate: partnerData.driving_license_expiry_date || "",
             carType: partnerData.car_type || "",
             transmissionType: partnerData.transmission_type || "",
-            cuisines: partnerData.cuisines || "",
+            cuisines: formattedCuisines, // Store as array of option objects
             vegNonVeg: partnerData.veg_non_veg || "",
             category_id: partnerData.category_id || "",
             account_holder_name: partnerData.account_holder_name || "",
@@ -185,7 +209,7 @@ const VerifyChef = () => {
               : "",
             comment: partnerData.comment || "",
             registeredBy: partnerData.registered_by_id || "",
-            ...mappedAttachments, // Merging dynamically mapped attachments
+            ...mappedAttachments,
           });
 
           setAttachments(partnerData.attachments || []);
@@ -202,6 +226,18 @@ const VerifyChef = () => {
     }
   };
 
+  useEffect(() => {
+    if (id) {
+      fetchPartnerDetails();
+    }
+  }, [id]);
+
+  const handleInputChangeCar = (field, value) => {
+    setCookDetails(prev => ({
+      ...prev,
+      [field]: Array.isArray(value) ? value.map(option => option.value) : value
+    }));
+  };
   useEffect(() => {
     console.log("Updated cookDetails:", cookDetails);
   }, [cookDetails]);
@@ -378,9 +414,7 @@ const VerifyChef = () => {
       ];
 
       // Validate that no required field is missing
-      const missingFields = requiredFields.filter(
-        (field) => !cookDetails[field]
-      );
+      const missingFields = requiredFields.filter((field) => !cookDetails[field]);
       if (missingFields.length > 0) {
         toast.error(
           `Please fill all required fields: ${missingFields.join(", ")}`
@@ -388,7 +422,6 @@ const VerifyChef = () => {
         return;
       }
 
-      // Check if driving license is required for restaurant 2
       if (restaurant === 2 && !cookDetails.drivingLicense) {
         toast.error("Please upload the Driving License Photocopy.");
         return;
@@ -396,37 +429,27 @@ const VerifyChef = () => {
     }
 
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
       const formData = new FormData();
 
-      // Only append fields that have values
+      // Append basic fields
       if (cookDetails.name) formData.append("name", cookDetails.name);
       if (cookDetails.email) formData.append("email", cookDetails.email);
       if (cookDetails.phone) formData.append("mobile", cookDetails.phone);
+      if (cookDetails.gender) formData.append("gender", cookDetails.gender);
+      if (cookDetails.comment) formData.append("comment", cookDetails.comment);
 
-      // Append gender if selected
-      if (cookDetails.gender) {
-        formData.append("gender", cookDetails.gender);
+      // Handle cuisines
+      if (cookDetails.cuisines) {
+        const cuisinesString = Array.isArray(cookDetails.cuisines) 
+          ? cookDetails.cuisines.map(cuisine => 
+              typeof cuisine === 'string' ? cuisine : cuisine.value
+            ).join(',')
+          : cookDetails.cuisines;
+        formData.append("cuisines", cuisinesString);
       }
 
-      // Append comment if available
-      if (cookDetails.comment) {
-        formData.append("comment", cookDetails.comment);
-      }
-
-      // Append verification report file
-      if (cookDetails.verificationReport) {
-        console.log(
-          "Verification Report File:",
-          cookDetails.verificationReport
-        ); // 🔍 Debugging
-        formData.append("verification_report", cookDetails.verificationReport);
-      } else {
-        console.warn("No verification report found in cookDetails!"); // ⚠️ Debugging
-      }
-
+      // Format dates
       if (cookDetails.dob) {
         const formattedDOB = new Date(cookDetails.dob)
           .toISOString()
@@ -441,64 +464,48 @@ const VerifyChef = () => {
         formData.append("driving_license_expiry_date", formattedDate);
       }
 
+      // Append other fields
       if (cookDetails.aadhaar) formData.append("aadhaar", cookDetails.aadhaar);
-      if (cookDetails.address)
-        formData.append("current_address", cookDetails.address);
-      if (cookDetails.permanentAddress)
-        formData.append("permanent_address", cookDetails.permanentAddress);
-      if (cookDetails.experience)
-        formData.append("years_of_experience", cookDetails.experience);
-      if (cookDetails.subCategory)
-        formData.append("specialisation", cookDetails.subCategory);
+      if (cookDetails.address) formData.append("current_address", cookDetails.address);
+      if (cookDetails.permanentAddress) formData.append("permanent_address", cookDetails.permanentAddress);
+      if (cookDetails.experience) formData.append("years_of_experience", cookDetails.experience);
+      if (cookDetails.subCategory) formData.append("specialisation", cookDetails.subCategory);
+      
       if (cookDetails.dateOfJoining) {
         const formattedDateOfJoining = new Date(cookDetails.dateOfJoining)
           .toISOString()
           .split("T")[0];
         formData.append("date_of_joining", formattedDateOfJoining);
       }
-      if (cookDetails.languages)
-        formData.append("languages", cookDetails.languages);
-      if (cookDetails.drivingLicenseNumber)
-        formData.append(
-          "driving_license_number",
-          cookDetails.drivingLicenseNumber
-        );
+
+      // Append remaining fields
+      if (cookDetails.languages) formData.append("languages", cookDetails.languages);
+      if (cookDetails.drivingLicenseNumber) formData.append("driving_license_number", cookDetails.drivingLicenseNumber);
       if (cookDetails.carType) formData.append("car_type", cookDetails.carType);
-      if (cookDetails.transmissionType)
-        formData.append("transmission_type", cookDetails.transmissionType);
-      if (cookDetails.cuisines)
-        formData.append("cuisines", cookDetails.cuisines);
-      if (cookDetails.aadharFront)
-        formData.append("aadhar_front", cookDetails.aadharFront);
-      if (cookDetails.aadharBack)
-        formData.append("aadhar_back", cookDetails.aadharBack);
+      if (cookDetails.transmissionType) formData.append("transmission_type", cookDetails.transmissionType);
+      if (cookDetails.vegNonVeg) formData.append("veg_non_veg", cookDetails.vegNonVeg);
+      if (cookDetails.category_id) formData.append("category_id", cookDetails.category_id);
+      
+      // Append bank details
+      if (cookDetails.account_holder_name) formData.append("account_holder_name", cookDetails.account_holder_name);
+      if (cookDetails.account_number) formData.append("account_number", cookDetails.account_number);
+      if (cookDetails.ifsc_code) formData.append("ifsc_code", cookDetails.ifsc_code);
+      if (cookDetails.bank_name) formData.append("bank_name", cookDetails.bank_name);
+      if (cookDetails.whatsapp_no) formData.append("whatsapp_no", cookDetails.whatsapp_no);
+
+      // Append files
+      if (cookDetails.aadharFront) formData.append("aadhar_front", cookDetails.aadharFront);
+      if (cookDetails.aadharBack) formData.append("aadhar_back", cookDetails.aadharBack);
       if (cookDetails.panCard) formData.append("pancard", cookDetails.panCard);
-      if (cookDetails.bankDetails)
-        formData.append("bank_passbook", cookDetails.bankDetails);
-      if (cookDetails.drivingLicense)
-        formData.append("driving_licence", cookDetails.drivingLicense);
-      if (cookDetails.currentAddressProof)
-        formData.append("address_proof", cookDetails.currentAddressProof);
-      if (cookDetails.vegNonVeg)
-        formData.append("veg_non_veg", cookDetails.vegNonVeg);
-      if (cookDetails.category_id)
-        formData.append("category_id", cookDetails.category_id);
-      if (cookDetails.account_holder_name)
-        formData.append("account_holder_name", cookDetails.account_holder_name);
-      if (cookDetails.account_number)
-        formData.append("account_number", cookDetails.account_number);
-      if (cookDetails.ifsc_code)
-        formData.append("ifsc_code", cookDetails.ifsc_code);
-      if (cookDetails.bank_name)
-        formData.append("bank_name", cookDetails.bank_name);
-      if (cookDetails.whatsapp_no)
-        formData.append("whatsapp_no", cookDetails.whatsapp_no);
+      if (cookDetails.bankDetails) formData.append("bank_passbook", cookDetails.bankDetails);
+      if (cookDetails.drivingLicense) formData.append("driving_licence", cookDetails.drivingLicense);
+      if (cookDetails.currentAddressProof) formData.append("address_proof", cookDetails.currentAddressProof);
+      if (cookDetails.verificationReport) formData.append("verification_report", cookDetails.verificationReport);
 
       // Always append these fields
       formData.append("partner_id", id);
       formData.append("save_or_verify", action);
 
-      // Only append is_verify if action is 'verify'
       if (action === "verify") {
         formData.append("is_verify", isVerify);
       }
@@ -518,7 +525,7 @@ const VerifyChef = () => {
       );
 
       setLoading(false);
-      setLoadingAction(null); // Clear loading state regardless of success/failure
+      setLoadingAction(null);
 
       if (response.status === 200 && response.data.success) {
         toast.success(
@@ -537,10 +544,9 @@ const VerifyChef = () => {
       console.error(`Error during ${action}:`, error);
       toast.error(`Failed to ${action} partner. Please try again.`);
       setLoading(false);
-      setLoadingAction(null); // Clear loading state regardless of success/failure
+      setLoadingAction(null);
     }
   };
-
   return (
     <div className="verification-container">
       <h2>{heading}</h2>
@@ -609,15 +615,18 @@ const VerifyChef = () => {
 
       {restaurant === 1 && (
         <>
-          <label>
-        Cuisines <span style={{ color: "red" }}>*</span>
-      </label>
-      <CuisineSelect
-        value={selectedCuisineOptions}
-        onChange={(selectedOptions) => 
-          handleInputChangeCar("cuisines", selectedOptions)
-        }
-      />
+         <label>
+            Cuisines <span style={{ color: "red" }}>*</span>
+          </label>
+          <CuisineSelect
+            value={cookDetails.cuisines}
+            onChange={(selectedOptions) => {
+              setCookDetails(prev => ({
+                ...prev,
+                cuisines: selectedOptions
+              }));
+            }}
+          />
 
           <label>
             Veg / Non-Veg <span style={{ color: "red" }}>*</span>

@@ -260,6 +260,9 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
                 <th scope="col" style={{ width: "5%" }}>
                   Sr.
                 </th>
+                <th scope="col" style={{ width: "5%" }}>
+                  Partner Id
+                </th>
                 <th scope="col" style={{ width: "20%" }}>
                   Partner Name
                 </th>
@@ -270,13 +273,13 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
                   Created At
                 </th>
                 <th scope="col" style={{ width: "15%" }}>
-                  Payout Amount
+                  TDS Amount
                 </th>
                 <th scope="col" style={{ width: "15%" }}>
-                 Amount Due Before TDS
+                 Payout Amount
                 </th>
                 <th scope="col" style={{ width: "15%" }}>
-                Amount Due After TDS
+                Payout Amount After TDS
                 </th>
                 <th scope="col" style={{ width: "15%" }}>
                   Transaction ID
@@ -296,6 +299,7 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
                     <th scope="row">
                       {index + 1 + (currentPage - 1) * entriesPerPage}.
                     </th>
+                    <td>{item.partner_id || "Unknown"}</td>
                     <td>{item.partner_name || "Unknown"}</td>
                     <td>{item.category_name || "N/A"}</td>
                     <td>
