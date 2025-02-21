@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import Loader from "../../Loader/Loader";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import Loader from "../../Loader/Loader";
 import "../CommissionDueTabs/CommonCommissionTab/CommonCommissionTab.css";
 
 const PaymentHistoryTable = ({ loading, setLoading }) => {
@@ -311,8 +311,8 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
                     </td>
 
                     <td>{item.tds_amount || "N/A"}</td>
-                    <td>{item.payout_amount_after_tds || "N/A"}</td>
                     <td>{item.payout_amount || "N/A"}</td>
+                    <td>{item.payout_amount_after_tds || "N/A"}</td>
                     <td>{item.payment_transaction_id || "N/A"}</td>
                   </tr>
                 ))

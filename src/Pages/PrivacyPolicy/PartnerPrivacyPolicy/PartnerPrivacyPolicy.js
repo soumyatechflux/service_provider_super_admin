@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; 
@@ -5,7 +6,7 @@ import { Button } from '@mui/material';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-const PrivacypolicyText = () => {
+const PartnerPrivacyPolicy = () => {
   const [editorContent, setEditorContent] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -17,7 +18,7 @@ const PrivacypolicyText = () => {
     const fetchPrivacyPolicy = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}/api/admin/cms/privacy_policy`,
+          `${baseURL}/api/admin/cms/partner/privacy_policy`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -54,7 +55,7 @@ const PrivacypolicyText = () => {
   
     try {
       const response = await axios.patch(
-        `${baseURL}/api/admin/cms/privacy_policy`,
+        `${baseURL}/api/admin/cms/partner/privacy_policy`,
         { title: 'Privacy Policy', content: editorContent },
         {
           headers: {
@@ -80,7 +81,6 @@ const PrivacypolicyText = () => {
   
   return (
     <div>
-      <h2>Privacy Policy</h2>
       <ReactQuill
         value={editorContent}
         onChange={handleChange}
@@ -126,4 +126,4 @@ const PrivacypolicyText = () => {
   );
 };
 
-export default PrivacypolicyText;
+export default PartnerPrivacyPolicy;

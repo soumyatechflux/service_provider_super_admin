@@ -10,13 +10,16 @@ import {
   MenuItem,
   Button,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) => {
-  const [status, setStatus] = useState(support?.status || "New"); // Ensure proper casing
-  const [note, setNote] = useState(support?.note || ""); // Load existing note if available
+  const [status, setStatus] = useState(support?.status || "New");
+  const [priority, setPriority] = useState(support?.priority || "Medium");
+  const [assign, setAssign] = useState(support?.assign || "");
+  const [note, setNote] = useState(support?.note || "");
   const [loading, setLoading] = useState(false);
 
   const handleStatusUpdate = async () => {
@@ -32,8 +35,10 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
 
       const payload = {
         id: support.id,
-        status: status, // Corrected status keys
-        note: note, // Include note in payload
+        status,
+        priority,
+        assign,
+        note,
       };
 
       const response = await axios.patch(
@@ -47,7 +52,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
       );
 
       if (response?.status === 200 && response?.data?.success) {
-        onStatusChange(support.id, status, note);
+        onStatusChange(support.id, status, priority, assign, note);
         toast.success(response?.data?.message || "Status updated successfully!");
         getSupportData();
       } else {
@@ -88,17 +93,39 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
             fullWidth
             label="Status"
           >
-            {status === "New" && (
-              <MenuItem value="New" disabled>
-                New
-              </MenuItem>
-            )}
             <MenuItem value="New">New</MenuItem>
             <MenuItem value="In-review">In Review</MenuItem>
             <MenuItem value="Resolved">Resolved</MenuItem>
             <MenuItem value="Rejected">Rejected</MenuItem>
           </Select>
         </FormControl>
+
+        {/* Priority Dropdown */}
+        <FormControl fullWidth margin="normal">
+          <InputLabel id="priority-label">Priority</InputLabel>
+          <Select
+            labelId="priority-label"
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            fullWidth
+            label="Priority"
+          >
+            <MenuItem value="High">High</MenuItem>
+            <MenuItem value="Medium">Medium</MenuItem>
+            <MenuItem value="Low">Low</MenuItem>
+          </Select>
+        </FormControl>
+
+        {/* Assign Input */}
+        <TextField
+          label="Assign To"
+          value={assign}
+          onChange={(e) => setAssign(e.target.value)}
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          placeholder="Enter assignee name"
+        />
 
         {/* Note TextArea */}
         <TextField
@@ -120,7 +147,7 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
           onClick={handleStatusUpdate}
           disabled={loading}
         >
-          {loading ? "Saving..." : "Save"}
+          {loading ? <CircularProgress size={24} /> : "Save"}
         </Button>
         <Button variant="contained" onClick={onClose} color="error">
           Cancel
@@ -131,15 +158,3 @@ const EditStatusModal = ({ support, onClose, onStatusChange, getSupportData }) =
 };
 
 export default EditStatusModal;
-
-
-
-
-
-
-
-
-
-
-
-

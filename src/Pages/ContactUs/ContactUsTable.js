@@ -69,7 +69,9 @@ const ContactUsTable = () => {
       normalizeString(item.message ?? "").includes(searchTerm) ||
       normalizeString(formatDate(item.created_at)).includes(searchTerm) ||
       normalizeString(formatDate(item.updated_at)).includes(searchTerm) ||
-      normalizeString(item.status ?? "").includes(searchTerm)
+      normalizeString(item.status ?? "").includes(searchTerm)||
+      normalizeString(item.priority ?? "").includes(searchTerm) ||  
+      normalizeString(item.assign ?? "").includes(searchTerm)     
     );
   });
 
@@ -122,6 +124,8 @@ const ContactUsTable = () => {
                   <th>Location</th>
                   <th>Created At</th>
                   <th>Message</th>
+                  <th>Assign To</th>
+                  <th>Priority</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -151,6 +155,8 @@ const ContactUsTable = () => {
                             </button>
                           )}
                         </td>
+                        <td>{item.assign || "Not Assign"}</td>
+                        <td>{item.priority || "N/A"}</td>
                         <td>
                           <div style={{ display: "flex", alignItems: "center" }}>
                             <span>{item.status ? item.status : "N/A"}</span>
@@ -168,7 +174,7 @@ const ContactUsTable = () => {
                   })
                 ) : (
                   <tr>
-                    <td colSpan="8" className="text-center">
+                    <td colSpan="10" className="text-center">
                       No contact messages found.
                     </td>
                   </tr>

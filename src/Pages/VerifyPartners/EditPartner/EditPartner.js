@@ -1,6 +1,7 @@
+
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import "./VerifyChef.css";
+import "../VerifyChef/VerifyChef.css"
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -52,7 +53,7 @@ const CuisineSelect = ({ value, onChange }) => {
   );
 };
 
-const VerifyChef = () => {
+const EditPartner = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [loadingAction, setLoadingAction] = useState(null); // Add this state to track which button is loading
@@ -506,9 +507,9 @@ const VerifyChef = () => {
       formData.append("partner_id", id);
       formData.append("save_or_verify", action);
 
-      // if (action === "verify") {
-      //   formData.append("is_verify", isVerify);
-      // }
+      if (action === "verify") {
+        formData.append("is_verify", isVerify);
+      }
 
       setLoading(true);
       setLoadingAction(action);
@@ -1026,30 +1027,30 @@ const VerifyChef = () => {
 
       {/* Verify Button */}
       <div className="button-aliangment">
-  <button
-    onClick={() => handlePartnerDetails("save")}
-    className="verify-button"
-    disabled={loadingAction !== null}
-    style={{ width: "40%" }}
-  >
-    {loadingAction === "save" ? "Saving..." : "Save"}
-  </button>
-
-  {/* Hide the Verify button if restaurant is already verified */}
-  {isVerify === 0 && (
-    <button
-      onClick={() => handlePartnerDetails("verify")}
-      className="verify-button"
-      disabled={loadingAction !== null}
-      style={{ width: "40%" }}
-    >
-      {loadingAction === "verify" ? "Verifying..." : "Verify"}
-    </button>
-  )}
-</div>
-
+        <button
+          onClick={() => handlePartnerDetails("save")}
+          className="verify-button"
+          disabled={loadingAction !== null} // Disable both buttons while either is loading
+          style={{ width: "40%" }}
+        >
+          {loadingAction === "save" ? "Saving..." : "Save"}
+        </button>
+        <button
+          onClick={() => handlePartnerDetails("verify")}
+          className="verify-button"
+          disabled={loadingAction !== null} // Disable both buttons while either is loading
+          style={{ width: "40%" }}
+        >
+          {loadingAction === "verify" ? "Verifying..." : "Verify"}
+        </button>
+      </div>
     </div>
   );
 };
 
-export default VerifyChef;
+export default EditPartner;
+
+
+
+
+

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import axios from "axios";
-// import "./BookingDetailsModal.css";
 
 const ViewSupportDetails = ({ bookingId, onClose }) => {
   const [bookingDetails, setBookingDetails] = useState(null);
@@ -22,7 +21,9 @@ const ViewSupportDetails = ({ bookingId, onClose }) => {
     const fetchBookingDetails = async () => {
       try {
         setLoading(true);
-        const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+        const token = sessionStorage.getItem(
+          "TokenForSuperAdminOfServiceProvider"
+        );
         const response = await axios.get(
           `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/bookings/${bookingId}`,
           {
@@ -35,9 +36,11 @@ const ViewSupportDetails = ({ bookingId, onClose }) => {
           setBookingDetails(response.data.data);
         } else {
           console.error("Failed to fetch booking details");
+          setBookingDetails(null);
         }
       } catch (error) {
         console.error("Error fetching booking details:", error);
+        setBookingDetails(null);
       } finally {
         setLoading(false);
       }
@@ -67,43 +70,71 @@ const ViewSupportDetails = ({ bookingId, onClose }) => {
       <div className="modal-body">
         {loading ? (
           <p>Loading...</p>
-        ) : bookingDetails ? (
+        ) : bookingDetails && Object.keys(bookingDetails).length > 0 ? (
           <>
-            <p>
-              <strong>Booking ID:</strong> {bookingDetails.booking_id || "N/A"}
-            </p>
-            <p>
-              <strong>Guest Name:</strong> {bookingDetails.guest_name || "N/A"}
-            </p>
-            <p>
-              <strong>Visit Date:</strong>{" "}
-              {new Date(bookingDetails.visit_date).toLocaleDateString()}
-            </p>
-            <p>
-              <strong>Visit Time:</strong> {bookingDetails.visit_time || "N/A"}
-            </p>
-            <p>
-              <strong>Visit Address:</strong> {bookingDetails.visit_address || "N/A"}
-            </p>
-            <p>
-              <strong>Sub Category:</strong>{" "}
-              {bookingDetails.sub_category?.sub_category_name || "N/A"}
-            </p>
-            <p>
-              <strong>Billing Amount:</strong> {bookingDetails.billing_amount || "N/A"}
-            </p>
-            <p>
-              <strong>Payment Mode:</strong>{" "}
-              {bookingDetails.payment_mode === "online"
-                ? "Online"
-                : bookingDetails.payment_mode === "cod"
-                ? "COD"
-                : bookingDetails.payment_mode || "N/A"}
-            </p>
-            <p>
-              <strong>Payment Status:</strong>{" "}
-              {bookingDetails.payment_status || "N/A"}
-            </p>
+            {bookingDetails.booking_id && (
+              <p>
+                <strong>Booking ID:</strong> {bookingDetails.booking_id}
+              </p>
+            )}
+            {bookingDetails.guest_name && (
+              <p>
+                <strong>Guest Name:</strong> {bookingDetails.guest_name}
+              </p>
+            )}
+            {bookingDetails.visit_date && (
+              <p>
+                <strong>Visit Date:</strong>{" "}
+                {new Date(bookingDetails.visit_date).toLocaleDateString()}
+              </p>
+            )}
+            {bookingDetails.visit_time && (
+              <p>
+                <strong>Visit Time:</strong> {bookingDetails.visit_time}
+              </p>
+            )}
+            {bookingDetails.visit_address &&
+            bookingDetails.visit_address.replace(/[, ]+/g, "").trim() !== "" ? (
+              <p>
+                <strong>Visit Address:</strong> {bookingDetails.visit_address}
+              </p>
+            ) : (
+              <p>
+                <strong>Visit Address:</strong> N/A
+              </p>
+            )}
+
+            {bookingDetails.address_from && (
+              <p>
+                <strong>Address From:</strong> {bookingDetails.address_from}
+              </p>
+            )}
+            {bookingDetails.address_to && (
+              <p>
+                <strong>Address To:</strong> {bookingDetails.address_to}
+              </p>
+            )}
+            {bookingDetails.sub_category?.sub_category_name && (
+              <p>
+                <strong>Sub Category:</strong>{" "}
+                {bookingDetails.sub_category.sub_category_name}
+              </p>
+            )}
+            {bookingDetails.billing_amount && (
+              <p>
+                <strong>Billing Amount:</strong> {bookingDetails.billing_amount}
+              </p>
+            )}
+            {bookingDetails.payment_mode && (
+              <p>
+                <strong>Payment Mode:</strong>{" "}
+                {bookingDetails.payment_mode === "online"
+                  ? "Online"
+                  : bookingDetails.payment_mode === "cod"
+                  ? "COD"
+                  : bookingDetails.payment_mode}
+              </p>
+            )}
           </>
         ) : (
           <p>No details available</p>

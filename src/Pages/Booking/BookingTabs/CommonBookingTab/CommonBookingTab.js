@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
-import Loader from "../../../Loader/Loader";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import EditStatusModal from "./EditStatusModal/EditStatusModal";
+import Loader from "../../../Loader/Loader";
 import AttachmentModal from "./AttachmentModal/AttachmentModal";
+import EditStatusModal from "./EditStatusModal/EditStatusModal";
 import PriceDetailModal from "./PriceDetailModal/PriceDetailModal";
-import DatePicker from "react-datepicker";
 
 const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   function formatDateWithTime(dateString) {
@@ -159,6 +158,20 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   
   const normalizeNumber = (num) => (isNaN(num) ? "" : Number(num)); // Convert to number or empty string
   
+  // Function to safely parse `dishes` if it's a stringified array
+  const parseDishes = (dishes) => {
+    if (!dishes) return "N/A";
+    if (typeof dishes === "string") {
+      try {
+        const parsed = JSON.parse(dishes);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed.join(", ") : "N/A";
+      } catch (error) {
+        return "N/A"; // If JSON parsing fails, return "N/A"
+      }
+    }
+    return Array.isArray(dishes) && dishes.length > 0 ? dishes.join(", ") : "N/A";
+  };
+  
   // Function to format date in "DD MMM YY, h:mm A" format
   const formatDateTime = (dateString) => {
     if (!dateString) return "";
@@ -176,6 +189,7 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   const filteredData = dummy_Data.filter((item) => {
     const searchTerm = normalizeString(searchInput);
     const searchTermNumber = normalizeNumber(searchInput); // Convert input to a number if possible
+    const formattedDishes = normalizeString(parseDishes(item?.dishes)); // Ensure dishes match the displayed format
   
     return (
       normalizeString(item?.guest_name ?? "").includes(searchTerm) || // Customer name
@@ -189,9 +203,19 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
       normalizeString(item?.instructions ?? "").includes(searchTerm) || // Instructions
       normalizeNumber(item?.billing_amount) === searchTermNumber || // Billing Amount as a number
       normalizeString(formatDateTime(item?.visit_date)).includes(searchTerm) || // Visit Date formatted
-      normalizeString(formatDateTime(item?.created_at)).includes(searchTerm) // Created Date formatted
+      normalizeString(formatDateTime(item?.created_at)).includes(searchTerm) || // Created Date formatted
+      normalizeString(formatDateTime(item?.reached_location)).includes(searchTerm) || // Reached Location formatted
+      normalizeString(formatDateTime(item?.start_job)).includes(searchTerm) || // Start Job formatted
+      normalizeString(formatDateTime(item?.end_job)).includes(searchTerm) || // End Job formatted
+      normalizeString(formatDateTime(item?.payment)).includes(searchTerm) || // Payment formatted
+      normalizeString(item?.car_type ?? "").includes(searchTerm) || // Car Type
+      normalizeString(item?.transmission_type ?? "").includes(searchTerm) || // Transmission Type
+      normalizeNumber(item?.people_count) === searchTermNumber || // People Count as number
+      formattedDishes.includes(searchTerm) || // Search in formatted dishes
+      normalizeString(item?.menu ?? "N/A").includes(searchTerm) // Menu (handles null)
     );
   });
+  
   
   const currentEntries = filteredData.slice(
     indexOfFirstEntry,
@@ -335,6 +359,32 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                   <th scope="col" style={{ width: "10%" }}>
                     Sub Category
                   </th>
+                  {category_id === "1" && (
+                    <th scope="col" style={{ width: "10%" }}>
+                      Menu
+                    </th>
+                  )}
+                  {category_id === "1" && (
+                    <th scope="col" style={{ width: "10%" }}>
+                      Dishes
+                    </th>
+                  )}
+                   {category_id === "2" && (
+                    <th scope="col" style={{ width: "10%" }}>
+                      Car Type
+                    </th>
+                  )}
+                  {category_id === "2" && (
+                    <th scope="col" style={{ width: "10%" }}>
+                     Transmission Type
+                    </th>
+                  )}
+                  
+                  {(category_id === "1" || category_id === "2") && (
+                  <th scope="col" style={{ width: "15%" }}>
+                    No of People
+                  </th> )}
+                  
                   <th scope="col" style={{ width: "5%" }}>
                     Amount
                   </th>
@@ -361,6 +411,21 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                     Booking Date
                   </th>
 
+                  <th scope="col" style={{ width: "15%" }}>
+                    Partner Reached Time
+                  </th>
+
+                  <th scope="col" style={{ width: "15%" }}>
+                    Booking Start Time
+                  </th>
+
+                  <th scope="col" style={{ width: "15%" }}>
+                    Booking End Time
+                  </th>
+                  <th scope="col" style={{ width: "15%" }}>
+                    Payment Time
+                  </th>
+
                   <th scope="col" style={{ width: "10%" }}>
                     Payment Mode
                   </th>
@@ -369,20 +434,15 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                       Visit Slot Count
                     </th>
                   )}
-                  {category_id !== "1" && ( // Hide if category_id is "1"
-  <th scope="col" style={{ width: "10%" }}>
-    Hours Booked
-  </th>
-)}
-
+                  {category_id !== "1" && ( <th scope="col" style={{ width: "10%" }}> Hours Booked </th>)}
                   <th scope="col" style={{ width: "10%" }}>
                     Special Request
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
-                    Status
+                    Attachments
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
-                    Attachments
+                    Status
                   </th>
                   <th scope="col" style={{ width: "5%" }}>
                     Action
@@ -398,6 +458,31 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
         <td>{item.guest_name || "N/A"}</td>
         <td>{item.partner?.name || "Not assigned yet"}</td>
         <td>{item.sub_category_name?.sub_category_name || "Unknown"}</td>
+        {category_id === "1" && <td>{item.menu || "N/A"}</td>}
+        {category_id === "1" && (
+  <td>
+    {typeof item.dishes === "string"
+      ? (() => {
+          try {
+            const parsedDishes = JSON.parse(item.dishes);
+            return Array.isArray(parsedDishes) && parsedDishes.length > 0
+              ? parsedDishes.join(", ")
+              : "N/A"; // Handle empty array []
+          } catch (error) {
+            return "N/A"; // If JSON parsing fails, return "N/A"
+          }
+        })()
+      : Array.isArray(item.dishes) && item.dishes.length > 0
+      ? item.dishes.join(", ")
+      : "N/A"}
+  </td>
+)}
+
+        {category_id === "2" && <td>{item.car_type || "N/A"}</td>}
+        {category_id === "2" && <td>{item.transmission_type || "N/A"}</td>}
+        {(category_id === "1" || category_id === "2") && (
+         <td>{item.people_count || "N/A"}</td>
+        )}
         <td>
           {item.billing_amount || "N/A"}
           <i
@@ -435,6 +520,10 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
         </td>
 
         <td>{item.created_at ? formatDateWithTime(item.created_at) : "N/A"}</td>
+        <td>{item.reached_location ? formatDateWithTime(item.reached_location) : "N/A"}</td>
+        <td>{item.start_job ? formatDateWithTime(item.start_job) : "N/A"}</td>
+        <td>{item.end_job ? formatDateWithTime(item.end_job) : "N/A"}</td>
+        <td>{item.payment ? formatDateWithTime(item.payment) : "N/A"}</td>
 
         <td>{formatPaymentMode(item.payment_mode)}</td>
 
@@ -442,12 +531,6 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
         {category_id !== "1" && <td>{item.no_of_hours_booked || "NA"}</td>}
 
         <td>{item.instructions || "N/A"}</td>
-        <td>
-          {item.booking_status
-            ? item.booking_status.charAt(0).toUpperCase() + item.booking_status.slice(1)
-            : "No current_address available."}
-        </td>
-
         <td>
           {item.start_job_attachments.length > 0 || item.end_job_attachments.length > 0 ? (
             <i
@@ -464,22 +547,37 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
             "No Attachments"
           )}
         </td>
-        <td>
-          <i
-            className={`fa fa-pencil-alt ${
-              ["upcoming", "inprogress"].includes(item.booking_status) ? "text-primary" : "text-muted"
-            }`}
-            style={{
-              cursor: item.booking_status === "inprogress" ? "not-allowed" : "pointer",
-              opacity: item.booking_status === "inprogress" ? 0.5 : 1,
-            }}
-            onClick={() =>
-              item.booking_status === "upcoming"
-                ? handleOpenEditModal(item.booking_id, item.booking_status, item.partner_id, item.category_id)
-                : null
-            }
-          />
-        </td>
+        <td
+  style={
+    item.booking_status === "not-started"
+      ? { backgroundColor: "#fff3cd", color: "#dc3545", fontWeight: "bold" }
+      : {}
+  }
+>
+  {item.booking_status
+    ? item.booking_status.charAt(0).toUpperCase() + item.booking_status.slice(1)
+    : "N/A"}
+</td>
+
+<td>
+  <i
+    className={`fa fa-pencil-alt ${
+      ["upcoming", "inprogress", "not-started"].includes(item.booking_status)
+        ? "text-primary" // Make it blue for "not-started"
+        : "text-muted"
+    }`}
+    style={{
+      cursor: ["not-started", "upcoming"].includes(item.booking_status) ? "pointer" : "not-allowed",
+      opacity: item.booking_status === "inprogress" ? 0.5 : 1, // Keep opacity for "inprogress"
+    }}
+    onClick={() =>
+      ["not-started", "upcoming"].includes(item.booking_status)
+        ? handleOpenEditModal(item.booking_id, item.booking_status, item.partner_id, item.category_id)
+        : null
+    }
+  />
+</td>
+
       </tr>
     ))
   ) : (

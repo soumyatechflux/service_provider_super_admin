@@ -134,27 +134,34 @@ const VerifiedPartnerTab = ({
     const categoryName = categoryMap[restaurant.category_id] || "";
     const formattedDate = formatDate(restaurant.created_at);
     const termsConditionText = restaurant.terms_and_condition === 1 ? "accepted" : "not accepted";
-    const genderText = normalizeString(restaurant.gender || ""); // ✅ Normalize gender
+    const genderText = normalizeString(restaurant.gender || "");
   
     if (isNumber) {
-      return restaurant.years_of_experience?.toString() === searchInput.trim();
-    } else if (searchTerm === "accepted" || searchTerm === "not accepted") {
-      return termsConditionText === searchTerm; // ✅ Strict filtering for Accepted / Not Accepted
+      return (
+        restaurant.years_of_experience?.toString() === searchInput.trim() || 
+        restaurant.mobile?.toString().includes(searchInput.trim()) 
+      );
+    } else if (searchTerm === "accepted") {
+      return restaurant.terms_and_condition === 1; // ✅ Show only records where terms_and_condition is 1
+    } else if (searchTerm === "not accepted") {
+      return restaurant.terms_and_condition === 0; // ✅ Show only records where terms_and_condition is 0
     } else if (searchTerm === "male" || searchTerm === "female") {
-      return genderText === searchTerm; // ✅ Strict filtering for gender
+      return genderText === searchTerm;
     } else {
       return (
         normalizeString(restaurant.name).includes(searchTerm) ||
         normalizeString(restaurant.email).includes(searchTerm) ||
         normalizeString(restaurant.rating?.toString()).includes(searchTerm) ||
         normalizeString(categoryName).includes(searchTerm) ||
-        normalizeString(restaurant.mobile).includes(searchTerm) ||
+        restaurant.mobile?.toString().includes(searchTerm) ||
         normalizeString(restaurant.current_address).includes(searchTerm) ||
         normalizeString(restaurant.active_status).includes(searchTerm) ||
         normalizeString(formattedDate).includes(searchTerm)
       );
     }
   });
+  
+  
   
   
   // Pagination logic
@@ -356,8 +363,11 @@ const VerifiedPartnerTab = ({
                   <th scope="col" style={{ width: "10%" }}>
                     T & C 
                   </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Register By
+                  </th>
                   <th scope="col" style={{ width: "5%" }}>
-                    Verify
+                    Verification Action
                   </th>
                   {restaurants.some(
                     (restaurant) => restaurant.is_verify === 1
@@ -378,7 +388,7 @@ const VerifiedPartnerTab = ({
               <tbody style={{ cursor: "default" }}>
   {currentEntries.length === 0 ? (
     <tr>
-      <td colSpan="13" style={{ textAlign: "center", fontWeight: "bold" }}>
+      <td colSpan="15" style={{ textAlign: "center", fontWeight: "bold" }}>
         No data available
       </td>
     </tr>
@@ -429,7 +439,10 @@ const VerifiedPartnerTab = ({
         <td className="text-user">
           {restaurant.terms_and_condition === 1 ? "Accepted" : "Not Accepted"}
         </td>
-        <td>
+        <td className="text-user">
+          {restaurant.registered_by || "N/A"}
+        </td>
+        {/* <td>
           <div style={{ display: "flex", gap: "2px", justifyContent: "center" }}>
             <div
               className={`edit_users ${restaurant.is_verify !== 0 ? "disabled" : ""}`}
@@ -458,7 +471,33 @@ const VerifiedPartnerTab = ({
               )}
             </div>
           </div>
-        </td>
+        </td> */}
+
+
+<td>
+  <div style={{ display: "flex", gap: "2px", justifyContent: "center" }}>
+    <div
+      className="edit_users"
+      onClick={() =>
+        handleNavigateToVerifyCook(restaurant?.category_id, restaurant?.id, restaurant?.is_verify)
+      }
+      style={{
+        cursor: "pointer",
+        opacity: 1,
+      }}
+    >
+      {restaurant.is_verify !== 0 ? (
+        // <VerifiedUserIcon style={{ color: "green" }} />
+        <EditIcon style={{ color: "green" }} />
+      ) : (
+        <HighlightOffIcon style={{ color: "red" }} />
+      )}
+    </div>
+  </div>
+</td>
+
+
+
         {restaurant.is_verify === 1 && (
           <td className={`status ${restaurant.active_status}`}>
             <div
@@ -478,13 +517,13 @@ const VerifiedPartnerTab = ({
                 }[restaurant.active_status] || "Unknown Status"}
               </span>
               <div onClick={() => handleRestaurantClick(restaurant)} style={{ cursor: "pointer", opacity: 1 }}>
-                <EditIcon />
               </div>
             </div>
           </td>
         )}
-        <td className="edit_users action-btn-trash" style={{ cursor: "pointer", opacity: 1 }} onClick={() => handleDeleteClick(restaurant)}>
-          <DeleteIcon style={{ color: "red" }} />
+        <td >
+          <DeleteIcon className="edit_users action-btn-trash" style={{ cursor: "pointer", opacity: 1, color: "red" }} onClick={() => handleDeleteClick(restaurant)} />
+          {/* <EditIcon /> */}
         </td>
         <td className="text-user">
           <i

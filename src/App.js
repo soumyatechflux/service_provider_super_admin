@@ -36,7 +36,6 @@ import Banner from "./Pages/Banner/Banner";
 import Services from "./Pages/Services/Services";
 import FAQs from "./Pages/FAQs/FAQs";
 import AboutUs from "./Pages/AboutUs/AboutUs";
-import PrivacyPolicy from "./Pages/PrivacyPolicy/PrivacyPolicy";
 import CancellationPlicy from "./Pages/CancellationPlicy/CancellationPlicy";
 import RefundPolicy from "./Pages/RefundPolicy/RefundPolicy";
 import ServerDown from "./Pages/ServerDown/ServerDown";
@@ -55,6 +54,8 @@ import ContactUs from "./Pages/ContactUs/ContactUs";
 import RewardPoints from "./Pages/RewardPoints/RewardPoints";
 import AlertCentre from "./Pages/AlertCentre/AlertCentre";
 import TermsAndConditionTab from "./Pages/Terms&Conditions/TermsAndConditionTab/TermsAndConditionTab";
+import PrivacyPolicyTab from "./Pages/PrivacyPolicy/PrivacyPolicyTab";
+import EditPartner from "./Pages/VerifyPartners/EditPartner/EditPartner";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -147,6 +148,7 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/sub-categories" element={<SubCategories />} />
           <Route path="/commission-due" element={<CommissionDue />} />
           <Route path="/verify-partner" element={<VerifyChef />} />
+          <Route path="/edit-partner" element={<EditPartner />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/pricing-module" element={<Pricing />} />
           <Route path="/inquiries" element={<Inquiries />} />
@@ -161,7 +163,7 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/faq" element={<FAQs/>}/>
           <Route path="/about-us" element={<AboutUs/>}/>
           <Route path="/terms-and-conditions" element={<TermsAndConditionTab/>}/>
-          <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
+          <Route path="/privacy-policy" element={<PrivacyPolicyTab/>}/>
           <Route path="/cancellation-policy" element={<CancellationPlicy/>}/>
           <Route path="/refund-policy" element={<RefundPolicy/>}/>
           <Route path="/help-centre" element={<HelpCentre/>}/>

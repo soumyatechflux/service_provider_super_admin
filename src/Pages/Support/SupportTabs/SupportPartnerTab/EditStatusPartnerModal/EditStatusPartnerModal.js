@@ -16,11 +16,18 @@ import { toast } from "react-toastify";
 
 const EditStatusPartnerModal = ({ support, onClose, onStatusChange, getSupportData }) => {
   const [status, setStatus] = useState(support?.status || "New"); // Default to "New"
+  const [priority, setPriority] = useState(support?.priority || "Medium"); // Default to "Medium"
+  const [assign, setAssign] = useState(support?.assign || ""); // Default to empty
   const [note, setNote] = useState(""); // Initially empty
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setNote(support?.note || ""); // Load existing note if available
+    if (support) {
+      setStatus(support?.status || "New");
+      setPriority(support?.priority || "Medium");
+      setAssign(support?.assign || "");
+      setNote(support?.note || "");
+    }
   }, [support]);
 
   const handleStatusUpdate = async () => {
@@ -36,8 +43,10 @@ const EditStatusPartnerModal = ({ support, onClose, onStatusChange, getSupportDa
 
       const payload = {
         id: support.id,
-        status: status, // Ensure correct status format
-        note: note, // Include previous/existing note
+        status,
+        priority, // Include priority in payload
+        assign, // Include assign in payload
+        note, // Include previous/existing note
       };
 
       const response = await axios.patch(
@@ -51,7 +60,7 @@ const EditStatusPartnerModal = ({ support, onClose, onStatusChange, getSupportDa
       );
 
       if (response?.status === 200 && response?.data?.success) {
-        onStatusChange(support.id, status, note);
+        onStatusChange(support.id, status, priority, assign, note);
         toast.success(response?.data?.message || "Status updated successfully!");
         getSupportData();
       } else {
@@ -90,19 +99,39 @@ const EditStatusPartnerModal = ({ support, onClose, onStatusChange, getSupportDa
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             fullWidth
-            label="Status"
           >
-            {status === "New" && (
-              <MenuItem value="New" disabled>
-                New
-              </MenuItem>
-            )}
             <MenuItem value="New">New</MenuItem>
             <MenuItem value="In-review">In Review</MenuItem>
             <MenuItem value="Resolved">Resolved</MenuItem>
             <MenuItem value="Rejected">Rejected</MenuItem>
           </Select>
         </FormControl>
+
+        {/* Priority Dropdown */}
+        <FormControl fullWidth margin="normal">
+          <InputLabel id="priority-label">Priority</InputLabel>
+          <Select
+            labelId="priority-label"
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            fullWidth
+          >
+            <MenuItem value="High">High</MenuItem>
+            <MenuItem value="Medium">Medium</MenuItem>
+            <MenuItem value="Low">Low</MenuItem>
+          </Select>
+        </FormControl>
+
+        {/* Assign To Input */}
+        <TextField
+          label="Assign To"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          value={assign}
+          onChange={(e) => setAssign(e.target.value)}
+          placeholder="Enter assignee name"
+        />
 
         {/* Note TextArea */}
         <TextField

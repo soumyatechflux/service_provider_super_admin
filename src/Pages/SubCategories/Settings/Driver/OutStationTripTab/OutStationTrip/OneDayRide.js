@@ -71,11 +71,11 @@ const OutStationTrip = () => {
         setBookingSummaryPage(data.booking_summary || "");
         setNightCharge(data.night_charge ?? "");
         setAdditionalPriceHours(data.additional_price_hours || {});
-        setGst(data.gst || null);
+        setGst(data.gst);
         setSecureFees(data.secure_fee || null);
         setPlatformFees(data.platform_fee ?? null);
 
-        setPartnerTax(data.partner_tax || null);
+        setPartnerTax(data.partner_tax);
         setCommission(data.commission || null);
 setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null);
 
@@ -231,10 +231,10 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     formData.append("booking_summary", bookingSummaryPage);
     formData.append("additional_price_hours", additionalPriceHours);
     formData.append("booking_details", summary);
-    formData.append("gst", gst || ""); 
     formData.append("secure_fee", secureFees ?? "");
     formData.append("platform_fee", platformFees ?? "");
-    formData.append("partner_tax", partnerTax || "");
+    formData.append("gst", gst ?? "0");
+    formData.append("partner_tax", partnerTax ?? "0");  
     formData.append("commission", commission || "");
     formData.append("night_charge", nightCharge ?? "");
 
@@ -497,24 +497,20 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     />
   </div>
   <div className="col-md-3">
-    <label htmlFor="gst" className="form-label">Tax on commission & Platform Fee</label>
-    <input
-      type="number"
-      className="form-control"
-      id="gst"
-      value={gst === null ? "" : gst}
-      onChange={(e) => {
-        let value = e.target.value === "" ? null : Number(e.target.value);
-        if (value === 0) value = 1; // Convert 0 to 1
-        setGst(value);
-      }}
-      min="1"
-      required
-    />
-  </div>
- 
-
-
+  <label htmlFor="gst" className="form-label">Tax on commission & Platform Fee</label>
+  <input
+    type="number"
+    className="form-control"
+    id="gst"
+    value={gst === null ? "" : gst}
+    onChange={(e) => {
+      let value = e.target.value === "" ? null : Number(e.target.value);
+      setGst(value);
+    }}
+    min="0"
+    required
+  />
+</div>
   <div className="col-md-3">
   <label htmlFor="partnerTax" className="form-label">Tax on Partner's Pay</label>
   <input
@@ -524,10 +520,9 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     value={partnerTax === null ? "" : partnerTax}
     onChange={(e) => {
       let value = e.target.value === "" ? null : Number(e.target.value);
-      if (value === 0) value = 1; // Convert 0 to 1
       setPartnerTax(value);
     }}
-    min="1"
+    min="0"
     required
   />
 </div>

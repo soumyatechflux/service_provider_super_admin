@@ -18,7 +18,9 @@ const SupportPartnerTab = () => {
   // Fetch support data
   const getSupportData = async () => {
     try {
-      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
 
       setLoading(true);
 
@@ -37,7 +39,9 @@ const SupportPartnerTab = () => {
         const data = response?.data?.data || [];
         setSupportData(data);
       } else {
-        toast.error(response.data?.message || "Failed to fetch support tickets.");
+        toast.error(
+          response.data?.message || "Failed to fetch support tickets."
+        );
       }
     } catch (error) {
       console.error("Error fetching support tickets:", error);
@@ -75,29 +79,36 @@ const SupportPartnerTab = () => {
   // Updated filtering logic: search by name, email, mobile, description, created_at, or updated_at
   const filteredData = supportData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
-  
+
     // Function to format date as "DD MMM YYYY"
     const formatDate = (dateString) => {
       if (!dateString) return "";
       const date = new Date(dateString);
-      return `${date.getDate()} ${date.toLocaleString("en-US", { month: "short" })} ${date.getFullYear()}`;
+      return `${date.getDate()} ${date.toLocaleString("en-US", {
+        month: "short",
+      })} ${date.getFullYear()}`;
     };
-  
+
     return (
       normalizeString(item?.name ?? "").includes(searchTerm) ||
       normalizeString(item?.email ?? "").includes(searchTerm) ||
       normalizeString(item?.mobile ?? "").includes(searchTerm) ||
       normalizeString(item?.description ?? "").includes(searchTerm) ||
-      normalizeString(formatDate(item?.created_at)).includes(searchTerm) || // Formatted date search
-      normalizeString(formatDate(item?.updated_at)).includes(searchTerm) || // Formatted date search
-      normalizeString(item?.status ?? "").includes(searchTerm)
+      normalizeString(formatDate(item?.created_at)).includes(searchTerm) || 
+      normalizeString(formatDate(item?.updated_at)).includes(searchTerm) || 
+      normalizeString(item?.status ?? "").includes(searchTerm) ||
+      normalizeString(item?.priority ?? "").includes(searchTerm) || 
+      normalizeString(item?.assign ?? "Unassigned").includes(searchTerm) 
     );
   });
-  
+
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = filteredData.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   const getPageRange = () => {
     let start = currentPage - 1;
@@ -158,7 +169,10 @@ const SupportPartnerTab = () => {
           </button>
         </li>
         {pageRange.map((number) => (
-          <li key={number} className={`page-item ${currentPage === number ? "active" : ""}`}>
+          <li
+            key={number}
+            className={`page-item ${currentPage === number ? "active" : ""}`}
+          >
             <button
               className="page-link"
               onClick={() => handlePageChange(number)}
@@ -171,20 +185,34 @@ const SupportPartnerTab = () => {
             </button>
           </li>
         ))}
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
           <button
             className="page-link"
-            onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+            onClick={() =>
+              handlePageChange(Math.min(currentPage + 1, totalPages))
+            }
+            style={{
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            }}
           >
             Next
           </button>
         </li>
-        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
+        >
           <button
             className="page-link"
             onClick={() => handlePageChange(totalPages)}
-            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+            style={{
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            }}
           >
             Last
           </button>
@@ -209,7 +237,10 @@ const SupportPartnerTab = () => {
       ) : (
         <>
           <div className="table-responsive mb-5">
-            <table style={{ cursor: "default" }} className="table table-bordered table-user">
+            <table
+              style={{ cursor: "default" }}
+              className="table table-bordered table-user"
+            >
               <thead className="heading_user">
                 <tr>
                   <th style={{ width: "5%" }}>Sr. No.</th>
@@ -218,51 +249,71 @@ const SupportPartnerTab = () => {
                   {/* <th style={{ width: "10%" }}>Email</th> */}
                   <th style={{ width: "25%" }}>Description</th>
                   <th style={{ width: "25%" }}>Image</th>
-                  <th style={{ width: "10%" }}>Status</th>
                   <th style={{ width: "10%" }}>Created At</th>
+                  <th style={{ width: "10%" }}>Assign To</th>
+                  <th style={{ width: "10%" }}>Priority</th>
+                  <th style={{ width: "10%" }}>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {currentEntries.map((item, index) => (
-                  <tr key={item.id || index}>
-                    <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
-                    <td>{item?.name || "N/A"}</td>
-                    <td>{item?.mobile || "N/A"}</td>
-                    {/* <td>{item?.email || "N/A"}</td> */}
-                    <td>{item?.description || "N/A"}</td>
-                    <td>
-  {item.attachment ? (
-    <a href={item.attachment} target="_blank" rel="noopener noreferrer">
-      <img
-        src={item.attachment}
-        alt="Partner"
-        style={{
-          width: "50px",
-          height: "50px",
-          cursor: "pointer",
-        }}
-      />
-    </a>
-  ) : (
-    "N/A"
-  )}
-</td>
-                    <td>
-                      <div className="status-div">
-                        <span>
-                          {item.status
-                            ? item.status.charAt(0).toUpperCase() + item.status.slice(1)
-                            : "New"}
-                        </span>
-                        <EditIcon
-                          onClick={() => handleEditStatus(item)}
-                          style={{ cursor: "pointer" }}
-                        />
-                      </div>
+                {currentEntries.length > 0 ? (
+                  currentEntries.map((item, index) => (
+                    <tr key={item.id || index}>
+                      <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
+                      <td>{item?.name || "N/A"}</td>
+                      <td>{item?.mobile || "N/A"}</td>
+                      {/* <td>{item?.email || "N/A"}</td> */}
+                      <td>{item?.description || "N/A"}</td>
+                      <td>
+                        {item.attachment ? (
+                          <a
+                            href={item.attachment}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <img
+                              src={item.attachment}
+                              alt="Partner"
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                cursor: "pointer",
+                              }}
+                            />
+                          </a>
+                        ) : (
+                          "N/A"
+                        )}
+                      </td>
+                      <td>{formatDate(item?.created_at)}</td>
+                      <td>{item?.assign || "N/A"}</td>
+                      <td>{item?.priority || "N/A"}</td>
+                      <td>
+                        <div className="status-div">
+                          <span>
+                            {item.status
+                              ? item.status.charAt(0).toUpperCase() +
+                                item.status.slice(1)
+                              : "New"}
+                          </span>
+                          <EditIcon
+                            onClick={() => handleEditStatus(item)}
+                            style={{ cursor: "pointer" }}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="9"
+                      style={{ textAlign: "center", padding: "10px" }}
+                    >
+                      No Data Available
                     </td>
-                    <td>{formatDate(item?.created_at)}</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

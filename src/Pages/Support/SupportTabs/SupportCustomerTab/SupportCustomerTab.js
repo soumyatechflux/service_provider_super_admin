@@ -20,7 +20,9 @@ const SupportCustomerTab = () => {
   // Fetch Support Data
   const getSupportData = useCallback(async () => {
     try {
-      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+      const token = sessionStorage.getItem(
+        "TokenForSuperAdminOfServiceProvider"
+      );
       setLoading(true);
 
       const response = await axios.get(
@@ -52,32 +54,32 @@ const SupportCustomerTab = () => {
     getSupportData();
   }, [getSupportData]);
 
-  // Normalization function to ensure a consistent comparison
+ 
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
 
-  // Filter supportData using multiple fields: name, email, mobile, description, created_at, and updated_at
   const filteredData = supportData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
-  
+
     // Function to format date as MM/DD/YYYY
     const formatDate = (dateString) => {
       if (!dateString) return "";
       const date = new Date(dateString);
       return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     };
-  
+
     return (
       normalizeString(item.email ?? "").includes(searchTerm) ||
       normalizeString(item.name ?? "").includes(searchTerm) ||
       normalizeString(item.mobile ?? "").includes(searchTerm) ||
       normalizeString(item.description ?? "").includes(searchTerm) ||
-      normalizeString(formatDate(item.created_at)).includes(searchTerm) || // Formatted date search
-      normalizeString(formatDate(item.updated_at)).includes(searchTerm) || // Formatted date search
-      normalizeString(item.status ?? "").includes(searchTerm)
+      normalizeString(formatDate(item.created_at)).includes(searchTerm) || 
+      normalizeString(formatDate(item.updated_at)).includes(searchTerm) || 
+      normalizeString(item.status ?? "").includes(searchTerm) ||
+    normalizeString(item.priority ?? "").includes(searchTerm) ||  
+    normalizeString(item.assign ?? "").includes(searchTerm)       
     );
   });
-  
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
@@ -127,66 +129,73 @@ const SupportCustomerTab = () => {
                   <th>Mobile</th>
                   <th>Description</th>
                   <th>Image</th>
-                  <th>Status</th>
                   <th>Created At</th>
                   <th>Updated At</th>
+                  <th>Assign To</th>
+                  <th>Priority</th>
+                  <th>Status</th>
                   <th scope="col" style={{ width: "5%" }}>
                     Action
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {currentEntries.map((item, index) => (
-                  <tr key={item.id}>
-                    <td>{indexOfFirstEntry + index + 1}</td>
-                    <td>{item.name || "No name available"}</td>
-                    <td>{item.mobile}</td>
-                    <td>{item.description}</td>
-                    <td>
-  {item.attachment ? (
-    <a href={item.attachment} target="_blank" rel="noopener noreferrer">
-      <img
-        src={item.attachment}
-        alt="Customer"
-        style={{
-          width: "50px",
-          height: "50px",
-          cursor: "pointer",
-        }}
-      />
-    </a>
+  {currentEntries.length > 0 ? (
+    currentEntries.map((item, index) => (
+      <tr key={item.id}>
+        <td>{indexOfFirstEntry + index + 1}</td>
+        <td>{item.name || "No name available"}</td>
+        <td>{item.mobile || "N/A"}</td>
+        <td>{item.description || "N/A"}</td>
+        <td>
+          {item.attachment ? (
+            <a href={item.attachment} target="_blank" rel="noopener noreferrer">
+              <img
+                src={item.attachment}
+                alt="Customer"
+                style={{ width: "50px", height: "50px", cursor: "pointer" }}
+              />
+            </a>
+          ) : (
+            "N/A"
+          )}
+        </td>
+        <td>{new Date(item.created_at).toLocaleDateString()}</td>
+        <td>{new Date(item.updated_at).toLocaleDateString()}</td>
+        <td>{item.assign || "Not Assign Yet"}</td>
+        <td>{item.priority || "N/A"}</td>
+        <td>
+          <div className="status-div">
+            <span>
+              {item.status
+                ? item.status.charAt(0).toUpperCase() + item.status.slice(1)
+                : "New"}
+            </span>
+            <EditIcon
+              onClick={() => handleEditStatus(item)}
+              style={{ cursor: "pointer" }}
+            />
+          </div>
+        </td>
+        <td>
+          <button
+            className="btn Discount-btn"
+            onClick={() => setSelectedBookingId(item.booking_id)}
+          >
+            View
+          </button>
+        </td>
+      </tr>
+    ))
   ) : (
-    "N/A"
+    <tr>
+      <td colSpan="11" style={{ textAlign: "center", padding: "10px" }}>
+        No Data Available
+      </td>
+    </tr>
   )}
-</td>
+</tbody>
 
-                    <td>
-                      <div className="status-div">
-                        <span>
-                          {item.status
-                            ? item.status.charAt(0).toUpperCase() +
-                              item.status.slice(1)
-                            : "New"}
-                        </span>
-                        <EditIcon
-                          onClick={() => handleEditStatus(item)}
-                          style={{ cursor: "pointer" }}
-                        />
-                      </div>
-                    </td>
-                    <td>{new Date(item.created_at).toLocaleDateString()}</td>
-                    <td>{new Date(item.updated_at).toLocaleDateString()}</td>
-                    <td>
-                      <button
-                        className="btn Discount-btn"
-                        onClick={() => setSelectedBookingId(item.booking_id)}
-                      >
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
             </table>
           </div>
           {/* You can add your pagination controls here if needed */}
