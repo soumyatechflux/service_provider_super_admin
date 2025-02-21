@@ -110,7 +110,7 @@ const SettingsTable = () => {
               <tr>
                 <th scope="col" style={{ width: "10%" }}>Sr No.</th>
                 <th scope="col" style={{ width: "20%" }}>Title</th>
-                <th scope="col" style={{ width: "20%" }}>Key</th>
+                {/* <th scope="col" style={{ width: "20%" }}>Key</th> */}
                 <th scope="col" style={{ width: "20%" }}>Value</th>
                 <th scope="col" style={{ width: "25%" }}>Description</th>
                 <th scope="col" style={{ width: "10%" }}>Action</th>
@@ -122,7 +122,7 @@ const SettingsTable = () => {
                   <tr key={setting.config_id}>
                     <td>{index + 1}</td>
                     <td>{setting?.title || "N/A"}</td>
-                    <td>{setting.config_key}</td>
+                    {/* <td>{setting.config_key}</td> */}
                     <td>{setting.config_value}</td>
                     <td>{setting.description || "N/A"}</td>
                     <td>

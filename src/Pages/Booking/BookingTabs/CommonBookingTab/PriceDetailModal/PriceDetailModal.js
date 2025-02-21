@@ -6,11 +6,13 @@ const PriceDetailModal = ({ show, onHide, bookingData }) => {
     return null;
   }
 
-  const renderAmount = (label, amount) => (
-    <p>
-      <strong>{label}:</strong> {amount && parseFloat(amount) > 0 ? amount : "N/A"}
+  const renderAmount = (label, amount, style = {}) => (
+    <p style={{ ...style }}>
+      <strong>{label}:</strong> {amount !== null && amount !== undefined ? amount : "N/A"}
     </p>
   );
+  
+  
 
   return (
     <Modal show={show} onHide={onHide} centered>
@@ -24,10 +26,12 @@ const PriceDetailModal = ({ show, onHide, bookingData }) => {
           {renderAmount("Extra Charges", bookingData.extra_charge)}
           {renderAmount("Discount Amount", bookingData.discount_amount)}
           {renderAmount("Secure Fee", bookingData.secure_fee)}
+          {renderAmount("Grand Total", bookingData.billing_amount, { color: "green", fontWeight: "bold" })}
+
+          <hr style={{color:"black",backgroundColor:"black"}}/>
+         
           {renderAmount("Commission Amount", bookingData.commission_amount)}
           {renderAmount("Partner Amount", bookingData.partner_amount)}
-          <hr style={{color:"black",backgroundColor:"black"}}/>
-          {renderAmount("Grand Total", bookingData.billing_amount)}
         </div>
       </Modal.Body>
       <Modal.Footer>

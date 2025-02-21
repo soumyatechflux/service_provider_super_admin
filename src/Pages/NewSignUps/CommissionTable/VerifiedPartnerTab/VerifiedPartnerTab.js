@@ -516,7 +516,8 @@ const VerifiedPartnerTab = ({
                   blocked: "Blocked",
                 }[restaurant.active_status] || "Unknown Status"}
               </span>
-              <div onClick={() => handleRestaurantClick(restaurant)} style={{ cursor: "pointer", opacity: 1 }}>
+              <div  onClick={() => handleRestaurantClick(restaurant)} style={{ cursor: "pointer", opacity: 1 }}>
+              <EditIcon />
               </div>
             </div>
           </td>

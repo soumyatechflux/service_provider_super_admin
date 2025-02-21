@@ -117,13 +117,31 @@ const CommonCommissionTab = ({
                     <td>{item.id || "Unknown"}</td>
                     <td>{item.name || "Unknown"}</td>
                     <td>{item.category_name || "N/A"}</td>
-                    <td>{item.total_partner_amount || "N/A"}</td>
-                    <td>{item.total_partner_amount_after_tds || "N/A"}</td>
-                    <td>
-                      <button className="payNow-btn" onClick={() => handlePayNowClick(item)}>
-                        Pay Now
-                      </button>
-                    </td>
+                    <td style={{ color: item.total_partner_amount < 0 ? "red" : "inherit" }}>
+  {item.total_partner_amount || "N/A"}
+</td>
+<td style={{ color: item.total_partner_amount_after_tds < 0 ? "red" : "inherit" }}>
+  {item.total_partner_amount_after_tds || "N/A"}
+</td>
+
+<td>
+  <button
+    className="payNow-btn"
+    onClick={() => handlePayNowClick(item)}
+    disabled={item.total_partner_amount < 0 || item.total_partner_amount_after_tds < 0}
+    style={{
+      backgroundColor: item.total_partner_amount < 0 || item.total_partner_amount_after_tds < 0 ? "#ccc" : "#007bff",
+      cursor: item.total_partner_amount < 0 || item.total_partner_amount_after_tds < 0 ? "not-allowed" : "pointer",
+      color: "#fff",
+      border: "none",
+      padding: "5px 10px",
+      borderRadius: "5px"
+    }}
+  >
+    Pay Now
+  </button>
+</td>
+
                   </tr>
                 ))
               )}
