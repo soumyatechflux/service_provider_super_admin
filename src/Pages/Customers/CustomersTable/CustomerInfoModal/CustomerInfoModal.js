@@ -24,11 +24,11 @@ const CustomerInfoModal = ({ customer, onClose }) => {
             {/* Bookings Section */}
             <h5 className="mt-3"><strong>Bookings</strong></h5>
             <p><strong>Total:</strong> {customer.bookings?.total ?? "N/A"}</p>
-            <p><strong>Upcoming:</strong> {customer.bookings?.upcoming ?? "N/A"}</p>
-            <p><strong>Cancelled:</strong> {customer.bookings?.cancelled ?? "N/A"}</p>
-            <p><strong>Completed:</strong> {customer.bookings?.completed ?? "N/A"}</p>
-            <p><strong>In Progress:</strong> {customer.bookings?.inprogress ?? "N/A"}</p>
-            <p><strong>Not Started:</strong> {customer.bookings?.not_started ?? "N/A"}</p>
+            <p><strong>Upcoming:</strong> {customer.bookings?.upcoming ?? "No Upcoming Bookings"}</p>
+            <p><strong>Cancelled:</strong> {customer.bookings?.cancelled ?? "No Cancelled Bookings"}</p>
+            <p><strong>Completed:</strong> {customer.bookings?.completed ?? "No Completed Bookings"}</p>
+            <p><strong>In Progress:</strong> {customer.bookings?.inprogress ?? "No In Progress Bookings"}</p>
+            <p><strong>Not Started:</strong> {customer.bookings?.not_started ?? "No Not Started Bookings"}</p>
           </div>
           <div className="modal-footer">
             <button type="button" className="btn btn-primary" onClick={onClose}>Close</button>
