@@ -56,6 +56,7 @@ import AlertCentre from "./Pages/AlertCentre/AlertCentre";
 import TermsAndConditionTab from "./Pages/Terms&Conditions/TermsAndConditionTab/TermsAndConditionTab";
 import PrivacyPolicyTab from "./Pages/PrivacyPolicy/PrivacyPolicyTab";
 import EditPartner from "./Pages/VerifyPartners/EditPartner/EditPartner";
+import Rewards from "./Pages/Rewards/Rewards";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -187,6 +188,8 @@ function AppContent({ isOffline, loggedIn }) {
 
           <Route path="/sub-categories/monthly-subscription" element={<MonthlySubscriptionTab/>}/>
           <Route path="/sub-categories/gardner-visit" element={<GardnerDayVisitTab/>}/>
+          <Route path="/rewards" element={<Rewards/>}/>
+
 
         </Route>
       </Routes>

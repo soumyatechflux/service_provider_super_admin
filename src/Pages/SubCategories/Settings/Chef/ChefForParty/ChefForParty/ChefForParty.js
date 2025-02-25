@@ -20,9 +20,7 @@ const ChefForParty = () => {
   const [nightChargesEndAt, setNightChargesEndAt] = useState(""); // New Field
   const [bookBefore, setBookBefore] = useState(1);
   const [cancellationBefore, setCancellationBefore] = useState(1);
-  const [guestRows, setGuestRows] = useState([
-    { id: 0, count: 1, duration: "", price: "" },
-  ]);
+  const [guestRows, setGuestRows] = useState([ { id: 0, count: 1, duration: "", price: "" }, ]);
   const [summary, setSummary] = useState("");
   const [cancellationPolicy, setCancellationPolicy] = useState("");
   const [bookingSummaryPage, setBookingSummaryPage] = useState("");
@@ -30,15 +28,35 @@ const ChefForParty = () => {
   const [nightCharge, setNightCharge] = useState([]);
   const [loading, setLoading] = useState(false);
   const [subCategoryData, setSubCategoryData] = useState(null);
-
   const [foodItems, setFoodItems] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedFoodItem, setSelectedFoodItem] = useState(null);
-
   const [gst, setGst] = useState(null);
   const [secureFees, setSecureFees] = useState(null);
   const [platformFees, setPlatformFees] = useState(null);
+  const [bulletPoints, setBulletPoints] = useState([""]); 
+    
+  
+    const handleAddBulletPoint = () => {
+      setBulletPoints([...bulletPoints, ""]);
+    };
+    
+    const handleRemoveBulletPoint = (index) => {
+      if (bulletPoints.length === 1) {
+        toast.error("At least one bullet point is required.");
+        return;
+      }
+      
+      const updatedBulletPoints = bulletPoints.filter((_, i) => i !== index);
+      setBulletPoints(updatedBulletPoints);
+    };
+    
+    const handleBulletPointChange = (index, value) => {
+      const updatedBulletPoints = [...bulletPoints];
+      updatedBulletPoints[index] = value;
+      setBulletPoints(updatedBulletPoints);
+    };
 
   const handleCommissionChange = (e) => {
     const value = e.target.value === "" ? null : Number(e.target.value);
@@ -94,10 +112,10 @@ const ChefForParty = () => {
         setCancellationPolicy(data.cancellation_policy || "");
         setBookingSummaryPage(data.booking_summary || "");
         setNightCharge(data.night_charge || "");
-
         setGst(data.gst);
         setSecureFees(data.secure_fee || null);
         setPlatformFees(data.platform_fee || null);
+        setBulletPoints(data.bullet_points || [""]);
 
         setPartnerTax(data.partner_tax);
         setCommission(data.commission || null);
@@ -254,6 +272,8 @@ const ChefForParty = () => {
     formData.append("secure_fee", secureFees || "");
     formData.append("platform_fee", platformFees ?? "");
     formData.append("commission", commission || "");
+    formData.append("bullet_points", JSON.stringify(bulletPoints));
+
 
     // Add `no_of_people` data
     const noOfPeopleData = guestRows.map((row) => ({
@@ -704,6 +724,78 @@ const ChefForParty = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Bullet points */}
+         <div className="MainDining_AddTable mb-5 mt-5">
+          <p className="Subheading1_AddTable">Bullet Points</p>
+          <div
+            className="menu-container"
+            style={{ display: "flex", flexDirection: "column", gap: "15px" }}
+          >
+            {bulletPoints.map((point, index) => (
+              <div
+                key={index}
+                className="menu-row"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  backgroundColor: "#F6F8F9",
+                  padding: "10px 15px",
+                  borderRadius: "8px",
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                {/* Bullet Point Input */}
+                <div style={{ flex: 1, marginRight: "15px" }}>
+                  <label className="Subheading2_AddTable" style={{ fontWeight: "600" }}>
+                    Bullet Points <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={point}
+                    onChange={(e) => handleBulletPointChange(index, e.target.value)}
+                    className="form-control"
+                    placeholder="Enter Bullet Point"
+                    required
+                    style={{
+                      marginTop: "5px",
+                      padding: "8px",
+                      fontSize: "18px",
+                      border: "1px solid #ccc",
+                      borderRadius: "5px",
+                    }}
+                  />
+                </div>
+        
+                {/* Action Buttons */}
+                <div
+                  className="menu-actions mt-4"
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  {/* Add Button */}
+                  {index === bulletPoints.length - 1 && (
+                    <HiPlus
+                      className="svg_AddTable"
+                      style={{ fontSize: "25px", cursor: "pointer" }}
+                      onClick={handleAddBulletPoint}
+                    />
+                  )}
+        
+                  {/* Remove Button */}
+                  {bulletPoints.length > 1 && (
+                    <IoMdBackspace
+                      className="svg_AddTable"
+                      style={{ fontSize: "25px", cursor: "pointer" }}
+                      onClick={() => handleRemoveBulletPoint(index)}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
 
         <div className="MainDining_AddTable mb-5 mt-5">
           <h4 className="form-label">

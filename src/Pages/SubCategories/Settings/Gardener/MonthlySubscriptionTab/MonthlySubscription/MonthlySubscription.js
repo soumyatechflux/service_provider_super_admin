@@ -8,11 +8,10 @@ import ReactQuill from "react-quill";
 import axios from "axios";
 
 const MonthlySubscription = () => {
-
   const [partnerTax, setPartnerTax] = useState(null);
-    const [commission, setCommission] = useState(null);
-    const [partnersPayPercentage, setPartnersPayPercentage] = useState(null);
-    
+  const [commission, setCommission] = useState(null);
+  const [partnersPayPercentage, setPartnersPayPercentage] = useState(null);
+
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [nightChargesStartAt, setNightChargesStartAt] = useState("");
@@ -30,17 +29,36 @@ const MonthlySubscription = () => {
   const [guestRows, setGuestRows] = useState([
     { id: 0, count: 1, duration: "", price: "" },
   ]);
-    const [gst, setGst] = useState(null);
-                    const [secureFees, setSecureFees] = useState(null);
-                    const [platformFees, setPlatformFees] = useState(null);
-    
+  const [gst, setGst] = useState(null);
+  const [secureFees, setSecureFees] = useState(null);
+  const [platformFees, setPlatformFees] = useState(null);
+  const [bulletPoints, setBulletPoints] = useState([""]);
 
+  const handleAddBulletPoint = () => {
+    setBulletPoints([...bulletPoints, ""]);
+  };
 
-                    const handleCommissionChange = (e) => {
-                      const value = e.target.value === "" ? null : Number(e.target.value);
-                      setCommission(value);
-                      setPartnersPayPercentage(value !== null ? 100 - value : null);
-                    };
+  const handleRemoveBulletPoint = (index) => {
+    if (bulletPoints.length === 1) {
+      toast.error("At least one bullet point is required.");
+      return;
+    }
+
+    const updatedBulletPoints = bulletPoints.filter((_, i) => i !== index);
+    setBulletPoints(updatedBulletPoints);
+  };
+
+  const handleBulletPointChange = (index, value) => {
+    const updatedBulletPoints = [...bulletPoints];
+    updatedBulletPoints[index] = value;
+    setBulletPoints(updatedBulletPoints);
+  };
+
+  const handleCommissionChange = (e) => {
+    const value = e.target.value === "" ? null : Number(e.target.value);
+    setCommission(value);
+    setPartnersPayPercentage(value !== null ? 100 - value : null);
+  };
   // Fetch data for sub_category_id = 2
 
   const fetchSubCategoryData = async () => {
@@ -54,10 +72,10 @@ const MonthlySubscription = () => {
           },
         }
       );
-  
+
       if (response.data.success) {
         const data = response.data.data;
-  
+
         // Populate state with API data
         setStartTime(data.service_start_time.slice(0, 5));
         setEndTime(data.service_end_time.slice(0, 5));
@@ -74,28 +92,28 @@ const MonthlySubscription = () => {
         setGst(data.gst);
         setSecureFees(data.secure_fee || null);
         setPlatformFees(data.platform_fee || null);
+        setBulletPoints(data.bullet_points || [""]);
 
         setPartnerTax(data.partner_tax);
         setCommission(data.commission || null);
-setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null);
+        setPartnersPayPercentage(
+          data.commission !== null ? 100 - data.commission : null
+        );
 
-        
-  
-  
         // Map gardener monthly visit calculations to hourRows
         if (data.gardener_monthly_visit_calculations.length > 0) {
-          const mappedHours = data.gardener_monthly_visit_calculations.map((item) => ({
-            id: item.id, // Use the actual ID from the API response
-            visitCount: item.visit, // Map `visit` to `visitCount`
-            duration: item.hours, // Map `hours` to `duration`
-            price: parseFloat(item.price).toFixed(2), // Format price to 2 decimal places
-          }));
+          const mappedHours = data.gardener_monthly_visit_calculations.map(
+            (item) => ({
+              id: item.id, // Use the actual ID from the API response
+              visitCount: item.visit, // Map `visit` to `visitCount`
+              duration: item.hours, // Map `hours` to `duration`
+              price: parseFloat(item.price).toFixed(2), // Format price to 2 decimal places
+            })
+          );
           setHourRows(mappedHours);
         } else {
           // Default initial row if no data exists
-          setHourRows([
-            { id: 0, visitCount: "", duration: "", price: "" },
-          ]);
+          setHourRows([{ id: 0, visitCount: "", duration: "", price: "" }]);
         }
       } else {
         toast.error("Failed to fetch sub-category data.");
@@ -105,11 +123,10 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
       toast.error("An error occurred while fetching data.");
     }
   };
-  
+
   useEffect(() => {
     fetchSubCategoryData();
   }, []);
-  
 
   const [hourRows, setHourRows] = useState([
     { id: 0, visitCount: 1, duration: "", price: "" },
@@ -167,25 +184,23 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
 
     // Validate required fields
     const isValidData = hourRows.every(
-        (row) => row.visitCount && row.duration && row.price
+      (row) => row.visitCount && row.duration && row.price
     );
 
     if (!isValidData) {
-        toast.error("Please fill in all required fields for each row");
-        return;
+      toast.error("Please fill in all required fields for each row");
+      return;
     }
 
     // Check for duplicate visit counts
-   // Check for duplicate visit counts
-const visitCounts = hourRows.map((row) => Number(row.visitCount));
-// const hasDuplicates = new Set(visitCounts).size !== visitCounts.length;
+    // Check for duplicate visit counts
+    const visitCounts = hourRows.map((row) => Number(row.visitCount));
+    // const hasDuplicates = new Set(visitCounts).size !== visitCounts.length;
 
-// if (hasDuplicates) {
-//     toast.error("Duplicate visit counts are not allowed.");
-//     return;
-// }
-
-   
+    // if (hasDuplicates) {
+    //     toast.error("Duplicate visit counts are not allowed.");
+    //     return;
+    // }
 
     // Create FormData object
     const formData = new FormData();
@@ -206,57 +221,57 @@ const visitCounts = hourRows.map((row) => Number(row.visitCount));
     formData.append("secure_fee", secureFees ?? "");
     formData.append("platform_fee", platformFees ?? "");
     formData.append("gst", gst ?? "0");
-    formData.append("partner_tax", partnerTax ?? "0");  
+    formData.append("partner_tax", partnerTax ?? "0");
     formData.append("commission", commission || "");
     formData.append("night_charge", nightCharge ?? "");
+    formData.append("bullet_points", JSON.stringify(bulletPoints));
 
 
     // Format the data according to the expected structure
     const visitCalculations = hourRows.map((row) => ({
-        visit: row.visitCount,
-        hours: row.duration,
-        price: row.price,
+      visit: row.visitCount,
+      hours: row.duration,
+      price: row.price,
     }));
 
     console.log(
-        "gardener_monthly_visit_calculations:",
-        JSON.stringify(visitCalculations)
+      "gardener_monthly_visit_calculations:",
+      JSON.stringify(visitCalculations)
     );
 
     // Append the formatted data
     formData.append(
-        "gardener_monthly_visit_calculations",
-        JSON.stringify(visitCalculations)
+      "gardener_monthly_visit_calculations",
+      JSON.stringify(visitCalculations)
     );
 
     setLoading(true);
 
     try {
-        const response = await axios.patch(
-            `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/sub_category`,
-            formData,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-        );
-
-        if (response.data.success) {
-            toast.success("Sub-category updated successfully!");
-            fetchSubCategoryData();
-        } else {
-            toast.error(response.data.message || "Failed to update sub-category.");
+      const response = await axios.patch(
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/sub_category`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
         }
-    } catch (error) {
-        console.error("Error updating sub-category:", error);
-        toast.error("An error occurred while updating the sub-category.");
-    } finally {
-        setLoading(false);
-    }
-};
+      );
 
+      if (response.data.success) {
+        toast.success("Sub-category updated successfully!");
+        fetchSubCategoryData();
+      } else {
+        toast.error(response.data.message || "Failed to update sub-category.");
+      }
+    } catch (error) {
+      console.error("Error updating sub-category:", error);
+      toast.error("An error occurred while updating the sub-category.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const generateTimeOptions = () => {
     const times = [];
@@ -443,39 +458,44 @@ const visitCounts = hourRows.map((row) => Number(row.visitCount));
           </div>
         </div>
 
-
         <div className="row mb-3 align-items-center">
-        <div className="col-md-3">
-  <label htmlFor="gst" className="form-label">Tax on commission & Platform Fee</label>
-  <input
-    type="number"
-    className="form-control"
-    id="gst"
-    value={gst === null ? "" : gst}
-    onChange={(e) => {
-      let value = e.target.value === "" ? null : Number(e.target.value);
-      setGst(value);
-    }}
-    min="0"
-    required
-  />
-</div>
-  <div className="col-md-3">
-  <label htmlFor="partnerTax" className="form-label">Tax on Partner's Pay</label>
-  <input
-    type="number"
-    className="form-control"
-    id="partnerTax"
-    value={partnerTax === null ? "" : partnerTax}
-    onChange={(e) => {
-      let value = e.target.value === "" ? null : Number(e.target.value);
-      setPartnerTax(value);
-    }}
-    min="0"
-    required
-  />
-</div>
-  {/* <div className="col-md-3">
+          <div className="col-md-3">
+            <label htmlFor="gst" className="form-label">
+              Tax on commission & Platform Fee
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="gst"
+              value={gst === null ? "" : gst}
+              onChange={(e) => {
+                let value =
+                  e.target.value === "" ? null : Number(e.target.value);
+                setGst(value);
+              }}
+              min="0"
+              required
+            />
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="partnerTax" className="form-label">
+              Tax on Partner's Pay
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="partnerTax"
+              value={partnerTax === null ? "" : partnerTax}
+              onChange={(e) => {
+                let value =
+                  e.target.value === "" ? null : Number(e.target.value);
+                setPartnerTax(value);
+              }}
+              min="0"
+              required
+            />
+          </div>
+          {/* <div className="col-md-3">
     <label htmlFor="secureFees" className="form-label">Secure Fees</label>
     <input
       type="number"
@@ -488,47 +508,57 @@ const visitCounts = hourRows.map((row) => Number(row.visitCount));
     />
   </div> */}
 
-<div className="col-md-3">
-  <label htmlFor="commission" className="form-label">Servyo Commission %</label>
-  <input
-    type="number"
-    className="form-control"
-    id="commission"
-    value={commission === null ? "" : commission}
-    onChange={handleCommissionChange}
-    min="1"
-    max="100"
-    required
-  />
-</div>
+          <div className="col-md-3">
+            <label htmlFor="commission" className="form-label">
+              Servyo Commission %
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="commission"
+              value={commission === null ? "" : commission}
+              onChange={handleCommissionChange}
+              min="1"
+              max="100"
+              required
+            />
+          </div>
 
+          {/* Partner's Pay Percentage (Automatically calculated) */}
+          <div className="col-md-3">
+            <label htmlFor="partnersPay" className="form-label">
+              Partner's Commission %
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="partnersPay"
+              value={
+                partnersPayPercentage === null ? "" : partnersPayPercentage
+              }
+              disabled // Prevents manual editing
+            />
+          </div>
 
-
-      {/* Partner's Pay Percentage (Automatically calculated) */}
-      <div className="col-md-3">
-  <label htmlFor="partnersPay" className="form-label">Partner's Commission %</label>
-  <input
-    type="number"
-    className="form-control"
-    id="partnersPay"
-    value={partnersPayPercentage === null ? "" : partnersPayPercentage}
-    disabled // Prevents manual editing
-  />
-</div>
-
-<div className="col-md-3">
-    <label htmlFor="platformFees" className="form-label">Platform Fees</label>
-    <input
-      type="number"
-      className="form-control"
-      id="platformFees"
-      value={platformFees ?? "" } // Set value to empty string when null
-      onChange={(e) => setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
-      min="1"
-      required
-    />
-  </div>
-</div>
+          <div className="col-md-3">
+            <label htmlFor="platformFees" className="form-label">
+              Platform Fees
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="platformFees"
+              value={platformFees ?? ""} // Set value to empty string when null
+              onChange={(e) =>
+                setPlatformFees(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
+              min="1"
+              required
+            />
+          </div>
+        </div>
 
         {/* Guest Time Slot Section */}
         <div className="MainDining_AddTable mb-5 mt-5">
@@ -621,90 +651,167 @@ const visitCounts = hourRows.map((row) => Number(row.visitCount));
           </div>
         </div>
 
-       <div className="MainDining_AddTable mb-5 mt-5">
-                 <h4 className="form-label">
-                   Additional Details (Booking Details Summary)
-                 </h4>
-                 <ReactQuill
-                   value={summary}
-                   onChange={setSummary}
-                   placeholder="Write the booking details here..."
-                   theme="snow"
-                   modules={{
-                     toolbar: [
-                       [{ header: "1" }, { header: "2" }, { font: [] }],
-                       [{ list: "ordered" }, { list: "bullet" }],
-                       ["bold", "italic", "underline"],
-                       [{ align: [] }],
-                       ["link"],
-                       ["blockquote"],
-                       [{ indent: "-1" }, { indent: "+1" }],
-                       [{ direction: "rtl" }],
-                     ],
-                   }}
-                 />
-               </div>
-       
-               {/* Cancellation Policy Editor */}
-               <div className="MainDining_AddTable mb-5 mt-5">
-                 <h4 className="form-label">Cancellation Policy</h4>
-                 <ReactQuill
-                   value={cancellationPolicy}
-                   onChange={setCancellationPolicy}
-                   placeholder="Write the cancellation policy here..."
-                   theme="snow"
-                   modules={{
-                     toolbar: [
-                       [{ header: "1" }, { header: "2" }, { font: [] }],
-                       [{ list: "ordered" }, { list: "bullet" }],
-                       ["bold", "italic", "underline"],
-                       [{ align: [] }],
-                       ["link"],
-                       ["blockquote"],
-                       [{ indent: "-1" }, { indent: "+1" }],
-                       [{ direction: "rtl" }],
-                     ],
-                   }}
-                 />
-               </div>
-       
-               {/* Booking Summary Page Editor */}
-               <div className="MainDining_AddTable mb-5 mt-5">
-                 <h4 className="form-label">
-                   Additional Details (Booking Summary Page)
-                 </h4>
-                 <ReactQuill
-                   value={bookingSummaryPage}
-                   onChange={setBookingSummaryPage}
-                   placeholder="Write the booking summary page content here..."
-                   theme="snow"
-                   modules={{
-                     toolbar: [
-                       [{ header: "1" }, { header: "2" }, { font: [] }],
-                       [{ list: "ordered" }, { list: "bullet" }],
-                       ["bold", "italic", "underline"],
-                       [{ align: [] }],
-                       ["link"],
-                       ["blockquote"],
-                       [{ indent: "-1" }, { indent: "+1" }],
-                       [{ direction: "rtl" }],
-                     ],
-                   }}
-                 />
-               </div>
+        {/* Bullet points */}
+        <div className="MainDining_AddTable mb-5 mt-5">
+          <p className="Subheading1_AddTable">Bullet Points</p>
+          <div
+            className="menu-container"
+            style={{ display: "flex", flexDirection: "column", gap: "15px" }}
+          >
+            {bulletPoints.length === 0 && setBulletPoints([""])}{" "}
+            {/* Ensure one input exists */}
+            {bulletPoints.map((point, index) => (
+              <div
+                key={index}
+                className="menu-row"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  backgroundColor: "#F6F8F9",
+                  padding: "10px 15px",
+                  borderRadius: "8px",
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                {/* Bullet Point Input */}
+                <div style={{ flex: 1, marginRight: "15px" }}>
+                  <label
+                    className="Subheading2_AddTable"
+                    style={{ fontWeight: "600" }}
+                  >
+                    Bullet Point <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={point}
+                    onChange={(e) =>
+                      handleBulletPointChange(index, e.target.value)
+                    }
+                    className="form-control"
+                    placeholder="Enter Bullet Point"
+                    required
+                    style={{
+                      marginTop: "5px",
+                      padding: "8px",
+                      fontSize: "18px",
+                      border: "1px solid #ccc",
+                      borderRadius: "5px",
+                    }}
+                  />
+                </div>
+
+                {/* Action Buttons */}
+                <div
+                  className="menu-actions mt-4"
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  {/* Add Button (Always shown for last input) */}
+                  {index === bulletPoints.length - 1 && (
+                    <HiPlus
+                      className="svg_AddTable"
+                      style={{ fontSize: "25px", cursor: "pointer" }}
+                      onClick={handleAddBulletPoint}
+                    />
+                  )}
+
+                  {/* Remove Button (Hidden if only one input remains) */}
+                  {bulletPoints.length > 1 && (
+                    <IoMdBackspace
+                      className="svg_AddTable"
+                      style={{ fontSize: "25px", cursor: "pointer" }}
+                      onClick={() => handleRemoveBulletPoint(index)}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="MainDining_AddTable mb-5 mt-5">
+          <h4 className="form-label">
+            Additional Details (Booking Details Summary)
+          </h4>
+          <ReactQuill
+            value={summary}
+            onChange={setSummary}
+            placeholder="Write the booking details here..."
+            theme="snow"
+            modules={{
+              toolbar: [
+                [{ header: "1" }, { header: "2" }, { font: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["bold", "italic", "underline"],
+                [{ align: [] }],
+                ["link"],
+                ["blockquote"],
+                [{ indent: "-1" }, { indent: "+1" }],
+                [{ direction: "rtl" }],
+              ],
+            }}
+          />
+        </div>
+
+        {/* Cancellation Policy Editor */}
+        <div className="MainDining_AddTable mb-5 mt-5">
+          <h4 className="form-label">Cancellation Policy</h4>
+          <ReactQuill
+            value={cancellationPolicy}
+            onChange={setCancellationPolicy}
+            placeholder="Write the cancellation policy here..."
+            theme="snow"
+            modules={{
+              toolbar: [
+                [{ header: "1" }, { header: "2" }, { font: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["bold", "italic", "underline"],
+                [{ align: [] }],
+                ["link"],
+                ["blockquote"],
+                [{ indent: "-1" }, { indent: "+1" }],
+                [{ direction: "rtl" }],
+              ],
+            }}
+          />
+        </div>
+
+        {/* Booking Summary Page Editor */}
+        <div className="MainDining_AddTable mb-5 mt-5">
+          <h4 className="form-label">
+            Additional Details (Booking Summary Page)
+          </h4>
+          <ReactQuill
+            value={bookingSummaryPage}
+            onChange={setBookingSummaryPage}
+            placeholder="Write the booking summary page content here..."
+            theme="snow"
+            modules={{
+              toolbar: [
+                [{ header: "1" }, { header: "2" }, { font: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["bold", "italic", "underline"],
+                [{ align: [] }],
+                ["link"],
+                ["blockquote"],
+                [{ indent: "-1" }, { indent: "+1" }],
+                [{ direction: "rtl" }],
+              ],
+            }}
+          />
+        </div>
 
         <div style={{ textAlign: "center" }}>
           <button
             type="submit"
             className="btn btn-primary w-50 mt-4"
             onClick={(e) => {
-              handleSubmit(e); 
+              handleSubmit(e);
               setTimeout(() => {
                 window.scrollTo({
                   top: 0,
-                  behavior: "smooth", 
+                  behavior: "smooth",
                 });
-              }, 500); 
+              }, 500);
             }}
             disabled={loading}
           >

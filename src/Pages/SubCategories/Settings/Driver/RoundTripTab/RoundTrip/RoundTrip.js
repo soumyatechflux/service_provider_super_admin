@@ -9,12 +9,10 @@ const RoundTrip = () => {
   const [partnerTax, setPartnerTax] = useState(null);
   const [commission, setCommission] = useState(null);
   const [partnersPayPercentage, setPartnersPayPercentage] = useState(null);
-  
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [nightChargesStartAt, setNightChargesStartAt] = useState("");
-    const [nightChargesEndAt, setNightChargesEndAt] = useState(""); // New Field
-  
+ const [nightChargesEndAt, setNightChargesEndAt] = useState(""); // New Field 
   const [bookBefore, setBookBefore] = useState(1);
   const [cancellationBefore, setCancellationBefore] = useState(1);
   const [freeCancellationBefore, setFreeCancellationBefore] = useState(1); // New Field
@@ -28,12 +26,33 @@ const RoundTrip = () => {
   const [nightCharge, setNightCharge] = useState([]);
   const [loading, setLoading] = useState(false);
   const [additionalPriceHours, setAdditionalPriceHours] = useState("");
-   const [gst, setGst] = useState(null);
-                const [secureFees, setSecureFees] = useState(null);
-                const [platformFees, setPlatformFees] = useState(null);
-
+ const [gst, setGst] = useState(null);
+  const [secureFees, setSecureFees] = useState(null);
+  const [platformFees, setPlatformFees] = useState(null);
   const carTypes = ["SUV", "Sedan", "Hatchback", "Luxury"];
   const transmissions = ["Manual", "Automatic"];
+  const [bulletPoints, setBulletPoints] = useState([""]); 
+    
+  
+    const handleAddBulletPoint = () => {
+      setBulletPoints([...bulletPoints, ""]);
+    };
+    
+    const handleRemoveBulletPoint = (index) => {
+      if (bulletPoints.length === 1) {
+        toast.error("At least one bullet point is required.");
+        return;
+      }
+      
+      const updatedBulletPoints = bulletPoints.filter((_, i) => i !== index);
+      setBulletPoints(updatedBulletPoints);
+    };
+    
+    const handleBulletPointChange = (index, value) => {
+      const updatedBulletPoints = [...bulletPoints];
+      updatedBulletPoints[index] = value;
+      setBulletPoints(updatedBulletPoints);
+    };
 
   
 
@@ -76,10 +95,11 @@ const RoundTrip = () => {
         setGst(data.gst);
         setSecureFees(data.secure_fee || null);
         setPlatformFees(data.platform_fee || null);
-
         setPartnerTax(data.partner_tax );
         setCommission(data.commission || null);
 setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null);
+setBulletPoints(data.bullet_points || [""]);
+
 
         
 
@@ -251,11 +271,12 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     formData.append("additional_price_hours", additionalPriceHours);
     formData.append("secure_fee", secureFees ?? "");
     formData.append("platform_fee", platformFees ?? "");
-
     formData.append("gst", gst ?? "0");
     formData.append("partner_tax", partnerTax ?? "0");   
    formData.append("commission", commission || "");
     formData.append("night_charge", nightCharge ?? "");
+    formData.append("bullet_points", JSON.stringify(bulletPoints));
+
 
 
 
@@ -809,6 +830,72 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
             ))}
           </div>
         </div>
+
+{/* Bullet points */}
+<div className="MainDining_AddTable mb-5 mt-5">
+  <p className="Subheading1_AddTable">Bullet Points</p>
+  <div className="menu-container" style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+    {bulletPoints.length === 0 && setBulletPoints([""])} {/* Ensure one input exists */}
+
+    {bulletPoints.map((point, index) => (
+      <div
+        key={index}
+        className="menu-row"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          backgroundColor: "#F6F8F9",
+          padding: "10px 15px",
+          borderRadius: "8px",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {/* Bullet Point Input */}
+        <div style={{ flex: 1, marginRight: "15px" }}>
+          <label className="Subheading2_AddTable" style={{ fontWeight: "600" }}>
+            Bullet Point <span className="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            value={point}
+            onChange={(e) => handleBulletPointChange(index, e.target.value)}
+            className="form-control"
+            placeholder="Enter Bullet Point"
+            required
+            style={{
+              marginTop: "5px",
+              padding: "8px",
+              fontSize: "18px",
+              border: "1px solid #ccc",
+              borderRadius: "5px",
+            }}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="menu-actions mt-4" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {/* Add Button (Always shown for last input) */}
+          {index === bulletPoints.length - 1 && (
+            <HiPlus
+              className="svg_AddTable"
+              style={{ fontSize: "25px", cursor: "pointer" }}
+              onClick={handleAddBulletPoint}
+            />
+          )}
+
+          {/* Remove Button (Hidden if only one input remains) */}
+          {bulletPoints.length > 1 && (
+            <IoMdBackspace
+              className="svg_AddTable"
+              style={{ fontSize: "25px", cursor: "pointer" }}
+              onClick={() => handleRemoveBulletPoint(index)}
+            />
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
 
 
