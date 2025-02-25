@@ -330,7 +330,7 @@ const ChefForParty = () => {
       <form onSubmit={handleSubmit}>
         {/* Start Time, End Time, Night Charges Start At */}
         <div className="row mb-3 align-items-center">
-          <div className="col-md-3">
+          {/* <div className="col-md-3">
             <label htmlFor="startTime" className="form-label">
               Start Time
             </label>
@@ -371,7 +371,65 @@ const ChefForParty = () => {
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
+
+<div className="col-md-3">
+  <label htmlFor="startTime" className="form-label">Start Time</label>
+  <select
+    className="form-control"
+    id="startTime"
+    value={startTime}
+    onChange={(e) => {
+      setStartTime(e.target.value);
+      if (e.target.value === endTime) {
+        setEndTime(""); // Reset endTime if it's the same as startTime
+      }
+    }}
+    required
+  >
+    <option value="" disabled>Select start time</option>
+    {timeOptions.map((time) => (
+      <option 
+        key={time} 
+        value={time} 
+        disabled={time === endTime} 
+        style={time === endTime ? { backgroundColor: "#d3d3d3", cursor: "not-allowed" } : {}}
+      >
+        {time}
+      </option>
+    ))}
+  </select>
+</div>
+
+<div className="col-md-3">
+  <label htmlFor="endTime" className="form-label">End Time</label>
+  <select
+    className="form-control"
+    id="endTime"
+    value={endTime}
+    onChange={(e) => {
+      if (e.target.value === startTime) {
+        toast.error("End time cannot be the same as start time.");
+      } else {
+        setEndTime(e.target.value);
+      }
+    }}
+    required
+  >
+    <option value="" disabled>Select end time</option>
+    {timeOptions.map((time) => (
+      <option 
+        key={time} 
+        value={time} 
+        disabled={time === startTime} 
+        style={time === startTime ? { backgroundColor: "#d3d3d3", cursor: "not-allowed" } : {}}
+      >
+        {time}
+      </option>
+    ))}
+  </select>
+</div>
+
           <div className="col-md-3">
             <label htmlFor="nightChargesStartAt" className="form-label">
               Night Charges Start At

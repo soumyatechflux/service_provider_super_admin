@@ -1,52 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
 import Loader from "../../Loader/Loader";
+import AddRewardModal from "../AddRewardModal/AddRewardModal";
+import EditRewardModal from "../EditRewardModal/EditRewardModal"; // Import the Edit Modal
+import EditIcon from "@mui/icons-material/Edit";
 
 const RewardTable = () => {
-  const [settings, setSettings] = useState([]);
+  const [rewards, setRewards] = useState([
+    {
+      config_id: 1,
+      points_per_rupee: 10,
+      usage_limit: "5 times per user",
+      from_whom: "Service Provider",
+      who_uses: "Customers",
+      rewards_sent_by_partner: "Yes",
+    },
+    {
+      config_id: 2,
+      points_per_rupee: 15,
+      usage_limit: "Unlimited",
+      from_whom: "Admin",
+      who_uses: "All Users",
+      rewards_sent_by_partner: "No",
+    },
+  ]);
+
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isAddRewardModalOpen, setIsAddRewardModalOpen] = useState(false);
+  const [isEditRewardModalOpen, setIsEditRewardModalOpen] = useState(false); // Track Edit Modal state
+  const [selectedReward, setSelectedReward] = useState(null); // Track reward to edit
   const entriesPerPage = 10;
 
-  const getSettingsTableData = async () => {
-    try {
-      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-      setLoading(true);
+  const normalizeString = (str) =>
+    str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/settings`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setLoading(false);
-      if (response?.data?.success) {
-        setSettings(response.data.data || []);
-      } else {
-        toast.error(response.data.message || "Failed to fetch settings.");
-      }
-    } catch (error) {
-      console.error("Error fetching settings data:", error);
-      toast.error("Failed to load settings. Please try again.");
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getSettingsTableData();
-  }, []);
-
-  const normalizeString = (str) => str?.replace(/\s+/g, " ").trim().toLowerCase() || "";
-
-  const filteredData = settings.filter((item) => {
+  const filteredData = rewards.filter((item) => {
     const searchTerm = normalizeString(searchQuery);
 
     return (
-      normalizeString(item.title).includes(searchTerm) ||
-      normalizeString(item.config_key).includes(searchTerm) ||
-      normalizeString(item.config_value).includes(searchTerm) ||
-      normalizeString(item.description).includes(searchTerm)
+      normalizeString(item.points_per_rupee.toString()).includes(searchTerm) ||
+      normalizeString(item.usage_limit).includes(searchTerm) ||
+      normalizeString(item.from_whom).includes(searchTerm) ||
+      normalizeString(item.who_uses).includes(searchTerm)
     );
   });
 
@@ -55,18 +52,51 @@ const RewardTable = () => {
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
 
+  // Handle Add Reward
+  const handleAddReward = (newReward) => {
+    setRewards((prevRewards) => [
+      ...prevRewards,
+      { ...newReward, config_id: prevRewards.length + 1 },
+    ]);
+    toast.success("Reward added successfully!");
+  };
+
+  // Handle Edit Click
+  const handleEditClick = (reward) => {
+    setSelectedReward(reward);
+    setIsEditRewardModalOpen(true);
+  };
+
   return (
     <div className="Restro-Table-Main p-3">
       <h2>Reward Points System</h2>
-      <div className="search-bar mb-3" style={{ width: "350px" }}>
-        <input
-          type="text"
-          placeholder="Search settings"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="search-input"
-        />
+      <div
+        className="mb-3"
+        style={{
+          display: "flex",
+          flexDirection: "row-reverse",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <button
+          className="Discount-btn mb-0"
+          onClick={() => setIsAddRewardModalOpen(true)}
+        >
+          Add Rewards
+        </button>
+
+        <div className="search-bar " style={{ width: "350px" }}>
+          <input
+            type="text"
+            placeholder="Search rewards"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+        </div>
       </div>
+
       {loading ? (
         <Loader />
       ) : (
@@ -75,53 +105,61 @@ const RewardTable = () => {
             <table className="table table-bordered table-user">
               <thead>
                 <tr>
-                  <th scope="col" style={{ width: "10%" }}>Sr No.</th>
-                  <th scope="col" style={{ width: "15%" }}>1 Rs = Points</th>
-                  <th scope="col" style={{ width: "15%" }}>Usage Limit</th>
-                  <th scope="col" style={{ width: "20%" }}>From Whom Given</th>
-                  <th scope="col" style={{ width: "20%" }}>Who Uses Rewards</th>
-                  <th scope="col" style={{ width: "20%" }}>Reward Sent by Partner</th>
+                  <th scope="col">Sr No.</th>
+                  <th scope="col">1 Rs = Points</th>
+                  <th scope="col">Usage Limit</th>
+                  <th scope="col">From Whom Given</th>
+                  <th scope="col">Who Uses Rewards</th>
+                  <th scope="col">Reward Sent by Partner</th>
+                  <th scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {currentEntries.length > 0 ? (
-                  currentEntries.map((setting, index) => (
-                    <tr key={setting.config_id}>
+                  currentEntries.map((reward, index) => (
+                    <tr key={reward.config_id}>
                       <td>{indexOfFirstEntry + index + 1}</td>
-                      <td>{setting.points_per_rupee || "N/A"}</td>
-                      <td>{setting.usage_limit || "N/A"}</td>
-                      <td>{setting.from_whom || "N/A"}</td>
-                      <td>{setting.who_uses || "N/A"}</td>
-                      <td>{setting.rewards_sent_by_partner || "N/A"}</td>
+                      <td>{reward.points_per_rupee || "N/A"}</td>
+                      <td>{reward.usage_limit || "N/A"}</td>
+                      <td>{reward.from_whom || "N/A"}</td>
+                      <td>{reward.who_uses || "N/A"}</td>
+                      <td>{reward.rewards_sent_by_partner || "N/A"}</td>
+                      <td className="status-div">
+                        <EditIcon
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleEditClick(reward)}
+                        />
+                        <i className="fa fa-trash text-danger"
+                           style={{ cursor: "pointer" }}
+                        />
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center">No data available</td>
+                    <td colSpan="7" className="text-center">
+                      No data available
+                    </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
-
-          <nav className="d-flex justify-content-center">
-            <ul className="pagination mb-0">
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setCurrentPage(1)}>First</button>
-              </li>
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
-              </li>
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
-              </li>
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setCurrentPage(totalPages)}>Last</button>
-              </li>
-            </ul>
-          </nav>
         </>
       )}
+
+      <AddRewardModal
+        open={isAddRewardModalOpen}
+        onClose={() => setIsAddRewardModalOpen(false)}
+        onSave={handleAddReward}
+      />
+
+      {/* Edit Reward Modal */}
+      <EditRewardModal
+        open={isEditRewardModalOpen}
+        onClose={() => setIsEditRewardModalOpen(false)}
+        reward={selectedReward}
+      />
     </div>
   );
 };
