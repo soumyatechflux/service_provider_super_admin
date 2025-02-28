@@ -41,8 +41,8 @@ const EditDiscountModal = ({
           ? initialData.end_date.split("T")[0]
           : "",
         description: initialData.description || "",
-        is_first_time_use: initialData.is_first_time_use || false, // ✅ Pre-populate checkbox value
-        is_one_time_use: initialData.is_one_time_use || false, // ✅ Pre-populate checkbox value
+        is_first_time_use: initialData.is_first_time_use || false, 
+        is_one_time_use: initialData.is_one_time_use || false,
       });
     }
   }, [initialData]);
@@ -87,10 +87,10 @@ const EditDiscountModal = ({
       toast.error("Discount value must be greater than 0.");
       return;
     }
-    if (!formData.limit || formData.limit <= 0) {
-      toast.error("Usage limit must be greater than 0.");
-      return;
-    }
+    // if (!formData.limit || formData.limit <= 0) {
+    //   toast.error("Usage limit must be greater than 0.");
+    //   return;
+    // }
     if (formData.minimum_price < 0) {
       toast.error("Minimum price must be greater than or equal to 0.");
       return;
@@ -130,8 +130,8 @@ const EditDiscountModal = ({
           end_date: formData.end_date || null,
           usage_limit: formData.limit || null,
           description: formData.description || null,
-          is_first_time_use: formData.is_first_time_use, // ✅ Added to payload
-          is_one_time_use: formData.is_one_time_use, // ✅ Added to payload
+          is_first_time_use: formData.is_first_time_use, 
+          is_one_time_use: formData.is_one_time_use,
         },
       };
 

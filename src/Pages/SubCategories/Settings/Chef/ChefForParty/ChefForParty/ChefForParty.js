@@ -784,19 +784,20 @@ const ChefForParty = () => {
         </div>
 
         {/* Bullet points */}
-         <div className="MainDining_AddTable mb-5 mt-5">
+        <div className="MainDining_AddTable mb-5 mt-5">
           <p className="Subheading1_AddTable">Bullet Points</p>
           <div
             className="menu-container"
             style={{ display: "flex", flexDirection: "column", gap: "15px" }}
           >
+            {bulletPoints.length === 0 && setBulletPoints([""])}{" "}
+            {/* Ensure one input exists */}
             {bulletPoints.map((point, index) => (
               <div
                 key={index}
                 className="menu-row"
                 style={{
                   display: "flex",
-                  flexDirection: "row",
                   alignItems: "center",
                   backgroundColor: "#F6F8F9",
                   padding: "10px 15px",
@@ -806,13 +807,18 @@ const ChefForParty = () => {
               >
                 {/* Bullet Point Input */}
                 <div style={{ flex: 1, marginRight: "15px" }}>
-                  <label className="Subheading2_AddTable" style={{ fontWeight: "600" }}>
-                    Bullet Points <span className="text-danger">*</span>
+                  <label
+                    className="Subheading2_AddTable"
+                    style={{ fontWeight: "600" }}
+                  >
+                    Bullet Point <span className="text-danger">*</span>
                   </label>
                   <input
                     type="text"
                     value={point}
-                    onChange={(e) => handleBulletPointChange(index, e.target.value)}
+                    onChange={(e) =>
+                      handleBulletPointChange(index, e.target.value)
+                    }
                     className="form-control"
                     placeholder="Enter Bullet Point"
                     required
@@ -825,13 +831,13 @@ const ChefForParty = () => {
                     }}
                   />
                 </div>
-        
+
                 {/* Action Buttons */}
                 <div
                   className="menu-actions mt-4"
                   style={{ display: "flex", alignItems: "center", gap: "10px" }}
                 >
-                  {/* Add Button */}
+                  {/* Add Button (Always shown for last input) */}
                   {index === bulletPoints.length - 1 && (
                     <HiPlus
                       className="svg_AddTable"
@@ -839,8 +845,8 @@ const ChefForParty = () => {
                       onClick={handleAddBulletPoint}
                     />
                   )}
-        
-                  {/* Remove Button */}
+
+                  {/* Remove Button (Hidden if only one input remains) */}
                   {bulletPoints.length > 1 && (
                     <IoMdBackspace
                       className="svg_AddTable"
@@ -853,7 +859,6 @@ const ChefForParty = () => {
             ))}
           </div>
         </div>
-        
 
         <div className="MainDining_AddTable mb-5 mt-5">
           <h4 className="form-label">

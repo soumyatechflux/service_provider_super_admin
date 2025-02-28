@@ -56,7 +56,9 @@ import AlertCentre from "./Pages/AlertCentre/AlertCentre";
 import TermsAndConditionTab from "./Pages/Terms&Conditions/TermsAndConditionTab/TermsAndConditionTab";
 import PrivacyPolicyTab from "./Pages/PrivacyPolicy/PrivacyPolicyTab";
 import EditPartner from "./Pages/VerifyPartners/EditPartner/EditPartner";
-import Rewards from "./Pages/Rewards/Rewards";
+import RefferAndEarn from "./Pages/RefferAndEarn/RefferAndEarn";
+import RefundAndCancellation from "./Pages/RefundAndCancellation/RefundAndCancellation";
+import Reward from "./Pages/Reward/Reward";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -188,7 +190,11 @@ function AppContent({ isOffline, loggedIn }) {
 
           <Route path="/sub-categories/monthly-subscription" element={<MonthlySubscriptionTab/>}/>
           <Route path="/sub-categories/gardner-visit" element={<GardnerDayVisitTab/>}/>
-          <Route path="/rewards" element={<Rewards/>}/>
+          <Route path="/reward" element={<Reward/>}/>
+          <Route path="/refer-&-earn" element={<RefferAndEarn />} />
+          <Route path="/refund-&-cancellation" element={<RefundAndCancellation />} />
+
+
 
 
         </Route>

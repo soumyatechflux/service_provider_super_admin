@@ -283,100 +283,97 @@ const BookingsGraph = () => {
   
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+  const fetchData = async () => {
+    setLoading(true);
   
-      try {
-        let apiUrl = `${baseUrl}/api/admin/dashboard/bookings`;
+    try {
+      let apiUrl = `${baseUrl}/api/admin/dashboard/bookings`;
   
-        if (timeRange === "today") {
-          apiUrl += `?today=true`;
-        } else if (timeRange === "weekly") {
-          apiUrl += `?timeRange=weekly&week=${selectedWeek}`;
-        } else {
-          apiUrl += `?month=${timeRange}`;
-        }
+      if (timeRange === "today") {
+        apiUrl += `?today=true`;
+      } else if (timeRange === "weekly") {
+        apiUrl += `?timeRange=weekly&week=${selectedWeek}`;
+      } else {
+        apiUrl += `?month=${timeRange}`;
+      }
   
-        const response = await axios.get(apiUrl, {
-          headers: { Authorization: `Bearer ${token}` },
+      const response = await axios.get(apiUrl, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const { data } = response.data;
+
+      if (!data || data.length === 0) {
+        setChartData({ labels: [], datasets: [] }); // Set empty data to trigger "No Data Available"
+        return;
+      }
+  
+      if (timeRange === "today") {
+        const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const todayData = data[0] || null;
+        const todayName = todayData ? todayData.day_name : new Date().toLocaleDateString("en-US", { weekday: "long" });
+        const todayCount = todayData ? todayData.booking_count : 0;
+  
+        const dayData = allDays.map((day) => (day === todayName ? todayCount : 0));
+  
+        setChartData({
+          labels: allDays,
+          datasets: [
+            {
+              label: "Bookings Today",
+              data: dayData,
+              backgroundColor: "rgba(0, 123, 255, 0.6)",
+            },
+          ],
+        });
+      } else if (timeRange === "weekly") {
+        const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const dayData = data.reduce((acc, item) => {
+          acc[item.day_name] = item.booking_count;
+          return acc;
+        }, {});
+  
+        setChartData({
+          labels: allDays,
+          datasets: [
+            {
+              label: `Bookings for Week ${selectedWeek}`,
+              data: allDays.map((day) => dayData[day] || 0),
+              backgroundColor: "rgba(0, 123, 255, 0.6)",
+            },
+          ],
+        });
+      } else {
+        const maxWeekNumber = Math.max(...data.map((item) => item.week_number));
+        const weekLabels = Array.from({ length: maxWeekNumber }, (_, i) => `Week ${i + 1}`);
+        const weekData = Array(maxWeekNumber).fill(0);
+  
+        data.forEach((item) => {
+          weekData[item.week_number - 1] = item.booking_count;
         });
   
-        const { data } = response.data;
-  
-        // Handle response for "Today"
-        if (timeRange === "today") {
-          const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-          const todayData = data[0] || null; // Assume the API returns today's data
-          const todayName = todayData ? todayData.day_name : new Date().toLocaleDateString("en-US", { weekday: "long" });
-          const todayCount = todayData ? todayData.booking_count : 0;
-  
-          const dayData = allDays.map((day) => (day === todayName ? todayCount : 0));
-  
-          setChartData({
-            labels: allDays, // Show all days of the week
-            datasets: [
-              {
-                label: "Bookings Today",
-                data: dayData, // Only today's day will have data; others will be 0
-                backgroundColor: "rgba(0, 123, 255, 0.6)", // Blue color
-              },
-            ],
-          });
-        } else if (timeRange === "weekly") {
-          const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-          const dayData = data.reduce((acc, item) => {
-            acc[item.day_name] = item.booking_count;
-            return acc;
-          }, {});
-  
-          const dayLabels = allDays;
-          const bookingCounts = allDays.map((day) => dayData[day] || 0);
-  
-          setChartData({
-            labels: dayLabels,
-            datasets: [
-              {
-                label: `Bookings for Week ${selectedWeek}`,
-                data: bookingCounts,
-                backgroundColor: "rgba(0, 123, 255, 0.6)", // Blue color
-              },
-            ],
-          });
-        } else {
-          const maxWeekNumber = Math.max(...data.map((item) => item.week_number));
-          const weekLabels = Array.from(
-            { length: maxWeekNumber },
-            (_, i) => `Week ${i + 1}`
-          );
-          const weekData = Array(maxWeekNumber).fill(0);
-  
-          data.forEach((item) => {
-            weekData[item.week_number - 1] = item.booking_count;
-          });
-  
-          setChartData({
-            labels: weekLabels,
-            datasets: [
-              {
-                label: `Bookings for ${timeRangeOptions.find(
-                  (opt) => opt.value === timeRange
-                )?.label}`,
-                data: weekData,
-                backgroundColor: "rgba(0, 123, 255, 0.6)", // Blue color
-              },
-            ],
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching bookings data:", error);
-      } finally {
-        setLoading(false);
+        setChartData({
+          labels: weekLabels,
+          datasets: [
+            {
+              label: `Bookings for ${timeRangeOptions.find((opt) => opt.value === timeRange)?.label}`,
+              data: weekData,
+              backgroundColor: "rgba(0, 123, 255, 0.6)",
+            },
+          ],
+        });
       }
-    };
-  
-    fetchData();
-  }, [timeRange, selectedWeek]);
-  
+    } catch (error) {
+      console.error("Error fetching bookings data:", error);
+      setChartData({ labels: [], datasets: [] }); // Show "No Data Available" in case of an error
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [timeRange, selectedWeek]);
+
 
   const handleExport = async (format) => {
     setLoading(true);

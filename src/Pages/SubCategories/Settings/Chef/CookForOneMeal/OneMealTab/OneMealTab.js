@@ -831,74 +831,80 @@ setBulletPoints(data.bullet_points || [""]);
 
  {/* Bullet points */}
  <div className="MainDining_AddTable mb-5 mt-5">
-  <p className="Subheading1_AddTable">Bullet Points</p>
-  <div
-    className="menu-container"
-    style={{ display: "flex", flexDirection: "column", gap: "15px" }}
-  >
-    {bulletPoints.map((point, index) => (
-      <div
-        key={index}
-        className="menu-row"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          backgroundColor: "#F6F8F9",
-          padding: "10px 15px",
-          borderRadius: "8px",
-          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        {/* Bullet Point Input */}
-        <div style={{ flex: 1, marginRight: "15px" }}>
-          <label className="Subheading2_AddTable" style={{ fontWeight: "600" }}>
-            Bullet Points <span className="text-danger">*</span>
-          </label>
-          <input
-            type="text"
-            value={point}
-            onChange={(e) => handleBulletPointChange(index, e.target.value)}
-            className="form-control"
-            placeholder="Enter Bullet Point"
-            required
-            style={{
-              marginTop: "5px",
-              padding: "8px",
-              fontSize: "18px",
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-            }}
-          />
-        </div>
+          <p className="Subheading1_AddTable">Bullet Points</p>
+          <div
+            className="menu-container"
+            style={{ display: "flex", flexDirection: "column", gap: "15px" }}
+          >
+            {bulletPoints.length === 0 && setBulletPoints([""])}{" "}
+            {/* Ensure one input exists */}
+            {bulletPoints.map((point, index) => (
+              <div
+                key={index}
+                className="menu-row"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  backgroundColor: "#F6F8F9",
+                  padding: "10px 15px",
+                  borderRadius: "8px",
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                {/* Bullet Point Input */}
+                <div style={{ flex: 1, marginRight: "15px" }}>
+                  <label
+                    className="Subheading2_AddTable"
+                    style={{ fontWeight: "600" }}
+                  >
+                    Bullet Point <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={point}
+                    onChange={(e) =>
+                      handleBulletPointChange(index, e.target.value)
+                    }
+                    className="form-control"
+                    placeholder="Enter Bullet Point"
+                    required
+                    style={{
+                      marginTop: "5px",
+                      padding: "8px",
+                      fontSize: "18px",
+                      border: "1px solid #ccc",
+                      borderRadius: "5px",
+                    }}
+                  />
+                </div>
 
-        {/* Action Buttons */}
-        <div
-          className="menu-actions mt-4"
-          style={{ display: "flex", alignItems: "center", gap: "10px" }}
-        >
-          {/* Add Button */}
-          {index === bulletPoints.length - 1 && (
-            <HiPlus
-              className="svg_AddTable"
-              style={{ fontSize: "25px", cursor: "pointer" }}
-              onClick={handleAddBulletPoint}
-            />
-          )}
+                {/* Action Buttons */}
+                <div
+                  className="menu-actions mt-4"
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  {/* Add Button (Always shown for last input) */}
+                  {index === bulletPoints.length - 1 && (
+                    <HiPlus
+                      className="svg_AddTable"
+                      style={{ fontSize: "25px", cursor: "pointer" }}
+                      onClick={handleAddBulletPoint}
+                    />
+                  )}
 
-          {/* Remove Button */}
-          {bulletPoints.length > 1 && (
-            <IoMdBackspace
-              className="svg_AddTable"
-              style={{ fontSize: "25px", cursor: "pointer" }}
-              onClick={() => handleRemoveBulletPoint(index)}
-            />
-          )}
+                  {/* Remove Button (Hidden if only one input remains) */}
+                  {bulletPoints.length > 1 && (
+                    <IoMdBackspace
+                      className="svg_AddTable"
+                      style={{ fontSize: "25px", cursor: "pointer" }}
+                      onClick={() => handleRemoveBulletPoint(index)}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    ))}
-  </div>
-</div>
 
 
 

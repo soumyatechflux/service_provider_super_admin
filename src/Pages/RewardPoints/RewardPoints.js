@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../Template/LayoutMain/LayoutMain/Layout.css";
-import RewardPointConvert from "./RewardPointConvert/RewardPointConvert";
+import RewardPointsText from "./RewardPointsText/RewardPointsText";
 // import ServicesTabs from "./ServicesTabs/ServicesTabs";
 
 const RewardPoints = () => {
@@ -41,7 +41,7 @@ const RewardPoints = () => {
         style={{marginTop:"30px"}}
       >
         {/* <ServicesTabs/> */}
-        <RewardPointConvert/>
+        <RewardPointsText/>
 
       </div>
     </>

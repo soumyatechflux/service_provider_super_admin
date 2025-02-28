@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
-import "../../Template/LayoutMain/LayoutMain/Layout.css";
-import SupportTabs from "./SupportTabs/SupportTabs";
 
-const Support = () => {
+import React, { useEffect, useState } from "react";
+// import "../../../Template/LayoutMain/LayoutMain/Layout.css";
+import "../../Template/LayoutMain/LayoutMain/Layout.css";
+import RewardTab from "./RewardTab";
+
+const Reward = () => {
   const [value, setValue] = useState(() => {
     const storedValue = sessionStorage.getItem("isSidebarOpen");
     return storedValue !== null ? JSON.parse(storedValue) : true;
@@ -29,18 +31,26 @@ const Support = () => {
     };
   }, [value]);
 
+
   return (
     <>
+ 
       <div
         className={`content-container ${
           value ? "sidebar-open" : "sidebar-closed"
         }`}
-        style={{ marginTop: "30px" }}
+        style={{marginTop:"30px"}}
       >
-        <SupportTabs />
+        <RewardTab/>
       </div>
     </>
   );
 };
 
-export default Support;
+export default Reward;
+
+
+
+
+
+

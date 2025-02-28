@@ -1,11 +1,10 @@
 
 import React, { useEffect, useState } from "react";
 import "../../Template/LayoutMain/LayoutMain/Layout.css";
-import RewardTable from "./RewardTable/RewardTable";
+import RefundAndCancellationTab from "./RefundAndCancellationTab";
 
 
-
-const Rewards = () => {
+const RefundAndCancellation = () => {
   const [value, setValue] = useState(() => {
     const storedValue = sessionStorage.getItem("isSidebarOpen");
     return storedValue !== null ? JSON.parse(storedValue) : true;
@@ -42,16 +41,10 @@ const Rewards = () => {
         }`}
         style={{marginTop:"30px"}}
       >
-        {/* <SettingsTabs/> */}
-        <RewardTable/>
-
-
+        <RefundAndCancellationTab/>
       </div>
     </>
   );
 };
 
-export default Rewards;
-
-
-
+export default RefundAndCancellation;

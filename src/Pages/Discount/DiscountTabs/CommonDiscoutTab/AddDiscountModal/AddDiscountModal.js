@@ -86,10 +86,10 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
     }
   
     // Ensure limit is greater than 0
-    if (formData.limit <= 0) {
-      toast.error("Usage limit must be greater than 0.");
-      return;
-    }
+    // if (formData.limit <= 0) {
+    //   toast.error("Usage limit must be greater than 0.");
+    //   return;
+    // }
   
     // Ensure start date is not in the past
     if (formData.start_date < currentDate) {
