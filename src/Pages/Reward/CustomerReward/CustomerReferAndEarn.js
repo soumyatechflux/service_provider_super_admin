@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -8,7 +7,8 @@ import "./../Reward.css";
 const CustomerReward = () => {
   const [formData, setFormData] = useState({
     after_how_many_bookings_completed_rewards_will_be_able_to_use_for_signup_customer: "",
-    minimum_amount_of_booking_to_use_reward_points_customer: ""
+    minimum_amount_of_booking_to_use_reward_points_customer: "",
+    how_much_rupees_1_reward_point_equals_customer: ""
   });
 
   const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
@@ -40,7 +40,7 @@ const CustomerReward = () => {
   const handleUpdate = async (key) => {
     const payload = {
       key,
-      value: formData[key].toString() // Ensure the value is a string if required by API
+      value: formData[key].toString()
     };
 
     try {
@@ -72,9 +72,7 @@ const CustomerReward = () => {
               onChange={handleChange}
               placeholder="Enter number of bookings"
             />
-            <button type="button" className="Reward-button" onClick={() => handleUpdate("after_how_many_bookings_completed_rewards_will_be_able_to_use_for_signup_customer")}>
-              Update
-            </button>
+            <button type="button" className="Reward-button" onClick={() => handleUpdate("after_how_many_bookings_completed_rewards_will_be_able_to_use_for_signup_customer")}>Update</button>
           </div>
         </div>
 
@@ -91,9 +89,24 @@ const CustomerReward = () => {
               onChange={handleChange}
               placeholder="Enter amount"
             />
-            <button type="button" className="Reward-button" onClick={() => handleUpdate("minimum_amount_of_booking_to_use_reward_points_customer")}>
-              Update
-            </button>
+            <button type="button" className="Reward-button" onClick={() => handleUpdate("minimum_amount_of_booking_to_use_reward_points_customer")}>Update</button>
+          </div>
+        </div>
+
+        <div className="Reward-form-background">
+          <label className="Label-Reward-form-background">
+            How many rupees is 1 reward point equals?
+          </label>
+          <div className="reward-alignments-btn">
+            <input
+              className="input-Reward-form-background"
+              type="number"
+              name="how_much_rupees_1_reward_point_equals_customer"
+              value={formData.how_much_rupees_1_reward_point_equals_customer}
+              onChange={handleChange}
+              placeholder="Enter rupee value per point"
+            />
+            <button type="button" className="Reward-button" onClick={() => handleUpdate("how_much_rupees_1_reward_point_equals_customer")}>Update</button>
           </div>
         </div>
       </form>

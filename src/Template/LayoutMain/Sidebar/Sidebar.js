@@ -78,7 +78,7 @@ const Sidebar = ({ isOpen }) => {
   useEffect(() => {
     const path = location.pathname;
     if (path.startsWith("/sub-categories")) {
-      setActiveItem("/sub-categories"); // Ensure that sub-categories paths are active
+      setActiveItem("/sub-categories"); 
     } else {
       setActiveItem(path);
     }
@@ -130,7 +130,7 @@ const Sidebar = ({ isOpen }) => {
           {permissions.map((permission) => {
             const { permission_id, permission_name, path } = permission;
             const predefinedRoutes = {
-              "Weekly Payouts": "/commission-due", // Map Weekly Payouts to /commission-due
+              "Weekly Payouts": "/commission-due", 
             };
             
             const itemPath = predefinedRoutes[permission_name] || 
