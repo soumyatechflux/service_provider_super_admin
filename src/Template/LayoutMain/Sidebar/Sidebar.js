@@ -189,7 +189,7 @@ export default Sidebar;
 //   Loyalty, // Icon for Rewards
 //   Replay, // Icon for Refunds
 // } from "@mui/icons-material";
-// import { Gavel, Lock, ReceiptLong, ContactMail, Notifications } from "@mui/icons-material";
+// import { Gavel, Lock, ReceiptLong, ContactMail, Notifications, CardGiftcard, GroupAdd, RequestQuote } from "@mui/icons-material";
 // import React, { useEffect, useState } from "react";
 // import { Link, useLocation } from "react-router-dom";
 // import Tooltip from "@mui/material/Tooltip";
@@ -238,9 +238,7 @@ export default Sidebar;
 
 //           // Add static permissions for Rewards & Refunds
 //           const staticPermissions = [
-//             { permission_id: 25, permission_name: "Reward", path: "/reward" },
-//             { permission_id: 26, permission_name: "Reffer & Earn", path: "/reffer-and-earn" },
-//             { permission_id: 27, permission_name: "Refund & Cancellation", path: "/refund-and-cancellation" },
+//             { permission_id: 29, permission_name: "Refferal Table", path: "/referal-table" },
           
 //           ];
 
@@ -296,9 +294,10 @@ export default Sidebar;
 //     22: <ReceiptLong />,
 //     23: <ContactMail />,
 //     24: <Notifications />,
-//     25: <Loyalty />, // Rewards Icon
-//     26: <Replay />, // Refunds Icon
-//     26: <Replay />, // Refunds Icon
+//     // 25: <Loyalty />,
+//     26: <CardGiftcard  />,
+//     27: <GroupAdd />,
+//     28: <RequestQuote />, 
 //   };
 
 //   return (

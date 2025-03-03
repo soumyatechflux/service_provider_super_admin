@@ -299,7 +299,7 @@ const handleViewCustomer = async (customerId) => {
       <th scope="col" style={{ width: "10%" }}>Name</th>
       <th scope="col" style={{ width: "15%" }}>Email</th>
       <th scope="col" style={{ width: "10%" }}>Phone</th>
-      <th scope="col" style={{ width: "10%" }}>Gender</th>
+      {/* <th scope="col" style={{ width: "10%" }}>Gender</th> */}
       <th scope="col" style={{ width: "10%" }}>Address</th>
       <th scope="col" style={{ width: "5%" }}>Rating</th>
       <th scope="col" style={{ width: "10%" }}>Status</th>
@@ -314,7 +314,7 @@ const handleViewCustomer = async (customerId) => {
         <td>{restaurant.name ? restaurant.name.charAt(0).toUpperCase() + restaurant.name.slice(1) : "N/A"}</td>
         <td>{restaurant.email || "NA"}</td>
         <td>{restaurant.mobile}</td>
-        <td>{restaurant.gender ? restaurant.gender : "Not Provided"}</td>
+        {/* <td>{restaurant.gender ? restaurant.gender : "Not Provided"}</td> */}
         <td>{restaurant.address ? restaurant.address : "Not Provided"}</td>
         <td>{restaurant.rating}</td>
         <td className={`status ${restaurant.active_status}`}>

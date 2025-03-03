@@ -71,6 +71,12 @@ const SupportPartnerTab = () => {
   }, [currentPage]);
 
   // Helper function to normalize strings for comparison
+  const categoryMap = {
+    "cook": 1,
+    "driver": 2,
+    "gardener": 3,
+  };
+
   const normalizeString = (str) => {
     if (!str) return "";
     return str.replace(/\s+/g, " ").trim().toLowerCase();
@@ -80,6 +86,13 @@ const SupportPartnerTab = () => {
   const filteredData = supportData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
 
+    const categoryIdMatch = categoryMap[searchTerm];
+  
+    if (categoryIdMatch !== undefined) {
+      // If the search term is a category, filter only by category_id
+      return item.category_id === categoryIdMatch;
+    }
+  
     // Function to format date as "DD MMM YYYY"
     const formatDate = (dateString) => {
       if (!dateString) return "";
@@ -247,6 +260,7 @@ const SupportPartnerTab = () => {
                   <th style={{ width: "10%" }}>Name</th>
                   <th style={{ width: "10%" }}>Mobile</th>
                   {/* <th style={{ width: "10%" }}>Email</th> */}
+                  <th style={{ width: "10%" }}>Category</th>
                   <th style={{ width: "25%" }}>Description</th>
                   <th style={{ width: "25%" }}>Image</th>
                   <th style={{ width: "10%" }}>Created At</th>
@@ -262,6 +276,14 @@ const SupportPartnerTab = () => {
                       <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
                       <td>{item?.name || "N/A"}</td>
                       <td>{item?.mobile || "N/A"}</td>
+                      <td>{(() => {const categoryMap = {
+      1: "Cook",
+      2: "Driver",
+      3: "Gardener",
+    };
+    return categoryMap[item.category_id] || "N/A";
+  })()}
+</td>
                       {/* <td>{item?.email || "N/A"}</td> */}
                       <td>{item?.description || "N/A"}</td>
                       <td>

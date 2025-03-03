@@ -5,6 +5,7 @@ import Loader from "../../../Loader/Loader";
 import AttachmentModal from "./AttachmentModal/AttachmentModal";
 import EditStatusModal from "./EditStatusModal/EditStatusModal";
 import PriceDetailModal from "./PriceDetailModal/PriceDetailModal";
+import { format } from "date-fns";
 
 const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   function formatDateWithTime(dateString) {
@@ -190,6 +191,11 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     const searchTerm = normalizeString(searchInput);
     const searchTermNumber = normalizeNumber(searchInput); // Convert input to a number if possible
     const formattedDishes = normalizeString(parseDishes(item?.dishes)); // Ensure dishes match the displayed format
+
+    const gardenerDates = (item.gardener_visiting_slots || [])
+    .map((slot) => normalizeString(format(new Date(slot.date), "dd MMM yyyy")))
+    .join(" "); // Convert array to a searchable string
+
   
     return (
       normalizeString(item?.guest_name ?? "").includes(searchTerm) || // Customer name
@@ -212,7 +218,8 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
       normalizeString(item?.transmission_type ?? "").includes(searchTerm) || // Transmission Type
       normalizeNumber(item?.people_count) === searchTermNumber || // People Count as number
       formattedDishes.includes(searchTerm) || // Search in formatted dishes
-      normalizeString(item?.menu ?? "N/A").includes(searchTerm) // Menu (handles null)
+      normalizeString(item?.menu ?? "N/A").includes(searchTerm) || // Menu (handles null)
+      gardenerDates.includes(searchTerm)
     );
   });
   
@@ -434,6 +441,11 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                       Visit Slot Count
                     </th>
                   )}
+                   {category_id === "3" && (
+                    <th scope="col" style={{ width: "25%" }}>
+                      Gardner Visit Dates
+                    </th>
+                  )}
                   {category_id !== "1" && ( <th scope="col" style={{ width: "10%" }}> Hours Booked </th>)}
                   <th scope="col" style={{ width: "10%" }}>
                     Special Request
@@ -528,6 +540,19 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
         <td>{formatPaymentMode(item.payment_mode)}</td>
 
         {category_id == "3" && <td>{item.gardener_visiting_slot_count || "NA"}</td>}
+        {category_id == "3" && (
+  <td style={{ width: "200px", whiteSpace: "nowrap" }}>
+    {item.gardener_visiting_slots?.length > 0
+      ? item.gardener_visiting_slots.map((slot, index) => (
+          <span key={index}>
+            {index + 1}. {format(new Date(slot.date), "dd MMM yyyy")}
+            <br />
+          </span>
+        ))
+      : "NA"}
+  </td>
+)}
+
         {category_id !== "1" && <td>{item.no_of_hours_booked || "NA"}</td>}
 
         <td>{item.instructions || "N/A"}</td>

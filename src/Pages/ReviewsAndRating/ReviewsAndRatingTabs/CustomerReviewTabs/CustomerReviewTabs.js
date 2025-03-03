@@ -2,21 +2,20 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../../../Loader/Loader";
-import DeleteReviewModal from "./../DeleteReviewModal/DeleteReviewModal"; // Import the modal
+import DeleteReviewModal from "./../DeleteReviewModal/DeleteReviewModal"; 
 
 const PartnerReviewTabs = () => {
   const [reviewData, setReviewData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
-  const [searchInput, setSearchInput] = useState(""); // Search input state
+  const [searchInput, setSearchInput] = useState(""); 
 
   const getSupportData = async () => {
     try {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
-
       setLoading(true);
 
       const response = await axios.get(
@@ -47,9 +46,7 @@ const PartnerReviewTabs = () => {
       const token = sessionStorage.getItem(
         "TokenForSuperAdminOfServiceProvider"
       );
-
       setLoading(true);
-
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/ratings/${review.id}`,
         {
@@ -58,12 +55,9 @@ const PartnerReviewTabs = () => {
           },
         }
       );
-
       setLoading(false);
-
       if (response?.status === 200 && response?.data?.success) {
         toast.success("Review deleted successfully.");
-        // Remove the deleted review from the local state
         setReviewData((prevData) =>
           prevData.filter((item) => item.id !== review.id)
         );
@@ -178,7 +172,6 @@ const PartnerReviewTabs = () => {
     "N/A"
   )}
 </td>
-
 
                     <td>
                       {new Intl.DateTimeFormat("en-GB", {

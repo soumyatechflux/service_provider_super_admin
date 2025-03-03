@@ -59,6 +59,7 @@ import EditPartner from "./Pages/VerifyPartners/EditPartner/EditPartner";
 import RefferAndEarn from "./Pages/RefferAndEarn/RefferAndEarn";
 import RefundAndCancellation from "./Pages/RefundAndCancellation/RefundAndCancellation";
 import Reward from "./Pages/Reward/Reward";
+import ReferalTableMain from "./Pages/ReferalTable/ReferalTableMain";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -174,8 +175,6 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/reward-points" element={<RewardPoints/>} />
           <Route path="/alert-center" element={<AlertCentre/>} />
 
-
-
           <Route path="/serverDown" element={<ServerDown/>}/>
           <Route path="/underconstruction" element={<UnderConstruction/>}/>
 
@@ -193,6 +192,8 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/reward" element={<Reward/>}/>
           <Route path="/refer-&-earn" element={<RefferAndEarn />} />
           <Route path="/refund-&-cancellation" element={<RefundAndCancellation />} />
+          <Route path="/referal-table" element={<ReferalTableMain />} />
+
 
 
 

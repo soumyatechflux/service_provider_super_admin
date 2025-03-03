@@ -55,31 +55,47 @@ const SupportCustomerTab = () => {
   }, [getSupportData]);
 
  
+  const categoryMap = {
+    "cook": 1,
+    "driver": 2,
+    "gardener": 3,
+  };
+  
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
-
+  
   const filteredData = supportData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
-
+  
     // Function to format date as MM/DD/YYYY
     const formatDate = (dateString) => {
       if (!dateString) return "";
       const date = new Date(dateString);
       return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     };
-
+  
+    // Check if the search term matches a category name
+    const categoryIdMatch = categoryMap[searchTerm];
+  
+    if (categoryIdMatch !== undefined) {
+      // If the search term is a category, filter only by category_id
+      return item.category_id === categoryIdMatch;
+    }
+  
+    // Otherwise, perform normal search on other fields
     return (
       normalizeString(item.email ?? "").includes(searchTerm) ||
       normalizeString(item.name ?? "").includes(searchTerm) ||
       normalizeString(item.mobile ?? "").includes(searchTerm) ||
       normalizeString(item.description ?? "").includes(searchTerm) ||
-      normalizeString(formatDate(item.created_at)).includes(searchTerm) || 
-      normalizeString(formatDate(item.updated_at)).includes(searchTerm) || 
+      normalizeString(formatDate(item.created_at)).includes(searchTerm) ||
+      normalizeString(formatDate(item.updated_at)).includes(searchTerm) ||
       normalizeString(item.status ?? "").includes(searchTerm) ||
-    normalizeString(item.priority ?? "").includes(searchTerm) ||  
-    normalizeString(item.assign ?? "").includes(searchTerm)       
+      normalizeString(item.priority ?? "").includes(searchTerm) ||
+      normalizeString(item.assign ?? "").includes(searchTerm)
     );
   });
+  
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
@@ -127,6 +143,7 @@ const SupportCustomerTab = () => {
                   <th>Sr. No.</th>
                   <th>Name</th>
                   <th>Mobile</th>
+                  <th>Category</th>
                   <th>Description</th>
                   <th>Image</th>
                   <th>Created At</th>
@@ -146,6 +163,15 @@ const SupportCustomerTab = () => {
         <td>{indexOfFirstEntry + index + 1}</td>
         <td>{item.name || "No name available"}</td>
         <td>{item.mobile || "N/A"}</td>
+        <td>{(() => {const categoryMap = {
+      1: "Cook",
+      2: "Driver",
+      3: "Gardener",
+    };
+    return categoryMap[item.category_id] || "N/A";
+  })()}
+</td>
+
         <td>{item.description || "N/A"}</td>
         <td>
           {item.attachment ? (

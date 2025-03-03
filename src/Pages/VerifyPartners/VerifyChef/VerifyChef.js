@@ -598,7 +598,7 @@ const VerifyChef = () => {
           />
 
           <label>
-            Email <span style={{ color: "red" }}>*</span>
+            Email 
           </label>
 
           <input

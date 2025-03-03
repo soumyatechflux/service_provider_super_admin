@@ -79,25 +79,40 @@ const PartnerReviewTabs = () => {
     getSupportData();
   }, []);
 
+
+  
+  const categoryMap = {
+    1: "Cook",
+    2: "Driver",
+    3: "Gardener",
+  };
+  
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
-
+  
   const filteredData = reviewData.filter((item) => {
+    const searchTerm = normalizeString(searchInput);
+  
     // Format created_at to "11 Feb 2025"
     const createdAtFormatted = new Intl.DateTimeFormat("en-GB", {
       day: "2-digit",
       month: "short",
       year: "numeric",
     }).format(new Date(item.created_at));
-
+  
+    // Get category name based on category_id
+    const categoryName = categoryMap[item.category_id] || "N/A";
+  
     return (
-      normalizeString(item.customer?.name).includes(normalizeString(searchInput)) ||
-      normalizeString(item.partner?.name).includes(normalizeString(searchInput)) ||
-      normalizeString(item.rating).includes(normalizeString(searchInput)) ||
-      normalizeString(item.review).includes(normalizeString(searchInput)) ||
-      normalizeString(createdAtFormatted).includes(normalizeString(searchInput)) // Search by formatted date
+      normalizeString(item.customer?.name).includes(searchTerm) ||
+      normalizeString(item.partner?.name).includes(searchTerm) ||
+      normalizeString(item.rating).includes(searchTerm) ||
+      normalizeString(item.review).includes(searchTerm) ||
+      normalizeString(createdAtFormatted).includes(searchTerm) || // Search by formatted date
+      normalizeString(categoryName).includes(searchTerm) // Search by category name
     );
   });
+  
 
   return (
     <div className="Support-Table-Main p-3">
@@ -121,6 +136,7 @@ const PartnerReviewTabs = () => {
                 <th scope="col" style={{ width: "5%" }}>Sr.</th>
                 <th scope="col" style={{ width: "15%" }}>Partner</th>
                 <th scope="col" style={{ width: "15%" }}>Customer</th>
+                <th scope="col" style={{ width: "10%" }}>Category</th>
                 <th scope="col" style={{ width: "10%" }}>Rating</th>
                 <th scope="col" style={{ width: "30%" }}>Comments</th>
                 {/* <th scope="col" style={{ width: "30%" }}>Images</th> */}
@@ -135,6 +151,14 @@ const PartnerReviewTabs = () => {
                     <th scope="row">{index + 1}.</th>
                     <td>{item.partner?.name || "N/A"}</td>
                     <td>{item.customer?.name || "N/A"}</td>
+                    <td>{(() => {const categoryMap = {
+      1: "Cook",
+      2: "Driver",
+      3: "Gardener",
+    };
+    return categoryMap[item.category_id] || "N/A";
+  })()}
+</td>
                     <td style={{ fontWeight: "bold" }}>{item.rating || "N/A"}</td>
                     {/* <td>
                       {item.customer?.image ? (

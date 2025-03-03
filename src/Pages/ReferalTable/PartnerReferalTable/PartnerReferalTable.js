@@ -1,32 +1,24 @@
 import React, { useState, useEffect } from "react";
 import Loader from "../../Loader/Loader";
-import AddPartnerModal from "./AddPartnerModal/AddPartnerModal";
 
-const AlertPartnerTable = () => {
-  const [alertData, setAlertData] = useState([]);
+const PartnerReferalTable = () => {
+  const [referralData, setReferralData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
-
   const entriesPerPage = 10;
 
-  // Fetching alert data from API
- 
-  // Fetching alert data from API
-  const fetchAlertData = async () => {
+  const fetchReferralData = async () => {
     setLoading(true);
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-
     if (!token) {
       console.error("Token not found. Please log in again.");
       setLoading(false);
       return;
     }
-
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/notifications?role=partner`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/partner-referrals`,
         {
           method: "GET",
           headers: {
@@ -35,82 +27,47 @@ const AlertPartnerTable = () => {
           },
         }
       );
-
       if (!response.ok) {
-        throw new Error("Failed to fetch alerts.");
+        throw new Error("Failed to fetch partner referrals.");
       }
-
       const data = await response.json();
-
-      // Assuming the API returns data in the format { success: true, data: [...] }
-      if (data.success) {
-        // Filter notifications from the last 30 days
-        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-        const filteredNotifications = (data.data || []).filter((notification) => {
-          const notificationDate = new Date(notification.created_at);
-          return notificationDate >= thirtyDaysAgo;
-        });
-
-        setAlertData(filteredNotifications);
-      } else {
-        console.error("Failed to fetch valid alert data.");
-        setAlertData([]);
-      }
+      setReferralData(data.data || []);
     } catch (error) {
-      console.error("Error fetching alert data:", error);
-      setAlertData([]);
+      console.error("Error fetching partner referral data:", error);
+      setReferralData([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAlertData();
+    fetchReferralData();
   }, []);
 
-
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Ensure two digits
-    const day = String(date.getDate()).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`; // MM/DD/YYYY format
-  };
-  
-  // Helper function to normalize strings for comparison
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
 
-  // Updated filtering logic: search by title, message, notification_type, role, or created_at
-  const filteredData = alertData.filter((item) => {
+  const filteredData = referralData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
     return (
-      normalizeString(item.title).includes(searchTerm) ||
-      normalizeString(item.message).includes(searchTerm) ||
-      normalizeString(item.notification_type).includes(searchTerm) ||
-      normalizeString(item.role).includes(searchTerm) ||
-      normalizeString(formatDate(item.created_at)).includes(searchTerm) 
+      normalizeString(item.referrer).includes(searchTerm) ||
+      normalizeString(item.referredTo).includes(searchTerm) ||
+      normalizeString(item.points).includes(searchTerm)
     );
   });
 
-  // Pagination Logic
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
 
   return (
-    <div className="Alert-Table-Main p-3">
+    <div className="Referral-Table-Main p-3">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <button className="Discount-btn mb-0" onClick={() => setModalOpen(true)}>
-          Add Notification
-        </button>
-
         <input
           type="text"
           className="form-control w-25"
-          placeholder="Search by title, message, type, role or date..."
+          placeholder="Search by referrer, referred to, or points..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
@@ -125,32 +82,24 @@ const AlertPartnerTable = () => {
               <thead>
                 <tr>
                   <th>Sr. No.</th>
-                  <th>Title</th>
-                  <th>Message</th>
-                  <th>Notification Type</th>
-                  <th>Created At</th>
+                  <th>Referrer</th>
+                  <th>Referred To</th>
+                  <th>Referral Points</th>
                 </tr>
               </thead>
               <tbody>
                 {currentEntries.length > 0 ? (
                   currentEntries.map((item, index) => (
-                    <tr key={item.notification_id}>
+                    <tr key={index}>
                       <td>{indexOfFirstEntry + index + 1}</td>
-                      <td>{item.title}</td>
-                      <td>{item.message}</td>
-                      <td>{item.notification_type || "N/A"}</td>
-                      <td>
-                        {new Date(item.created_at).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })}
-                      </td>
+                      <td>{item.referrer}</td>
+                      <td>{item.referredTo}</td>
+                      <td>{item.points}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center">
+                    <td colSpan="4" className="text-center">
                       No data available
                     </td>
                   </tr>
@@ -166,9 +115,7 @@ const AlertPartnerTable = () => {
                   <button
                     className="page-link"
                     onClick={() => setCurrentPage(1)}
-                    style={{
-                      cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                    }}
+                    style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
                   >
                     First
                   </button>
@@ -194,9 +141,7 @@ const AlertPartnerTable = () => {
                   <button
                     className="page-link"
                     onClick={() => setCurrentPage(totalPages)}
-                    style={{
-                      cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-                    }}
+                    style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
                   >
                     Last
                   </button>
@@ -206,25 +151,8 @@ const AlertPartnerTable = () => {
           )}
         </>
       )}
-
-      <AddPartnerModal
-        show={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={(newAlert) => {
-          // Prepend new alert to the list
-          const newAlertWithDetails = {
-            ...newAlert,
-            notification_id: Date.now().toString(),
-            created_at: new Date().toISOString(),
-            role: "partner",
-          };
-          setAlertData([newAlertWithDetails, ...alertData]);
-          setModalOpen(false);
-        }}
-        fetchAlertData={fetchAlertData}
-      />
     </div>
   );
 };
 
-export default AlertPartnerTable;
+export default PartnerReferalTable;

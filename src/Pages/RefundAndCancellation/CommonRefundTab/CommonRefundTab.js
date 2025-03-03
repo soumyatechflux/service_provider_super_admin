@@ -167,7 +167,7 @@ const CommonRefundTab = ({ category_id }) => {
 
       {/* Refund Confirmation Modal */}
     {selectedRefund && (
-  <EditRefundAndCancellationModal
+   <EditRefundAndCancellationModal
     show={showModal}
     onClose={() => setShowModal(false)}
     bookingId={selectedRefund.booking_id} 

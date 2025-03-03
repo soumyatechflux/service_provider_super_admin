@@ -40,16 +40,13 @@ const AlertCustomerTable = () => {
 
       const data = await response.json();
 
-      // Assuming the API returns data in the format { success: true, data: [...] }
       if (data.success) {
-        // Filter notifications from the last 24 hours
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const filteredNotifications = (data.data || []).filter(
-          (notification) => {
-            const notificationDate = new Date(notification.created_at);
-            return notificationDate >= twentyFourHoursAgo;
-          }
-        );
+        // Filter notifications from the last 30 days
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const filteredNotifications = (data.data || []).filter((notification) => {
+          const notificationDate = new Date(notification.created_at);
+          return notificationDate >= thirtyDaysAgo;
+        });
 
         setAlertData(filteredNotifications);
       } else {
