@@ -8,7 +8,7 @@ const PartnerReward = () => {
   const [formData, setFormData] = useState({
     after_how_many_bookings_completed_rewards_will_be_able_to_use_for_signup_partner: "",
     minimum_amount_of_booking_to_use_reward_points_partner: "",
-    how_much_rupees_1_reward_point_equals_partner: ""
+    how_much_reward_points_equal_to_1_rupees_partner: ""
   });
 
   const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
@@ -99,18 +99,18 @@ const PartnerReward = () => {
 
         <div className="Reward-form-background">
           <label className="Label-Reward-form-background">
-            How many rupees is 1 reward point equal?
+          How much reward points equal to 1 rupees?
           </label>
           <div className="reward-alignments-btn">
             <input
               className="input-Reward-form-background"
               type="number"
-              name="how_much_rupees_1_reward_point_equals_partner"
-              value={formData.how_much_rupees_1_reward_point_equals_partner}
+              name="how_much_reward_points_equal_to_1_rupees_partner"
+              value={formData.how_much_reward_points_equal_to_1_rupees_partner}
               onChange={handleChange}
               placeholder="Enter rupee value per point"
             />
-            <button type="button" className="Reward-button" onClick={() => handleUpdate("how_much_rupees_1_reward_point_equals_partner")}>
+            <button type="button" className="Reward-button" onClick={() => handleUpdate("how_much_reward_points_equal_to_1_rupees_partner")}>
               Update
             </button>
           </div>
