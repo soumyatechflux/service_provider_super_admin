@@ -155,6 +155,7 @@ const VerifiedPartnerTab = ({
         normalizeString(categoryName).includes(searchTerm) ||
         restaurant.mobile?.toString().includes(searchTerm) ||
         normalizeString(restaurant.current_address).includes(searchTerm) ||
+        normalizeString(restaurant.registered_by_name).includes(searchTerm) ||
         normalizeString(restaurant.active_status).includes(searchTerm) ||
         normalizeString(formattedDate).includes(searchTerm)
       );
@@ -333,6 +334,9 @@ const VerifiedPartnerTab = ({
                   <th scope="col" style={{ width: "5%" }}>
                     Sr.
                   </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Partner ID
+                  </th>
                   <th scope="col" style={{ width: "12%" }}>
                     Name
                   </th>
@@ -398,6 +402,7 @@ const VerifiedPartnerTab = ({
         <th scope="row" className="id-user">
           {indexOfFirstEntry + index + 1}.
         </th>
+        <td className="text-user">{restaurant.uid}</td>
         <td className="text-user">
           {restaurant.name
             ? restaurant.name.charAt(0).toUpperCase() + restaurant.name.slice(1)
@@ -440,7 +445,7 @@ const VerifiedPartnerTab = ({
           {restaurant.terms_and_condition === 1 ? "Accepted" : "Not Accepted"}
         </td>
         <td className="text-user">
-          {restaurant.registered_by || "N/A"}
+          {restaurant.registered_by_name || "N/A"}
         </td>
         {/* <td>
           <div style={{ display: "flex", gap: "2px", justifyContent: "center" }}>

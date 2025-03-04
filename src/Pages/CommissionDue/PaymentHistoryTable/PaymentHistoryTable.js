@@ -299,7 +299,7 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
                     <th scope="row">
                       {index + 1 + (currentPage - 1) * entriesPerPage}.
                     </th>
-                    <td>{item.partner_id || "Unknown"}</td>
+                    <td>{item.uid || "Unknown"}</td>
                     <td>{item.partner_name || "Unknown"}</td>
                     <td>{item.category_name || "N/A"}</td>
                     <td>

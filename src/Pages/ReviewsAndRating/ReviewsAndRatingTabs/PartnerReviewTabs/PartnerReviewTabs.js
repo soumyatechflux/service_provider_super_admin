@@ -3,12 +3,17 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../../../Loader/Loader";
 import DeleteReviewModal from "./../DeleteReviewModal/DeleteReviewModal"; // Import the modal
+import EditIcon from "@mui/icons-material/Edit";
+import EditReviewModal from "../EditReviewModal/EditReviewModal";
+
 
 const PartnerReviewTabs = () => {
   const [reviewData, setReviewData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  
   const [searchInput, setSearchInput] = useState(""); // Search input state
 
   const getSupportData = async () => {
@@ -93,6 +98,9 @@ const PartnerReviewTabs = () => {
   const filteredData = reviewData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
   
+    // Check if search input is a number (for booking_id & rating)
+    const isNumericSearch = !isNaN(searchInput) && searchInput.trim() !== "";
+  
     // Format created_at to "11 Feb 2025"
     const createdAtFormatted = new Intl.DateTimeFormat("en-GB", {
       day: "2-digit",
@@ -104,12 +112,19 @@ const PartnerReviewTabs = () => {
     const categoryName = categoryMap[item.category_id] || "N/A";
   
     return (
-      normalizeString(item.customer?.name).includes(searchTerm) ||
-      normalizeString(item.partner?.name).includes(searchTerm) ||
-      normalizeString(item.rating).includes(searchTerm) ||
-      normalizeString(item.review).includes(searchTerm) ||
-      normalizeString(createdAtFormatted).includes(searchTerm) || // Search by formatted date
-      normalizeString(categoryName).includes(searchTerm) // Search by category name
+      (isNumericSearch
+        ? String(item.booking_id).includes(searchInput.trim()) || // Strict search by booking_id
+          String(item.rating).includes(searchInput.trim()) // Also allow rating search
+        : 
+        // Otherwise, search across all fields
+        normalizeString(item.customer?.name).includes(searchTerm) ||
+        normalizeString(item.partner?.name).includes(searchTerm) ||
+        normalizeString(item.rating).includes(searchTerm) || 
+        normalizeString(item.review).includes(searchTerm) ||
+        normalizeString(item.comment).includes(searchTerm) ||
+        normalizeString(createdAtFormatted).includes(searchTerm) || 
+        normalizeString(categoryName).includes(searchTerm) 
+      )
     );
   });
   
@@ -134,13 +149,15 @@ const PartnerReviewTabs = () => {
             <thead className="heading_user">
               <tr>
                 <th scope="col" style={{ width: "5%" }}>Sr.</th>
+                <th scope="col" style={{ width: "5%" }}>Booking ID.</th>
                 <th scope="col" style={{ width: "15%" }}>Partner</th>
                 <th scope="col" style={{ width: "15%" }}>Customer</th>
                 <th scope="col" style={{ width: "10%" }}>Category</th>
                 <th scope="col" style={{ width: "10%" }}>Rating</th>
-                <th scope="col" style={{ width: "30%" }}>Comments</th>
-                {/* <th scope="col" style={{ width: "30%" }}>Images</th> */}
+                <th scope="col" style={{ width: "30%" }}>Reviews</th>
+                <th scope="col" style={{ width: "30%" }}>Images</th>
                 <th scope="col" style={{ width: "10%" }}>Created At</th>
+                <th scope="col" style={{ width: "10%" }}>comments</th>
                 <th scope="col" style={{ width: "10%" }}>Action</th>
               </tr>
             </thead>
@@ -149,6 +166,7 @@ const PartnerReviewTabs = () => {
                 filteredData.map((item, index) => (
                   <tr key={item.id}>
                     <th scope="row">{index + 1}.</th>
+                    <td>{item.booking_id || "N/A"}</td>
                     <td>{item.partner?.name || "N/A"}</td>
                     <td>{item.customer?.name || "N/A"}</td>
                     <td>{(() => {const categoryMap = {
@@ -160,10 +178,10 @@ const PartnerReviewTabs = () => {
   })()}
 </td>
                     <td style={{ fontWeight: "bold" }}>{item.rating || "N/A"}</td>
-                    {/* <td>
-                      {item.customer?.image ? (
+                    <td>
+                      {item.attachment ? (
                         <img
-                          src={item.customer.image}
+                          src={item.attachment}
                           alt="Customer"
                           style={{
                             width: "50px",
@@ -173,7 +191,7 @@ const PartnerReviewTabs = () => {
                       ) : (
                         "N/A"
                       )}
-                    </td> */}
+                    </td>
 
                     <td>{item.review || "No review provided."}</td>
                     <td>
@@ -183,7 +201,9 @@ const PartnerReviewTabs = () => {
                         year: "numeric",
                       }).format(new Date(item.created_at))}
                     </td>
+                    <td>{item.comment || "N/A"}</td>
                     <td className="action-btn-trash">
+                    <div className="status-div">
                       <i
                         className="fa fa-trash text-danger"
                         style={{ cursor: "pointer" }}
@@ -192,12 +212,20 @@ const PartnerReviewTabs = () => {
                           setShowModal(true);
                         }}
                       ></i>
+                       <EditIcon
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setSelectedReview(item);
+                            setShowEditModal(true);
+                          }}
+                        />
+                        </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="text-center">No reviews available.</td>
+                  <td colSpan="11" className="text-center">No reviews available.</td>
                 </tr>
               )}
             </tbody>
@@ -212,6 +240,8 @@ const PartnerReviewTabs = () => {
         handleDelete={handleDeleteReview}
         review={selectedReview}
       />
+  <EditReviewModal open={showEditModal} onClose={() => setShowEditModal(false)} review={selectedReview} fetchReviews={getSupportData} />
+
     </div>
   );
 };

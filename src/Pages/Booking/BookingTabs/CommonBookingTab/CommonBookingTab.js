@@ -586,22 +586,19 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
 
 <td>
   <i
-    className={`fa fa-pencil-alt ${
-      ["upcoming", "inprogress", "not-started"].includes(item.booking_status)
-        ? "text-primary" // Make it blue for "not-started"
-        : "text-muted"
-    }`}
+    className={`fa fa-pencil-alt ${item.cancel_button ? "text-primary" : "text-muted"}`}
     style={{
-      cursor: ["not-started", "upcoming"].includes(item.booking_status) ? "pointer" : "not-allowed",
-      opacity: item.booking_status === "inprogress" ? 0.5 : 1, // Keep opacity for "inprogress"
+      cursor: item.cancel_button ? "pointer" : "not-allowed",
+      opacity: item.cancel_button ? 1 : 0.5,
     }}
     onClick={() =>
-      ["not-started", "upcoming"].includes(item.booking_status)
+      item.cancel_button
         ? handleOpenEditModal(item.booking_id, item.booking_status, item.partner_id, item.category_id)
         : null
     }
   />
 </td>
+
 
       </tr>
     ))

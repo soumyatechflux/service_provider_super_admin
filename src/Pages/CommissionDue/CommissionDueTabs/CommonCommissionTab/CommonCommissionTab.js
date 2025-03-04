@@ -114,7 +114,7 @@ const CommonCommissionTab = ({
                 currentEntries.map((item, index) => (
                   <tr key={item.id}>
                     <th scope="row">{index + 1 + (currentPage - 1) * entriesPerPage}.</th>
-                    <td>{item.id || "Unknown"}</td>
+                    <td>{item.uid|| "Unknown"}</td>
                     <td>{item.name || "Unknown"}</td>
                     <td>{item.category_name || "N/A"}</td>
                     <td style={{ color: item.total_partner_amount < 0 ? "red" : "inherit" }}>
@@ -161,8 +161,8 @@ const CommonCommissionTab = ({
 
       {/* Payment History Modal - FIXED */}
       <PaymentHistoryModal
-        open={showPaymentHistoryModal} // ✅ FIXED PROP NAME
-        handleClose={() => setShowPaymentHistoryModal(false)} // ✅ FIXED FUNCTION NAME
+        open={showPaymentHistoryModal}
+        handleClose={() => setShowPaymentHistoryModal(false)} 
       />
     </div>
   );

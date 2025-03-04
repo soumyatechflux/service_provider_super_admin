@@ -59,6 +59,26 @@ const PartnerReward = () => {
   return (
     <div className="MainDining_AddTable mb-5 mt-5">
       <form className="menu-container" style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+
+      <div className="Reward-form-background">
+          <label className="Label-Reward-form-background">
+          How much reward points equal to 1 rupees?
+          </label>
+          <div className="reward-alignments-btn">
+            <input
+              className="input-Reward-form-background"
+              type="number"
+              name="how_much_reward_points_equal_to_1_rupees_partner"
+              value={formData.how_much_reward_points_equal_to_1_rupees_partner}
+              onChange={handleChange}
+              placeholder="Enter rupee value per point"
+            />
+            <button type="button" className="Reward-button" onClick={() => handleUpdate("how_much_reward_points_equal_to_1_rupees_partner")}>
+              Update
+            </button>
+          </div>
+        </div>
+        
         <div className="Reward-form-background">
           <label className="Label-Reward-form-background">
             After how many bookings completed, rewards will be able to use for signup partner?
@@ -97,24 +117,7 @@ const PartnerReward = () => {
           </div>
         </div>
 
-        <div className="Reward-form-background">
-          <label className="Label-Reward-form-background">
-          How much reward points equal to 1 rupees?
-          </label>
-          <div className="reward-alignments-btn">
-            <input
-              className="input-Reward-form-background"
-              type="number"
-              name="how_much_reward_points_equal_to_1_rupees_partner"
-              value={formData.how_much_reward_points_equal_to_1_rupees_partner}
-              onChange={handleChange}
-              placeholder="Enter rupee value per point"
-            />
-            <button type="button" className="Reward-button" onClick={() => handleUpdate("how_much_reward_points_equal_to_1_rupees_partner")}>
-              Update
-            </button>
-          </div>
-        </div>
+        
       </form>
     </div>
   );

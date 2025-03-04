@@ -2,38 +2,33 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../../../Loader/Loader";
-import DeleteReviewModal from "./../DeleteReviewModal/DeleteReviewModal"; 
+import DeleteReviewModal from "../DeleteReviewModal/DeleteReviewModal";
+import EditReviewModal from "../EditReviewModal/EditReviewModal";
+import EditIcon from "@mui/icons-material/Edit";
 
 const PartnerReviewTabs = () => {
   const [reviewData, setReviewData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
-  const [searchInput, setSearchInput] = useState(""); 
+  const [searchInput, setSearchInput] = useState("");
 
   const getSupportData = async () => {
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
       setLoading(true);
-
       const response = await axios.get(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/customer_ratings`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-
       setLoading(false);
       if (response?.status === 200 && response?.data?.success) {
-        const data = response?.data?.data || [];
-        setReviewData(data);
+        setReviewData(response?.data?.data || []);
       } else {
         toast.error(response.data.message || "Failed to fetch reviews.");
-        setLoading(false);
       }
     } catch (error) {
       toast.error("Failed to load reviews. Please try again.");
@@ -43,25 +38,19 @@ const PartnerReviewTabs = () => {
 
   const handleDeleteReview = async (review) => {
     try {
-      const token = sessionStorage.getItem(
-        "TokenForSuperAdminOfServiceProvider"
-      );
+      const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
       setLoading(true);
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/ratings/${review.id}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       setLoading(false);
       if (response?.status === 200 && response?.data?.success) {
         toast.success("Review deleted successfully.");
-        setReviewData((prevData) =>
-          prevData.filter((item) => item.id !== review.id)
-        );
-        setShowModal(false);
+        setReviewData((prevData) => prevData.filter((item) => item.id !== review.id));
+        setShowDeleteModal(false);
       } else {
         toast.error(response.data.message || "Failed to delete review.");
       }
@@ -78,9 +67,21 @@ const PartnerReviewTabs = () => {
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
 
-  // Corrected Search Functionality
   const filteredData = reviewData.filter((item) => {
-    // Format created_at to "11 Feb 2025"
+    const searchTerm = normalizeString(searchInput);
+
+    // Ensure that if the input is empty, return all data
+    if (!searchTerm) return true;
+
+    // Normalize all fields except image
+    const bookingId = item.booking_id?.toString() || "";
+    const customerName = normalizeString(item.customer?.name);
+    const partnerName = normalizeString(item.partner?.name);
+    const rating = item.rating?.toString() || "";
+    const review = normalizeString(item.review);
+    const comment = normalizeString(item.comment);
+
+    // Format created_at to "11 Feb 2025" for searching
     const createdAtFormatted = new Intl.DateTimeFormat("en-GB", {
       day: "2-digit",
       month: "short",
@@ -88,15 +89,13 @@ const PartnerReviewTabs = () => {
     }).format(new Date(item.created_at));
 
     return (
-      normalizeString(item.customer?.name).includes(
-        normalizeString(searchInput)
-      ) ||
-      normalizeString(item.partner?.name).includes(
-        normalizeString(searchInput)
-      ) ||
-      normalizeString(item.rating).includes(normalizeString(searchInput)) ||
-      normalizeString(item.review).includes(normalizeString(searchInput)) ||
-      normalizeString(createdAtFormatted).includes(normalizeString(searchInput))
+      bookingId.includes(searchTerm) ||
+      customerName.includes(searchTerm) ||
+      partnerName.includes(searchTerm) ||
+      rating.includes(searchTerm) ||
+      review.includes(searchTerm) ||
+      comment.includes(searchTerm) ||
+      normalizeString(createdAtFormatted).includes(searchTerm)
     );
   });
 
@@ -118,30 +117,16 @@ const PartnerReviewTabs = () => {
           <table className="table table-bordered table-user">
             <thead className="heading_user">
               <tr>
-                <th scope="col" style={{ width: "5%" }}>
-                  Sr.
-                </th>
-                <th scope="col" style={{ width: "15%" }}>
-                  Customer
-                </th>
-                <th scope="col" style={{ width: "15%" }}>
-                  Partner
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Rating
-                </th>
-                <th scope="col" style={{ width: "30%" }}>
-                  Comments
-                </th>
-                <th scope="col" style={{ width: "30%" }}>
-                  Image
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Created At
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Action
-                </th>
+                <th scope="col">Sr.</th>
+                <th scope="col">Booking ID</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Partner</th>
+                <th scope="col">Rating</th>
+                <th scope="col">Reviews</th>
+                <th scope="col">Image</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Comments</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -149,30 +134,20 @@ const PartnerReviewTabs = () => {
                 filteredData.map((item, index) => (
                   <tr key={item.id}>
                     <th scope="row">{index + 1}.</th>
+                    <td>{item.booking_id || "N/A"}</td>
                     <td>{item.customer?.name || "N/A"}</td>
                     <td>{item.partner?.name || "N/A"}</td>
-                    <td style={{ fontWeight: "bold" }}>
-                      {item.rating || "N/A"}
-                    </td>
+                    <td style={{ fontWeight: "bold" }}>{item.rating || "N/A"}</td>
                     <td>{item.review || "No review provided."}</td>
                     <td>
-  {item.customer?.image ? (
-    <a href={item.customer.image} target="_blank" rel="noopener noreferrer">
-      <img
-        src={item.customer.image}
-        alt="Customer"
-        style={{
-          width: "50px",
-          height: "50px",
-          cursor: "pointer",
-        }}
-      />
-    </a>
-  ) : (
-    "N/A"
-  )}
-</td>
-
+                      {item.attachment ? (
+                        <a href={item.attachment} target="_blank" rel="noopener noreferrer">
+                          <img src={item.attachment} alt="Customer" style={{ width: "50px", height: "50px", cursor: "pointer" }} />
+                        </a>
+                      ) : (
+                        "N/A"
+                      )}
+                    </td>
                     <td>
                       {new Intl.DateTimeFormat("en-GB", {
                         day: "2-digit",
@@ -180,38 +155,41 @@ const PartnerReviewTabs = () => {
                         year: "numeric",
                       }).format(new Date(item.created_at))}
                     </td>
-
+                    <td>{item.comment || "N/A"}</td>
                     <td className="action-btn-trash">
-                      <i
-                        className="fa fa-trash text-danger"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          setSelectedReview(item);
-                          setShowModal(true);
-                        }}
-                      ></i>
+                      <div className="status-div">
+                        <i
+                          className="fa fa-trash text-danger"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setSelectedReview(item);
+                            setShowDeleteModal(true);
+                          }}
+                        ></i>
+                        <EditIcon
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setSelectedReview(item);
+                            setShowEditModal(true);
+                          }}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="text-center">
-                    No reviews available.
-                  </td>
+                  <td colSpan="11" className="text-center">No reviews available.</td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
       )}
-
       {/* Delete Review Modal */}
-      <DeleteReviewModal
-        show={showModal}
-        handleClose={() => setShowModal(false)}
-        handleDelete={handleDeleteReview}
-        review={selectedReview}
-      />
+      <DeleteReviewModal show={showDeleteModal} handleClose={() => setShowDeleteModal(false)} handleDelete={handleDeleteReview} review={selectedReview} />
+      {/* Edit Review Modal */}
+      <EditReviewModal open={showEditModal} onClose={() => setShowEditModal(false)} review={selectedReview} fetchReviews={getSupportData} />
     </div>
   );
 };

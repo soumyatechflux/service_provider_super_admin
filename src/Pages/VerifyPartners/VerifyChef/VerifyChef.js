@@ -91,7 +91,7 @@ const VerifyChef = () => {
     currentAddressProof: null,
     verificationReport: null,
     comment: "",
-    registeredBy: "",
+    registered_by_name: "",
     cuisines: "" // Initialize as empty array
   });
 
@@ -208,7 +208,7 @@ const VerifyChef = () => {
                 partnerData.gender.slice(1)
               : "",
             comment: partnerData.comment || "",
-            registeredBy: partnerData.registered_by_id || "",
+            registered_by_name: partnerData.registered_by_name || "",
             ...mappedAttachments,
           });
 
@@ -501,6 +501,8 @@ const VerifyChef = () => {
       if (cookDetails.drivingLicense) formData.append("driving_licence", cookDetails.drivingLicense);
       if (cookDetails.currentAddressProof) formData.append("address_proof", cookDetails.currentAddressProof);
       if (cookDetails.verificationReport) formData.append("verification_report", cookDetails.verificationReport);
+      if (cookDetails.registered_by_name) formData.append("registered_by_name", cookDetails.registered_by_name);
+
 
       // Always append these fields
       formData.append("partner_id", id);
@@ -547,6 +549,7 @@ const VerifyChef = () => {
       setLoadingAction(null);
     }
   };
+
   return (
     <div className="verification-container">
       <h2>{heading}</h2>
@@ -1020,9 +1023,24 @@ const VerifyChef = () => {
                 />
               </div>
             </div>
-          </div>
+          </div>  
         ))}
+
+<label>Register By</label>
+<input
+  type="text"
+  name="registered_by_name"
+  value={cookDetails?.registered_by_name}
+  onChange={handleInputChange}
+  placeholder="Enter register by"
+  required
+/>
+
+
       </div>
+      
+
+      
 
       {/* Verify Button */}
       <div className="button-aliangment">

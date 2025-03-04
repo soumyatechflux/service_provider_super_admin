@@ -819,7 +819,7 @@ const CookForDay = () => {
 
                 <div className="col-12 col-md-3 p-4">
                   <div className="Subheading2_AddTable">
-                    DURATION In Minutes
+                    DURATION (in minutes)
                      {/* (Fixed:12hr) */}
                   </div>
                   <div className="seating_AddTable">
