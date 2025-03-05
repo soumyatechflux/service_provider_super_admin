@@ -10,11 +10,10 @@ import { toast } from "react-toastify";
 import "./OneMealTab.css"; // Import your CSS for styling
 
 const OneMealTab = () => {
-
   const [partnerTax, setPartnerTax] = useState(null);
-    const [commission, setCommission] = useState(null);
-    const [partnersPayPercentage, setPartnersPayPercentage] = useState(null);
-    
+  const [commission, setCommission] = useState(null);
+  const [partnersPayPercentage, setPartnersPayPercentage] = useState(null);
+
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [nightChargesStartAt, setNightChargesStartAt] = useState("");
@@ -33,34 +32,31 @@ const OneMealTab = () => {
   const [loading, setLoading] = useState(false);
   const [subCategoryData, setSubCategoryData] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
-  
+
   const [gst, setGst] = useState(null);
   const [secureFees, setSecureFees] = useState(null);
   const [platformFees, setPlatformFees] = useState(null);
-  const [bulletPoints, setBulletPoints] = useState([""]); 
-  
+  const [bulletPoints, setBulletPoints] = useState([""]);
 
   const handleAddBulletPoint = () => {
     setBulletPoints([...bulletPoints, ""]);
   };
-  
+
   const handleRemoveBulletPoint = (index) => {
     if (bulletPoints.length === 1) {
       toast.error("At least one bullet point is required.");
       return;
     }
-    
+
     const updatedBulletPoints = bulletPoints.filter((_, i) => i !== index);
     setBulletPoints(updatedBulletPoints);
   };
-  
+
   const handleBulletPointChange = (index, value) => {
     const updatedBulletPoints = [...bulletPoints];
     updatedBulletPoints[index] = value;
     setBulletPoints(updatedBulletPoints);
   };
-  
-
 
   const handleCommissionChange = (e) => {
     const value = e.target.value === "" ? null : Number(e.target.value);
@@ -115,11 +111,13 @@ const OneMealTab = () => {
         setNightCharge(data.night_charge || "");
         setPartnerTax(data.partner_tax);
         setCommission(data.commission || null);
-setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null);
+        setPartnersPayPercentage(
+          data.commission !== null ? 100 - data.commission : null
+        );
         setGst(data.gst);
-setSecureFees(data.secure_fee || null);
-setPlatformFees(data.platform_fee || null);
-setBulletPoints(data.bullet_points || [""]);
+        setSecureFees(data.secure_fee || null);
+        setPlatformFees(data.platform_fee || null);
+        setBulletPoints(data.bullet_points || [""]);
       } else {
         toast.error(
           response.data.message || "Failed to fetch sub-category data"
@@ -228,49 +226,63 @@ setBulletPoints(data.bullet_points || [""]);
   const handleSubmit = async (event) => {
     event.preventDefault();
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
-  
+
+    // Validate that all bullet points are filled
+    const hasEmptyBulletPoint = bulletPoints.some(
+      (point) => point.trim() === ""
+    );
+    if (hasEmptyBulletPoint) {
+      toast.error("Please fill out all bullet points before submitting.");
+      return;
+    }
+
     // Validate that all dish names are filled
-    const invalidMenuItem = menuRows.some(row => !row.dishName.trim());
+    const invalidMenuItem = menuRows.some((row) => !row.dishName.trim());
     if (invalidMenuItem) {
       toast.error("Please fill out all dish names before submitting.");
       return; // Prevent form submission if validation fails
     }
-  
+
     // Validate that all guest count and price fields are filled
     const invalidGuestRow = guestRows.some(
       (row) => !row.count || row.count < 1 || !row.price || row.price <= 0
     );
     if (invalidGuestRow) {
-      toast.error("Please fill out all guest counts and prices before submitting.");
+      toast.error(
+        "Please fill out all guest counts and prices before submitting."
+      );
       return; // Prevent form submission if validation fails
     }
-  
+
     // Validate that guest counts are unique
-    const guestCounts = guestRows.map(row => row.count);
-    const hasDuplicateGuestCounts = guestCounts.length !== new Set(guestCounts).size;
+    const guestCounts = guestRows.map((row) => row.count);
+    const hasDuplicateGuestCounts =
+      guestCounts.length !== new Set(guestCounts).size;
     if (hasDuplicateGuestCounts) {
-      toast.error("Guest counts should be unique. Please add different guest counts.");
+      toast.error(
+        "Guest counts should be unique. Please add different guest counts."
+      );
       return;
     }
-  
+
     // Validate that guest counts are in ascending order
-    const isAscendingOrder = guestCounts.every((count, index, array) =>
-      index === 0 || count >= array[index - 1]
+    const isAscendingOrder = guestCounts.every(
+      (count, index, array) => index === 0 || count >= array[index - 1]
     );
     if (!isAscendingOrder) {
       toast.error("Guest counts should be in ascending order.");
       return;
     }
-  
+
     // Validate that the number of rows does not exceed 15
     if (guestRows.length > 15) {
       toast.error("Guest count cannot exceed 15.");
       return;
     }
-  
+
     // Create FormData object
     const formData = new FormData();
-  
+
     // Add required fields
     formData.append("category_id", 1); // Add category_id explicitly
     formData.append("sub_category_id", 1); // Add sub_category_id explicitly
@@ -288,7 +300,7 @@ setBulletPoints(data.bullet_points || [""]);
 
     formData.append("gst", gst ?? "0");
     formData.append("partner_tax", partnerTax ?? "0");
-    
+
     formData.append("secure_fee", secureFees ?? "");
     formData.append("platform_fee", platformFees ?? "");
     formData.append("commission", commission || "");
@@ -301,16 +313,16 @@ setBulletPoints(data.bullet_points || [""]);
       aprox_time: row.duration,
     }));
     formData.append("no_of_people", JSON.stringify(noOfPeopleData));
-  
+
     // Add `dishes` data
     const menuItemsData = menuRows.map((row) => ({
       dish_name: row.dishName,
     }));
     formData.append("dishes", JSON.stringify(menuItemsData));
-  
+
     // Loading state
     setLoading(true);
-  
+
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/sub_category`,
@@ -322,7 +334,7 @@ setBulletPoints(data.bullet_points || [""]);
           },
         }
       );
-  
+
       if (response.data.success) {
         toast.success("Sub-category updated successfully!");
         fetchSubCategoryData(); // Refresh the data after update
@@ -336,8 +348,6 @@ setBulletPoints(data.bullet_points || [""]);
       setLoading(false);
     }
   };
-  
-  
 
   const generateTimeOptions = () => {
     const times = [];
@@ -359,62 +369,78 @@ setBulletPoints(data.bullet_points || [""]);
       <form onSubmit={handleSubmit}>
         {/* Start Time, End Time, Night Charges Start At */}
         <div className="row mb-3 align-items-center">
-        <div className="col-md-3">
-  <label htmlFor="startTime" className="form-label">Start Time</label>
-  <select
-    className="form-control"
-    id="startTime"
-    value={startTime}
-    onChange={(e) => {
-      setStartTime(e.target.value);
-      if (e.target.value === endTime) {
-        setEndTime(""); // Reset endTime if it's the same as startTime
-      }
-    }}
-    required
-  >
-    <option value="" disabled>Select start time</option>
-    {timeOptions.map((time) => (
-      <option 
-        key={time} 
-        value={time} 
-        disabled={time === endTime} 
-        style={time === endTime ? { backgroundColor: "#d3d3d3", cursor: "not-allowed" } : {}}
-      >
-        {time}
-      </option>
-    ))}
-  </select>
-</div>
+          <div className="col-md-3">
+            <label htmlFor="startTime" className="form-label">
+              Start Time
+            </label>
+            <select
+              className="form-control"
+              id="startTime"
+              value={startTime}
+              onChange={(e) => {
+                setStartTime(e.target.value);
+                if (e.target.value === endTime) {
+                  setEndTime(""); // Reset endTime if it's the same as startTime
+                }
+              }}
+              required
+            >
+              <option value="" disabled>
+                Select start time
+              </option>
+              {timeOptions.map((time) => (
+                <option
+                  key={time}
+                  value={time}
+                  disabled={time === endTime}
+                  style={
+                    time === endTime
+                      ? { backgroundColor: "#d3d3d3", cursor: "not-allowed" }
+                      : {}
+                  }
+                >
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
 
-<div className="col-md-3">
-  <label htmlFor="endTime" className="form-label">End Time</label>
-  <select
-    className="form-control"
-    id="endTime"
-    value={endTime}
-    onChange={(e) => {
-      if (e.target.value === startTime) {
-        toast.error("End time cannot be the same as start time.");
-      } else {
-        setEndTime(e.target.value);
-      }
-    }}
-    required
-  >
-    <option value="" disabled>Select end time</option>
-    {timeOptions.map((time) => (
-      <option 
-        key={time} 
-        value={time} 
-        disabled={time === startTime} 
-        style={time === startTime ? { backgroundColor: "#d3d3d3", cursor: "not-allowed" } : {}}
-      >
-        {time}
-      </option>
-    ))}
-  </select>
-</div>
+          <div className="col-md-3">
+            <label htmlFor="endTime" className="form-label">
+              End Time
+            </label>
+            <select
+              className="form-control"
+              id="endTime"
+              value={endTime}
+              onChange={(e) => {
+                if (e.target.value === startTime) {
+                  toast.error("End time cannot be the same as start time.");
+                } else {
+                  setEndTime(e.target.value);
+                }
+              }}
+              required
+            >
+              <option value="" disabled>
+                Select end time
+              </option>
+              {timeOptions.map((time) => (
+                <option
+                  key={time}
+                  value={time}
+                  disabled={time === startTime}
+                  style={
+                    time === startTime
+                      ? { backgroundColor: "#d3d3d3", cursor: "not-allowed" }
+                      : {}
+                  }
+                >
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="col-md-3">
             <label htmlFor="nightChargesStartAt" className="form-label">
@@ -535,30 +561,29 @@ setBulletPoints(data.bullet_points || [""]);
               required
             />
           </div>
-
-          
         </div>
 
-
-
         <div className="row mb-3 align-items-center">
-        <div className="col-md-3">
-  <label htmlFor="gst" className="form-label">Tax on commission & Platform Fee</label>
-  <input
-    type="number"
-    className="form-control"
-    id="gst"
-    value={gst === null ? "" : gst}
-    onChange={(e) => {
-      let value = e.target.value === "" ? null : Number(e.target.value);
-      setGst(value);
-    }}
-    min="0"
-    required
-  />
-</div>
+          <div className="col-md-3">
+            <label htmlFor="gst" className="form-label">
+              Tax on commission & Platform Fee
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="gst"
+              value={gst === null ? "" : gst}
+              onChange={(e) => {
+                let value =
+                  e.target.value === "" ? null : Number(e.target.value);
+                setGst(value);
+              }}
+              min="0"
+              required
+            />
+          </div>
 
-  {/* <div className="col-md-3">
+          {/* <div className="col-md-3">
     <label htmlFor="secureFees" className="form-label">Secure Fees</label>
     <input
       type="number"
@@ -571,72 +596,77 @@ setBulletPoints(data.bullet_points || [""]);
     />
   </div> */}
 
-  
+          <div className="col-md-3">
+            <label htmlFor="partnerTax" className="form-label">
+              Tax on Partner's Pay
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="partnerTax"
+              value={partnerTax === null ? "" : partnerTax}
+              onChange={(e) => {
+                let value =
+                  e.target.value === "" ? null : Number(e.target.value);
+                setPartnerTax(value);
+              }}
+              min="0"
+              required
+            />
+          </div>
 
-  <div className="col-md-3">
-  <label htmlFor="partnerTax" className="form-label">Tax on Partner's Pay</label>
-  <input
-    type="number"
-    className="form-control"
-    id="partnerTax"
-    value={partnerTax === null ? "" : partnerTax}
-    onChange={(e) => {
-      let value = e.target.value === "" ? null : Number(e.target.value);
-      setPartnerTax(value);
-    }}
-    min="0"
-    required
-  />
-</div>
-  
+          <div className="col-md-3">
+            <label htmlFor="commission" className="form-label">
+              Servyo Commission %
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="commission"
+              value={commission === null ? "" : commission}
+              onChange={handleCommissionChange}
+              min="1"
+              max="100"
+              required
+            />
+          </div>
 
-<div className="col-md-3">
-  <label htmlFor="commission" className="form-label">Servyo Commission %</label>
-  <input
-    type="number"
-    className="form-control"
-    id="commission"
-    value={commission === null ? "" : commission}
-    onChange={handleCommissionChange}
-    min="1"
-    max="100"
-    required
-  />
-</div>
+          {/* Partner's Pay Percentage (Automatically calculated) */}
+          <div className="col-md-3">
+            <label htmlFor="partnersPay" className="form-label">
+              Partner's Commission %
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="partnersPay"
+              value={
+                partnersPayPercentage === null ? "" : partnersPayPercentage
+              }
+              disabled // Prevents manual editing
+            />
+          </div>
 
+          <div className="col-md-3">
+            <label htmlFor="platformFees" className="form-label">
+              Platform Fees
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="platformFees"
+              value={platformFees ?? ""} // Set value to empty string when null
+              onChange={(e) =>
+                setPlatformFees(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
+              min="1"
+              required
+            />
+          </div>
+        </div>
 
-
-      {/* Partner's Pay Percentage (Automatically calculated) */}
-      <div className="col-md-3">
-  <label htmlFor="partnersPay" className="form-label">Partner's Commission %</label>
-  <input
-    type="number"
-    className="form-control"
-    id="partnersPay"
-    value={partnersPayPercentage === null ? "" : partnersPayPercentage}
-    disabled // Prevents manual editing
-  />
-</div>
-
-<div className="col-md-3">
-    <label htmlFor="platformFees" className="form-label">Platform Fees</label>
-    <input
-      type="number"
-      className="form-control"
-      id="platformFees"
-      value={platformFees ?? "" } // Set value to empty string when null
-      onChange={(e) => setPlatformFees(e.target.value === "" ? null : Number(e.target.value))}
-      min="1"
-      required
-    />
-  </div>
-
-</div>
-
-
-
-
-        
         {/* Guest Time Slot Section */}
         <div className="MainDining_AddTable mb-5 mt-5">
           <p className="Subheading1_AddTable">
@@ -827,10 +857,8 @@ setBulletPoints(data.bullet_points || [""]);
           </div>
         </div>
 
-
-
- {/* Bullet points */}
- <div className="MainDining_AddTable mb-5 mt-5">
+        {/* Bullet points */}
+        <div className="MainDining_AddTable mb-5 mt-5">
           <p className="Subheading1_AddTable">Bullet Points</p>
           <div
             className="menu-container"
@@ -905,10 +933,6 @@ setBulletPoints(data.bullet_points || [""]);
             ))}
           </div>
         </div>
-
-
-
-        
 
         {/* Summernote or Quill Editor for Editable Summary */}
         <div className="MainDining_AddTable mb-5 mt-5">

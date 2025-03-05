@@ -243,6 +243,15 @@ setBulletPoints(data.bullet_points || [""]);
 
     // Create FormData object
     const formData = new FormData();
+
+    // Validate that all bullet points are filled
+    const hasEmptyBulletPoint = bulletPoints.some(
+      (point) => point.trim() === ""
+    );
+    if (hasEmptyBulletPoint) {
+      toast.error("Please fill out all bullet points before submitting.");
+      return;
+    }
     
     const durations = hourRows.map((row) => String(row.duration).trim());
     console.log("Durations (normalized):", durations); // Log the normalized durations array

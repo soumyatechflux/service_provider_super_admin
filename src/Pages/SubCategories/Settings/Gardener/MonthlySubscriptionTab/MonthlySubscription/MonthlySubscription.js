@@ -182,6 +182,14 @@ const MonthlySubscription = () => {
     event.preventDefault();
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
 
+    // Validate that all bullet points are filled
+    const hasEmptyBulletPoint = bulletPoints.some(
+      (point) => point.trim() === ""
+    );
+    if (hasEmptyBulletPoint) {
+      toast.error("Please fill out all bullet points before submitting.");
+      return;
+    }
     // Validate required fields
     const isValidData = hourRows.every(
       (row) => row.visitCount && row.duration && row.price

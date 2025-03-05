@@ -217,6 +217,15 @@ const ChefForParty = () => {
     // Create FormData object
     const formData = new FormData();
 
+    // Validate that all bullet points are filled
+        const hasEmptyBulletPoint = bulletPoints.some(
+          (point) => point.trim() === ""
+        );
+        if (hasEmptyBulletPoint) {
+          toast.error("Please fill out all bullet points before submitting.");
+          return;
+        }
+
     // Validate that all guest count and price fields are filled
     const invalidGuestRow = guestRows.some(
       (row) => !row.count || row.count < 1 || !row.price || row.price <= 0
