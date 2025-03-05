@@ -16,10 +16,10 @@ const ReferalTable = () => {
       className="custom-tabs mb-3 m-3"
       justify
     >
-      <Tab eventKey="customer" title="Customer Refer" >
+      <Tab eventKey="customer" title="Customer Referral" >
         <CustomerReferalTable/>
       </Tab>
-      <Tab eventKey="partner" title="Partner Refer">
+      <Tab eventKey="partner" title="Partner Referral">
         <PartnerReferalTable/>
       </Tab>
     </Tabs>

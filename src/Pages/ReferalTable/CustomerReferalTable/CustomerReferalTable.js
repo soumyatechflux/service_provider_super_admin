@@ -9,7 +9,7 @@ const CustomerReferralTable = () => {
 
   const entriesPerPage = 10;
 
-  // Fetching referral data from the API
+  // Fetch referral data
   const fetchReferralData = async () => {
     setLoading(true);
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
@@ -22,7 +22,7 @@ const CustomerReferralTable = () => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/referrals`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/refer_history/customers`,
         {
           method: "GET",
           headers: {
@@ -33,15 +33,15 @@ const CustomerReferralTable = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch referral data.");
+        throw new Error(`Failed to fetch referral data: ${response.statusText}`);
       }
 
       const data = await response.json();
 
-      if (data.success) {
-        setReferralData(data.data || []);
+      if (data?.success && Array.isArray(data.data)) {
+        setReferralData(data.data);
       } else {
-        console.error("Failed to fetch valid referral data.");
+        console.error("Invalid API response structure.");
         setReferralData([]);
       }
     } catch (error) {
@@ -56,17 +56,21 @@ const CustomerReferralTable = () => {
     fetchReferralData();
   }, []);
 
+  // Normalize string for case-insensitive search
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
 
+  // Filtered data based on search input
   const filteredData = referralData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
     return (
-      normalizeString(item.referrer).includes(searchTerm) ||
-      normalizeString(item.referred).includes(searchTerm) ||
-      normalizeString(item.points.toString()).includes(searchTerm)
+      normalizeString(item.referred_by_name).includes(searchTerm) ||
+      normalizeString(item.referred_to_name).includes(searchTerm) ||
+      normalizeString(item.referral_code).includes(searchTerm) || 
+      normalizeString(item.amount.toString()).includes(searchTerm) 
     );
   });
+  
 
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -76,6 +80,7 @@ const CustomerReferralTable = () => {
   return (
     <div className="Referral-Table-Main p-3">
       <div className="d-flex justify-content-between align-items-center mb-3">
+      <h2>Customer Referral Table</h2>
         <input
           type="text"
           className="form-control w-25"
@@ -96,6 +101,7 @@ const CustomerReferralTable = () => {
                   <th>Sr. No.</th>
                   <th>Referrer</th>
                   <th>Referred To</th>
+                  <th>Referral Code</th>
                   <th>Referral Points</th>
                 </tr>
               </thead>
@@ -104,14 +110,15 @@ const CustomerReferralTable = () => {
                   currentEntries.map((item, index) => (
                     <tr key={item.id}>
                       <td>{indexOfFirstEntry + index + 1}</td>
-                      <td>{item.referrer}</td>
-                      <td>{item.referred}</td>
-                      <td>{item.points}</td>
+                      <td>{item.referred_by_name || "N/A"}</td>
+                      <td>{item.referred_to_name  || "N/A"}</td>
+                      <td>{item.referral_code  || "N/A"}</td>
+                      <td>{item.amount  || "N/A"}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className="text-center">
+                    <td colSpan="5" className="text-center">
                       No data available
                     </td>
                   </tr>
@@ -128,16 +135,23 @@ const CustomerReferralTable = () => {
                     First
                   </button>
                 </li>
-                {[...Array(totalPages)].map((_, number) => (
-                  <li
-                    key={number}
-                    className={`page-item ${currentPage === number + 1 ? "active" : ""}`}
-                  >
-                    <button className="page-link" onClick={() => setCurrentPage(number + 1)}>
-                      {number + 1}
-                    </button>
-                  </li>
-                ))}
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .slice(
+                    Math.max(0, currentPage - 3),
+                    Math.min(totalPages, currentPage + 2)
+                  )
+                  .map((number) => (
+                    <li
+                      key={number}
+                      className={`page-item ${currentPage === number ? "active" : ""}`}
+                    >
+                      <button className="page-link" onClick={() => setCurrentPage(number)}>
+                        {number}
+                      </button>
+                    </li>
+                  ))}
+
                 <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                   <button className="page-link" onClick={() => setCurrentPage(totalPages)}>
                     Last

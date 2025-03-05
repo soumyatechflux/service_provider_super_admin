@@ -105,7 +105,8 @@ const PartnerReviewTabs = () => {
         <Loader />
       ) : (
         <div className="table-responsive mb-5">
-          <div className="d-flex justify-content-end align-items-center mb-3">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+          <h2>Customer Review</h2>
             <input
               type="text"
               className="form-control search-input w-25"

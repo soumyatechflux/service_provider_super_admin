@@ -121,6 +121,7 @@ const Sidebar = ({ isOpen }) => {
     26: <CardGiftcard  />,
     27: <GroupAdd />,
     28: <RequestQuote />, 
+    31: <RequestQuote />, 
   };
 
   return (

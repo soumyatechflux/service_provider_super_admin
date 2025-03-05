@@ -73,7 +73,7 @@ const CommonCommissionTab = ({
 
   return (
     <div className="SubCategory-Table-Main p-3">
-      <div className="mb-3 d-flex justify-content-between align-items-center">
+      <div className="d-flex justify-content-end align-items-center mb-3">
         {/* <button
           className="Discount-btn mb-0"
           onClick={() => setShowPaymentHistoryModal(true)}

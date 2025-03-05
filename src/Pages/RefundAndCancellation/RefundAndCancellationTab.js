@@ -21,6 +21,9 @@ const RefundAndCancellationTab = () => {
 
 
   return (
+    <>
+    <h2>Refund And Cancellation</h2>
+
     <Tabs
       defaultActiveKey="customer"
       id="justify-tab-example"
@@ -64,6 +67,8 @@ const RefundAndCancellationTab = () => {
         />
       </Tab>
     </Tabs>
+    </>
+
   );
 };
 

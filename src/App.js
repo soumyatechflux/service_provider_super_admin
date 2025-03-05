@@ -192,11 +192,7 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/reward" element={<Reward/>}/>
           <Route path="/refer-&-earn" element={<RefferAndEarn />} />
           <Route path="/refund-&-cancellation" element={<RefundAndCancellation />} />
-          <Route path="/referal-table" element={<ReferalTableMain />} />
-
-
-
-
+          <Route path="/referral" element={<ReferalTableMain/>} />
 
         </Route>
       </Routes>

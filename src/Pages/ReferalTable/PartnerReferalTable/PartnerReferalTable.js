@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import Loader from "../../Loader/Loader";
 
@@ -6,19 +7,23 @@ const PartnerReferalTable = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
+
   const entriesPerPage = 10;
 
+  // Fetch referral data
   const fetchReferralData = async () => {
     setLoading(true);
     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+
     if (!token) {
       console.error("Token not found. Please log in again.");
       setLoading(false);
       return;
     }
+
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/partner-referrals`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/refer_history/partners`,
         {
           method: "GET",
           headers: {
@@ -27,13 +32,21 @@ const PartnerReferalTable = () => {
           },
         }
       );
+
       if (!response.ok) {
-        throw new Error("Failed to fetch partner referrals.");
+        throw new Error(`Failed to fetch referral data: ${response.statusText}`);
       }
+
       const data = await response.json();
-      setReferralData(data.data || []);
+
+      if (data?.success && Array.isArray(data.data)) {
+        setReferralData(data.data);
+      } else {
+        console.error("Invalid API response structure.");
+        setReferralData([]);
+      }
     } catch (error) {
-      console.error("Error fetching partner referral data:", error);
+      console.error("Error fetching referral data:", error);
       setReferralData([]);
     } finally {
       setLoading(false);
@@ -44,17 +57,21 @@ const PartnerReferalTable = () => {
     fetchReferralData();
   }, []);
 
+  // Normalize string for case-insensitive search
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
 
+  // Filtered data based on search input
   const filteredData = referralData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
     return (
-      normalizeString(item.referrer).includes(searchTerm) ||
-      normalizeString(item.referredTo).includes(searchTerm) ||
-      normalizeString(item.points).includes(searchTerm)
+      normalizeString(item.referred_by_name).includes(searchTerm) ||
+      normalizeString(item.referred_to_name).includes(searchTerm) ||
+      normalizeString(item.referral_code).includes(searchTerm) || 
+      normalizeString(item.amount.toString()).includes(searchTerm) 
     );
   });
+  
 
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -64,10 +81,11 @@ const PartnerReferalTable = () => {
   return (
     <div className="Referral-Table-Main p-3">
       <div className="d-flex justify-content-between align-items-center mb-3">
+      <h2>Partner Referral Table</h2>
         <input
           type="text"
           className="form-control w-25"
-          placeholder="Search by referrer, referred to, or points..."
+          placeholder="Search by referrer, referred person, or points..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
@@ -84,22 +102,24 @@ const PartnerReferalTable = () => {
                   <th>Sr. No.</th>
                   <th>Referrer</th>
                   <th>Referred To</th>
+                  <th>Referral Code</th>
                   <th>Referral Points</th>
                 </tr>
               </thead>
               <tbody>
                 {currentEntries.length > 0 ? (
                   currentEntries.map((item, index) => (
-                    <tr key={index}>
+                    <tr key={item.id}>
                       <td>{indexOfFirstEntry + index + 1}</td>
-                      <td>{item.referrer}</td>
-                      <td>{item.referredTo}</td>
-                      <td>{item.points}</td>
+                      <td>{item.referred_by_name || "N/A"}</td>
+                      <td>{item.referred_to_name  || "N/A"}</td>
+                      <td>{item.referral_code  || "N/A"}</td>
+                      <td>{item.amount  || "N/A"}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className="text-center">
+                    <td colSpan="5" className="text-center">
                       No data available
                     </td>
                   </tr>
@@ -112,37 +132,29 @@ const PartnerReferalTable = () => {
             <nav className="d-flex justify-content-center">
               <ul className="pagination mb-0" style={{ gap: "5px" }}>
                 <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                  <button
-                    className="page-link"
-                    onClick={() => setCurrentPage(1)}
-                    style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
-                  >
+                  <button className="page-link" onClick={() => setCurrentPage(1)}>
                     First
                   </button>
                 </li>
-                {[...Array(totalPages)].map((_, number) => (
-                  <li
-                    key={number}
-                    className={`page-item ${currentPage === number + 1 ? "active" : ""}`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => setCurrentPage(number + 1)}
-                      style={{
-                        backgroundColor: currentPage === number + 1 ? "#007bff" : "white",
-                        color: currentPage === number + 1 ? "white" : "#007bff",
-                      }}
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .slice(
+                    Math.max(0, currentPage - 3),
+                    Math.min(totalPages, currentPage + 2)
+                  )
+                  .map((number) => (
+                    <li
+                      key={number}
+                      className={`page-item ${currentPage === number ? "active" : ""}`}
                     >
-                      {number + 1}
-                    </button>
-                  </li>
-                ))}
+                      <button className="page-link" onClick={() => setCurrentPage(number)}>
+                        {number}
+                      </button>
+                    </li>
+                  ))}
+
                 <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                  <button
-                    className="page-link"
-                    onClick={() => setCurrentPage(totalPages)}
-                    style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
-                  >
+                  <button className="page-link" onClick={() => setCurrentPage(totalPages)}>
                     Last
                   </button>
                 </li>

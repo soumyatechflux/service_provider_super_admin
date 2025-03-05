@@ -236,7 +236,8 @@ const SupportPartnerTab = () => {
 
   return (
     <div className="Support-Table-Main p-3">
-      <div className="d-flex justify-content-end align-items-center mb-3">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+      <h2>Partner Support</h2>
         <input
           type="text"
           className="form-control search-input w-25"
