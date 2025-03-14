@@ -246,20 +246,40 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   };
 
   const renderPagination = () => {
-    // Hide pagination if filtered data is less than or equal to entriesPerPage
     if (filteredData.length <= entriesPerPage) return null;
-
+  
+    const totalPages = Math.ceil(filteredData.length / entriesPerPage);
+  
+    // Determine the range of pages to display
     const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
+    const pagesToShow = 3; // Number of page numbers to display at a time
+    let startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
+    let endPage = Math.min(totalPages, startPage + pagesToShow - 1);
+  
+    // Adjust startPage if we are near the last pages
+    if (endPage - startPage < pagesToShow - 1) {
+      startPage = Math.max(1, endPage - pagesToShow + 1);
+    }
+  
+    // Collect page numbers for display
+    for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(i);
     }
-
+  
     return (
       <nav>
-        <ul
-          className="pagination justify-content-center"
-          style={{ gap: "5px" }}
-        >
+        <ul className="pagination justify-content-center" style={{ gap: "5px" }}>
+          {/* First Page Button */}
+          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => handlePageChange(1)}
+            >
+              First
+            </button>
+          </li>
+  
+          {/* Previous Page Button */}
           <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
             <button
               className="page-link"
@@ -268,6 +288,8 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
               Previous
             </button>
           </li>
+  
+          {/* Page Numbers */}
           {pageNumbers.map((number) => (
             <li
               key={number}
@@ -281,10 +303,10 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
               </button>
             </li>
           ))}
+  
+          {/* Next Page Button */}
           <li
-            className={`page-item ${
-              currentPage === totalPages ? "disabled" : ""
-            }`}
+            className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
           >
             <button
               className="page-link"
@@ -293,11 +315,21 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
               Next
             </button>
           </li>
+  
+          {/* Last Page Button */}
+          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => handlePageChange(totalPages)}
+            >
+              Last
+            </button>
+          </li>
         </ul>
       </nav>
     );
   };
-
+  
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
 
   useEffect(() => {

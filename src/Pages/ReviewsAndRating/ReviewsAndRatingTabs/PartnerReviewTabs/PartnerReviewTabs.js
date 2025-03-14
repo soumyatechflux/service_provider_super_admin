@@ -155,8 +155,8 @@ const PartnerReviewTabs = () => {
                 <th scope="col" style={{ width: "15%" }}>Customer</th>
                 <th scope="col" style={{ width: "10%" }}>Category</th>
                 <th scope="col" style={{ width: "10%" }}>Rating</th>
-                <th scope="col" style={{ width: "30%" }}>Reviews</th>
                 <th scope="col" style={{ width: "30%" }}>Images</th>
+                <th scope="col" style={{ width: "30%" }}>Reviews</th>
                 <th scope="col" style={{ width: "10%" }}>Created At</th>
                 <th scope="col" style={{ width: "10%" }}>comments</th>
                 <th scope="col" style={{ width: "10%" }}>Action</th>

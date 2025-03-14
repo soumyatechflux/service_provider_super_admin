@@ -57,22 +57,48 @@ const CommonRefundTab = ({ category_id }) => {
         : item?.sub_category_name?.toLowerCase() || "";
     const billingAmount = item?.billing_amount?.toString() || "";
     const refundAmount = item?.refund_amount?.toString() || "";
-    const refundStatus =
-      item?.is_refund === 0 ? "not refunded" : item?.is_refund === 1 ? "refunded" : "";
     const razorpayPaymentId = item?.razorpay_payment_id?.toLowerCase() || "";
     const paymentMode =
       item?.payment_mode ? item.payment_mode.charAt(0).toUpperCase() + item.payment_mode.slice(1) : "";
 
+    // Special case for when searching "refunded"
+    if (searchLower === "refunded") {
+      return (
+        guestName.includes(searchLower) ||
+        subCategoryName.includes(searchLower) ||
+        billingAmount.includes(searchLower) ||
+        refundAmount.includes(searchLower) ||
+        razorpayPaymentId.includes(searchLower) ||
+        paymentMode.toLowerCase().includes(searchLower) ||
+        item?.is_refund === 1 // Only show refunded items
+      );
+    }
+
+    // Special case for when searching "not refunded"
+    if (searchLower === "not refunded") {
+      return (
+        guestName.includes(searchLower) ||
+        subCategoryName.includes(searchLower) ||
+        billingAmount.includes(searchLower) ||
+        refundAmount.includes(searchLower) ||
+        razorpayPaymentId.includes(searchLower) ||
+        paymentMode.toLowerCase().includes(searchLower) ||
+        item?.is_refund === 0 // Only show not refunded items
+      );
+    }
+
+    // Default behavior for other searches (customer, amount, status)
     return (
       guestName.includes(searchLower) ||
       subCategoryName.includes(searchLower) ||
       billingAmount.includes(searchLower) ||
       refundAmount.includes(searchLower) ||
-      refundStatus.includes(searchLower) ||
       razorpayPaymentId.includes(searchLower) ||
-      paymentMode.toLowerCase().includes(searchLower) // Ensure case-insensitive search
+      paymentMode.toLowerCase().includes(searchLower)
     );
   });
+
+
 
 
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);

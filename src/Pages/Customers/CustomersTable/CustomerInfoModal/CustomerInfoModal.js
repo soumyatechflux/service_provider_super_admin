@@ -19,7 +19,7 @@ const CustomerInfoModal = ({ customer, onClose }) => {
             <p><strong>Address:</strong> {customer.address ?? "N/A"}</p>
             <p><strong>Registered By:</strong> {customer.registered_by ?? "N/A"}</p>
             <p><strong>Rating:</strong> {customer.rating ?? "N/A"}</p>
-            <p><strong>Status:</strong> {customer.active_status ?? "N/A"}</p>
+            <p><strong>Status:</strong> {customer.active_status ? customer.active_status.charAt(0).toUpperCase() + customer.active_status.slice(1) : "N/A"}</p>
 
             {/* Bookings Section */}
             <h5 className="mt-3"><strong>Bookings</strong></h5>

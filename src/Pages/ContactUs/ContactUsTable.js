@@ -126,7 +126,7 @@ const ContactUsTable = () => {
                   <th>Message</th>
                   <th>Assign To</th>
                   <th>Priority</th>
-                  <th>Action</th>
+                  <th style={{width:"12%"}}>Action</th>
                 </tr>
               </thead>
               <tbody>

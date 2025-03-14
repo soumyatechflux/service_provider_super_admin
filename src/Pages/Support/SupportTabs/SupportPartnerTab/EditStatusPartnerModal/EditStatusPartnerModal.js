@@ -91,7 +91,7 @@ const EditStatusPartnerModal = ({ support, onClose, onStatusChange, getSupportDa
     >
       <DialogTitle>Edit Status</DialogTitle>
       <DialogContent>
-        {/* Status Dropdown */}
+        {/* Status Dropdown (updated UI) */}
         <FormControl fullWidth margin="normal">
           <InputLabel id="status-label">Status</InputLabel>
           <Select
@@ -99,6 +99,7 @@ const EditStatusPartnerModal = ({ support, onClose, onStatusChange, getSupportDa
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             fullWidth
+            label="Status"
           >
             <MenuItem value="New">New</MenuItem>
             <MenuItem value="In-review">In Review</MenuItem>
@@ -107,7 +108,7 @@ const EditStatusPartnerModal = ({ support, onClose, onStatusChange, getSupportDa
           </Select>
         </FormControl>
 
-        {/* Priority Dropdown */}
+        {/* Priority Dropdown (updated UI) */}
         <FormControl fullWidth margin="normal">
           <InputLabel id="priority-label">Priority</InputLabel>
           <Select
@@ -115,6 +116,7 @@ const EditStatusPartnerModal = ({ support, onClose, onStatusChange, getSupportDa
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
             fullWidth
+            label="Priority"
           >
             <MenuItem value="High">High</MenuItem>
             <MenuItem value="Medium">Medium</MenuItem>
