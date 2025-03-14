@@ -157,7 +157,9 @@ const VerifiedPartnerTab = ({
         normalizeString(restaurant.current_address).includes(searchTerm) ||
         normalizeString(restaurant.registered_by_name).includes(searchTerm) ||
         normalizeString(restaurant.active_status).includes(searchTerm) ||
-        normalizeString(formattedDate).includes(searchTerm)
+        normalizeString(formattedDate).includes(searchTerm) ||
+        normalizeString(restaurant.uid).includes(searchTerm)
+
       );
     }
   });
@@ -392,7 +394,7 @@ const VerifiedPartnerTab = ({
               <tbody style={{ cursor: "default" }}>
   {currentEntries.length === 0 ? (
     <tr>
-      <td colSpan="15" style={{ textAlign: "center", fontWeight: "bold" }}>
+      <td colSpan="16" style={{ textAlign: "center", fontWeight: "bold" }}>
         No data available
       </td>
     </tr>

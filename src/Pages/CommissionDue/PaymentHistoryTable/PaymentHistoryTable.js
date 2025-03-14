@@ -8,7 +8,7 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
   const [dummy_Data, setDummy_Data] = useState([]);
   const [searchInput, setSearchInput] = useState(""); // Search input state
   const [currentPage, setCurrentPage] = useState(1); // Pagination state
-  const entriesPerPage = 5; // Set number of entries per page
+  const entriesPerPage = 10; // Set number of entries per page
 
   const getCommissionData = async () => {
     try {
@@ -114,8 +114,10 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
     const formattedDate = normalizeString(formatDate(item.created_at)); // Convert date to DD/MM/YY and normalize
     const tdsAmount = normalizeString(item.tds_amount?.toString()); // Ensure it's a string
     const payoutAmountAfterTds = normalizeString(item.payout_amount_after_tds?.toString()); // Ensure it's a string
+    const normalizedUid = normalizeString(item.uid || ""); // Normalize uid field
   
     return (
+      normalizedUid.includes(searchTerm) || // Check if uid matches the search term
       normalizeString(item.partner_name).includes(searchTerm) ||
       normalizeString(item.category_name).includes(searchTerm) ||
       normalizeString(item.payout_amount).includes(searchTerm) ||

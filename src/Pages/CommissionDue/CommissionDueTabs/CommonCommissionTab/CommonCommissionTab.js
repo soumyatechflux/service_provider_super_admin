@@ -59,12 +59,28 @@ const CommonCommissionTab = ({
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
 
-  const filteredData = dummy_Data.filter(
-    (item) =>
-      normalizeString(item.name).includes(normalizeString(searchInput)) ||
-      normalizeString(item.category_name).includes(normalizeString(searchInput)) ||
-      normalizeString(String(item.total_partner_amount)).includes(normalizeString(searchInput))
-  );
+  // Log the normalized search input to see what it looks like
+  console.log("Normalized Search Input:", normalizeString(searchInput));
+
+  const filteredData = dummy_Data.filter((item) => {
+    const normalizedName = normalizeString(item.name || "");
+    const normalizedCategoryName = normalizeString(item.category_name || "");
+    const normalizedAmount = normalizeString(String(item.total_partner_amount) || "");
+    const normalizedUid = normalizeString(item.uid || "");
+
+    // Log the normalized values of the current item to see what they look like
+    console.log("Normalized UID:", normalizedUid);
+    console.log("Normalized Name:", normalizedName);
+    console.log("Normalized Category Name:", normalizedCategoryName);
+    console.log("Normalized Amount:", normalizedAmount);
+
+    return (
+      normalizedName.includes(normalizeString(searchInput)) ||
+      normalizedCategoryName.includes(normalizeString(searchInput)) ||
+      normalizedAmount.includes(normalizeString(searchInput)) ||
+      normalizedUid.includes(normalizeString(searchInput)) // Check UID too
+    );
+  });
 
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -74,16 +90,10 @@ const CommonCommissionTab = ({
   return (
     <div className="SubCategory-Table-Main p-3">
       <div className="d-flex justify-content-end align-items-center mb-3">
-        {/* <button
-          className="Discount-btn mb-0"
-          onClick={() => setShowPaymentHistoryModal(true)}
-        >
-          View Payment History
-        </button> */}
         <input
           type="text"
           className="form-control search-input w-25"
-          placeholder="Search by name, category or amount..."
+          placeholder="Search by name, category, amount, or UID..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
@@ -106,42 +116,58 @@ const CommonCommissionTab = ({
               </tr>
             </thead>
             <tbody>
-              {currentEntries.filter((item) => item.total_partner_amount > 0).length === 0 ? (
+              {currentEntries.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="text-center">No data available</td>
                 </tr>
               ) : (
                 currentEntries.map((item, index) => (
                   <tr key={item.id}>
-                    <th scope="row">{index + 1 + (currentPage - 1) * entriesPerPage}.</th>
-                    <td>{item.uid|| "Unknown"}</td>
+                    <th scope="row">
+                      {index + 1 + (currentPage - 1) * entriesPerPage}.
+                    </th>
+                    <td>{item.uid || "Unknown"}</td>
                     <td>{item.name || "Unknown"}</td>
                     <td>{item.category_name || "N/A"}</td>
-                    <td style={{ color: item.total_partner_amount < 0 ? "red" : "inherit" }}>
-  {item.total_partner_amount || "N/A"}
-</td>
-<td style={{ color: item.total_partner_amount_after_tds < 0 ? "red" : "inherit" }}>
-  {item.total_partner_amount_after_tds || "N/A"}
-</td>
-
-<td>
-  <button
-    className="payNow-btn"
-    onClick={() => handlePayNowClick(item)}
-    disabled={item.total_partner_amount < 0 || item.total_partner_amount_after_tds < 0}
-    style={{
-      backgroundColor: item.total_partner_amount < 0 || item.total_partner_amount_after_tds < 0 ? "#ccc" : "#007bff",
-      cursor: item.total_partner_amount < 0 || item.total_partner_amount_after_tds < 0 ? "not-allowed" : "pointer",
-      color: "#fff",
-      border: "none",
-      padding: "5px 10px",
-      borderRadius: "5px"
-    }}
-  >
-    Pay Now
-  </button>
-</td>
-
+                    <td
+                      style={{
+                        color: item.total_partner_amount < 0 ? "red" : "inherit",
+                      }}
+                    >
+                      {item.total_partner_amount || "N/A"}
+                    </td>
+                    <td
+                      style={{
+                        color: item.total_partner_amount_after_tds < 0 ? "red" : "inherit",
+                      }}
+                    >
+                      {item.total_partner_amount_after_tds || "N/A"}
+                    </td>
+                    <td>
+                      <button
+                        className="payNow-btn"
+                        onClick={() => handlePayNowClick(item)}
+                        disabled={
+                          item.total_partner_amount < 0 || item.total_partner_amount_after_tds < 0
+                        }
+                        style={{
+                          backgroundColor:
+                            item.total_partner_amount < 0 || item.total_partner_amount_after_tds < 0
+                              ? "#ccc"
+                              : "#007bff",
+                          cursor:
+                            item.total_partner_amount < 0 || item.total_partner_amount_after_tds < 0
+                              ? "not-allowed"
+                              : "pointer",
+                          color: "#fff",
+                          border: "none",
+                          padding: "5px 10px",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        Pay Now
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -159,10 +185,10 @@ const CommonCommissionTab = ({
         />
       )}
 
-      {/* Payment History Modal - FIXED */}
+      {/* Payment History Modal */}
       <PaymentHistoryModal
         open={showPaymentHistoryModal}
-        handleClose={() => setShowPaymentHistoryModal(false)} 
+        handleClose={() => setShowPaymentHistoryModal(false)}
       />
     </div>
   );
