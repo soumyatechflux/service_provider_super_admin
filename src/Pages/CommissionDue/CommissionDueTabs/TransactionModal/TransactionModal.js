@@ -25,12 +25,14 @@ const TransactionModal = ({ item, onClose, setLoading }) => {
   
       setLoading(true);
   
-      // Construct the payload with all required fields
+      // Construct the payload with additional hidden fields
       const payload = {
-        partner_id: item.id, // Adjust based on your API response key for the partner ID
+        partner_id: item.id, // Partner ID from item object
         payout_amount: parseFloat(item.total_partner_amount), // Ensure amount is a number
         payout_date: paymentDate, // Selected payment date
         payment_transaction_id: transactionId, // Transaction ID entered by the user
+        tds_amount: (item?.tds_amount ?? 0).toString(),
+        payout_amount_after_tds: (item?.total_partner_amount_after_tds ?? 0).toString(),
       };
   
       console.log("Payload:", payload); // Debug to verify payload structure
@@ -59,6 +61,7 @@ const TransactionModal = ({ item, onClose, setLoading }) => {
       setLoading(false);
     }
   };
+  
   
   
   return (

@@ -16,8 +16,8 @@ const CustomerInfoModal = ({ customer, onClose }) => {
             <p><strong>Email:</strong> {customer.email ?? "N/A"}</p>
             <p><strong>Phone:</strong> {customer.country_code ? `${customer.country_code} ${customer.mobile ?? "N/A"}` : customer.mobile ?? "N/A"}</p>
             <p><strong>Gender:</strong> {customer.gender ?? "N/A"}</p>
-            <p><strong>Address:</strong> {customer.address ?? "N/A"}</p>
-            <p><strong>Registered By:</strong> {customer.registered_by ?? "N/A"}</p>
+            <p><strong>Address:</strong> {customer.address?.trim() ? customer.address : "N/A"}</p>
+            <p><strong>Registered By:</strong> {customer.registered_by_id ? customer.registered_by : "N/A"}</p>
             <p><strong>Rating:</strong> {customer.rating ?? "N/A"}</p>
             <p><strong>Status:</strong> {customer.active_status ? customer.active_status.charAt(0).toUpperCase() + customer.active_status.slice(1) : "N/A"}</p>
 
