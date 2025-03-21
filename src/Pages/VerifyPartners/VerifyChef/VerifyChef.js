@@ -568,26 +568,41 @@ const VerifyChef = () => {
             Full Name <span style={{ color: "red" }}>*</span>
           </label>
 
-          <input
+          {/* <input
             type="text"
             name="name"
             value={partnerDetails?.name}
             onChange={handleInputChange}
             placeholder="Enter full name"
-          />
+          /> */}
+
+            <input
+                type="text"
+                name="name"
+                value={cookDetails?.name} 
+                onChange={handleInputChange}
+                placeholder="Enter full name"
+              />
 
           <label>
             Mobile Number <span style={{ color: "red" }}>*</span>
           </label>
 
-          <input
+          {/* <input
             type="text"
             name="phone"
             value={partnerDetails?.mobile}
             onChange={handleInputChange}
             placeholder="Enter mobile number"
-          />
+          /> */}
 
+            <input
+              type="text"
+              name="phone"
+              value={cookDetails?.phone} 
+              onChange={handleInputChange}
+              placeholder="Enter mobile number"
+            />
           <label>
             WhatsApp Number<span style={{ color: "red" }}>*</span>
           </label>
