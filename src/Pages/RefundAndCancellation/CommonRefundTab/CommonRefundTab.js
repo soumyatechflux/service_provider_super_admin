@@ -56,6 +56,13 @@ const CommonRefundTab = ({ category_id }) => {
         ? item?.sub_category_name?.sub_category_name?.toLowerCase() || ""
         : item?.sub_category_name?.toLowerCase() || "";
     const billingAmount = item?.billing_amount?.toString() || "";
+
+    const cancellationAmount = item?.cancel_charge_amount?.toString() || "";
+
+    const bookingIDD = item?.booking_id?.toString() || "";
+
+
+
     const refundAmount = item?.refund_amount?.toString() || "";
     const razorpayPaymentId = item?.razorpay_payment_id?.toLowerCase() || "";
     const paymentMode =
@@ -67,6 +74,8 @@ const CommonRefundTab = ({ category_id }) => {
         guestName.includes(searchLower) ||
         subCategoryName.includes(searchLower) ||
         billingAmount.includes(searchLower) ||
+        bookingIDD.includes(searchLower) ||
+        cancellationAmount.includes(searchLower) ||
         refundAmount.includes(searchLower) ||
         razorpayPaymentId.includes(searchLower) ||
         paymentMode.toLowerCase().includes(searchLower) ||
@@ -81,6 +90,8 @@ const CommonRefundTab = ({ category_id }) => {
         subCategoryName.includes(searchLower) ||
         billingAmount.includes(searchLower) ||
         refundAmount.includes(searchLower) ||
+        bookingIDD.includes(searchLower) ||
+        cancellationAmount.includes(searchLower) ||
         razorpayPaymentId.includes(searchLower) ||
         paymentMode.toLowerCase().includes(searchLower) ||
         item?.is_refund === 0 // Only show not refunded items
@@ -101,7 +112,6 @@ const CommonRefundTab = ({ category_id }) => {
 
 
 
-  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = filteredData.slice(indexOfFirstEntry, indexOfLastEntry);
@@ -133,9 +143,13 @@ const CommonRefundTab = ({ category_id }) => {
               <tr>
                 <th>Sr. No.</th>
                 <th>Customer Name</th>
+                <th>Booking ID </th>
+
                 <th>Sub Category</th>
                 <th>Billing Amount</th>
                 <th>Refund Amount</th>
+                <th>Cancellation Amount</th>
+
                 <th>Razer Pay Payment Id</th>
                 <th>Payment Mode</th>
                 <th>Refund Status</th>
@@ -148,6 +162,10 @@ const CommonRefundTab = ({ category_id }) => {
                   <tr key={item.id || index}>
                     <td>{index + 1 + (currentPage - 1) * entriesPerPage}</td>
                     <td>{item?.guest_name || "N/A"}</td>
+
+                    <td>{item?.booking_id || "N/A"}</td>
+
+
                     <td>
                       {typeof item?.sub_category_name === "object"
                         ? item?.sub_category_name?.sub_category_name || "N/A"
@@ -155,33 +173,41 @@ const CommonRefundTab = ({ category_id }) => {
                     </td>
                     <td>{item?.billing_amount || "N/A"}</td>
                     <td>{item?.refund_amount || "N/A"}</td>
+
+                    <td>{item?.cancel_charge_amount || "N/A"}</td>
+
+
                     <td>{item?.razorpay_payment_id || "N/A"}</td>
                     <td>{item?.payment_mode ? item.payment_mode.charAt(0).toUpperCase() + item.payment_mode.slice(1) : "N/A"}</td>
                     <td style={{ color: item?.is_refund === 0 ? "red" : "black" }}>
-                      {item?.is_refund === 0 ? "Not Refunded" : "Refunded"}
+
+                    {item?.payment_mode === "cod" ? "---" : item?.is_refund === 0 ? "Not Refunded" : "Refunded"}
+
+
                     </td>
                     <td>
-                      <button
-                        className="payNow-btn"
-                        style={{
-                          backgroundColor: item?.is_refund === 0 ? "#007bff" : "#ccc",
-                          cursor: item?.is_refund === 0 ? "pointer" : "not-allowed",
-                          color: "#fff",
-                          border: "none",
-                          padding: "5px 10px",
-                          borderRadius: "5px",
-                        }}
-                        disabled={item?.is_refund === 1}
-                        onClick={() => handlePayNowClick(item)}
-                      >
-                        Edit
-                      </button>
+                    <button
+  className="payNow-btn"
+  style={{
+    backgroundColor: (item?.is_refund === 1 || item?.payment_mode === "cod") ? "#ccc" : "#007bff",
+    cursor: (item?.is_refund === 1 || item?.payment_mode === "cod") ? "not-allowed" : "pointer",
+    color: "#fff",
+    border: "none",
+    padding: "5px 10px",
+    borderRadius: "5px",
+  }}
+  disabled={item?.is_refund === 1 || item?.payment_mode === "cod"}
+  onClick={() => handlePayNowClick(item)}
+>
+  Edit
+</button>
+
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="text-center">
+                  <td colSpan="12" className="text-center">
                     No Data Available
                   </td>
                 </tr>
