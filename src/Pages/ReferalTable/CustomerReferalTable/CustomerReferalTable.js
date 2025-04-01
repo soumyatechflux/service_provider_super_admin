@@ -22,7 +22,7 @@ const CustomerReferralTable = () => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/refer_history/customers`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/customer_refer_points`,
         {
           method: "GET",
           headers: {
@@ -64,10 +64,10 @@ const CustomerReferralTable = () => {
   const filteredData = referralData.filter((item) => {
     const searchTerm = normalizeString(searchInput);
     return (
-      normalizeString(item.referred_by_name).includes(searchTerm) ||
+      normalizeString(item.name).includes(searchTerm) ||
       normalizeString(item.referred_to_name).includes(searchTerm) ||
       normalizeString(item.referral_code).includes(searchTerm) || 
-      normalizeString(item.amount.toString()).includes(searchTerm) 
+      normalizeString(item.wallet_balance.toString()).includes(searchTerm) 
     );
   });
   
@@ -99,8 +99,8 @@ const CustomerReferralTable = () => {
               <thead>
                 <tr>
                   <th>Sr. No.</th>
-                  <th>Referrer</th>
-                  <th>Referred To</th>
+                  <th>Name</th>
+                  {/* <th>Referred To</th> */}
                   <th>Referral Code</th>
                   <th>Referral Points</th>
                 </tr>
@@ -110,10 +110,10 @@ const CustomerReferralTable = () => {
                   currentEntries.map((item, index) => (
                     <tr key={item.id}>
                       <td>{indexOfFirstEntry + index + 1}</td>
-                      <td>{item.referred_by_name || "N/A"}</td>
-                      <td>{item.referred_to_name  || "N/A"}</td>
+                      <td>{item.name || "N/A"}</td>
+                      {/* <td>{item.referred_to_name  || "N/A"}</td> */}
                       <td>{item.referral_code  || "N/A"}</td>
-                      <td>{item.amount  || "N/A"}</td>
+                      <td>{item.wallet_balance  || "N/A"}</td>
                     </tr>
                   ))
                 ) : (

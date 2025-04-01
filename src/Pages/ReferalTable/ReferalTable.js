@@ -25,14 +25,14 @@ const ReferalTable = () => {
         <PartnerReferalTable/>
       </Tab>
      
-      <Tab eventKey="customer-payout" title="Customer Referral Payout">
+      {/* <Tab eventKey="customer-payout" title="Customer Referral Payout">
   <PayoutCustomer />
 </Tab>
    
       <Tab eventKey="partner-payout" title="Partner Referral Payout">
   <PayoutPartner />
 </Tab>
-      
+       */}
     </Tabs>
     </>
   );
