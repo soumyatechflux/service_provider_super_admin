@@ -113,10 +113,10 @@ const PartnerReferalTable = () => {
                   <th>Sr. No.</th>
                   <th>Name</th>
                   <th>Referral Code</th>
-                  <th>Referral Points</th>
-                  <th>Wallet Amount</th>
                   <th>Refer By</th>
                   <th>Used Referral Code</th>
+                  <th>Referral Points</th>
+                  <th>Wallet Amount</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -127,11 +127,11 @@ const PartnerReferalTable = () => {
                       <td>{indexOfFirstEntry + index + 1}</td>
                       <td>{item.name || "N/A"}</td>
                       <td>{item.referral_code || "N/A"}</td>
-                      <td>{item.wallet_balance || "N/A"}</td>
-                      <td>{item.wallet_amount || "N/A"}</td>
                       <td>{item.refer_by_name || "N/A"}</td>
                       <td>{item.used_referral_code || "N/A"}</td>
-
+                      <td>{item.wallet_balance || "N/A"}</td>
+                      <td>{item.wallet_amount || "N/A"}</td>
+                      
                       <td>
                           <button
                             className="payNow-btn"
