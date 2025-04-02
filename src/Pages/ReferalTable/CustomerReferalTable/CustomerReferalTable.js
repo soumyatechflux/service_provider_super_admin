@@ -67,7 +67,9 @@ const CustomerReferralTable = () => {
       normalizeString(item.name).includes(searchTerm) ||
       normalizeString(item.referred_to_name).includes(searchTerm) ||
       normalizeString(item.referral_code).includes(searchTerm) || 
-      normalizeString(item.wallet_balance.toString()).includes(searchTerm) 
+      normalizeString(item.wallet_balance.toString()).includes(searchTerm) ||
+      normalizeString(item.used_referral_code).includes(searchTerm) || 
+      normalizeString(item.refer_by_name).includes(searchTerm) 
     );
   });
   
@@ -102,7 +104,11 @@ const CustomerReferralTable = () => {
                   <th>Name</th>
                   {/* <th>Referred To</th> */}
                   <th>Referral Code</th>
+                  <th>Refer By</th>
+                  <th>Used Referral Code</th>
                   <th>Referral Points</th>
+                  {/* <th>Wallet Amount</th> */}
+
                 </tr>
               </thead>
               <tbody>
@@ -113,12 +119,16 @@ const CustomerReferralTable = () => {
                       <td>{item.name || "N/A"}</td>
                       {/* <td>{item.referred_to_name  || "N/A"}</td> */}
                       <td>{item.referral_code  || "N/A"}</td>
+                      <td>{item.refer_by_name || "N/A"}</td>
+                      <td>{item.used_referral_code || "N/A"}</td>
                       <td>{item.wallet_balance  || "N/A"}</td>
+                      {/* <td>{item.wallet_amount || "N/A"}</td> */}
+
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center">
+                    <td colSpan="8" className="text-center">
                       No data available
                     </td>
                   </tr>
