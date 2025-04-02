@@ -70,8 +70,9 @@ const PartnerReferalTable = () => {
       normalizeString(item.referred_to_name).includes(searchTerm) ||
       normalizeString(item.referral_code).includes(searchTerm) ||
       normalizeString(item.wallet_balance.toString()).includes(searchTerm) ||
-      normalizeString(item.wallet_amount.toString()).includes(searchTerm)
-
+      normalizeString(item.wallet_amount.toString()).includes(searchTerm) ||
+      normalizeString(item.refer_by_name).includes(searchTerm) ||
+      normalizeString(item.used_referral_code).includes(searchTerm) 
     );
   });
 
@@ -112,8 +113,10 @@ const PartnerReferalTable = () => {
                   <th>Sr. No.</th>
                   <th>Name</th>
                   <th>Referral Code</th>
-                  <th>Wallet Balance</th>
+                  <th>Referral Points</th>
                   <th>Wallet Amount</th>
+                  <th>Refer By</th>
+                  <th>Used Referral Code</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -126,6 +129,9 @@ const PartnerReferalTable = () => {
                       <td>{item.referral_code || "N/A"}</td>
                       <td>{item.wallet_balance || "N/A"}</td>
                       <td>{item.wallet_amount || "N/A"}</td>
+                      <td>{item.refer_by_name || "N/A"}</td>
+                      <td>{item.used_referral_code || "N/A"}</td>
+
                       <td>
                           <button
                             className="payNow-btn"
@@ -156,7 +162,7 @@ const PartnerReferalTable = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center">
+                    <td colSpan="8" className="text-center">
                       No data available
                     </td>
                   </tr>

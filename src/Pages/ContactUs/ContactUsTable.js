@@ -184,21 +184,40 @@ const ContactUsTable = () => {
           </div>
 
           <nav className="d-flex justify-content-center">
-            <ul className="pagination mb-0">
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setCurrentPage(1)}>First</button>
-              </li>
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
-              </li>
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
-              </li>
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setCurrentPage(totalPages)}>Last</button>
-              </li>
-            </ul>
-          </nav>
+  <ul className="pagination mb-0">
+    {/* First & Previous */}
+    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+      <button className="page-link" onClick={() => setCurrentPage(1)}>First</button>
+    </li>
+    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+      <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+    </li>
+
+    {/* Page Numbers */}
+    {(() => {
+      let startPage = Math.max(1, currentPage - 1);
+      let endPage = Math.min(totalPages, startPage + 2);
+      if (endPage === totalPages) startPage = Math.max(1, endPage - 2);
+
+      return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNum) => (
+        <li key={pageNum} className={`page-item ${currentPage === pageNum ? "active" : ""}`}>
+          <button className="page-link" onClick={() => setCurrentPage(pageNum)}>
+            {pageNum}
+          </button>
+        </li>
+      ));
+    })()}
+
+    {/* Next & Last */}
+    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+      <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+    </li>
+    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+      <button className="page-link" onClick={() => setCurrentPage(totalPages)}>Last</button>
+    </li>
+  </ul>
+</nav>
+
         </>
       )}
 
