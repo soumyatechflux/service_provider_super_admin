@@ -17,7 +17,9 @@ import {
   GridView,
   QuestionAnswer,
   AccountBox,
-  Loyalty, // Import the Reward Points Icon
+  Loyalty,
+  MailOutline,
+  StarOutline , // Import the Reward Points Icon
 } from "@mui/icons-material";
 import { Gavel, Lock, ReceiptLong, ContactMail, Notifications, CardGiftcard, GroupAdd, RequestQuote } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
@@ -122,6 +124,8 @@ const Sidebar = ({ isOpen }) => {
     27: <GroupAdd />,
     28: <RequestQuote />, 
     31: <RequestQuote />, 
+    32: <MailOutline />, 
+    33:<StarOutline />
   };
 
   return (

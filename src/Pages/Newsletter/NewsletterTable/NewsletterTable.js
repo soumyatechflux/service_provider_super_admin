@@ -20,7 +20,7 @@ const NewsletterTable = () => {
       }
       setLoading(true);
       const response = await axios.get(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/newsletters`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/subscribers`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -45,9 +45,14 @@ const NewsletterTable = () => {
     getNewsletterData();
   }, [getNewsletterData]);
 
-  const filteredData = newsletterData.filter((item) =>
-    item.email.toLowerCase().includes(searchInput.toLowerCase())
-  );
+  const filteredData = newsletterData.filter((item) => {
+    const formattedDate = new Date(item.created_at).toLocaleDateString("en-GB"); 
+    return (
+      item.email.toLowerCase().includes(searchInput.toLowerCase()) ||
+      formattedDate.includes(searchInput) 
+    );
+  });
+  
 
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -77,6 +82,8 @@ const NewsletterTable = () => {
                 <tr>
                   <th>Sr. No.</th>
                   <th>Email</th>
+                  <th>Subscribe Date</th>
+
                 </tr>
               </thead>
               <tbody>
@@ -85,11 +92,13 @@ const NewsletterTable = () => {
                     <tr key={index}>
                       <td>{indexOfFirstEntry + index + 1}</td>
                       <td>{item.email}</td>
+                      <td>{new Date(item.created_at).toLocaleDateString("en-GB")}</td>
+
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="2" className="text-center">
+                    <td colSpan="3" className="text-center">
                       No newsletter subscribers found.
                     </td>
                   </tr>

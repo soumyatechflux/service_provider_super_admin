@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import "../../Template/LayoutMain/LayoutMain/Layout.css";
-import NewsletterTable from "./NewsletterTable/NewsletterTable";
+import TestimonialsTable from "./TestimonialsTable/TestimonialsTable";
 
 const Testimonials = () => {
 
@@ -42,7 +42,7 @@ const Testimonials = () => {
       {console.log('After',value)}
        <div className={`content-container ${value ? 'sidebar-open' : 'sidebar-closed'}`} >
       
-     <NewsletterTable/>
+     <TestimonialsTable/>
     </div>
     </>
    

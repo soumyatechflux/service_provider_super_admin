@@ -61,6 +61,7 @@ import RefundAndCancellation from "./Pages/RefundAndCancellation/RefundAndCancel
 import Reward from "./Pages/Reward/Reward";
 import ReferalTableMain from "./Pages/ReferalTable/ReferalTableMain";
 import Newsletter from "./Pages/Newsletter/Newsletter";
+import Testimonials from "./Pages/Testimonials/Testimonials";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -194,7 +195,9 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/refer-&-earn" element={<RefferAndEarn />} />
           <Route path="/refund-&-cancellation" element={<RefundAndCancellation />} />
           <Route path="/referral" element={<ReferalTableMain/>} />
-          <Route path="/newsletter" element={<Newsletter/>} />
+          <Route path="/subscribers" element={<Newsletter/>} />
+          <Route path="/testimonials" element={<Testimonials/>} />
+
 
 
           {/* Newsletter */}
