@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import './ReportingFilters.css';
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-
 
 const ReportingFilters = ({ onSearch, onClear ,tableData}) => {
   const [filters, setFilters] = useState({
@@ -71,153 +68,10 @@ const ReportingFilters = ({ onSearch, onClear ,tableData}) => {
 
 
 
-//   const handleDownloadPdf = (exportType) => {
-//  console.log(exportType)
-//   };
+  const handleDownloadPdf = (exportType) => {
+ console.log(exportType)
+  };
 
-const handleDownloadPdf = (exportType) => {
-  const excludedColumns = [
-    "sub_booking_id",
-    "number_of_people",
-    "category",
-    "sub_category_name",
-    "created_at",
-    "updated_at",
-    "address_from",
-    "address_from_latitude",
-    "address_from_longitude",
-    "address_to",
-    "address_to_latitude",
-    "address_to_longitude",
-    "start_job_attachments",
-    "end_job_attachments",
-    "customer",
-    "short_address_to",
-
-    "short_address_to",
-    "short_address_from",
-    "short_address_visit",
-
-    "customer_id",
-    "sub_category_id",
-
-
-
-
-
-  ];
-
-  // Create a new window for the PDF
-  const pdfWindow = window.open('', '_blank');
-  
-  // Extract all unique keys from the data to create column headers, excluding specified columns
-  const allKeys = new Set();
-  tableData.forEach(item => {
-    Object.keys(item).forEach(key => {
-      if (!excludedColumns.includes(key)) {
-        allKeys.add(key);
-      }
-    });
-  });
-  const headers = Array.from(allKeys);
-
-  // Create HTML content for the PDF
-  let htmlContent = `
-    <html>
-      <head>
-        <title>Servyo PDF Reporting Sheet</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-          }
-          h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-          }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-          }
-          th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-            word-wrap: break-word;
-            max-width: 300px;
-          }
-          th {
-            background-color: #f2f2f2;
-            position: sticky;
-            top: 0;
-          }
-          tr:nth-child(even) {
-            background-color: #f9f9f9;
-          }
-          .pdf-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-          }
-          .timestamp {
-            color: #666;
-            font-size: 14px;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="pdf-header">
-          <h1>Servyo PDF Reporting Sheet</h1>
-          <div class="timestamp">Generated on: ${new Date().toLocaleString()}</div>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              ${headers.map(header => `<th>${header.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</th>`).join('')}
-            </tr>
-          </thead>
-          <tbody>
-            ${tableData.map(item => `
-              <tr>
-                ${headers.map(header => {
-                  let value = item[header];
-                  // Handle nested objects
-                  if (value && typeof value === 'object' && !Array.isArray(value)) {
-                    value = JSON.stringify(value);
-                  }
-                  // Handle arrays
-                  else if (Array.isArray(value)) {
-                    value = value.join(', ');
-                  }
-                  // Handle null/undefined
-                  else if (value === null || value === undefined) {
-                    value = '';
-                  }
-                  return `<td>${value}</td>`;
-                }).join('')}
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-        <script>
-          // After content loads, trigger print dialog
-          window.onload = function() {
-            setTimeout(function() {
-              window.print();
-            }, 500);
-          };
-        </script>
-      </body>
-    </html>
-  `;
-
-  // Write the HTML content to the new window
-  pdfWindow.document.open();
-  pdfWindow.document.write(htmlContent);
-  pdfWindow.document.close();
-};
 
 
 

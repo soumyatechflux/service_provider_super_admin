@@ -23,6 +23,11 @@ const Reporting = () => {
     setLoading(true); // Trigger a reload in the table
   };
 
+
+  const [tableData, setTableData] = useState([]);
+
+
+
   return (
     <div
       className={`content-container ${
@@ -30,8 +35,12 @@ const Reporting = () => {
       }`}
       style={{ marginTop: "30px" }}
     >
-      <ReportingFilters onSearch={handleSearch} onClear={handleClearFilters} />
-      <ReportTable filters={filters} loading={loading} setLoading={setLoading} />
+      <ReportingFilters 
+         tableData={tableData} 
+         onSearch={handleSearch} onClear={handleClearFilters} />
+      <ReportTable 
+       setTableData={setTableData} 
+       filters={filters} loading={loading} setLoading={setLoading} />
     </div>
   );
 };

@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import BookingDetailsModal from "../BookingDetailsModal/BookingDetailsModal";
 
-const ReportTable = ({ filters, loading, setLoading }) => {
+const ReportTable = ({ filters, loading, setLoading,setTableData }) => {
   const [reportData, setReportData] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,6 +52,15 @@ const ReportTable = ({ filters, loading, setLoading }) => {
   useEffect(() => {
     fetchReportData();
   }, [filters]);
+
+  useEffect(() => {
+  
+
+        setTableData(reportData); 
+      
+     
+  }, [setTableData,reportData]);
+
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
