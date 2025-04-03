@@ -145,7 +145,7 @@ const SupportCustomerTab = () => {
                   <th>Mobile</th>
                   <th>Category</th>
                   <th>Description</th>
-                  <th>Image</th>
+                  <th>Attachments</th>
                   <th>Created At</th>
                   <th>Updated At</th>
                   <th>Assign To</th>
@@ -174,18 +174,44 @@ const SupportCustomerTab = () => {
 
         <td>{item.description || "N/A"}</td>
         <td>
-          {item.attachment ? (
-            <a href={item.attachment} target="_blank" rel="noopener noreferrer">
-              <img
-                src={item.attachment}
-                alt="Customer"
-                style={{ width: "50px", height: "50px", cursor: "pointer" }}
-              />
-            </a>
-          ) : (
-            "N/A"
-          )}
-        </td>
+  {item.attachment ? (
+    /\.(jpg|jpeg|png|gif)$/i.test(item.attachment) ? (
+      // Image preview
+      <a href={item.attachment} target="_blank" rel="noopener noreferrer">
+        <img
+          src={item.attachment}
+          alt="Attachment"
+          style={{ width: "50px", height: "50px", cursor: "pointer" }}
+        />
+      </a>
+    ) : /\.(pdf)$/i.test(item.attachment) ? (
+      // PDF preview
+      <embed
+        src={item.attachment}
+        type="application/pdf"
+        width="100"
+        height="100"
+        style={{ cursor: "pointer" }}
+      />
+    ) : /\.(doc|docx|xls|xlsx)$/i.test(item.attachment) ? (
+      // Word & Excel preview using Google Docs Viewer in iframe
+      <iframe
+        src={`https://docs.google.com/gview?url=${encodeURIComponent(
+          item.attachment
+        )}&embedded=true`}
+        style={{ width: "50px", height: "50px", border: "none" }}
+      ></iframe>
+    ) : (
+      // Fallback for other file types
+      <a href={item.attachment} target="_blank" rel="noopener noreferrer">
+        View File
+      </a>
+    )
+  ) : (
+    "N/A"
+  )}
+</td>
+
         <td>{new Date(item.created_at).toLocaleDateString()}</td>
         <td>{new Date(item.updated_at).toLocaleDateString()}</td>
         <td>{item.assign || "Not Assign Yet"}</td>

@@ -263,7 +263,7 @@ const SupportPartnerTab = () => {
                   {/* <th style={{ width: "10%" }}>Email</th> */}
                   <th style={{ width: "10%" }}>Category</th>
                   <th style={{ width: "25%" }}>Description</th>
-                  <th style={{ width: "25%" }}>Image</th>
+                  <th style={{ width: "25%" }}>Attachments</th>
                   <th style={{ width: "10%" }}>Created At</th>
                   <th style={{ width: "10%" }}>Assign To</th>
                   <th style={{ width: "10%" }}>Priority</th>
