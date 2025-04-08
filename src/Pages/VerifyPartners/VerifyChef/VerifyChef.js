@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import "./VerifyChef.css";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Select from "react-select";
+import { toast } from "react-toastify";
+import "./VerifyChef.css";
 
 import CreatableSelect from "react-select/creatable";
 
@@ -117,6 +116,7 @@ const VerifyChef = () => {
       ...(name === "category_id" && { subCategory: "" }),
     }));
   };
+  const baseURL = process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL;
 
   const fetchPartnerDetails = async () => {
     try {
@@ -124,7 +124,8 @@ const VerifyChef = () => {
       setLoading(true);
 
       const response = await axios.get(
-        "https://api-serviceprovider.techfluxsolutions.com/api/admin/partners",
+        // "https://api-serviceprovider.techfluxsolutions.com/api/admin/partners",
+        `${baseURL}/api/admin/partners`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
