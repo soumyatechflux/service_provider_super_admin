@@ -118,6 +118,7 @@ const EditPartner = () => {
       ...(name === "category_id" && { subCategory: "" }),
     }));
   };
+  const baseURL = process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL;
 
   const fetchPartnerDetails = async () => {
     try {
@@ -125,7 +126,8 @@ const EditPartner = () => {
       setLoading(true);
 
       const response = await axios.get(
-        "https://api-serviceprovider.techfluxsolutions.com/api/admin/partners",
+        `${baseURL}/api/admin/partners`,
+
         {
           headers: {
             Authorization: `Bearer ${token}`,

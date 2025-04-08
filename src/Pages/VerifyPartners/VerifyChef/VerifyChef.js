@@ -124,7 +124,6 @@ const VerifyChef = () => {
       setLoading(true);
 
       const response = await axios.get(
-        // "https://api-serviceprovider.techfluxsolutions.com/api/admin/partners",
         `${baseURL}/api/admin/partners`,
         {
           headers: {
