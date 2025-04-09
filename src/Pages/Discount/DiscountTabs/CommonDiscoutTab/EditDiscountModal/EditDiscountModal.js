@@ -175,7 +175,7 @@ const EditDiscountModal = ({
       <div className="modal-overlay">
         <div
           className="modal-content"
-          style={{ height: "80%", overflowY: "auto" }}
+          style={{ height: "90%", overflowY: "auto" }}
         >
           <h2>Edit Discount</h2>
 

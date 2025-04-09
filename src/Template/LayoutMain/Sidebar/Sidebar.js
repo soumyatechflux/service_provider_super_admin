@@ -212,6 +212,7 @@ export default Sidebar;
 //   GridView,
 //   QuestionAnswer,
 //   AccountBox,
+//   StarOutline ,
 // } from "@mui/icons-material";
 // import { MailOutline } from "@mui/icons-material";
 
@@ -318,6 +319,8 @@ export default Sidebar;
 //     27: <GroupAdd />,
 //     28: <RequestQuote />, 
 //     31: <RequestQuote />, 
+//     32: <MailOutline />, 
+//     33:<StarOutline />
 //   };
 
 //   return (
@@ -376,10 +379,10 @@ export default Sidebar;
 //             );
 //           })}
 
-// <Link to="/newsletter">
-//   <li className={`menu-item ${activeItem === "/newsletter" ? "active" : ""}`} onClick={() => handleItemClick("/newsletter")}>
+// <Link to="/invoice">
+//   <li className={`menu-item ${activeItem === "/invoice" ? "active" : ""}`} onClick={() => handleItemClick("/invoice")}>
 //     <MailOutline /> {/* You can replace this with an appropriate icon */}
-//     {isOpen && <span>Newsletter</span>}
+//     {isOpen && <span>Invoice</span>}
 //   </li>
 // </Link>
 

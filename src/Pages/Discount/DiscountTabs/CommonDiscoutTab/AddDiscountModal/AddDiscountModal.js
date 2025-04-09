@@ -187,7 +187,7 @@ const AddDiscountModal = ({ show, onClose, onSave, fetchDiscountData }) => {
       <div className="modal-overlay">
         <div
           className="modal-content"
-          style={{ height: "80%", overflowY: "auto" }}
+          style={{ height: "90%", overflowY: "auto" }}
         >
           <h2>Add Discount</h2>
 

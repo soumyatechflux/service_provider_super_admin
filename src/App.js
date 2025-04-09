@@ -62,6 +62,7 @@ import Reward from "./Pages/Reward/Reward";
 import ReferalTableMain from "./Pages/ReferalTable/ReferalTableMain";
 import Newsletter from "./Pages/Newsletter/Newsletter";
 import Testimonials from "./Pages/Testimonials/Testimonials";
+import Invoice from "./Pages/Invoice/Invoice";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -197,6 +198,8 @@ function AppContent({ isOffline, loggedIn }) {
           <Route path="/referral" element={<ReferalTableMain/>} />
           <Route path="/subscribers" element={<Newsletter/>} />
           <Route path="/testimonials" element={<Testimonials/>} />
+          <Route path="/invoice" element={<Invoice/>} />
+
 
 
 

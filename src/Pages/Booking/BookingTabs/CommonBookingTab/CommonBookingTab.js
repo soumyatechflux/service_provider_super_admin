@@ -6,6 +6,8 @@ import AttachmentModal from "./AttachmentModal/AttachmentModal";
 import EditStatusModal from "./EditStatusModal/EditStatusModal";
 import PriceDetailModal from "./PriceDetailModal/PriceDetailModal";
 import { format } from "date-fns";
+import { FaPeopleArrows } from "react-icons/fa";
+import ReassignPartnerModal from "../../ReassignPartnerModal/ReassignPartnerModal";
 
 const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   function formatDateWithTime(dateString) {
@@ -56,6 +58,9 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   const [attachmentsData, setAttachmentsData] = useState({});
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
+  const [showReassignModal, setShowReassignModal] = useState(false);
+const [selectedBooking, setSelectedBooking] = useState(null);
+
 
   const entriesPerPage = 10;
 
@@ -233,7 +238,6 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
     setCurrentPage(pageNumber);
   };
 
-  const [selectedBooking, setSelectedBooking] = useState(null);
   const [showPriceDetailModal, setShowPriceDetailModal] = useState(false);
 
   const handleOpenPriceDetailModal = (booking) => {
@@ -491,6 +495,9 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
                   <th scope="col" style={{ width: "5%" }}>
                     Action
                   </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Partner Reassign
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -631,8 +638,15 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   />
 </td>
 
-
-      </tr>
+<td
+  style={{ textAlign: "center", cursor: "pointer" }}
+  onClick={() => {
+    setSelectedBooking(item);
+    setShowReassignModal(true);
+  }}
+>
+  <FaPeopleArrows />
+</td>      </tr>
     ))
   ) : (
     <tr>
@@ -671,6 +685,15 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
         setDummyData={setDummy_Data}
         setShowEditModal={setShowEditModal}
       />
+
+<ReassignPartnerModal
+  show={showReassignModal}
+  onClose={() => setShowReassignModal(false)}
+  onSave={() => {}}
+  bookingData={selectedBooking}
+  getCommissionData={getCommissionData}
+
+/>
     </div>
   );
 };
