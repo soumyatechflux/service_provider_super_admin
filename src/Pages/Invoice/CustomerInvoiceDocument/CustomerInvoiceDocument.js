@@ -1,5 +1,5 @@
 import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
-import { format, parse } from 'date-fns';
+import { format,parseISO } from 'date-fns';
 import React from 'react';
 
 const styles = StyleSheet.create({
@@ -109,11 +109,11 @@ const getFormattedDate = (rawDate) => {
   if (!rawDate) return '';
 
   try {
-    const parsed = parse(rawDate, 'dd MMM, yyyy', new Date()); // match full format
-    return format(parsed, 'dd MMMM yyyy'); // e.g., "02 April 2025"
+    const parsed = parseISO(rawDate); 
+    return format(parsed, 'dd MMMM yyyy'); 
   } catch (error) {
     console.error("Date parsing error:", error);
-    return rawDate; // fallback to raw if parsing fails
+    return rawDate;
   }
 };
 
