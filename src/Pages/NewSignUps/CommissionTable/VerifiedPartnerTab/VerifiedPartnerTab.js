@@ -155,6 +155,7 @@ const VerifiedPartnerTab = ({
         normalizeString(categoryName).includes(searchTerm) ||
         restaurant.mobile?.toString().includes(searchTerm) ||
         normalizeString(restaurant.current_address).includes(searchTerm) ||
+        normalizeString(restaurant.state).includes(searchTerm) ||
         normalizeString(restaurant.registered_by_name).includes(searchTerm) ||
         normalizeString(restaurant.active_status).includes(searchTerm) ||
         normalizeString(formattedDate).includes(searchTerm) ||
@@ -360,6 +361,9 @@ const VerifiedPartnerTab = ({
                   <th scope="col" style={{ width: "5%" }}>
                     Address
                   </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    State
+                  </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Sign-Up
                   </th>
@@ -431,6 +435,8 @@ const VerifiedPartnerTab = ({
             ? restaurant.current_address.charAt(0).toUpperCase() + restaurant.current_address.slice(1)
             : "N/A"}
         </td>
+        <td className="text-user">{restaurant.state || "N/A"}</td>
+
         <td className="text-user">
           {new Intl.DateTimeFormat("en-GB", {
             day: "2-digit",

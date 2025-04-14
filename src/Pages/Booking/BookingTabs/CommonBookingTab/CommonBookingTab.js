@@ -1,13 +1,17 @@
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import axios from "axios";
+import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
+import { FaPeopleArrows } from "react-icons/fa";
+import { TbFileInvoice } from "react-icons/tb";
 import { toast } from "react-toastify";
+import CustomerInvoiceDocument from "../../../Invoice/CustomerInvoiceDocument/CustomerInvoiceDocument";
+import PartnerInvoiceDocument from "../../../Invoice/PartnerInvoiceDocument/PartnerInvoiceDocument";
 import Loader from "../../../Loader/Loader";
+import ReassignPartnerModal from "../../ReassignPartnerModal/ReassignPartnerModal";
 import AttachmentModal from "./AttachmentModal/AttachmentModal";
 import EditStatusModal from "./EditStatusModal/EditStatusModal";
 import PriceDetailModal from "./PriceDetailModal/PriceDetailModal";
-import { format } from "date-fns";
-import { FaPeopleArrows } from "react-icons/fa";
-import ReassignPartnerModal from "../../ReassignPartnerModal/ReassignPartnerModal";
 
 const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   function formatDateWithTime(dateString) {
@@ -498,6 +502,8 @@ const [selectedBooking, setSelectedBooking] = useState(null);
                   <th scope="col" style={{ width: "5%" }}>
                     Partner Reassign
                   </th>
+                  <th scope="col" style={{width:"13%"}}>Customer Invoice</th>
+                  <th scope="col" style={{width:"12%"}}>Partner Invoice</th>
                 </tr>
               </thead>
               <tbody>
@@ -646,7 +652,40 @@ const [selectedBooking, setSelectedBooking] = useState(null);
   }}
 >
   <FaPeopleArrows />
-</td>      </tr>
+</td>   
+<td style={{ textAlign: "center" }}>
+  <PDFDownloadLink
+    document={<CustomerInvoiceDocument customer={item} />}
+    fileName={`invoice-${item.booking_id}.pdf`}
+  >
+    {({ loading }) =>
+      loading ? 'Loading...' : (
+        <button className="payNow-btn">
+          Customer <TbFileInvoice />
+        </button>
+      )
+    }
+  </PDFDownloadLink>
+</td>
+
+
+<td style={{ textAlign: "center" }}>
+  <PDFDownloadLink
+    document={<PartnerInvoiceDocument customer={item} />}
+    fileName={`invoice-${item.booking_id}.pdf`}
+  >
+    {({ loading }) =>
+      loading ? 'Loading...' : (
+        <button className="payNow-btn">
+          Partner <TbFileInvoice />
+        </button>
+      )
+    }
+  </PDFDownloadLink>
+</td>
+
+
+ </tr>
     ))
   ) : (
     <tr>

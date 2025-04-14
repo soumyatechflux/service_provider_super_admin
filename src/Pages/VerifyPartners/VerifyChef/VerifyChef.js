@@ -72,6 +72,7 @@ const VerifyChef = () => {
     dob: "",
     address: "",
     permanentAddress: "",
+    state:"",
     experience: "",
     category: "",
     subCategory: "",
@@ -187,6 +188,7 @@ const VerifyChef = () => {
             aadhaar: partnerData.aadhaar || "",
             address: partnerData.current_address || "",
             permanentAddress: partnerData.permanent_address || "",
+            state: partnerData.state||"",
             experience: partnerData.years_of_experience || "",
             subCategory: partnerData.specialisation || "",
             dateOfJoining: partnerData.date_of_joining || "",
@@ -401,6 +403,7 @@ const VerifyChef = () => {
         // "aadhaar",
         "address",
         "permanentAddress",
+        "state",
         "experience",
         "subCategory",
         "dateOfJoining",
@@ -468,6 +471,7 @@ const VerifyChef = () => {
       if (cookDetails.aadhaar) formData.append("aadhaar", cookDetails.aadhaar);
       if (cookDetails.address) formData.append("current_address", cookDetails.address);
       if (cookDetails.permanentAddress) formData.append("permanent_address", cookDetails.permanentAddress);
+      if (cookDetails.state) formData.append("state", cookDetails.state);
       if (cookDetails.experience) formData.append("years_of_experience", cookDetails.experience);
       if (cookDetails.subCategory) formData.append("specialisation", cookDetails.subCategory);
       
@@ -803,6 +807,19 @@ const VerifyChef = () => {
           value={cookDetails.permanentAddress}
           onChange={handleInputChange}
           placeholder="Enter permanent address"
+          required
+        />
+
+        <label>
+          State <span style={{ color: "red" }}>*</span>
+        </label>
+
+        <input
+          type="text"
+          name="state"
+          value={cookDetails.state}
+          onChange={handleInputChange}
+          placeholder="Enter state"
           required
         />
 
