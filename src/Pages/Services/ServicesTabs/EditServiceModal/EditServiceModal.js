@@ -23,10 +23,92 @@ const EditServiceModal = ({ show, onClose, onSave, service }) => {
     }
   }, [service]);
 
-  const handleFileChange = (e) => {
-    setImage(e.target.files[0]);
-  };
+  // const handleFileChange = (e) => {
+  //   setImage(e.target.files[0]);
+  // };
 
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files?.[0];
+  
+  //   if (!file) {
+  //     // No file selected (user might have hit Cancel), do nothing
+  //     return;
+  //   }
+  
+  //   const fileExtension = file.name.split(".").pop().toLowerCase();
+  
+  //   if (fileExtension !== "webp") {
+  //     toast.error("Only .webp image files are allowed.");
+  //     e.target.value = null;
+  //     setImage(null);
+  //   } else {
+  //     setImage(file);
+  //   }
+  // };
+  
+  
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+  
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload a valid image file.");
+      e.target.value = null;
+      setImage(null);
+      return;
+    }
+  
+    const reader = new FileReader();
+  
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+  
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+  
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+  
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const webpFile = new File(
+                [blob],
+                `${file.name.split(".")[0]}.webp`,
+                { type: "image/webp" }
+              );
+              setImage(webpFile);
+            } else {
+              toast.error("Image conversion to .webp failed.");
+              e.target.value = null;
+              setImage(null);
+            }
+          },
+          "image/webp",
+          0.9 // optional quality setting (0.0 to 1.0)
+        );
+      };
+  
+      img.onerror = () => {
+        toast.error("Failed to load image for conversion.");
+        e.target.value = null;
+        setImage(null);
+      };
+    };
+  
+    reader.onerror = () => {
+      toast.error("Failed to read the image file.");
+      e.target.value = null;
+      setImage(null);
+    };
+  
+    reader.readAsDataURL(file);
+  };
+  
   const validateFields = () => {
     if (!title) {
       toast.error("Service title is required.");

@@ -35,15 +35,74 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files[0];
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     image: file,
+  //     imagePreview: URL.createObjectURL(file), // Generate the preview URL
+  //   }));
+  // };
+
+
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files[0];
+  
+  //   if (file && file.type !== "image/webp") {
+  //     toast.error("Only .webp image files are allowed.");
+  //     return;
+  //   }
+  
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     image: file,
+  //     imagePreview: URL.createObjectURL(file), // Generate the preview URL
+  //   }));
+  // };
+
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setFormData((prev) => ({
-      ...prev,
-      image: file,
-      imagePreview: URL.createObjectURL(file), // Generate the preview URL
-    }));
+    if (!file) return;
+  
+    const img = new Image();
+    const reader = new FileReader();
+  
+    reader.onload = (event) => {
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+  
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+  
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const webpFile = new File([blob], `${file.name.split('.')[0]}.webp`, {
+                type: "image/webp",
+                lastModified: Date.now(),
+              });
+  
+              setFormData((prev) => ({
+                ...prev,
+                image: webpFile,
+                imagePreview: URL.createObjectURL(blob),
+              }));
+            }
+          },
+          "image/webp",
+          0.8 // Quality: 0 to 1
+        );
+      };
+      img.src = event.target.result;
+    };
+  
+    reader.readAsDataURL(file);
   };
-
+  
+  
   const handleSubmit = async () => {
     setLoading(true);
     try {

@@ -35,13 +35,91 @@ const EditBannerModal = ({ show, onClose, onSave, bannerData, fetchBanners }) =>
     }));
   };
 
-  const handleImageChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      image: e.target.files[0], // Update image state when a new file is selected
-    }));
-  };
+  // const handleImageChange = (e) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     image: e.target.files[0], // Update image state when a new file is selected
+  //   }));
+  // };
 
+
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  
+  //   if (file && file.type !== "image/webp") {
+  //     toast.error("Only .webp image files are allowed.");
+  //     return;
+  //   }
+  
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     image: file,
+  //   }));
+  // };
+
+  const convertImageToWebP = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+  
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target.result;
+  
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+  
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+  
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const webpFile = new File([blob], "converted_image.webp", {
+                  type: "image/webp",
+                });
+                resolve(webpFile);
+              } else {
+                reject(new Error("Conversion to WebP failed"));
+              }
+            },
+            "image/webp",
+            0.9 // quality: 0–1 (adjust as needed)
+          );
+        };
+  
+        img.onerror = (err) => reject(err);
+      };
+  
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+    });
+  };
+  
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only JPEG, PNG, or WEBP image files are allowed.");
+      return;
+    }
+  
+    try {
+      const convertedWebpFile = await convertImageToWebP(file);
+      setFormData((prev) => ({
+        ...prev,
+        image: convertedWebpFile,
+      }));
+    } catch (error) {
+      toast.error("Failed to convert image to .webp format.");
+      console.error(error);
+    }
+  };
+  
+  
   const handleSave = async () => {
     setLoading(true); // Start loader
     const updatedBanner = new FormData();

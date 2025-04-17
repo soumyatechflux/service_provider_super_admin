@@ -61,16 +61,88 @@ const EditAboutUsModal = ({ open, onClose, onSubmit, initialData, fetchAboutUsDa
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const handleFileChange = (e) => {
+  //   const { name } = e.target;
+  //   const file = e.target.files[0];
+  //   setFormData((prev) => ({ ...prev, [name]: file }));
+  //   setImagePreviews((prev) => ({
+  //     ...prev,
+  //     [name]: file ? URL.createObjectURL(file) : null,
+  //   }));
+  // };
+
+
+
+  // const handleFileChange = (e) => {
+  //   const { name } = e.target;
+  //   const file = e.target.files[0];
+  
+  //   if (file && file.type !== "image/webp") {
+  //     toast.error("Only .webp image files are allowed.");
+  //     return;
+  //   }
+  
+  //   setFormData((prev) => ({ ...prev, [name]: file }));
+  //   setImagePreviews((prev) => ({
+  //     ...prev,
+  //     [name]: file ? URL.createObjectURL(file) : null,
+  //   }));
+  // };
+  
+
   const handleFileChange = (e) => {
     const { name } = e.target;
     const file = e.target.files[0];
-    setFormData((prev) => ({ ...prev, [name]: file }));
-    setImagePreviews((prev) => ({
-      ...prev,
-      [name]: file ? URL.createObjectURL(file) : null,
-    }));
+  
+    if (!file || !file.type.startsWith("image/")) {
+      toast.error("Please upload a valid image file.");
+      return;
+    }
+  
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+  
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+  
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+  
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+  
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const webpFile = new File([blob], `${name}.webp`, { type: "image/webp" });
+  
+              setFormData((prev) => ({ ...prev, [name]: webpFile }));
+              setImagePreviews((prev) => ({
+                ...prev,
+                [name]: URL.createObjectURL(webpFile),
+              }));
+            } else {
+              toast.error("Failed to convert image to .webp.");
+            }
+          },
+          "image/webp",
+          0.9 // Quality (0 to 1)
+        );
+      };
+  
+      img.onerror = () => {
+        toast.error("Failed to load the image.");
+      };
+    };
+  
+    reader.onerror = () => {
+      toast.error("Failed to read the image file.");
+    };
   };
-
+  
   const handleSubmit = async () => {
     setLoading(true);
     setIsSubmitting(true);
