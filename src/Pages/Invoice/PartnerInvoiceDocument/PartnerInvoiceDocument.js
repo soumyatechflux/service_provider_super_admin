@@ -144,7 +144,7 @@ const PartnerInvoiceDocument = ({ customer }) => {
           <Text>Invoice number: {customer?.invoice_number_customer || "N/A"}</Text>
           <Text>Invoice date: {customer?.visit_date || "N/A"}</Text>
           <Text>Place of supply (Name of state): {customer?.state_customer || "N/A"}</Text>
-          <Text>SAC Code: {customer?.sac_code || "N/A"}</Text>
+          <Text>SAC Code: {customer?.partner_to_customer?.sac_code || "N/A"}</Text>
           <Text>Category of service: {customer?.category?.category_name || "Services"}</Text>
           <Text>
             Tax is payable on reverse charge basis: {customer?.reverse_charge ? "Yes" : "No"}
@@ -165,7 +165,7 @@ const PartnerInvoiceDocument = ({ customer }) => {
       date: customer?.tax_date || 'xxx',
       description: 'Service Fees',
       qty: 1,
-      amount: customer?.total_amount,
+      amount: customer?.partner_to_customer?.net_amount,
     },
     {
       date: customer?.tax_date || 'xxx',
@@ -173,23 +173,23 @@ const PartnerInvoiceDocument = ({ customer }) => {
       qty: 1,
       amount: customer?.platform_fee,
     },
-    customer?.igst && {
+    customer?.partner_to_customer?.tax?.igst && {
       date: customer?.tax_date || 'xxx',
       description: 'IGST',
       qty: '',
-      amount: customer?.igst,
+      amount: customer?.partner_to_customer?.tax?.igst,
     },
-    customer?.sgst && {
+    customer?.partner_to_customer?.tax?.sgst && {
       date: customer?.tax_date || 'xxx',
       description: 'SGST',
       qty: '',
-      amount: customer?.sgst,
+      amount:  customer?.partner_to_customer?.tax?.sgst,
     },
-    customer?.cgst && {
+    customer?.partner_to_customer?.tax?.cgst && {
       date: customer?.tax_date || 'xxx',
       description: 'CGST',
       qty: '',
-      amount: customer?.cgst,
+      amount:  customer?.partner_to_customer?.tax?.cgst,
     },
   ]
     .filter(Boolean)
@@ -208,13 +208,13 @@ const PartnerInvoiceDocument = ({ customer }) => {
 </View>
 
 <View style={styles.totalSection}>
-  <Text>Total net amount: {formatCurrency(customer?.sub_total_amount)}</Text>
-  <Text>Total Tax: {formatCurrency(customer?.all_taxes)}</Text>
+  <Text>Total net amount: {formatCurrency(customer?.partner_to_customer?.net_amount)}</Text>
+  <Text>Total Tax: {formatCurrency(customer?.partner_to_customer?.gst)}</Text>
   <Text style={styles.bold}>
-    Total amount payable: {formatCurrency(customer?.billing_amount)}
+    Total amount payable: {formatCurrency(customer?.partner_to_customer?.total_amount)}
   </Text>
   {customer?.billing_amount && (
-    <Text>({numberToWords(customer.billing_amount)} Rupees Only)</Text>
+    <Text>({numberToWords(customer?.partner_to_customer?.total_amount)} Rupees Only)</Text>
   )}
 </View>
 
