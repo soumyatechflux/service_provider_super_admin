@@ -16,3 +16,10 @@
     color: white;
     box-shadow: none !important;
 }
+.payNow-btn:disabled {
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+  }
+  

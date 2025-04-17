@@ -653,7 +653,7 @@ const [selectedBooking, setSelectedBooking] = useState(null);
 >
   <FaPeopleArrows />
 </td>   
-<td style={{ textAlign: "center" }}>
+{/* <td style={{ textAlign: "center" }}>
   <PDFDownloadLink
     document={<CustomerInvoiceDocument customer={item} />}
     fileName={`invoice-${item.booking_id}.pdf`}
@@ -682,7 +682,75 @@ const [selectedBooking, setSelectedBooking] = useState(null);
       )
     }
   </PDFDownloadLink>
-</td>
+</td> */}
+
+{["completed"].includes(item.booking_status) ? (
+  <>
+    <td style={{ textAlign: "center" }}>
+      <PDFDownloadLink
+        document={<CustomerInvoiceDocument customer={item} />}
+        fileName={`invoice-${item.booking_id}.pdf`}
+      >
+        {({ loading }) =>
+          loading ? (
+            "Loading..."
+          ) : (
+            <button className="payNow-btn">
+              Customer <TbFileInvoice />
+            </button>
+          )
+        }
+      </PDFDownloadLink>
+    </td>
+
+    <td style={{ textAlign: "center" }}>
+      <PDFDownloadLink
+        document={<PartnerInvoiceDocument customer={item} />}
+        fileName={`invoice-${item.booking_id}.pdf`}
+      >
+        {({ loading }) =>
+          loading ? (
+            "Loading..."
+          ) : (
+            <button className="payNow-btn">
+              Partner <TbFileInvoice />
+            </button>
+          )
+        }
+      </PDFDownloadLink>
+    </td>
+  </>
+) : (
+  <>
+    <td style={{ textAlign: "center" }}>
+      <button
+        className="payNow-btn"
+        style={{
+          backgroundColor: "#ccc",
+          color: "#666",
+          cursor: "not-allowed",
+        }}
+        disabled
+      >
+        Customer <TbFileInvoice />
+      </button>
+    </td>
+    <td style={{ textAlign: "center" }}>
+      <button
+        className="payNow-btn"
+        style={{
+          backgroundColor: "#ccc",
+          color: "#666",
+          cursor: "not-allowed",
+        }}
+        disabled
+      >
+        Partner <TbFileInvoice />
+      </button>
+    </td>
+  </>
+)}
+
 
 
  </tr>
