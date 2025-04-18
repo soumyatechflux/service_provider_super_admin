@@ -130,13 +130,13 @@ const PartnerInvoiceDocument = ({ customer }) => {
         <View style={styles.row}>
           <View style={styles.address}>
             <Text style={styles.bold}>{customer?.guest_name || "Customer Name"}</Text>
-            <Text>Booking ID: {customer?.booking_id || "N/A"}</Text>
+            {/* <Text>Booking ID: {customer?.booking_id || "N/A"}</Text> */}
             <Text>Pick up address: {customer?.visit_address || "N/A"}</Text>
           </View>
           <View style={styles.invoiceMeta}>
             <Text>Invoice issued by {customer?.issuer_name || "Servyo Powered by Allify Home Solutions Private Limited"}</Text>
             <Text>On behalf of: {customer?.partner?.name || "Servyo Partner"}</Text>
-            <Text>{customer?.partner?.state || "N/A"}</Text>
+            <Text>{customer?.partner_to_customer?.state || "N/A"}</Text>
           </View>
         </View>
 
@@ -167,12 +167,12 @@ const PartnerInvoiceDocument = ({ customer }) => {
       qty: 1,
       amount: customer?.partner_to_customer?.net_amount,
     },
-    {
-      date: customer?.tax_date || 'xxx',
-      description: 'Platform Fees',
-      qty: 1,
-      amount: customer?.platform_fee,
-    },
+    // {
+    //   date: customer?.tax_date || 'xxx',
+    //   description: 'Platform Fees',
+    //   qty: 1,
+    //   amount: customer?.platform_fee,
+    // },
     customer?.partner_to_customer?.tax?.igst && {
       date: customer?.tax_date || 'xxx',
       description: 'IGST',
