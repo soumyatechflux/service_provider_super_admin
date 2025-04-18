@@ -179,7 +179,6 @@ const EditServiceModal = ({ show, onClose, onSave, service }) => {
   
   return (
     <>
-      <ToastContainer />
       <Modal open={show} onClose={onClose}>
         <div
           className="modal-overlay"

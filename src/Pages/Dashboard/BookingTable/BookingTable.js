@@ -32,7 +32,7 @@ const BookingTable = () => {
       }
     } catch (error) {
       console.error('Error fetching booking data:', error);
-      toast.error('Failed to fetch booking data. Please try again.');
+      // toast.error('Failed to fetch booking data. Please try again.');
     } finally {
       setLoading(false);
     }

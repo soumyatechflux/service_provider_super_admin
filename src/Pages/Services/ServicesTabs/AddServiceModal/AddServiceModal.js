@@ -172,7 +172,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "@mui/material/Modal";
 import { Button, TextField, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -336,6 +336,7 @@ const AddServiceModal = ({ show, onClose, onSave, categoryId, subCategoryId, fet
 
   return (
     <Modal open={show} onClose={onClose} aria-labelledby="modal-title" aria-describedby="modal-description">
+      
       <div
         className="modal-overlay"
         style={{
