@@ -166,12 +166,12 @@ const CustomerInvoiceDocument = ({ customer }) => {
       qty: 1,
       amount: customer?.company_to_customer?.net_amount,
     },
-    {
-      date: customer?.tax_date || 'xxx',
-      description: 'Platform Fees',
-      qty: 1,
-      amount: customer?.platform_fee,
-    },
+    // {
+    //   date: customer?.tax_date || 'xxx',
+    //   description: 'Platform Fees',
+    //   qty: 1,
+    //   amount: customer?.platform_fee,
+    // },
     customer?.company_to_customer?.tax?.igst && {
       date: customer?.tax_date || 'xxx',
       description: 'IGST',
