@@ -199,8 +199,8 @@ const [selectedBooking, setSelectedBooking] = useState(null);
   const filteredData = dummy_Data.filter((item) => {
     const searchTerm = normalizeString(searchInput);
     const searchTermNumber = normalizeNumber(searchInput); // Convert input to a number if possible
-    const formattedDishes = normalizeString(parseDishes(item?.dishes)); // Ensure dishes match the displayed format
-
+    const normalizedDishes = normalizeString(item?.dishes ?? "");
+    
     const gardenerDates = (item.gardener_visiting_slots || [])
     .map((slot) => normalizeString(format(new Date(slot.date), "dd MMM yyyy")))
     .join(" "); // Convert array to a searchable string
@@ -226,7 +226,7 @@ const [selectedBooking, setSelectedBooking] = useState(null);
       normalizeString(item?.car_type ?? "").includes(searchTerm) || // Car Type
       normalizeString(item?.transmission_type ?? "").includes(searchTerm) || // Transmission Type
       normalizeNumber(item?.people_count) === searchTermNumber || // People Count as number
-      formattedDishes.includes(searchTerm) || // Search in formatted dishes
+      normalizedDishes.includes(searchTerm) ||
       normalizeString(item?.menu ?? "N/A").includes(searchTerm) || // Menu (handles null)
       gardenerDates.includes(searchTerm)
     );
@@ -517,22 +517,23 @@ const [selectedBooking, setSelectedBooking] = useState(null);
         <td>{item.sub_category_name?.sub_category_name || "Unknown"}</td>
         {category_id === "1" && <td>{item.menu || "N/A"}</td>}
         {category_id === "1" && (
-  <td>
-    {typeof item.dishes === "string"
-      ? (() => {
-          try {
-            const parsedDishes = JSON.parse(item.dishes);
-            return Array.isArray(parsedDishes) && parsedDishes.length > 0
-              ? parsedDishes.join(", ")
-              : "N/A"; // Handle empty array []
-          } catch (error) {
-            return "N/A"; // If JSON parsing fails, return "N/A"
-          }
-        })()
-      : Array.isArray(item.dishes) && item.dishes.length > 0
-      ? item.dishes.join(", ")
-      : "N/A"}
-  </td>
+  // <td>
+  //   {typeof item.dishes === "string"
+  //     ? (() => {
+  //         try {
+  //           const parsedDishes = JSON.parse(item.dishes);
+  //           return Array.isArray(parsedDishes) && parsedDishes.length > 0
+  //             ? parsedDishes.join(", ")
+  //             : "N/A"; // Handle empty array []
+  //         } catch (error) {
+  //           return "N/A"; // If JSON parsing fails, return "N/A"
+  //         }
+  //       })()
+  //     : Array.isArray(item.dishes) && item.dishes.length > 0
+  //     ? item.dishes.join(", ")
+  //     : "N/A"}
+  // </td>
+  <td>{item.dishes || "N/A"}</td>
 )}
 
         {category_id === "2" && <td>{item.car_type || "N/A"}</td>}
@@ -684,7 +685,7 @@ const [selectedBooking, setSelectedBooking] = useState(null);
   </PDFDownloadLink>
 </td> */}
 
-{["completed"].includes(item.booking_status) ? (
+{["completed", "cancelled"].includes(item.booking_status) ? (
   <>
     <td style={{ textAlign: "center" }}>
       <PDFDownloadLink

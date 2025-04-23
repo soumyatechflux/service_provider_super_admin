@@ -1,4 +1,4 @@
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { format,parseISO } from 'date-fns';
 import React from 'react';
 
@@ -72,6 +72,22 @@ const styles = StyleSheet.create({
     borderTop: '1 solid #000',
     paddingTop: 4,
   },
+  signatureContainer: {
+    alignItems: 'flex-end',
+    marginTop: 20,
+  },
+  signatureImage: {
+    width: 100,
+    height: 50,
+    marginBottom: 5,
+  },
+  signatureText: {
+    fontSize: 10,
+    textAlign: 'right',
+  },
+  smallText: {
+    fontSize: 8, // or any size you prefer
+  },
 });
 
 const formatCurrency = (value) => {
@@ -129,7 +145,7 @@ const CustomerInvoiceDocument = ({ customer }) => {
           <View style={styles.address}>
             <Text style={styles.bold}>{customer?.guest_name || "Customer Name"}</Text>
             {/* <Text>Booking ID: {customer?.booking_id || "N/A"}</Text> */}
-            <Text>Customer address: {customer?.visit_address || "N/A"}</Text>
+            <Text style={styles.smallText}>Address: {customer?.visit_address || "N/A"}</Text>
           </View>
 
           {/* <View style={styles.invoiceMeta}>
@@ -141,7 +157,7 @@ const CustomerInvoiceDocument = ({ customer }) => {
 
         <View style={styles.section}>
           <Text>Invoice number: {customer?.invoice_number_customer || "N/A"}</Text>
-          <Text>Invoice date: {customer?.visit_date || "N/A"}</Text>
+          <Text>Invoice date: {customer?.visit_date?.split(',').slice(0, 2).join(',') || "N/A"}</Text>
           <Text>Place of supply (Name of state): {customer?.company_to_customer?.state || "N/A"}</Text>
           <Text>SAC Code: {customer?.company_to_customer?.sac_code || "N/A"}</Text>
           <Text>Category of service: {customer?.category?.category_name || "Services"}</Text>
@@ -162,7 +178,7 @@ const CustomerInvoiceDocument = ({ customer }) => {
   {[
     {
       date: customer?.tax_date || 'xxx',
-      description: 'Service Fees',
+      description: 'Convenience and platform fees',
       qty: 1,
       amount: customer?.company_to_customer?.net_amount,
     },
@@ -178,17 +194,18 @@ const CustomerInvoiceDocument = ({ customer }) => {
       qty: '',
       amount: customer?.company_to_customer?.tax?.igst,
     },
-    customer?.company_to_customer?.tax?.sgst && {
-      date: customer?.tax_date || 'xxx',
-      description: 'SGST',
-      qty: '',
-      amount: customer?.company_to_customer?.tax?.sgst,
-    },
+   
     customer?.company_to_customer?.tax?.cgst && {
       date: customer?.tax_date || 'xxx',
       description: 'CGST',
       qty: '',
       amount: customer?.company_to_customer?.tax?.cgst,
+    },
+    customer?.company_to_customer?.tax?.sgst && {
+      date: customer?.tax_date || 'xxx',
+      description: 'SGST/UTGST',
+      qty: '',
+      amount: customer?.company_to_customer?.tax?.sgst,
     },
   ]
     .filter(Boolean)
@@ -213,12 +230,18 @@ const CustomerInvoiceDocument = ({ customer }) => {
     Total amount payable: {formatCurrency(customer?.company_to_customer?.total_amount)}
   </Text>
   {customer?.billing_amount && (
-    <Text>({numberToWords(customer?.company_to_customer?.total_amount)})</Text>
+    <Text>({numberToWords(customer?.company_to_customer?.total_amount)} Rupees Only)</Text>
   )}
 </View>
 
 
-        <Text style={styles.signature}>Authorized Signature</Text>
+<View style={styles.signatureContainer}>
+    <Image
+      style={styles.signatureImage}
+      src="/Signature/Signature.jpg"
+    />
+    <Text style={styles.signatureText}>Authorized Signature</Text>
+  </View>
 
         <Text style={styles.footer}>
           Allify Home Solutions Private Limited / GST: xxxxx

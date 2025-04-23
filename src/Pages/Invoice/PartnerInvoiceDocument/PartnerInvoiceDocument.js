@@ -1,5 +1,5 @@
 
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { format,parseISO } from 'date-fns';
 import React from 'react';
 
@@ -73,6 +73,22 @@ const styles = StyleSheet.create({
     borderTop: '1 solid #000',
     paddingTop: 4,
   },
+  signatureContainer: {
+    alignItems: 'flex-end',
+    marginTop: 20,
+  },
+  signatureImage: {
+    width: 100,
+    height: 50,
+    marginBottom: 5,
+  },
+  signatureText: {
+    fontSize: 10,
+    textAlign: 'right',
+  },
+  smallText: {
+    fontSize: 8, // or any size you prefer
+  },
 });
 
 const formatCurrency = (value) => {
@@ -131,7 +147,7 @@ const PartnerInvoiceDocument = ({ customer }) => {
           <View style={styles.address}>
             <Text style={styles.bold}>{customer?.guest_name || "Customer Name"}</Text>
             {/* <Text>Booking ID: {customer?.booking_id || "N/A"}</Text> */}
-            <Text>Pick up address: {customer?.visit_address || "N/A"}</Text>
+            <Text style={styles.smallText}>Address: {customer?.visit_address || "N/A"}</Text>
           </View>
           <View style={styles.invoiceMeta}>
             <Text>Invoice issued by {customer?.issuer_name || "Servyo Powered by Allify Home Solutions Private Limited"}</Text>
@@ -141,8 +157,10 @@ const PartnerInvoiceDocument = ({ customer }) => {
         </View>
 
         <View style={styles.section}>
-          <Text>Invoice number: {customer?.invoice_number_customer || "N/A"}</Text>
-          <Text>Invoice date: {customer?.visit_date || "N/A"}</Text>
+          <Text>Invoice number: {customer?.invoice_number_partner || "N/A"}</Text>
+          {/* <Text>Invoice date: {customer?.visit_date || "N/A"}</Text> */}
+          <Text>Invoice date: {customer?.visit_date?.split(',').slice(0, 2).join(',') || "N/A"}</Text>
+
           <Text>Place of supply (Name of state): {customer?.state_customer || "N/A"}</Text>
           <Text>SAC Code: {customer?.partner_to_customer?.sac_code || "N/A"}</Text>/
           {/* <Text>Category of service: {customer?.category?.category_name || "Services"}</Text> */}
@@ -163,7 +181,7 @@ const PartnerInvoiceDocument = ({ customer }) => {
   {[
     {
       date: customer?.tax_date || 'xxx',
-      description: 'Service Fees',
+      description: 'Convenience and platform fees',
       qty: 1,
       amount: customer?.partner_to_customer?.total_amount,
     },
@@ -219,7 +237,13 @@ const PartnerInvoiceDocument = ({ customer }) => {
 </View>
 
 
-        <Text style={styles.signature}>Authorized Signature</Text>
+<View style={styles.signatureContainer}>
+    <Image
+      style={styles.signatureImage}
+      src="/Signature/Signature.jpg"
+    />
+    <Text style={styles.signatureText}>Authorized Signature</Text>
+  </View>
 
         <Text style={styles.footer}>
           Allify Home Solutions Private Limited / GST: xxxxx
