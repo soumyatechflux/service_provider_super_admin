@@ -159,7 +159,7 @@ const PartnerInvoiceDocument = ({ customer }) => {
         <View style={styles.section}>
           <Text>Invoice number: {customer?.invoice_number_partner || "N/A"}</Text>
           {/* <Text>Invoice date: {customer?.visit_date || "N/A"}</Text> */}
-          <Text>Invoice date: {customer?.visit_date?.split(',').slice(0, 2).join(',') || "N/A"}</Text>
+          <Text>Invoice date: {customer?.invoice_date || "N/A"}</Text>
 
           <Text>Place of supply (Name of state): {customer?.state_customer || "N/A"}</Text>
           <Text>SAC Code: {customer?.partner_to_customer?.sac_code || "N/A"}</Text>/
@@ -214,7 +214,7 @@ const PartnerInvoiceDocument = ({ customer }) => {
     .map((item, index) => (
       <View style={styles.tableRow} key={index}>
       <Text style={[styles.cell, { flex: 2 }]}>
-  {getFormattedDate(customer?.visit_date)}
+  {customer?.invoice_date}
 </Text>
 
 
