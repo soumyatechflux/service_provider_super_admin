@@ -145,7 +145,7 @@ const CustomerInvoiceDocument = ({ customer }) => {
           <View style={styles.address}>
             <Text style={styles.bold}>{customer?.guest_name || "Customer Name"}</Text>
             {/* <Text>Booking ID: {customer?.booking_id || "N/A"}</Text> */}
-            <Text style={styles.smallText}>Address: {customer?.visit_address || "N/A"}</Text>
+            <Text>Address: {customer?.visit_address || "N/A"}</Text>
           </View>
 
           {/* <View style={styles.invoiceMeta}>
@@ -225,7 +225,9 @@ const CustomerInvoiceDocument = ({ customer }) => {
 
 <View style={styles.totalSection}>
   <Text>Total net amount: {formatCurrency(customer?.company_to_customer?.net_amount)}</Text>
+  {customer?.company_to_customer?.gst > 0 && (
   <Text>Total Tax: {formatCurrency(customer?.company_to_customer?.gst)}</Text>
+)}
   <Text style={styles.bold}>
     Total amount payable: {formatCurrency(customer?.company_to_customer?.total_amount)}
   </Text>
@@ -243,10 +245,14 @@ const CustomerInvoiceDocument = ({ customer }) => {
     <Text style={styles.signatureText}>Authorized Signature</Text>
   </View>
 
-        <Text style={styles.footer}>
-          Allify Home Solutions Private Limited / GST: xxxxx
+          <Text style={styles.footer}>
+          <Text style={{ fontWeight: 'bold' }}>
+            Allify Home Solutions Private Limited / GST: 07ABCCA1486E1ZW
+          </Text>
           {"\n"}
-          H no. 5/43, second floor, punjabi bagh road no. 43,punjabi bagh sec-3, west delhi, new delhi, delhi, india, 110026 
+          <Text style={styles.smallText}>
+            H no. 5/43, second floor, punjabi bagh road no. 43, punjabi bagh sec-3, west delhi, new delhi, delhi, india, 110026
+          </Text>
         </Text>
       </Page>
     </Document>
