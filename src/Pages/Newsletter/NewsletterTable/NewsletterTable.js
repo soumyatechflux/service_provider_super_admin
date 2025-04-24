@@ -45,6 +45,10 @@ const NewsletterTable = () => {
     getNewsletterData();
   }, [getNewsletterData]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchInput]);
+  
   const filteredData = newsletterData.filter((item) => {
     const formattedDate = new Date(item.created_at).toLocaleDateString("en-GB"); 
     return (

@@ -56,6 +56,10 @@ const CustomerReferralTable = () => {
     fetchReferralData();
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchInput]);
+
   // Normalize string for case-insensitive search
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";

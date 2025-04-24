@@ -163,9 +163,9 @@ const DriverCategoriesTab = ({ category_id }) => {
                   Image
                 </th>
                 {/* New column header */}
-                <th scope="col" style={{ width: "8%" }}>
+                {/* <th scope="col" style={{ width: "8%" }}>
                   Price
-                </th>
+                </th> */}
                 <th scope="col" style={{ width: "20%" }}>
                   Description
                 </th>
@@ -205,7 +205,7 @@ const DriverCategoriesTab = ({ category_id }) => {
               )}
                   </td>
                   {/* New image cell */}
-                  <td>{item.price || "N/A"}</td>
+                  {/* <td>{item.price || "N/A"}</td> */}
                   <td>
                     {expandedDescriptions[item.id]
                       ? item.description

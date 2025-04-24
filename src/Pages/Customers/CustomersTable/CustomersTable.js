@@ -128,6 +128,10 @@ const handleViewCustomer = async (customerId) => {
   }, [getRestaurantTableData]);
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [searchInput]);
+  
+  useEffect(() => {
     // Normalize function to trim spaces and convert to lowercase
     const normalizeString = (str) =>
       str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";

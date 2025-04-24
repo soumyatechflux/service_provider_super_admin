@@ -160,7 +160,7 @@ const CustomerInvoiceDocument = ({ customer }) => {
           <Text>Invoice date: {customer?.visit_date?.split(',').slice(0, 2).join(',') || "N/A"}</Text>
           <Text>Place of supply (Name of state): {customer?.company_to_customer?.state || "N/A"}</Text>
           <Text>SAC Code: {customer?.company_to_customer?.sac_code || "N/A"}</Text>
-          <Text>Category of service: {customer?.category?.category_name || "Services"}</Text>
+          {/* <Text>Category of service: {customer?.category?.category_name || "Services"}</Text> */}
           <Text>
             Tax is payable on reverse charge basis: {customer?.reverse_charge ? "Yes" : "No"}
           </Text>
@@ -190,20 +190,20 @@ const CustomerInvoiceDocument = ({ customer }) => {
     // },
     customer?.company_to_customer?.tax?.igst && {
       date: customer?.tax_date || 'xxx',
-      description: 'IGST',
+      description: 'IGST (18%)',
       qty: '',
       amount: customer?.company_to_customer?.tax?.igst,
     },
    
     customer?.company_to_customer?.tax?.cgst && {
       date: customer?.tax_date || 'xxx',
-      description: 'CGST',
+      description: 'CGST (9%)',
       qty: '',
       amount: customer?.company_to_customer?.tax?.cgst,
     },
     customer?.company_to_customer?.tax?.sgst && {
       date: customer?.tax_date || 'xxx',
-      description: 'SGST/UTGST',
+      description: 'SGST/UTGST (9%)',
       qty: '',
       amount: customer?.company_to_customer?.tax?.sgst,
     },

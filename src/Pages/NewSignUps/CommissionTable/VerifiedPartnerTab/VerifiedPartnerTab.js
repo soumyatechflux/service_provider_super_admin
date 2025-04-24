@@ -169,13 +169,14 @@ const VerifiedPartnerTab = ({
   
   
   // Pagination logic
-  const totalPages = Math.ceil(restaurants.length / entriesPerPage);
+  const totalPages = Math.ceil(filteredRestaurants.length / entriesPerPage); // Update total pages based on filtered data
   const indexOfLastEntry = currentPage * entriesPerPage;
-  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredRestaurants.slice(
-    indexOfFirstEntry,
-    indexOfLastEntry
-  );
+const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+const currentEntries = filteredRestaurants.slice(indexOfFirstEntry, indexOfLastEntry);
+
+useEffect(() => {
+  setCurrentPage(1); // Reset to page 1 when search term changes
+}, [searchInput]);
 
   const getPageRange = () => {
     let start = currentPage - 1;

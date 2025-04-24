@@ -50,6 +50,10 @@ const ContactUsTable = () => {
     getContactData();
   }, [getContactData]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchInput]);
+
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
 

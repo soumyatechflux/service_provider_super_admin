@@ -47,7 +47,10 @@ const PaymentHistoryTable = ({ loading, setLoading }) => {
     getCommissionData();
   }, []);
 
-
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchInput]);
+  
   const exportToCSV = () => {
     if (dummy_Data.length === 0) {
       toast.error("No data available to export.");

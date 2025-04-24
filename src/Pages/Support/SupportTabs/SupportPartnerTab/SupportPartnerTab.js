@@ -81,7 +81,10 @@ const SupportPartnerTab = () => {
     if (!str) return "";
     return str.replace(/\s+/g, " ").trim().toLowerCase();
   };
-
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchInput]);
+  
   // Updated filtering logic: search by name, email, mobile, description, created_at, or updated_at
   const filteredData = supportData.filter((item) => {
     const searchTerm = normalizeString(searchInput);

@@ -53,7 +53,10 @@ const SupportCustomerTab = () => {
   useEffect(() => {
     getSupportData();
   }, [getSupportData]);
-
+  
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchInput]);
  
   const categoryMap = {
     "cook": 1,

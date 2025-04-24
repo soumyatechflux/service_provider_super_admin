@@ -181,7 +181,7 @@ const PartnerInvoiceDocument = ({ customer }) => {
   {[
     {
       date: customer?.tax_date || 'xxx',
-      description: 'Convenience and platform fees',
+      description: `${customer?.category?.category_name || ''}${customer?.sub_category_name?.sub_category_name ? ' - ' + customer.sub_category_name.sub_category_name : ''}`,
       qty: 1,
       amount: customer?.partner_to_customer?.total_amount,
     },

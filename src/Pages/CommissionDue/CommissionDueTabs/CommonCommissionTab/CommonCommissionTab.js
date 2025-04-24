@@ -56,6 +56,10 @@ const CommonCommissionTab = ({
     getCommissionData(category_id);
   }, [category_id]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchInput]);
+  
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
 

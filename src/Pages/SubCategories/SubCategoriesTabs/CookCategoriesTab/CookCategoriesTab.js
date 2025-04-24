@@ -154,9 +154,9 @@ const CookCategoriesTab = ({ category_id }) => {
                 <th scope="col" style={{ width: "15%" }}>
                   Image
                 </th>
-                <th scope="col" style={{ width: "8%" }}>
+                {/* <th scope="col" style={{ width: "8%" }}>
                   Price
-                </th>
+                </th> */}
                 <th scope="col" style={{ width: "20%" }}>
                   Description
                 </th>
@@ -198,7 +198,7 @@ const CookCategoriesTab = ({ category_id }) => {
                       "No image"
                     )}
                   </td>
-                  <td>{item.price || "N/A"}</td>
+                  {/* <td>{item.price || "N/A"}</td> */}
                   <td>
                     {expandedDescriptions[item.id]
                       ? item.description

@@ -177,7 +177,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
         />
 
         {/* Price */}
-        <TextField
+        {/* <TextField
           id="price"
           name="price"
           label="Price"
@@ -186,7 +186,7 @@ const EditSubCategoryModal = ({ open, onClose, onSubmit, initialData }) => {
           fullWidth
           margin="dense"
           variant="outlined"
-        />
+        /> */}
 
         {/* Description */}
         <TextField

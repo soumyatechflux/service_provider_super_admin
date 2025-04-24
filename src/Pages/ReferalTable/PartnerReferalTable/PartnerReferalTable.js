@@ -60,6 +60,10 @@ const PartnerReferalTable = () => {
     fetchReferralData();
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchInput]);
+  
   const normalizeString = (str) =>
     str?.toString().replace(/\s+/g, " ").trim().toLowerCase() || "";
 
