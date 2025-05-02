@@ -226,6 +226,7 @@ const [selectedBooking, setSelectedBooking] = useState(null);
       normalizeString(item?.car_type ?? "").includes(searchTerm) || // Car Type
       normalizeString(item?.transmission_type ?? "").includes(searchTerm) || // Transmission Type
       normalizeNumber(item?.people_count) === searchTermNumber || // People Count as number
+      normalizeNumber(item?.no_of_hours_booked) === searchTermNumber ||
       normalizedDishes.includes(searchTerm) ||
       normalizeString(item?.menu ?? "N/A").includes(searchTerm) || // Menu (handles null)
       gardenerDates.includes(searchTerm)
@@ -428,9 +429,10 @@ const [selectedBooking, setSelectedBooking] = useState(null);
                   )}
                   
                   {(category_id === "1" || category_id === "2") && (
-                  <th scope="col" style={{ width: "15%" }}>
-                    No of People
-                  </th> )}
+                    <th scope="col" style={{ width: "15%" }}>
+                      {category_id === "1" ? "No of People" : "No of Hours"}
+                    </th>
+                  )}
                   
                   <th scope="col" style={{ width: "5%" }}>
                     Amount
@@ -539,8 +541,13 @@ const [selectedBooking, setSelectedBooking] = useState(null);
         {category_id === "2" && <td>{item.car_type || "N/A"}</td>}
         {category_id === "2" && <td>{item.transmission_type || "N/A"}</td>}
         {(category_id === "1" || category_id === "2") && (
-         <td>{item.people_count || "N/A"}</td>
-        )}
+            <td>
+              {category_id === "1" 
+                ? item.people_count || "N/A" 
+                : item.no_of_hours_booked || "N/A"
+              }
+            </td>
+          )}
         <td>
           {item.billing_amount || "N/A"}
           <i
@@ -705,20 +712,34 @@ const [selectedBooking, setSelectedBooking] = useState(null);
     </td>
 
     <td style={{ textAlign: "center" }}>
-      <PDFDownloadLink
-        document={<PartnerInvoiceDocument customer={item} />}
-        fileName={`invoice-${item.booking_id}.pdf`}
-      >
-        {({ loading }) =>
-          loading ? (
-            "Loading..."
-          ) : (
-            <button className="payNow-btn">
-              Partner <TbFileInvoice />
-            </button>
-          )
-        }
-      </PDFDownloadLink>
+      {item.booking_status === "cancelled" ? (
+        <button
+          className="payNow-btn"
+          style={{
+            backgroundColor: "#ccc",
+            color: "#666",
+            cursor: "not-allowed",
+          }}
+          disabled
+        >
+          Partner <TbFileInvoice />
+        </button>
+      ) : (
+        <PDFDownloadLink
+          document={<PartnerInvoiceDocument customer={item} />}
+          fileName={`invoice-${item.booking_id}.pdf`}
+        >
+          {({ loading }) =>
+            loading ? (
+              "Loading..."
+            ) : (
+              <button className="payNow-btn">
+                Partner <TbFileInvoice />
+              </button>
+            )
+          }
+        </PDFDownloadLink>
+      )}
     </td>
   </>
 ) : (
@@ -794,14 +815,14 @@ const [selectedBooking, setSelectedBooking] = useState(null);
         setShowEditModal={setShowEditModal}
       />
 
-<ReassignPartnerModal
-  show={showReassignModal}
-  onClose={() => setShowReassignModal(false)}
-  onSave={() => {}}
-  bookingData={selectedBooking}
-  getCommissionData={getCommissionData}
+    <ReassignPartnerModal
+      show={showReassignModal}
+      onClose={() => setShowReassignModal(false)}
+      onSave={() => {}}
+      bookingData={selectedBooking}
+      getCommissionData={getCommissionData}
 
-/>
+    />
     </div>
   );
 };

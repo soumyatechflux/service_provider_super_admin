@@ -175,11 +175,12 @@ const CustomerInvoiceDocument = ({ customer }) => {
     <Text style={styles.cell}>Net Amount</Text>
   </View>
 
-  {[
+  {/* {[
     {
       date: customer?.tax_date || 'xxx',
-      description: 'Convenience and platform fees',
-      qty: 1,
+      description: customer?.booking_status === "cancelled" 
+      ? 'Cancellation Fees' 
+      : 'Convenience and platform fees',      qty: 1,
       amount: customer?.company_to_customer?.net_amount,
     },
     // {
@@ -207,7 +208,88 @@ const CustomerInvoiceDocument = ({ customer }) => {
       qty: '',
       amount: customer?.company_to_customer?.tax?.sgst,
     },
-  ]
+  ] */}
+
+{[
+  // 1. Net Amount (Cancellation Fees / Platform Fees)
+  {
+    date: customer?.tax_date || 'xxx',
+    description:
+    customer?.booking_status === "cancelled"
+        ? 'Cancellation Fees'
+        : 'Convenience and platform fees',
+    qty: 1,
+    amount: customer?.booking_status === "cancelled"
+    ? customer?.company_to_customer_cancelled_booking?.net_amount
+    : customer?.company_to_customer?.net_amount,
+  },
+
+  // 2. IGST (Conditional on booking status)
+  ...(customer?.booking_status === 'completed'
+    ? customer?.company_to_customer?.tax?.igst
+      ? [{
+          date: customer?.tax_date || 'xxx',
+          description: 'IGST (18%)',
+          qty: '',
+          amount: customer?.company_to_customer?.tax?.igst,
+        }]
+      : []
+    : customer?.booking_status === 'cancelled'
+      ? customer?.company_to_customer_cancelled_booking?.tax?.igst
+        ? [{
+            date: customer?.tax_date || 'xxx',
+            description: 'IGST (18%)',
+            qty: '',
+            amount: customer?.company_to_customer_cancelled_booking?.tax?.igst,
+          }]
+        : []
+      : []
+  ),
+
+  // 3. CGST (Conditional on booking status)
+  ...(customer?.booking_status === 'completed'
+    ? customer?.company_to_customer?.tax?.cgst
+      ? [{
+          date: customer?.tax_date || 'xxx',
+          description: 'CGST (9%)',
+          qty: '',
+          amount: customer?.company_to_customer?.tax?.cgst,
+        }]
+      : []
+    : customer?.booking_status === 'cancelled'
+      ? customer?.company_to_customer_cancelled_booking?.tax?.cgst
+        ? [{
+            date: customer?.tax_date || 'xxx',
+            description: 'CGST (9%)',
+            qty: '',
+            amount: customer?.company_to_customer_cancelled_booking?.tax?.cgst,
+          }]
+        : []
+      : []
+  ),
+
+  // 4. SGST/UTGST (Conditional on booking status)
+  ...(customer?.booking_status === 'completed'
+    ? customer?.company_to_customer?.tax?.sgst
+      ? [{
+          date: customer?.tax_date || 'xxx',
+          description: 'SGST/UTGST (9%)',
+          qty: '',
+          amount: customer?.company_to_customer?.tax?.sgst,
+        }]
+      : []
+    : customer?.booking_status === 'cancelled'
+      ? customer?.company_to_customer_cancelled_booking?.tax?.sgst
+        ? [{
+            date: customer?.tax_date || 'xxx',
+            description: 'SGST/UTGST (9%)',
+            qty: '',
+            amount: customer?.company_to_customer_cancelled_booking?.tax?.sgst,
+          }]
+        : []
+      : []
+  ),
+]
     .filter(Boolean)
     .map((item, index) => (
       <View style={styles.tableRow} key={index}>
@@ -224,16 +306,29 @@ const CustomerInvoiceDocument = ({ customer }) => {
 </View>
 
 <View style={styles.totalSection}>
-  <Text>Total net amount: {formatCurrency(customer?.company_to_customer?.net_amount)}</Text>
-  {customer?.company_to_customer?.gst > 0 && (
+<Text>
+  Total net amount:{" "}
+  {formatCurrency(
+    customer?.booking_status === "cancelled"
+      ? customer?.company_to_customer_cancelled_booking?.net_amount
+      : customer?.company_to_customer?.net_amount
+  )}
+</Text>  {customer?.company_to_customer?.gst > 0 && (
   <Text>Total Tax: {formatCurrency(customer?.company_to_customer?.gst)}</Text>
 )}
   <Text style={styles.bold}>
-    Total amount payable: {formatCurrency(customer?.company_to_customer?.total_amount)}
+    Total amount payable:{customer?.booking_status === "cancelled"
+    ? formatCurrency(customer?.company_to_customer_cancelled_booking?.total_amount)
+    : formatCurrency(customer?.company_to_customer?.total_amount)}
   </Text>
   {customer?.billing_amount && (
-    <Text>({numberToWords(customer?.company_to_customer?.total_amount)} Rupees Only)</Text>
-  )}
+    <Text>(
+  {numberToWords(
+    customer?.booking_status === "completed" 
+      ? customer?.company_to_customer?.total_amount
+      : customer?.company_to_customer_cancelled_booking?.total_amount
+  )} Rupees Only
+)</Text>  )}
 </View>
 
 
