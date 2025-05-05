@@ -158,8 +158,14 @@ const CustomerInvoiceDocument = ({ customer }) => {
         <View style={styles.section}>
           <Text>Invoice number: {customer?.invoice_number_customer || "N/A"}</Text>
           <Text>Invoice date: {customer?.invoice_date || "N/A"}</Text>
-          <Text>Place of supply (Name of state): {customer?.company_to_customer?.state || "N/A"}</Text>
-          <Text>SAC Code: {customer?.company_to_customer?.sac_code || "N/A"}</Text>
+          <Text>
+            Place of supply (Name of state): {
+              customer?.booking_status === "cancelled"
+                ? customer?.company_to_customer_cancelled_booking?.state || "N/A"
+                : customer?.company_to_customer?.state || "N/A"
+            }
+      </Text>              
+      <Text>SAC Code: {customer?.company_to_customer?.sac_code || "N/A"}</Text>
           {/* <Text>Category of service: {customer?.category?.category_name || "Services"}</Text> */}
           <Text>
             Tax is payable on reverse charge basis: {customer?.reverse_charge ? "Yes" : "No"}
