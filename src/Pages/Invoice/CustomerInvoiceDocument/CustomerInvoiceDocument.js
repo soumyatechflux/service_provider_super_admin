@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   smallText: {
-    fontSize: 8, // or any size you prefer
+    fontSize: 5, // or any size you prefer
   },
 });
 
@@ -313,8 +313,14 @@ const CustomerInvoiceDocument = ({ customer }) => {
       ? customer?.company_to_customer_cancelled_booking?.net_amount
       : customer?.company_to_customer?.net_amount
   )}
-</Text>  {customer?.company_to_customer?.gst > 0 && (
-  <Text>Total Tax: {formatCurrency(customer?.company_to_customer?.gst)}</Text>
+</Text> {customer?.company_to_customer?.gst > 0 && (
+  <Text>
+    Total Tax: {formatCurrency(
+      customer?.booking_status === "cancelled" 
+        ? customer?.company_to_customer_cancelled_booking?.gst 
+        : customer?.company_to_customer?.gst
+    )}
+  </Text>
 )}
   <Text style={styles.bold}>
     Total amount payable:{customer?.booking_status === "cancelled"
