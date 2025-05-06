@@ -24,6 +24,7 @@ const ChefForParty = () => {
   const [summary, setSummary] = useState("");
   const [cancellationPolicy, setCancellationPolicy] = useState("");
   const [bookingSummaryPage, setBookingSummaryPage] = useState("");
+    const [viewDetails, setViewDetails] = useState("");
   const [freeCancellationBefore, setFreeCancellationBefore] = useState(1); // New Field
   const [nightCharge, setNightCharge] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -111,6 +112,8 @@ const ChefForParty = () => {
         setSummary(data.booking_details || "");
         setCancellationPolicy(data.cancellation_policy || "");
         setBookingSummaryPage(data.booking_summary || "");
+        setViewDetails(data.view_details || "");
+
         setNightCharge(data.night_charge || "");
         setGst(data.gst);
         setSecureFees(data.secure_fee || null);
@@ -275,6 +278,7 @@ const ChefForParty = () => {
     formData.append("booking_details", summary);
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
+    formData.append("view_details", viewDetails);
     formData.append("night_charge", nightCharge ?? "");
     formData.append("gst", gst ?? "0");
     formData.append("partner_tax", partnerTax ?? "0");
@@ -940,6 +944,30 @@ const ChefForParty = () => {
             }}
           />
         </div>
+
+        <div className="MainDining_AddTable mb-5 mt-5">
+                  <h4 className="form-label">
+                    View Details (Booking Summary Page)
+                  </h4>
+                  <ReactQuill
+                    value={viewDetails}
+                    onChange={setViewDetails}
+                    placeholder="Write the View Details content here..."
+                    theme="snow"
+                    modules={{
+                      toolbar: [
+                        [{ header: "1" }, { header: "2" }, { font: [] }],
+                        [{ list: "ordered" }, { list: "bullet" }],
+                        ["bold", "italic", "underline"],
+                        [{ align: [] }],
+                        ["link"],
+                        ["blockquote"],
+                        [{ indent: "-1" }, { indent: "+1" }],
+                        [{ direction: "rtl" }],
+                      ],
+                    }}
+                  />
+                </div>
 
         <div style={{ textAlign: "center" }}>
           <button

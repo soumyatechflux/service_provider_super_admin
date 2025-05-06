@@ -26,6 +26,8 @@ const OneWayTrip = () => {
   const [cancellationPolicy, setCancellationPolicy] = useState("");
   const [bookingSummaryPage, setBookingSummaryPage] = useState("");
   const [additionalPriceHours, setAdditionalPriceHours] = useState("");
+  const [viewDetails, setViewDetails] = useState("");
+  
 
   const [gst, setGst] = useState(null);
   const [secureFees, setSecureFees] = useState(null);
@@ -204,6 +206,7 @@ const OneWayTrip = () => {
     formData.append("night_charge_end_time", nightChargesEndAt);
     formData.append("secure_fee", secureFees ?? "");
     formData.append("platform_fee", platformFees ?? "");
+    formData.append("view_details", viewDetails);
 
     formData.append("gst", gst ?? "0");
     formData.append("partner_tax", partnerTax ?? "0");   
@@ -350,6 +353,7 @@ const OneWayTrip = () => {
         setCurrentEditData(data.current_edit_data || {});
         setShowEditModal(data.show_edit_modal || false);
         setBulletPoints(data.bullet_points || [""]);
+        setViewDetails(data.view_details || "");
 
         setPartnerTax(data.partner_tax);
         setCommission(data.commission || null);
@@ -1014,6 +1018,31 @@ const OneWayTrip = () => {
             }}
           />
         </div>
+
+        
+                <div className="MainDining_AddTable mb-5 mt-5">
+                  <h4 className="form-label">
+                    View Details (Booking Summary Page)
+                  </h4>
+                  <ReactQuill
+                    value={viewDetails}
+                    onChange={setViewDetails}
+                    placeholder="Write the View Details content here..."
+                    theme="snow"
+                    modules={{
+                      toolbar: [
+                        [{ header: "1" }, { header: "2" }, { font: [] }],
+                        [{ list: "ordered" }, { list: "bullet" }],
+                        ["bold", "italic", "underline"],
+                        [{ align: [] }],
+                        ["link"],
+                        ["blockquote"],
+                        [{ indent: "-1" }, { indent: "+1" }],
+                        [{ direction: "rtl" }],
+                      ],
+                    }}
+                  />
+                </div>
 
         <div style={{ textAlign: "center" }}>
           <button

@@ -15,6 +15,7 @@ const RoundTrip = () => {
  const [nightChargesEndAt, setNightChargesEndAt] = useState(""); // New Field 
   const [bookBefore, setBookBefore] = useState(1);
   const [cancellationBefore, setCancellationBefore] = useState(1);
+  const [viewDetails, setViewDetails] = useState("");
   const [freeCancellationBefore, setFreeCancellationBefore] = useState(1); // New Field
   const [summary, setSummary] = useState("");
   const [selectedTransmission, setSelectedTransmission] = useState([]);
@@ -99,6 +100,8 @@ const RoundTrip = () => {
         setCommission(data.commission || null);
 setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null);
 setBulletPoints(data.bullet_points || [""]);
+setViewDetails(data.view_details || "");
+
 
 
         
@@ -276,6 +279,7 @@ setBulletPoints(data.bullet_points || [""]);
     formData.append("free_cancellation_time_before", freeCancellationBefore);
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
+    formData.append("view_details", viewDetails);
     formData.append("booking_details", summary);
     formData.append("additional_price_hours", additionalPriceHours);
     formData.append("secure_fee", secureFees ?? "");
@@ -1038,6 +1042,31 @@ setBulletPoints(data.bullet_points || [""]);
           />
         </div>
 
+
+
+        <div className="MainDining_AddTable mb-5 mt-5">
+          <h4 className="form-label">
+            View Details (Booking Summary Page)
+          </h4>
+          <ReactQuill
+            value={viewDetails}
+            onChange={setViewDetails}
+            placeholder="Write the View Details content here..."
+            theme="snow"
+            modules={{
+              toolbar: [
+                [{ header: "1" }, { header: "2" }, { font: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["bold", "italic", "underline"],
+                [{ align: [] }],
+                ["link"],
+                ["blockquote"],
+                [{ indent: "-1" }, { indent: "+1" }],
+                [{ direction: "rtl" }],
+              ],
+            }}
+          />
+        </div>
        
 
         <div style={{ textAlign: "center" }}>

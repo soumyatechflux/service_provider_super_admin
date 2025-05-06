@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   smallText: {
-    fontSize: 5, // or any size you prefer
+    fontSize: 3, // or any size you prefer
   },
 });
 
@@ -150,7 +150,7 @@ const PartnerInvoiceDocument = ({ customer }) => {
             <Text>Address: {customer?.visit_address || "N/A"}</Text>
           </View>
           <View style={styles.invoiceMeta}>
-            <Text>Invoice issued by {customer?.issuer_name || "Allify Home Solutions Private Limited"}</Text>
+            <Text>Invoice issues by {customer?.issuer_name || "Allify Home Solutions Private Limited"}</Text>
             <Text>On behalf of: {customer?.partner?.name || "Servyo Partner"}</Text>
             <Text>{customer?.partner_to_customer?.state || "N/A"}</Text>
           </View>

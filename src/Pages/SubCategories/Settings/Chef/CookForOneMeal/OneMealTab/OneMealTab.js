@@ -29,6 +29,8 @@ const OneMealTab = () => {
   const [summary, setSummary] = useState("");
   const [cancellationPolicy, setCancellationPolicy] = useState("");
   const [bookingSummaryPage, setBookingSummaryPage] = useState("");
+  const [viewDetails, setViewDetails] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [subCategoryData, setSubCategoryData] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
@@ -108,6 +110,8 @@ const OneMealTab = () => {
         setSummary(data.booking_details || "");
         setCancellationPolicy(data.cancellation_policy || "");
         setBookingSummaryPage(data.booking_summary || "");
+        setViewDetails(data.view_details || "");
+
         setNightCharge(data.night_charge || "");
         setPartnerTax(data.partner_tax);
         setCommission(data.commission || null);
@@ -295,6 +299,8 @@ const OneMealTab = () => {
     formData.append("free_cancellation_time_before", freeCancellationBefore);
     formData.append("cancellation_policy", cancellationPolicy);
     formData.append("booking_summary", bookingSummaryPage);
+    formData.append("view_details", viewDetails);
+
     formData.append("booking_details", summary);
     formData.append("night_charge", night_charge ?? "");
 
@@ -991,6 +997,30 @@ const OneMealTab = () => {
             value={bookingSummaryPage}
             onChange={setBookingSummaryPage}
             placeholder="Write the booking summary page content here..."
+            theme="snow"
+            modules={{
+              toolbar: [
+                [{ header: "1" }, { header: "2" }, { font: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["bold", "italic", "underline"],
+                [{ align: [] }],
+                ["link"],
+                ["blockquote"],
+                [{ indent: "-1" }, { indent: "+1" }],
+                [{ direction: "rtl" }],
+              ],
+            }}
+          />
+        </div>
+
+        <div className="MainDining_AddTable mb-5 mt-5">
+          <h4 className="form-label">
+            View Details (Booking Summary Page)
+          </h4>
+          <ReactQuill
+            value={viewDetails}
+            onChange={setViewDetails}
+            placeholder="Write the View Details content here..."
             theme="snow"
             modules={{
               toolbar: [

@@ -695,20 +695,34 @@ const [selectedBooking, setSelectedBooking] = useState(null);
 {["completed", "cancelled"].includes(item.booking_status) ? (
   <>
     <td style={{ textAlign: "center" }}>
-      <PDFDownloadLink
-        document={<CustomerInvoiceDocument customer={item} />}
-        fileName={`invoice-${item.booking_id}.pdf`}
-      >
-        {({ loading }) =>
-          loading ? (
-            "Loading..."
-          ) : (
-            <button className="payNow-btn">
-              Customer <TbFileInvoice />
-            </button>
-          )
-        }
-      </PDFDownloadLink>
+      {item.booking_status === "cancelled" && item.cancel_charge_amount === 0 ? (
+        <button
+          className="payNow-btn"
+          style={{
+            backgroundColor: "#ccc",
+            color: "#666",
+            cursor: "not-allowed",
+          }}
+          disabled
+        >
+          Customer <TbFileInvoice />
+        </button>
+      ) : (
+        <PDFDownloadLink
+          document={<CustomerInvoiceDocument customer={item} />}
+          fileName={`invoice-${item.booking_id}.pdf`}
+        >
+          {({ loading }) =>
+            loading ? (
+              "Loading..."
+            ) : (
+              <button className="payNow-btn">
+                Customer <TbFileInvoice />
+              </button>
+            )
+          }
+        </PDFDownloadLink>
+      )}
     </td>
 
     <td style={{ textAlign: "center" }}>

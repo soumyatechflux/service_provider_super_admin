@@ -33,6 +33,8 @@ const [gst, setGst] = useState(null);
   const carTypes = ["SUV", "Sedan", "Hatchback", "Luxury"];
   const transmissions = ["Manual", "Automatic"];
    const [bulletPoints, setBulletPoints] = useState([""]); 
+   const [viewDetails, setViewDetails] = useState("");
+
         
         const handleAddBulletPoint = () => {
           setBulletPoints([...bulletPoints, ""]);
@@ -93,7 +95,7 @@ const [gst, setGst] = useState(null);
         setSecureFees(data.secure_fee || null);
         setPlatformFees(data.platform_fee ?? null);
         setBulletPoints(data.bullet_points || [""]);
-
+        setViewDetails(data.view_details || "");
         setPartnerTax(data.partner_tax);
         setCommission(data.commission || null);
 setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null);
@@ -266,8 +268,7 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
     formData.append("commission", commission || "");
     formData.append("night_charge", nightCharge ?? "");
     formData.append("bullet_points", JSON.stringify(bulletPoints));
-
-
+    formData.append("view_details", viewDetails);
 
   
     // Add driver hours calculations data
@@ -948,7 +949,29 @@ setPartnersPayPercentage(data.commission !== null ? 100 - data.commission : null
           />
         </div>
 
-       
+        <div className="MainDining_AddTable mb-5 mt-5">
+          <h4 className="form-label">
+            View Details (Booking Summary Page)
+          </h4>
+          <ReactQuill
+            value={viewDetails}
+            onChange={setViewDetails}
+            placeholder="Write the View Details content here..."
+            theme="snow"
+            modules={{
+              toolbar: [
+                [{ header: "1" }, { header: "2" }, { font: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["bold", "italic", "underline"],
+                [{ align: [] }],
+                ["link"],
+                ["blockquote"],
+                [{ indent: "-1" }, { indent: "+1" }],
+                [{ direction: "rtl" }],
+              ],
+            }}
+          />
+   </div>  
 
         <div style={{ textAlign: "center" }}>
           <button
