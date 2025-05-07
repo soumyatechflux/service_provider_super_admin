@@ -12,6 +12,7 @@ import ReassignPartnerModal from "../../ReassignPartnerModal/ReassignPartnerModa
 import AttachmentModal from "./AttachmentModal/AttachmentModal";
 import EditStatusModal from "./EditStatusModal/EditStatusModal";
 import PriceDetailModal from "./PriceDetailModal/PriceDetailModal";
+import GardenerSlotsModal from './GardenerSlotsModal/GardenerSlotsModal';
 
 const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   function formatDateWithTime(dateString) {
@@ -64,6 +65,9 @@ const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   const [toDate, setToDate] = useState(null);
   const [showReassignModal, setShowReassignModal] = useState(false);
 const [selectedBooking, setSelectedBooking] = useState(null);
+const [showGardenerSlotsModal, setShowGardenerSlotsModal] = useState(false);
+const [selectedGardenerSlots, setSelectedGardenerSlots] = useState([]);
+const [selectedBookingCompleteDates, setSelectedBookingCompleteDates] = useState([]);
 
 
   const entriesPerPage = 10;
@@ -159,6 +163,11 @@ const [selectedBooking, setSelectedBooking] = useState(null);
     setShowAttachmentModal(false);
   };
 
+  const handleOpenGardenerSlotsModal = (slots, completeDates) => {
+    setSelectedGardenerSlots(slots || []);
+    setSelectedBookingCompleteDates(completeDates || []);
+    setShowGardenerSlotsModal(true);
+  };
   // const totalPages = Math.ceil(filteredData.length / entriesPerPage);
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
@@ -459,21 +468,27 @@ const [selectedBooking, setSelectedBooking] = useState(null);
                   <th scope="col" style={{ width: "15%" }}>
                     Booking Date
                   </th>
-
+                 
+                  {category_id !== "3" && (
                   <th scope="col" style={{ width: "15%" }}>
                     Partner Reached Time
                   </th>
-
+                  )}
+                  {category_id !== "3" && (
                   <th scope="col" style={{ width: "15%" }}>
                     Booking Start Time
                   </th>
-
+                  )}
+                  {category_id !== "3" && (
                   <th scope="col" style={{ width: "15%" }}>
                     Booking End Time
                   </th>
+                  )}
+                   {category_id !== "3" && (
                   <th scope="col" style={{ width: "15%" }}>
                     Payment Time
                   </th>
+                   )}
 
                   <th scope="col" style={{ width: "10%" }}>
                     Payment Mode
@@ -488,6 +503,10 @@ const [selectedBooking, setSelectedBooking] = useState(null);
                       Gardner Visit Dates
                     </th>
                   )}
+                   {category_id === "3" && (
+                  <th scope="col" style={{ width: "15%" }}>
+                    Service Slots
+                  </th>)}
                   {category_id !== "1" && ( <th scope="col" style={{ width: "10%" }}> Hours Booked </th>)}
                   <th scope="col" style={{ width: "10%" }}>
                     Special Request
@@ -519,23 +538,7 @@ const [selectedBooking, setSelectedBooking] = useState(null);
         <td>{item.sub_category_name?.sub_category_name || "Unknown"}</td>
         {category_id === "1" && <td>{item.menu || "N/A"}</td>}
         {category_id === "1" && (
-  // <td>
-  //   {typeof item.dishes === "string"
-  //     ? (() => {
-  //         try {
-  //           const parsedDishes = JSON.parse(item.dishes);
-  //           return Array.isArray(parsedDishes) && parsedDishes.length > 0
-  //             ? parsedDishes.join(", ")
-  //             : "N/A"; // Handle empty array []
-  //         } catch (error) {
-  //           return "N/A"; // If JSON parsing fails, return "N/A"
-  //         }
-  //       })()
-  //     : Array.isArray(item.dishes) && item.dishes.length > 0
-  //     ? item.dishes.join(", ")
-  //     : "N/A"}
-  // </td>
-  <td>{item.dishes || "N/A"}</td>
+    <td>{item.dishes || "N/A"}</td>
 )}
 
         {category_id === "2" && <td>{item.car_type || "N/A"}</td>}
@@ -585,10 +588,11 @@ const [selectedBooking, setSelectedBooking] = useState(null);
         </td>
 
         <td>{item.created_at ? formatDateWithTime(item.created_at) : "N/A"}</td>
-        <td>{item.reached_location ? formatDateWithTime(item.reached_location) : "N/A"}</td>
-        <td>{item.start_job ? formatDateWithTime(item.start_job) : "N/A"}</td>
-        <td>{item.end_job ? formatDateWithTime(item.end_job) : "N/A"}</td>
-        <td>{item.payment ? formatDateWithTime(item.payment) : "N/A"}</td>
+        
+        {category_id !== "3" && (<td>{item.reached_location ? formatDateWithTime(item.reached_location) : "N/A"}</td>)}
+        {category_id !== "3" && (<td>{item.start_job ? formatDateWithTime(item.start_job) : "N/A"}</td>)}
+        {category_id !== "3" && (<td>{item.end_job ? formatDateWithTime(item.end_job) : "N/A"}</td>)}
+        {category_id !== "3" && (<td>{item.payment ? formatDateWithTime(item.payment) : "N/A"}</td>)}
 
         <td>{formatPaymentMode(item.payment_mode)}</td>
 
@@ -605,6 +609,8 @@ const [selectedBooking, setSelectedBooking] = useState(null);
       : "NA"}
   </td>
 )}
+{category_id === "3" && (<td> <i className="fa fa-eye text-primary ml-2" style={{ cursor: "pointer" }}        onClick={() => handleOpenGardenerSlotsModal(
+        item.gardener_visiting_slots,  item.booking_complete_dates)} ></i></td>)}
 
         {category_id !== "1" && <td>{item.no_of_hours_booked || "NA"}</td>}
 
@@ -835,8 +841,13 @@ const [selectedBooking, setSelectedBooking] = useState(null);
       onSave={() => {}}
       bookingData={selectedBooking}
       getCommissionData={getCommissionData}
-
     />
+    <GardenerSlotsModal
+  show={showGardenerSlotsModal}
+  onClose={() => setShowGardenerSlotsModal(false)}
+  slots={selectedGardenerSlots}
+  bookingCompleteDates={selectedBookingCompleteDates}
+/>
     </div>
   );
 };
