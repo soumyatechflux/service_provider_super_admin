@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   smallText: {
-    fontSize: 5, // or any size you prefer
+    fontSize: 4, // or any size you prefer
   },
 });
 
