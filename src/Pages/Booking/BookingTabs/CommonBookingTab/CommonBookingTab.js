@@ -596,17 +596,25 @@ const [selectedBookingCompleteDates, setSelectedBookingCompleteDates] = useState
 
         <td>{formatPaymentMode(item.payment_mode)}</td>
 
-        {category_id == "3" && <td>{item.gardener_visiting_slot_count || "NA"}</td>}
-        {category_id == "3" && (
+   {category_id == "3" && (
+  <td>
+    {item.sub_category_name?.sub_category_name === "One Time Visit" 
+      ? "1" 
+      : item.gardener_visiting_slot_count || "NA"}
+  </td>
+)}       
+ {category_id == "3" && (
   <td style={{ width: "200px", whiteSpace: "nowrap" }}>
-    {item.gardener_visiting_slots?.length > 0
-      ? item.gardener_visiting_slots.map((slot, index) => (
-          <span key={index}>
-            {index + 1}. {format(new Date(slot.date), "dd MMM yyyy")}
-            <br />
-          </span>
-        ))
-      : "NA"}
+    {item.sub_category_name?.sub_category_name === "One Time Visit"
+      ? format(new Date(item.visit_date), "dd MMM yyyy")
+      : item.gardener_visiting_slots?.length > 0
+        ? item.gardener_visiting_slots.map((slot, index) => (
+            <span key={index}>
+              {index + 1}. {format(new Date(slot.date), "dd MMM yyyy")}
+              <br />
+            </span>
+          ))
+        : "NA"}
   </td>
 )}
 {category_id === "3" && (<td> <i className="fa fa-eye text-primary ml-2" style={{ cursor: "pointer" }}        onClick={() => handleOpenGardenerSlotsModal(
