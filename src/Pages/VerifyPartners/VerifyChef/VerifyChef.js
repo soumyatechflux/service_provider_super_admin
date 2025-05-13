@@ -425,10 +425,10 @@ const VerifyChef = () => {
         return;
       }
 
-      if (restaurant === 2 && !cookDetails.drivingLicense) {
-        toast.error("Please upload the Driving License Photocopy.");
-        return;
-      }
+      // if (restaurant === 2 && !cookDetails.drivingLicense) {
+      //   toast.error("Please upload the Driving License Photocopy.");
+      //   return;
+      // }
     }
 
     try {
