@@ -24,6 +24,19 @@ const BookingDetailsModal = ({ booking, onClose }) => {
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   };
 
+  const formatTime = (timeString) => {
+  const [hours, minutes] = timeString.split(":");
+  const date = new Date();
+  date.setHours(+hours);
+  date.setMinutes(+minutes);
+  return date.toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
+
   return (
     <Modal
       isOpen={true}
@@ -52,14 +65,24 @@ const BookingDetailsModal = ({ booking, onClose }) => {
         <p>
           <strong>Price:</strong> {booking.price || "N/A"}
         </p>
-        <p>
-          <strong>Address From:</strong>{" "}
-          {capitalizeFirstLetter(booking.address_from)}
-        </p>
-        <p>
-          <strong>Address To:</strong>{" "}
-          {capitalizeFirstLetter(booking.address_to)}
-        </p>
+        {booking.category_id === 2 && (
+  <>
+    <p>
+      <strong>Address From:</strong>{" "}
+      {capitalizeFirstLetter(booking.address_from)}
+    </p>
+    <p>
+      <strong>Address To:</strong>{" "}
+      {capitalizeFirstLetter(booking.address_to)}
+    </p>
+  </>
+)}
+{(booking.category_id === 1 || booking.category_id === 3) && (
+  <p>
+    <strong>Visit Address:</strong>{" "}
+    {capitalizeFirstLetter(booking.visit_address)}
+  </p>
+)}
 
         <p>
           <strong>Status:</strong>{" "}
@@ -86,9 +109,10 @@ const BookingDetailsModal = ({ booking, onClose }) => {
           <strong>Visit Date:</strong>{" "}
           {new Date(booking.visit_date).toLocaleDateString()}
         </p>
-        <p>
-          <strong>Visit Time:</strong> {booking.visit_time || "N/A"}
-        </p>
+       <p>
+  <strong>Visit Time:</strong> {booking.visit_time ? formatTime(booking.visit_time) : "N/A"}
+</p>
+
       </div>
       <div className="modal-footer">
         <button className="btn btn-secondary" onClick={onClose}>

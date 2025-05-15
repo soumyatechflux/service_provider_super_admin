@@ -217,7 +217,7 @@ const ReportTable = ({ filters, loading, setLoading,setTableData }) => {
                     Visit Slot Count
                   </th>
                   <th scope="col" style={{ width: "5%" }}>
-                    Amount
+                     Base Amount
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Commission
@@ -256,7 +256,12 @@ const ReportTable = ({ filters, loading, setLoading,setTableData }) => {
                     <td>{item.gardener_visiting_slot_count || "NA"}</td>
                     <td>{item.price || "No status"}</td>
                     <td>{item.commission_amount || "0.00"}</td>
-                    <td>{item.address_from || "No address available."}</td>
+                   <td>
+                        {item.category_id === 2
+                          ? item.address_from || "No address available."
+                          : item.visit_address || "No address available."}
+                      </td>
+
                     <td>
                       {item.booking_status?.charAt(0).toUpperCase() +
                         item.booking_status.slice(1) || "N/A"}
