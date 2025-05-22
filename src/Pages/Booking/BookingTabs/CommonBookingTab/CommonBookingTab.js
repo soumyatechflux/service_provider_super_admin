@@ -724,7 +724,7 @@ const [selectedBookingCompleteDates, setSelectedBookingCompleteDates] = useState
       ) : (
         <PDFDownloadLink
           document={<CustomerInvoiceDocument customer={item} />}
-          fileName={`invoice-${item.booking_id}.pdf`}
+          fileName={`Invoice-${item.booking_id}.pdf`}
         >
           {({ loading }) =>
             loading ? (
@@ -755,7 +755,7 @@ const [selectedBookingCompleteDates, setSelectedBookingCompleteDates] = useState
       ) : (
         <PDFDownloadLink
           document={<PartnerInvoiceDocument customer={item} />}
-          fileName={`invoice-${item.booking_id}.pdf`}
+          fileName={`Invoice-${item.booking_id}.pdf`}
         >
           {({ loading }) =>
             loading ? (
