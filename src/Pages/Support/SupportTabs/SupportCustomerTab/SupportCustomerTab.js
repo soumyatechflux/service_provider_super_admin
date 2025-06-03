@@ -89,6 +89,7 @@ const SupportCustomerTab = () => {
     return (
       normalizeString(item.email ?? "").includes(searchTerm) ||
       normalizeString(item.name ?? "").includes(searchTerm) ||
+      normalizeString(item.booking_id ?? "").includes(searchTerm) ||
       normalizeString(item.mobile ?? "").includes(searchTerm) ||
       normalizeString(item.description ?? "").includes(searchTerm) ||
       normalizeString(formatDate(item.created_at)).includes(searchTerm) ||
@@ -144,6 +145,7 @@ const SupportCustomerTab = () => {
               <thead>
                 <tr>
                   <th>Sr. No.</th>
+                  <th>Booking Id</th>
                   <th>Name</th>
                   <th>Mobile</th>
                   <th>Category</th>
@@ -164,6 +166,7 @@ const SupportCustomerTab = () => {
     currentEntries.map((item, index) => (
       <tr key={item.id}>
         <td>{indexOfFirstEntry + index + 1}</td>
+        <td>{item.booking_id || "N/A"}</td>
         <td>{item.name || "No name available"}</td>
         <td>{item.mobile || "N/A"}</td>
         <td>{(() => {const categoryMap = {
