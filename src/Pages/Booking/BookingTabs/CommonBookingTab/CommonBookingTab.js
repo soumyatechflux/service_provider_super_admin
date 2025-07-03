@@ -407,14 +407,23 @@ const [selectedBookingCompleteDates, setSelectedBookingCompleteDates] = useState
                   <th scope="col" style={{ width: "5%" }}>
                     Booking Id
                   </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Partner Id
+                  </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Customer Name
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Customer Phone No
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Partner Name
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Sub Category
+                  </th>
+                  <th scope="col" style={{ width: "10%" }}>
+                    Status
                   </th>
                   {category_id === "1" && (
                     <th scope="col" style={{ width: "10%" }}>
@@ -514,9 +523,9 @@ const [selectedBookingCompleteDates, setSelectedBookingCompleteDates] = useState
                   <th scope="col" style={{ width: "10%" }}>
                     Attachments
                   </th>
-                  <th scope="col" style={{ width: "10%" }}>
+                  {/* <th scope="col" style={{ width: "10%" }}>
                     Status
-                  </th>
+                  </th> */}
                   <th scope="col" style={{ width: "5%" }}>
                     Action
                   </th>
@@ -533,9 +542,22 @@ const [selectedBookingCompleteDates, setSelectedBookingCompleteDates] = useState
       <tr key={item.booking_id}>
         <th scope="row">{indexOfFirstEntry + index + 1}.</th>
         <td>{item.booking_id || "N/A"}</td>
+        <td>{item?.partner?.uid || "N/A"}</td>
         <td>{item.guest_name || "N/A"}</td>
+        <td>{item?.customer?.mobile || "N/A"}</td>
         <td>{item.partner?.name || "Not assigned yet"}</td>
         <td>{item.sub_category_name?.sub_category_name || "Unknown"}</td>
+         <td
+  style={
+    item.booking_status === "not-started"
+      ? { backgroundColor: "#fff3cd", color: "#dc3545", fontWeight: "bold" }
+      : {}
+  }
+>
+  {item.booking_status
+    ? item.booking_status.charAt(0).toUpperCase() + item.booking_status.slice(1)
+    : "N/A"}
+</td>
         {category_id === "1" && <td>{item.menu || "N/A"}</td>}
         {category_id === "1" && (
     <td>{item.dishes || "N/A"}</td>
@@ -602,7 +624,8 @@ const [selectedBookingCompleteDates, setSelectedBookingCompleteDates] = useState
       ? "1" 
       : item.gardener_visiting_slot_count || "NA"}
   </td>
-)}       
+)}  
+     
  {category_id == "3" && (
   <td style={{ width: "200px", whiteSpace: "nowrap" }}>
     {item.sub_category_name?.sub_category_name === "One Time Visit"
@@ -639,7 +662,7 @@ const [selectedBookingCompleteDates, setSelectedBookingCompleteDates] = useState
             "No Attachments"
           )}
         </td>
-        <td
+        {/* <td
   style={
     item.booking_status === "not-started"
       ? { backgroundColor: "#fff3cd", color: "#dc3545", fontWeight: "bold" }
@@ -649,7 +672,7 @@ const [selectedBookingCompleteDates, setSelectedBookingCompleteDates] = useState
   {item.booking_status
     ? item.booking_status.charAt(0).toUpperCase() + item.booking_status.slice(1)
     : "N/A"}
-</td>
+</td> */}
 
 <td>
   <i

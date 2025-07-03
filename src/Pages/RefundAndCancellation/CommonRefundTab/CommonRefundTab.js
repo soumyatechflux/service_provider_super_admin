@@ -152,6 +152,7 @@ const CommonRefundTab = ({ category_id }) => {
 
                 <th>Razer Pay Payment Id</th>
                 <th>Payment Mode</th>
+                <th>Reason for Cancellation</th>
                 <th>Refund Status</th>
                 <th>Action</th>
               </tr>
@@ -179,6 +180,7 @@ const CommonRefundTab = ({ category_id }) => {
 
                     <td>{item?.razorpay_payment_id || "N/A"}</td>
                     <td>{item?.payment_mode ? item.payment_mode.charAt(0).toUpperCase() + item.payment_mode.slice(1) : "N/A"}</td>
+                    <td>{item?.note || "N/A"}</td>
                     <td style={{ color: item?.is_refund === 0 ? "red" : "black" }}>
 
                     {item?.payment_mode === "cod" ? "---" : item?.is_refund === 0 ? "Not Refunded" : "Refunded"}
