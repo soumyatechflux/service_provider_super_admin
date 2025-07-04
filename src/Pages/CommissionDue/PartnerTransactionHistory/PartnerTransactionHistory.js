@@ -17,7 +17,7 @@ const PartnerTransactionHistory = ({ loading, setLoading }) => {
       );
       setLoading(true);
       const response = await axios.get(
-        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/payment_history`,
+        `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/partner_transactions`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
