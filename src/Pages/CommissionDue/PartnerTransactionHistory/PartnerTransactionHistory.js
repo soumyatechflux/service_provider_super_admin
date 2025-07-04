@@ -71,7 +71,7 @@ const PartnerTransactionHistory = ({ loading, setLoading }) => {
   
     dummy_Data.forEach((item, index) => {
       // Convert "created_at" (ISO 8601 format) to "DD/MM/YY"
-      const dateObj = new Date(item.created_at);
+      const dateObj = new Date(item.transaction_date);
       const day = String(dateObj.getDate()).padStart(2, "0");
       const month = String(dateObj.getMonth() + 1).padStart(2, "0");
       const year = String(dateObj.getFullYear()).slice(-2); // Get last 2 digits of the year
@@ -79,11 +79,11 @@ const PartnerTransactionHistory = ({ loading, setLoading }) => {
   
       const row = [
         index + 1,
-        item.partner_name || "Unknown",
-        item.category_name || "N/A",
+        item?.partner?.name || "Unknown",
+        item.category?.category_name || "N/A",
         `"${formattedDate}"`, // Ensure date is treated as a string
         item.payout_amount || "N/A",
-        item.payment_transaction_id || "N/A",
+        item.razorpay_payment_id || "N/A",
       ];
       csvRows.push(row.join(",")); // Convert row array to CSV string
     });
@@ -114,17 +114,17 @@ const PartnerTransactionHistory = ({ loading, setLoading }) => {
     const searchTerm = normalizeString(searchInput);
   
     // Convert the relevant numeric fields to string for comparison
-    const formattedDate = normalizeString(formatDate(item.created_at)); // Convert date to DD/MM/YY and normalize
+    const formattedDate = normalizeString(formatDate(item.transaction_date)); // Convert date to DD/MM/YY and normalize
     const tdsAmount = normalizeString(item.tds_amount?.toString()); // Ensure it's a string
     const payoutAmountAfterTds = normalizeString(item.payout_amount_after_tds?.toString()); // Ensure it's a string
-    const normalizedUid = normalizeString(item.uid || ""); // Normalize uid field
+    const normalizedUid = normalizeString(item.partner.uid || ""); // Normalize uid field
   
     return (
       normalizedUid.includes(searchTerm) || // Check if uid matches the search term
-      normalizeString(item.partner_name).includes(searchTerm) ||
-      normalizeString(item.category_name).includes(searchTerm) ||
+      normalizeString(item.partner.name).includes(searchTerm) ||
+      normalizeString(item.category?.category_name).includes(searchTerm) ||
       normalizeString(item.payout_amount).includes(searchTerm) ||
-      normalizeString(item.payment_transaction_id).includes(searchTerm) ||
+      normalizeString(item.razorpay_payment_id).includes(searchTerm) ||
       formattedDate.includes(searchTerm) || // Ensure search works with formatted date
       tdsAmount.includes(searchTerm) || // Allow search on tds_amount
       payoutAmountAfterTds.includes(searchTerm) // Allow search on payout_amount_after_tds
@@ -274,9 +274,9 @@ const PartnerTransactionHistory = ({ loading, setLoading }) => {
                 <th scope="col" style={{ width: "15%" }}>
                   Category
                 </th>
-                {/* <th scope="col" style={{ width: "15%" }}>
-                  Created At
-                </th> */}
+                <th scope="col" style={{ width: "15%" }}>
+                  Transaction Date
+                </th>
                 {/* <th scope="col" style={{ width: "15%" }}>
                   TDS Amount
                 </th> */}
@@ -304,21 +304,21 @@ const PartnerTransactionHistory = ({ loading, setLoading }) => {
                     <th scope="row">
                       {index + 1 + (currentPage - 1) * entriesPerPage}.
                     </th>
-                    <td>{item.uid || "Unknown"}</td>
-                    <td>{item.partner_name || "Unknown"}</td>
-                    <td>{item.category_name || "N/A"}</td>
-                    {/* <td>
+                    <td>{item?.partner.uid || "Unknown"}</td>
+                    <td>{item?.partner.name || "Unknown"}</td>
+                    <td>{item?.category?.category_name || "N/A"}</td>
+                    <td>
                       {new Intl.DateTimeFormat("en-GB", {
                         day: "2-digit",
                         month: "2-digit",
                         year: "2-digit",
-                      }).format(new Date(item.created_at)) || "N/A"}
-                    </td> */}
+                      }).format(new Date(item.transaction_date)) || "N/A"}
+                    </td>
 
                     {/* <td>{item.tds_amount || "N/A"}</td> */}
                     <td>{item.payout_amount || "N/A"}</td>
                     {/* <td>{item.payout_amount_after_tds || "N/A"}</td> */}
-                    <td>{item.payment_transaction_id || "N/A"}</td>
+                    <td>{item.razorpay_payment_id || "N/A"}</td>
                   </tr>
                 ))
               )}
