@@ -3,6 +3,7 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import CommonCommissionTab from "./CommonCommissionTab/CommonCommissionTab";
 import PaymentHistoryTable from "../PaymentHistoryTable/PaymentHistoryTable";
+import PartnerTransactionHistory from "../PartnerTransactionHistory/PartnerTransactionHistory";
 
 const CommissionDueTabs = () => {
 
@@ -83,6 +84,21 @@ const CommissionDueTabs = () => {
           handleCloseModal={handleCloseModal}
         />
       </Tab>
+
+      <Tab eventKey="transaction" title="Partner Transaction History">
+        <PartnerTransactionHistory
+          // category_id="3"
+          loading={loading}
+          setLoading={setLoading}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          showModal={showModal}
+          setShowModal={setShowModal}
+          handlePayNowClick={handlePayNowClick}
+          handleCloseModal={handleCloseModal}
+        />
+      </Tab>
+
     </Tabs>
     </>
   );
