@@ -82,7 +82,7 @@ const PartnerTransactionHistory = ({ loading, setLoading }) => {
         item?.partner?.name || "Unknown",
         item.category?.category_name || "N/A",
         `"${formattedDate}"`, // Ensure date is treated as a string
-        item.payout_amount || "N/A",
+        item.due_amount || "N/A",
         item.razorpay_payment_id || "N/A",
       ];
       csvRows.push(row.join(",")); // Convert row array to CSV string
@@ -123,7 +123,7 @@ const PartnerTransactionHistory = ({ loading, setLoading }) => {
       normalizedUid.includes(searchTerm) || // Check if uid matches the search term
       normalizeString(item.partner.name).includes(searchTerm) ||
       normalizeString(item.category?.category_name).includes(searchTerm) ||
-      normalizeString(item.payout_amount).includes(searchTerm) ||
+      normalizeString(item.due_amount).includes(searchTerm) ||
       normalizeString(item.razorpay_payment_id).includes(searchTerm) ||
       formattedDate.includes(searchTerm) || // Ensure search works with formatted date
       tdsAmount.includes(searchTerm) || // Allow search on tds_amount
@@ -316,7 +316,7 @@ const PartnerTransactionHistory = ({ loading, setLoading }) => {
                     </td>
 
                     {/* <td>{item.tds_amount || "N/A"}</td> */}
-                    <td>{item.payout_amount || "N/A"}</td>
+                    <td>{item.due_amount || "N/A"}</td>
                     {/* <td>{item.payout_amount_after_tds || "N/A"}</td> */}
                     <td>{item.razorpay_payment_id || "N/A"}</td>
                   </tr>
