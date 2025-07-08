@@ -143,6 +143,8 @@ const handleViewCustomer = async (customerId) => {
         normalizeString(restaurant.name).includes(searchTerm) ||
         normalizeString(restaurant.email ?? "").includes(searchTerm) ||
         normalizeString(restaurant.mobile ?? "").includes(searchTerm) ||
+        normalizeString(restaurant.id ?? "").includes(searchTerm) ||
+        normalizeString(restaurant.uid ?? "").includes(searchTerm) ||
         normalizeString(restaurant.gender ?? "").includes(searchTerm) ||
         normalizeString(restaurant.address ?? "").includes(searchTerm) ||
         normalizeString(restaurant.rating?.toString() ?? "").includes(searchTerm) ||
@@ -300,6 +302,7 @@ const handleViewCustomer = async (customerId) => {
   <thead>
     <tr>
       <th scope="col" style={{ width: "5%" }}>Sr.</th>
+      <th scope="col" style={{ width: "10%" }}>Customer Id</th>
       <th scope="col" style={{ width: "10%" }}>Name</th>
       <th scope="col" style={{ width: "15%" }}>Email</th>
       <th scope="col" style={{ width: "10%" }}>Phone</th>
@@ -315,6 +318,7 @@ const handleViewCustomer = async (customerId) => {
     {currentEntries.map((restaurant, index) => (
       <tr key={restaurant.id}>
         <th scope="row">{indexOfFirstEntry + index + 1}.</th>
+        <td>{restaurant?.id || "NA"}</td>
         <td>{restaurant.name ? restaurant.name.charAt(0).toUpperCase() + restaurant.name.slice(1) : "N/A"}</td>
         <td>{restaurant.email || "NA"}</td>
         <td>{restaurant.mobile}</td>
