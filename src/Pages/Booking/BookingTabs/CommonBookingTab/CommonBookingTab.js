@@ -1511,7 +1511,10 @@ const [loadingCustomerId, setLoadingCustomerId] = useState(null);
         <th scope="row">{indexOfFirstEntry + index + 1}.</th>
         <td>{item.booking_id || "N/A"}</td>
 <td 
-  style={{ cursor: "pointer"}}
+  style={{ 
+    cursor: "pointer",
+    color: item?.partner?.uid ? "blue" : "black"
+  }}
   onClick={() => {
     if (item?.partner?.id) {
       fetchPartnerDetails(item.partner.id);
@@ -1519,10 +1522,13 @@ const [loadingCustomerId, setLoadingCustomerId] = useState(null);
   }}
 >
   {item?.partner?.uid || "N/A"}
-</td> 
+</td>
        <td>{item.partner?.name || "Not assigned yet"}</td>
 <td 
-  style={{ cursor: "pointer"}}
+  style={{ 
+    cursor: "pointer",
+    color: item?.customer?.id ? "blue" : "black"
+  }}
   onClick={() => {
     if (item?.customer?.id) {
       fetchCustomerDetails(item.customer.id);
