@@ -29,10 +29,10 @@ const AttachmentModalPartner = ({ open, attachments, onClose }) => {
 
   const formatValue = (key, value) => {
     if (typeof value === "string") {
-      if (key === "dob" || key === "created_at" || key === "updated_at") 
+      if (key === "dob" || key === "created_at" || key === "updated_at" || key === "date_of_joining") 
         return moment(value).format("MMMM D, YYYY");
       if (key.includes("date"))
-        return moment(value).format("MMMM D, YYYY, hh:mm A");
+        return moment(value).format("MMMM D, YYYY");
       return value.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
     }
     return value;
