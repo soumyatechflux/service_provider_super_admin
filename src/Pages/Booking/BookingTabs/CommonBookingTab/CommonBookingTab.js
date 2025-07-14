@@ -1372,12 +1372,7 @@ const [loadingCustomerId, setLoadingCustomerId] = useState(null);
                   <th scope="col" style={{ width: "5%" }}>
                     Booking Id
                   </th>
-                  <th scope="col" style={{ width: "5%" }}>
-                    Partner Id
-                  </th>
-                   <th scope="col" style={{ width: "10%" }}>
-                    Partner Name
-                  </th>
+                  
                   <th scope="col" style={{ width: "5%" }}>
                     Customer Id
                   </th>
@@ -1386,6 +1381,12 @@ const [loadingCustomerId, setLoadingCustomerId] = useState(null);
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Customer Phone No
+                  </th>
+                  <th scope="col" style={{ width: "5%" }}>
+                    Partner Id
+                  </th>
+                   <th scope="col" style={{ width: "10%" }}>
+                    Partner Name
                   </th>
                   <th scope="col" style={{ width: "10%" }}>
                     Sub Category
@@ -1510,20 +1511,7 @@ const [loadingCustomerId, setLoadingCustomerId] = useState(null);
       <tr key={item.booking_id}>
         <th scope="row">{indexOfFirstEntry + index + 1}.</th>
         <td>{item.booking_id || "N/A"}</td>
-<td 
-  style={{ 
-    cursor: "pointer",
-    color: item?.partner?.uid ? "blue" : "black"
-  }}
-  onClick={() => {
-    if (item?.partner?.id) {
-      fetchPartnerDetails(item.partner.id);
-    }
-  }}
->
-  {item?.partner?.uid || "N/A"}
-</td>
-       <td>{item.partner?.name || "Not assigned yet"}</td>
+
 <td 
   style={{ 
     cursor: "pointer",
@@ -1539,6 +1527,20 @@ const [loadingCustomerId, setLoadingCustomerId] = useState(null);
 </td>
        <td>{item.guest_name || "N/A"}</td>
         <td>{item?.customer?.mobile || "N/A"}</td>
+        <td 
+  style={{ 
+    cursor: "pointer",
+    color: item?.partner?.uid ? "blue" : "black"
+  }}
+  onClick={() => {
+    if (item?.partner?.id) {
+      fetchPartnerDetails(item.partner.id);
+    }
+  }}
+>
+  {item?.partner?.uid || "N/A"}
+</td>
+       <td>{item.partner?.name || "Not assigned yet"}</td>
         <td>{item.sub_category_name?.sub_category_name || "Unknown"}</td>
          <td
   style={
