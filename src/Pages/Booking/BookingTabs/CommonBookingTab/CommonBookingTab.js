@@ -13,6 +13,8 @@
 // import EditStatusModal from "./EditStatusModal/EditStatusModal";
 // import PriceDetailModal from "./PriceDetailModal/PriceDetailModal";
 // import GardenerSlotsModal from './GardenerSlotsModal/GardenerSlotsModal';
+// import AttachmentModalPartner from '../../../NewSignUps/CommissionTable/AttachmentModalPartner/AttachmentModalPartner';
+// import CustomerInfoModal from '../../../Customers/CustomersTable/CustomerInfoModal/CustomerInfoModal';
 
 // const CommonBookingTab = ({ category_id, loading, setLoading }) => {
 //   function formatDateWithTime(dateString) {
@@ -69,6 +71,17 @@
 // const [selectedGardenerSlots, setSelectedGardenerSlots] = useState([]);
 // const [selectedBookingCompleteDates, setSelectedBookingCompleteDates] = useState([]);
 
+// const [showPartnerModal, setShowPartnerModal] = useState(false);
+// const [partnerData, setPartnerData] = useState(null);
+// const [partnerLoading, setPartnerLoading] = useState(false);
+
+// // const [showCustomerModal, setShowCustomerModal] = useState(false);
+// // const [selectedCustomer, setSelectedCustomer] = useState(null);
+// // const [customerLoading, setCustomerLoading] = useState(false);
+// const [showCustomerModal, setShowCustomerModal] = useState(false);
+// const [selectedCustomer, setSelectedCustomer] = useState(null);
+// const [customerLoading, setCustomerLoading] = useState(false);
+// const [loadingCustomerId, setLoadingCustomerId] = useState(null);
 
 //   const entriesPerPage = 10;
 
@@ -81,6 +94,60 @@
 //     setToDate("");
 //     getCommissionData();
 //   };
+
+//   const fetchCustomerDetails = async (customerId) => {
+//   try {
+//     setLoading(true);
+//     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+//     const response = await axios.get(
+//       `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/customers/${customerId}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     if (response?.status === 200 && response?.data?.success) {
+//       setSelectedCustomer(response.data.data);
+//       setShowCustomerModal(true);
+//     } else {
+//       toast.error(response.data.message || "Failed to fetch customer details.");
+//     }
+//   } catch (error) {
+//     console.error("Error fetching customer details:", error);
+//     toast.error("Failed to load customer details. Please try again.");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+//   const fetchPartnerDetails = async (partnerId) => {
+//   try {
+//     setLoading(true);
+//     const token = sessionStorage.getItem("TokenForSuperAdminOfServiceProvider");
+//     const response = await axios.get(
+//       `${process.env.REACT_APP_SERVICE_PROVIDER_SUPER_ADMIN_BASE_API_URL}/api/admin/partners/${partnerId}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     if (response?.status === 200 && response?.data?.success) {
+//       setPartnerData(response.data.data);
+//       setShowPartnerModal(true);
+//     } else {
+//       toast.error(response.data.message || "Failed to fetch partner details.");
+//     }
+//   } catch (error) {
+//     console.error("Error fetching partner details:", error);
+//     toast.error("Failed to load partner details. Please try again.");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
   
 //   const getCommissionData = async () => {
 //     try {
@@ -218,6 +285,8 @@
 //     return (
 //       normalizeString(item?.guest_name ?? "").includes(searchTerm) || // Customer name
 //       normalizeString(String(item?.booking_id ?? "")).includes(searchTerm) || // Booking ID
+//       normalizeString(String(item?.partner?.uid  ?? "")).includes(searchTerm) ||
+//       normalizeString(String(item?.customer?.id ?? "")).includes(searchTerm) || 
 //       normalizeString(item?.partner?.name ?? "").includes(searchTerm) || // Partner name
 //       normalizeString(item?.sub_category_name?.sub_category_name ?? "").includes(searchTerm) || // Sub-category
 //       normalizeString(String(item?.total_amount ?? "")).includes(searchTerm) || // Amount
@@ -407,8 +476,9 @@
 //                   <th scope="col" style={{ width: "5%" }}>
 //                     Booking Id
 //                   </th>
+                  
 //                   <th scope="col" style={{ width: "5%" }}>
-//                     Partner Id
+//                     Customer Id
 //                   </th>
 //                   <th scope="col" style={{ width: "10%" }}>
 //                     Customer Name
@@ -416,7 +486,10 @@
 //                   <th scope="col" style={{ width: "10%" }}>
 //                     Customer Phone No
 //                   </th>
-//                   <th scope="col" style={{ width: "10%" }}>
+//                   <th scope="col" style={{ width: "5%" }}>
+//                     Partner Id
+//                   </th>
+//                    <th scope="col" style={{ width: "10%" }}>
 //                     Partner Name
 //                   </th>
 //                   <th scope="col" style={{ width: "10%" }}>
@@ -542,10 +615,36 @@
 //       <tr key={item.booking_id}>
 //         <th scope="row">{indexOfFirstEntry + index + 1}.</th>
 //         <td>{item.booking_id || "N/A"}</td>
-//         <td>{item?.partner?.uid || "N/A"}</td>
-//         <td>{item.guest_name || "N/A"}</td>
+
+// <td 
+//   style={{ 
+//     cursor: "pointer",
+//     color: item?.customer?.id ? "blue" : "black"
+//   }}
+//   onClick={() => {
+//     if (item?.customer?.id) {
+//       fetchCustomerDetails(item.customer.id);
+//     }
+//   }}
+// >
+//   {item?.customer?.id || "N/A"}
+// </td>
+//        <td>{item.guest_name || "N/A"}</td>
 //         <td>{item?.customer?.mobile || "N/A"}</td>
-//         <td>{item.partner?.name || "Not assigned yet"}</td>
+//         <td 
+//   style={{ 
+//     cursor: "pointer",
+//     color: item?.partner?.uid ? "blue" : "black"
+//   }}
+//   onClick={() => {
+//     if (item?.partner?.id) {
+//       fetchPartnerDetails(item.partner.id);
+//     }
+//   }}
+// >
+//   {item?.partner?.uid || "N/A"}
+// </td>
+//        <td>{item.partner?.name || "Not assigned yet"}</td>
 //         <td>{item.sub_category_name?.sub_category_name || "Unknown"}</td>
 //          <td
 //   style={
@@ -879,6 +978,18 @@
 //   slots={selectedGardenerSlots}
 //   bookingCompleteDates={selectedBookingCompleteDates}
 // />
+
+// <AttachmentModalPartner
+//   open={showPartnerModal}
+//   attachments={partnerData}
+//   onClose={() => setShowPartnerModal(false)}
+// />
+// {showCustomerModal && selectedCustomer && (
+//   <CustomerInfoModal 
+//     customer={selectedCustomer} 
+//     onClose={() => setShowCustomerModal(false)} 
+//   />
+// )}
 //     </div>
 //   );
 // };
@@ -887,30 +998,23 @@
 
 
 
-
-
-
-
-
-
-
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import axios from "axios";
 import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPeopleArrows } from "react-icons/fa";
 import { TbFileInvoice } from "react-icons/tb";
 import { toast } from "react-toastify";
+import CustomerInfoModal from '../../../Customers/CustomersTable/CustomerInfoModal/CustomerInfoModal';
 import CustomerInvoiceDocument from "../../../Invoice/CustomerInvoiceDocument/CustomerInvoiceDocument";
 import PartnerInvoiceDocument from "../../../Invoice/PartnerInvoiceDocument/PartnerInvoiceDocument";
 import Loader from "../../../Loader/Loader";
+import AttachmentModalPartner from '../../../NewSignUps/CommissionTable/AttachmentModalPartner/AttachmentModalPartner';
 import ReassignPartnerModal from "../../ReassignPartnerModal/ReassignPartnerModal";
 import AttachmentModal from "./AttachmentModal/AttachmentModal";
 import EditStatusModal from "./EditStatusModal/EditStatusModal";
-import PriceDetailModal from "./PriceDetailModal/PriceDetailModal";
 import GardenerSlotsModal from './GardenerSlotsModal/GardenerSlotsModal';
-import AttachmentModalPartner from '../../../NewSignUps/CommissionTable/AttachmentModalPartner/AttachmentModalPartner';
-import CustomerInfoModal from '../../../Customers/CustomersTable/CustomerInfoModal/CustomerInfoModal';
+import PriceDetailModal from "./PriceDetailModal/PriceDetailModal";
 
 const CommonBookingTab = ({ category_id, loading, setLoading }) => {
   function formatDateWithTime(dateString) {
@@ -1117,10 +1221,14 @@ const [loadingCustomerId, setLoadingCustomerId] = useState(null);
     setShowEditModal(false);
   };
 
-  const handleOpenAttachmentModal = (attachments) => {
-    setAttachmentsData(attachments);
-    setShowAttachmentModal(true);
-  };
+  // const handleOpenAttachmentModal = (attachments) => {
+  //   setAttachmentsData(attachments);
+  //   setShowAttachmentModal(true);
+  // };
+  const handleOpenAttachmentModal = (bookingId) => {
+  setSelectedBookingId(bookingId); // Store the booking ID
+  setShowAttachmentModal(true); // Open the modal
+};
 
   const handleCloseAttachmentModal = () => {
     setShowAttachmentModal(false);
@@ -1641,7 +1749,7 @@ const [loadingCustomerId, setLoadingCustomerId] = useState(null);
         {category_id !== "1" && <td>{item.no_of_hours_booked || "NA"}</td>}
 
         <td>{item.instructions || "N/A"}</td>
-        <td>
+        {/* <td>
           {item.start_job_attachments.length > 0 || item.end_job_attachments.length > 0 ? (
             <i
               className="fa fa-eye text-primary"
@@ -1656,19 +1764,20 @@ const [loadingCustomerId, setLoadingCustomerId] = useState(null);
           ) : (
             "No Attachments"
           )}
-        </td>
-        {/* <td
-  style={
-    item.booking_status === "not-started"
-      ? { backgroundColor: "#fff3cd", color: "#dc3545", fontWeight: "bold" }
-      : {}
-  }
->
-  {item.booking_status
-    ? item.booking_status.charAt(0).toUpperCase() + item.booking_status.slice(1)
-    : "N/A"}
-</td> */}
+        </td> */}
 
+        <td>
+  {item.start_job_attachments.length > 0 || item.end_job_attachments.length > 0 ? (
+    <i
+      className="fa fa-eye text-primary"
+      style={{ cursor: "pointer" }}
+      onClick={() => handleOpenAttachmentModal(item.booking_id)} // Pass booking_id here
+    />
+  ) : (
+    "No Attachments"
+  )}
+</td>
+        
 <td>
   <i
     className={`fa fa-pencil-alt ${item.cancel_button ? "text-primary" : "text-muted"}`}
@@ -1837,11 +1946,17 @@ const [loadingCustomerId, setLoadingCustomerId] = useState(null);
         </>
       )}
 
-      <AttachmentModal
+      {/* <AttachmentModal
         open={showAttachmentModal}
         attachments={attachmentsData}
         onClose={handleCloseAttachmentModal}
-      />
+      /> */}
+
+<AttachmentModal
+  open={showAttachmentModal}
+  onClose={handleCloseAttachmentModal}
+  bookingId={selectedBookingId} // Pass the booking ID here
+/>
 
 <PriceDetailModal
         show={showPriceDetailModal}
